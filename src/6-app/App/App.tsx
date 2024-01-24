@@ -1,8 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
+import {logo} from '0-shared';
 import './App.css';
 
 function App() {
+  const i = process.env.REACT_APP_TEST_VARIABLE ?? "null";
   return (
     <div className="App">
       <header className="App-header">
@@ -10,6 +11,7 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <span>process env: TEST: {i}</span>
         <a
           className="App-link"
           href="https://reactjs.org"

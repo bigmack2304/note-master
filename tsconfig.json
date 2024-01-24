@@ -1,6 +1,13 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
+    "moduleTypes": {
+        "webpack.config.ts": "cjs",
+        "webpack-config-scripts/**/*": "cjs"
+    }
+},
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,7 +25,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./src"
   },
   "include": [
     "src"
