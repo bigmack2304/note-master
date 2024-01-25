@@ -1,28 +1,14 @@
-import React from 'react';
-import {logo} from '0-shared';
-import './App.css';
+import React from "react";
+import { logo } from "0-shared";
+import "./App.scss";
+import { BasePage } from "4-pages";
 
 function App() {
-  const i = process.env.REACT_APP_TEST_VARIABLE ?? "null";
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>process env: TEST: {i}</span>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <BasePage></BasePage>
+        </div>
+    );
 }
 
 export default App;
