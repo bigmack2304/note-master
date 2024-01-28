@@ -8,9 +8,14 @@ interface IThemeState {
 }
 
 const initialState: IThemeState = {
+    isAuto: true,
     isDark: false,
-    isAuto: false,
 };
+
+// На случай если нужно будет поменять значение темы по умолчанию, сразу тут ее вычислим
+if (initialState.isAuto) {
+    initialState.isDark = getSystemStyle.isDark();
+}
 
 const themeSlice = createSlice({
     name: "theme",

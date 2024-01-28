@@ -6,6 +6,7 @@ import { TransitionSlideRightForvardRef } from "0-shared";
 import { TRANSITION_DURATION } from "5-app";
 import type { SxProps, DialogProps } from "@mui/material";
 import type { GetProps } from "0-shared";
+import "./SettingsContent.scss";
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 
@@ -26,6 +27,12 @@ const dialogContentStyle: SxProps = {
 
 const dialogListStyle: SxProps = {
     width: "clamp(0px, 1000px, 100%)",
+    outline: "1px #00000024 solid",
+    borderRadius: "10px",
+};
+
+const dialogActionsStyle: SxProps = {
+    justifyContent: "center",
 };
 
 function SettingsContent({ dialogSettings, isOpen, onClose = () => {} }: TProps) {
@@ -57,10 +64,12 @@ function SettingsContent({ dialogSettings, isOpen, onClose = () => {} }: TProps)
                     </ListItem>
                 </List>
             </DialogContent>
-            <DialogActions>
-                <Button variant="contained" onClick={handleCloseDialog}>
-                    выход
-                </Button>
+            <DialogActions sx={dialogActionsStyle}>
+                <div className="SettingsContent__actionsInner">
+                    <Button variant="contained" onClick={handleCloseDialog}>
+                        выход
+                    </Button>
+                </div>
             </DialogActions>
         </Dialog>
     );

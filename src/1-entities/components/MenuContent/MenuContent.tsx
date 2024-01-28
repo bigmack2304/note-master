@@ -4,6 +4,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SaveIcon from "@mui/icons-material/Save";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import InfoIcon from "@mui/icons-material/Info";
 
 import type { SxProps } from "@mui/material";
 
@@ -12,6 +13,7 @@ type TProps = {
     onNewNoteClick?: (e: React.MouseEvent) => void;
     onSaveClick?: (e: React.MouseEvent) => void;
     onLoadClick?: (e: React.MouseEvent) => void;
+    onInfoClick?: (e: React.MouseEvent) => void;
 };
 
 const listStyle: SxProps = {};
@@ -20,7 +22,7 @@ const ListSubheaderStyle: SxProps = {
     fontSize: "1.3rem",
 };
 
-function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick }: TProps) {
+function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TProps) {
     return (
         <List sx={listStyle}>
             <ListSubheader component="div" id="nested-list-subheader" sx={ListSubheaderStyle}>
@@ -50,6 +52,12 @@ function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick
                     <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText>Настройки</ListItemText>
+            </ListItemButton>
+            <ListItemButton onClick={onInfoClick} aria-label="открыть меню настроек">
+                <ListItemIcon>
+                    <InfoIcon />
+                </ListItemIcon>
+                <ListItemText>О приложении</ListItemText>
             </ListItemButton>
         </List>
     );
