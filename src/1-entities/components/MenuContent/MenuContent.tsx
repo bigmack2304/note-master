@@ -1,5 +1,5 @@
 import React from "react";
-import { ListItemIcon, ListItemText, List, ListItemButton, ListSubheader } from "@mui/material";
+import { ListItemIcon, ListItemText, List, ListItemButton, ListSubheader, Divider } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SaveIcon from "@mui/icons-material/Save";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
@@ -16,31 +16,36 @@ type TProps = {
 
 const listStyle: SxProps = {};
 
+const ListSubheaderStyle: SxProps = {
+    fontSize: "1.3rem",
+};
+
 function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick }: TProps) {
     return (
         <List sx={listStyle}>
-            <ListSubheader component="div" id="nested-list-subheader">
+            <ListSubheader component="div" id="nested-list-subheader" sx={ListSubheaderStyle}>
                 Меню
             </ListSubheader>
-            <ListItemButton onClick={onNewNoteClick}>
+            <Divider />
+            <ListItemButton onClick={onNewNoteClick} aria-label="создать новую заметку">
                 <ListItemIcon>
                     <EditNoteIcon />
                 </ListItemIcon>
                 <ListItemText>Новая заметка</ListItemText>
             </ListItemButton>
-            <ListItemButton onClick={onSaveClick}>
+            <ListItemButton onClick={onSaveClick} aria-label="сохранить все на устройство">
                 <ListItemIcon>
                     <SaveIcon />
                 </ListItemIcon>
                 <ListItemText>Сохранить</ListItemText>
             </ListItemButton>
-            <ListItemButton onClick={onLoadClick}>
+            <ListItemButton onClick={onLoadClick} aria-label="загрузить коллекцию заметок с устроиства">
                 <ListItemIcon>
                     <ImportContactsIcon />
                 </ListItemIcon>
                 <ListItemText>Загрузить</ListItemText>
             </ListItemButton>
-            <ListItemButton onClick={onSettingsClick}>
+            <ListItemButton onClick={onSettingsClick} aria-label="открыть меню настроек">
                 <ListItemIcon>
                     <SettingsIcon />
                 </ListItemIcon>
@@ -51,3 +56,4 @@ function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick
 }
 
 export { MenuContent };
+export type { TProps };

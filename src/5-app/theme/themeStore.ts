@@ -1,12 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { getSystemStyle } from "0-shared";
 
-export interface IThemeState {
+interface IThemeState {
     isDark: boolean;
+    isAuto: boolean;
 }
 
 const initialState: IThemeState = {
     isDark: false,
+    isAuto: false,
 };
 
 const themeSlice = createSlice({
@@ -15,13 +18,27 @@ const themeSlice = createSlice({
     reducers: {
         sethemeName: (state, action: PayloadAction<"light" | "dark">) => {
             state.isDark = action.payload === "light" ? false : true;
+            state.isAuto = false;
         },
         setIsDark: (state, action: PayloadAction<IThemeState["isDark"]>) => {
             state.isDark = action.payload;
+            state.isAuto = false;
+        },
+        setIsAuto: (state, action: PayloadAction<IThemeState["isAuto"]>) => {
+            state.isAuto = action.payload;
+
+            if (action.payload === false) return;
+
+            if (getSystemStyle.isDark()) {
+                state.isDark = true;
+            } else {
+                state.isDark = false;
+            }
         },
     },
 });
 
-export const { sethemeName, setIsDark } = themeSlice.actions;
+export const { sethemeName, setIsDark, setIsAuto } = themeSlice.actions;
 export const { reducer } = themeSlice;
 export { themeSlice };
+export type { IThemeState };

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { themeSlice } from "6-app/theme/themeStore"; // реэкспорт через индекс почемуто не работает
+import { themeSlice } from "5-app/theme/themeStore"; // реэкспорт через индекс почемуто не работает
 
 const store = configureStore({
     reducer: {
