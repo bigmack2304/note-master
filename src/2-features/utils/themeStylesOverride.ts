@@ -1,35 +1,47 @@
 import { createTheme } from "@mui/material/styles";
 import type { IThemeState } from "5-app/theme/themeStore";
+import type { PaletteMode } from "@mui/material";
 
 // переопределяет базовые стили material UI
+// выставляет стили в зависимости от текущей темы
 
 type TTheme = ReturnType<typeof createTheme>;
 
 // цвет primary (кнопки переключалки)
-function primaryThemeColor(theme: "light" | "dark") {
+function primaryThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#288CEF";
     return "#e2e3e7";
 }
 
 // цвет info (поле над background)
-function infoThemeColor(theme: "light" | "dark") {
+function infoThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#6DC2F3";
     return "#4E525C";
 }
 
 // цвет background
-function backgroundThemeColor(theme: "light" | "dark") {
+function backgroundThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#fff";
     return "#292c31";
 }
 
+// цвет иконок
+function svgThemeColor(theme: PaletteMode) {
+    return theme === "light" ? "#212121" : "#fbffff";
+}
+
 // цвет шрифта
-function textThemeColor(theme: "light" | "dark") {
+function textThemeColor(theme: PaletteMode) {
     if (theme === "light") return { primary: "#212121", secondary: "#666666", disabled: "#9e9e9e" };
     return { primary: "#fbffff", secondary: "#fcffff", disabled: "#fdffff" };
 }
 
-function themeOverrideStyles(theme: TTheme, themeValue: "light" | "dark", storeTheme: IThemeState) {
+// цвет текста для Typography
+function fontThemeColor(theme: PaletteMode) {
+    return theme === "light" ? "#212121" : "#fbffff";
+}
+
+function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme: IThemeState) {
     let themeOverrided = createTheme(theme, {
         components: {
             MuiContainer: {
@@ -42,10 +54,18 @@ function themeOverrideStyles(theme: TTheme, themeValue: "light" | "dark", storeT
             MuiSvgIcon: {
                 styleOverrides: {
                     root: {
-                        color: !storeTheme.isDark ? "#3A3A3A" : "#fdffff",
+                        color: svgThemeColor(themeValue),
                     },
                 },
             },
+            MuiTypography: {
+                styleOverrides: {
+                    root: {
+                        color: fontThemeColor(themeValue),
+                    },
+                },
+            },
+
             MuiDivider: {
                 defaultProps: {},
             },
@@ -67,17 +87,23 @@ function themeOverrideStyles(theme: TTheme, themeValue: "light" | "dark", storeT
             },
             text: textThemeColor(themeValue),
             action: {
-                active: !storeTheme.isDark ? "#FFFFFFE1" : "#FFFFFF",
-                focus: !storeTheme.isDark ? "#DEDEDE" : "#F5F5F542",
-                hover: !storeTheme.isDark ? "#DEDEDE" : "#F5F5F542",
-                selected: !storeTheme.isDark ? "#ebebeb" : "#ebebeb",
+                active: !storeTheme.isDark ? "#000000" : "#FFFFFF",
+                focus: !storeTheme.isDark ? "#00000022" : "#FFFFFF19",
+                hover: !storeTheme.isDark ? "#00000022" : "#FFFFFF19",
+                selected: !storeTheme.isDark ? "#000000" : "#FFFFFF",
+                selectedOpacity: 0.02,
+                hoverOpacity: 0.06,
+                focusOpacity: 0.04,
+                disabledOpacity: 0.02,
+                activatedOpacity: 0.02,
             },
         },
     });
 
-    //console.dir(themeOverrided);
+    console.dir(themeOverrided);
 
     return themeOverrided;
 }
 
 export { themeOverrideStyles };
+export type { PaletteMode, TTheme };
