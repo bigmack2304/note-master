@@ -8,7 +8,7 @@ import InfoIcon from "@mui/icons-material/Info";
 
 import type { SxProps } from "@mui/material";
 
-type TProps = {
+type TMenuContentProps = {
     onSettingsClick?: (e: React.MouseEvent) => void;
     onNewNoteClick?: (e: React.MouseEvent) => void;
     onSaveClick?: (e: React.MouseEvent) => void;
@@ -22,7 +22,7 @@ const ListSubheaderStyle: SxProps = {
     fontSize: "1.3rem",
 };
 
-function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TProps) {
+function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
     return (
         <List sx={listStyle}>
             <ListSubheader component="div" id="nested-list-subheader" sx={ListSubheaderStyle}>
@@ -64,4 +64,4 @@ function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick
 }
 
 export { MenuContent };
-export type { TProps };
+export type { TMenuContentProps };

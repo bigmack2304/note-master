@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { AppBar } from "0-shared";
-import { ToggleMenuButton } from "2-features";
-import { SettingsContent } from "1-entities";
-import { DialogWindow } from "1-entities";
+import { AppBar } from "0-shared/components/AppBar/AppBar";
+import { ToggleMenuButton } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
+import { SettingsContent } from "1-entities/components/SettingsContent/SettingsContent";
+import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 
-type TProps = {};
+type THeaderBarProps = {};
 
-function HeaderBar({}: TProps) {
+function HeaderBar({}: THeaderBarProps) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
 

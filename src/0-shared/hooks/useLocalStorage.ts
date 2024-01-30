@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useHandleUpdate } from "./useHandleUpdate";
-import type { IAppLocalStorage } from "0-shared";
-import { get_stprage_data, set_storage_data } from "0-shared";
+import type { IAppLocalStorage } from "0-shared/utils/appLoacalStorage";
+import { get_stprage_data, set_storage_data } from "0-shared/utils/appLoacalStorage";
 
 // хук для чтения и записи данных в локал-сторадж, по томуже принцыпу что и useState
 // updateOnChange - разрешить-ли обновление компонента при изменении данных в локал-сторадже

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { getSystemStyle } from "0-shared";
-import { AUTO_THEME_DETECT } from "5-app";
+import { isDark } from "0-shared/utils/getSystemStyle";
+import { AUTO_THEME_DETECT } from "5-app/settings";
 import { get_stprage_data, storage_save_value } from "0-shared/utils/appLoacalStorage";
 
 interface IThemeState {
@@ -21,7 +21,7 @@ function init_values() {
     initialState.isDark = get_stprage_data().isDark;
 
     if (initialState.isAuto) {
-        initialState.isDark = getSystemStyle.isDark();
+        initialState.isDark = isDark();
         storage_save_value("isDark", initialState.isDark);
     }
 }
@@ -48,7 +48,7 @@ const themeSlice = createSlice({
 
             if (action.payload === false) return;
 
-            if (getSystemStyle.isDark()) {
+            if (isDark()) {
                 state.isDark = true;
             } else {
                 state.isDark = false;

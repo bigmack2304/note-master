@@ -1,4 +1,4 @@
-import { AUTO_THEME_DETECT } from "5-app";
+import { AUTO_THEME_DETECT } from "5-app/settings";
 
 // определение локал-стораджа всего приложения
 // тип локал стораджа приложения

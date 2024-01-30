@@ -1,7 +1,9 @@
 import React from "react";
 import "./App.scss";
-import { BasePage } from "4-pages";
-import { useUiTeme } from "0-shared";
+import "5-app/normalize/normalize.module.scss";
+import "5-app/baseStyles/baseStyles.module.scss";
+import { BasePage } from "4-pages/BasePage/BasePage";
+import { useUiTeme } from "0-shared/hooks/useUiTeme";
 import { ThemeProvider, Container } from "@mui/material";
 import type { SxProps } from "@mui/material";
 

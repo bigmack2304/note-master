@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "5-app";
+import type { RootState } from "5-app/GlobalState/store";
 import { createTheme } from "@mui/material/styles";
-import { themeOverrideStyles } from "2-features";
+import { themeOverrideStyles } from "2-features/utils/themeStylesOverride";
 
 // возвращает обьект темы material UI, автоматически меняет цвета темы в обьекте, операясь на глобальное состояние
 // используется для провайдера темы

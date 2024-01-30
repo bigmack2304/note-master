@@ -1,16 +1,15 @@
 import React from "react";
 import { Dialog, DialogActions, DialogTitle, DialogContent, Button } from "@mui/material";
 import type { SxProps, DialogProps } from "@mui/material";
-import type { GetProps } from "0-shared";
-import { TransitionSlideRightForvardRef } from "0-shared";
-import { TRANSITION_DURATION } from "5-app";
-import { useTemeMode } from "0-shared";
+import type { GetProps } from "0-shared/utils/typeHelpers";
+import { TransitionSlideRightForvardRef } from "0-shared/components/TransitionSlideFR/TransitionSlideFR";
+import { TRANSITION_DURATION } from "5-app/settings";
 
 // диалоговое окно на весь экран с возможностью закрытия
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 
-type TProps = {
+type TDialogWindowProps = {
     dialogSettings?: DialogProps;
     isOpen: boolean;
     onClose?: TDialogOnClose;
@@ -37,7 +36,7 @@ const dialogActionsStyle: SxProps = {
     backgroundColor: "#0000000d",
 };
 
-function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, headerText }: TProps) {
+function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, headerText }: TDialogWindowProps) {
     const handleCloseDialog = () => {
         const event = {};
         const reason = "escapeKeyDown";
