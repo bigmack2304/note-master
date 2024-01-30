@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { getSystemStyle } from "0-shared";
+import { AUTO_THEME_DETECT } from "5-app";
+import { get_stprage_data, storage_save_value } from "0-shared/utils/appLoacalStorage";
 
 interface IThemeState {
     isDark: boolean;
@@ -8,13 +10,20 @@ interface IThemeState {
 }
 
 const initialState: IThemeState = {
-    isAuto: true,
+    isAuto: AUTO_THEME_DETECT,
     isDark: false,
 };
 
-// На случай если нужно будет поменять значение темы по умолчанию, сразу тут ее вычислим
-if (initialState.isAuto) {
-    initialState.isDark = getSystemStyle.isDark();
+// в начале загружаем значения из localStorage
+init_values();
+function init_values() {
+    initialState.isAuto = get_stprage_data().isAuto;
+    initialState.isDark = get_stprage_data().isDark;
+
+    if (initialState.isAuto) {
+        initialState.isDark = getSystemStyle.isDark();
+        storage_save_value("isDark", initialState.isDark);
+    }
 }
 
 const themeSlice = createSlice({
@@ -24,13 +33,18 @@ const themeSlice = createSlice({
         sethemeName: (state, action: PayloadAction<"light" | "dark">) => {
             state.isDark = action.payload === "light" ? false : true;
             state.isAuto = false;
+            storage_save_value("isAuto", false);
+            storage_save_value("isDark", state.isDark);
         },
         setIsDark: (state, action: PayloadAction<IThemeState["isDark"]>) => {
             state.isDark = action.payload;
             state.isAuto = false;
+            storage_save_value("isAuto", false);
+            storage_save_value("isDark", state.isDark);
         },
         setIsAuto: (state, action: PayloadAction<IThemeState["isAuto"]>) => {
             state.isAuto = action.payload;
+            storage_save_value("isAuto", state.isAuto);
 
             if (action.payload === false) return;
 
@@ -39,6 +53,8 @@ const themeSlice = createSlice({
             } else {
                 state.isDark = false;
             }
+
+            storage_save_value("isDark", state.isDark);
         },
     },
 });
