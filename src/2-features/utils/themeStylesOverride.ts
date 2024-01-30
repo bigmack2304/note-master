@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
-import type { IThemeState } from "./themeStore";
+import type { IThemeState } from "5-app/theme/themeStore";
 
-// переопределяет базовые стили
+// переопределяет базовые стили material UI
 
 type TTheme = ReturnType<typeof createTheme>;
 

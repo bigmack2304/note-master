@@ -1,7 +1,5 @@
 import React from "react";
 import "./BasePage.scss";
-import { AppBar } from "0-shared";
-import { ToggleMenuButton } from "2-features";
 import { HeaderBar } from "3-widgets";
 import { WorkSpace } from "0-shared";
 
