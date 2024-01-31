@@ -94,13 +94,13 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                 selectedOpacity: 0.02,
                 hoverOpacity: 0.06,
                 focusOpacity: 0.04,
-                disabledOpacity: 0.02,
+                disabledOpacity: 0.5,
                 activatedOpacity: 0.02,
             },
         },
     });
 
-    console.dir(themeOverrided);
+    // console.dir(themeOverrided);
 
     return themeOverrided;
 }

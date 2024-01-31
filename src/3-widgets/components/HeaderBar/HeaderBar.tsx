@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AppBar } from "0-shared/components/AppBar/AppBar";
-import { ToggleMenuButton } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
+import { ToggleMenuButton, ToggleMenuButtonMemo } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
 import { SettingsContent } from "1-entities/components/SettingsContent/SettingsContent";
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 
@@ -28,7 +28,7 @@ function HeaderBar({}: THeaderBarProps) {
 
     return (
         <AppBar>
-            <ToggleMenuButton menuContentProps={{ onSettingsClick: onSettingsOpen, onInfoClick: onInfoOpen }} />
+            <ToggleMenuButtonMemo menuContentProps={{ onSettingsClick: onSettingsOpen, onInfoClick: onInfoOpen }} />
             <DialogWindow headerText="Меню настроек" isOpen={isSettingsOpen} onClose={onSettingsClose}>
                 <SettingsContent />
             </DialogWindow>

@@ -18,4 +18,6 @@ function LeftMenu({ isOpen = false, closeCallback = () => {}, drawerSettings = {
     );
 }
 
-export { LeftMenu };
+const LeftMenuMemo = React.memo(LeftMenu);
+
+export { LeftMenu, LeftMenuMemo };

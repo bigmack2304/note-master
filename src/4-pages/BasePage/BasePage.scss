@@ -2,4 +2,11 @@
     height: 100dvh;
     width: 100dvw;
     overflow: hidden;
+    display: flex;
+}
+
+.BasePage .BasePage__workSpace {
+    margin-top: 64px;
+    padding: 10px 20px;
+    flex-grow: 1;
 }

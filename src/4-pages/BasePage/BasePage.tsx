@@ -2,6 +2,7 @@ import React from "react";
 import "./BasePage.scss";
 import { HeaderBar } from "3-widgets/components/HeaderBar/HeaderBar";
 import { WorkSpace } from "0-shared/components/WorkSpace/WorkSpace";
+import { Note } from "1-entities/components/Note/Note";
 
 type TBasePageprops = {
     addClassNames?: string[];
@@ -14,7 +15,9 @@ function BasePage({ addClassNames = [] }: TBasePageprops) {
     return (
         <div className={genClassName}>
             <HeaderBar></HeaderBar>
-            <WorkSpace></WorkSpace>
+            <WorkSpace addClassNames={["BasePage__workSpace"]}>
+                <Note headerText="hello world"></Note>
+            </WorkSpace>
         </div>
     );
 }

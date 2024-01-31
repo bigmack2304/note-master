@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { LeftMenu } from "0-shared/components/LeftMenu/LeftMenu";
+import { LeftMenu, LeftMenuMemo } from "0-shared/components/LeftMenu/LeftMenu";
 import { MenuButton } from "1-entities/components/MenuButton/MenuButton";
-import { MenuContent } from "1-entities/components/MenuContent/MenuContent";
+import { MenuContent, MenuContentMemo } from "1-entities/components/MenuContent/MenuContent";
 import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 
 type TToggleMenuButtonProps = {
@@ -29,4 +29,6 @@ function ToggleMenuButton({ menuContentProps }: TToggleMenuButtonProps) {
     );
 }
 
-export { ToggleMenuButton };
+const ToggleMenuButtonMemo = React.memo(ToggleMenuButton);
+
+export { ToggleMenuButton, ToggleMenuButtonMemo };

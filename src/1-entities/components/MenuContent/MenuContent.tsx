@@ -63,5 +63,7 @@ function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick
     );
 }
 
-export { MenuContent };
+const MenuContentMemo = React.memo(MenuContent);
+
+export { MenuContent, MenuContentMemo };
 export type { TMenuContentProps };
