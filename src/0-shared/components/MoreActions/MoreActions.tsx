@@ -2,44 +2,98 @@ import React, { useRef, useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useHandleUpdate } from "0-shared/hooks/useHandleUpdate";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { SxProps } from "@mui/material";
 
 // добавляет кнопку рядом с компонентом
 
 interface IMoreActionsProps {
-    children: React.ReactNode;
-    onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  position?: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
 }
 
 const rootStyle: SxProps = {
-    display: "contents",
+  display: "contents",
 };
 
-const calcButtonStyle: SxProps = {
+function calcButtonStyle(
+  position: IMoreActionsProps["position"],
+  toAttachRect: DOMRect
+) {
+  let style: SxProps = {
     position: "absolute",
-    transform: "translate(50%, -50%)",
-};
+  };
 
-function MoreActions({ children, onClick }: IMoreActionsProps) {
-    const rootElement = useRef<HTMLDivElement>(null);
+  switch (position) {
+    case "topLeft":
+      Object.assign(style, {
+        transform: "translate(-150%, -50%)",
+        top: `${toAttachRect.top}px`,
+        left: `${toAttachRect.left}px`,
+      });
+      break;
+    case "topRight":
+      Object.assign(style, {
+        transform: "translate(50%, -50%)",
+        top: `${toAttachRect.top}px`,
+        left: `${toAttachRect.right}px`,
+      });
+      break;
+    case "bottomLeft":
+      Object.assign(style, {
+        transform: "translate(-150%, -50%)",
+        top: `${toAttachRect.bottom}px`,
+        left: `${toAttachRect.left}px`,
+      });
+      break;
+    case "bottomRight":
+      Object.assign(style, {
+        transform: "translate(50%, -50%)",
+        top: `${toAttachRect.bottom}px`,
+        left: `${toAttachRect.right}px`,
+      });
+      break;
+    default:
+      console.warn(`calcButtonStyle(position: ${position}) not processed!`);
+      break;
+  }
 
-    useEffect(() => {
-        if (!rootElement.current || !rootElement.current.children[0]) return;
-        const firstChildren = rootElement.current.children[0];
-        const button = rootElement.current.children[1] as HTMLButtonElement;
-        let pos = firstChildren.getBoundingClientRect();
-        Object.assign(button.style, { top: `${pos.top}px`, left: `${pos.right}px` });
-    });
+  return style;
+}
 
-    return (
-        <Box component={"div"} sx={rootStyle} ref={rootElement}>
-            {children}
-            <IconButton sx={calcButtonStyle} onClick={onClick} aria-label="Опции">
-                <MoreHorizIcon fontSize="small" />
-            </IconButton>
-        </Box>
-    );
+function MoreActions({
+  children,
+  onClick,
+  position = "topRight",
+}: IMoreActionsProps) {
+  const rootElement = useRef<HTMLDivElement>(null);
+  const [handleUpdate] = useHandleUpdate(true);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleUpdate);
+    return () => {
+      window.removeEventListener("resize", handleUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!rootElement.current || !rootElement.current.children[0]) return;
+    const firstChildren = rootElement.current.children[0];
+    const button = rootElement.current.children[1] as HTMLButtonElement;
+    let pos = firstChildren.getBoundingClientRect();
+    Object.assign(button.style, calcButtonStyle(position, pos));
+  });
+
+  return (
+    <Box component={"div"} sx={rootStyle} ref={rootElement}>
+      {children}
+      <IconButton onClick={onClick} aria-label="Опции">
+        <MoreHorizIcon fontSize="small" />
+      </IconButton>
+    </Box>
+  );
 }
 
 export { MoreActions };
