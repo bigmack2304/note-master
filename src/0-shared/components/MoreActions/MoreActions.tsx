@@ -5,6 +5,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useUpdateOnResize } from "0-shared/hooks/useUpdateOnResize";
 import type { SxProps } from "@mui/material";
 
+// DEPRICATED // DEPRICATED // DEPRICATED // DEPRICATED
 // добавляет кнопку рядом с компонентом
 
 interface IMoreActionsProps {
