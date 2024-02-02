@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, ButtonGroup } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsAuto, setIsDark } from "5-app/theme/themeStore";
+import { setIsAuto, setIsDark } from "5-app/GlobalState/themeStore";
 import type { RootState } from "5-app/GlobalState/store";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import type { IThemeState } from "5-app/theme/themeStore";
+import type { IThemeState } from "5-app/GlobalState/themeStore";
 import type { SxProps } from "@mui/material";
 
 type TButtonVatiant = GetProps<typeof Button>["variant"];

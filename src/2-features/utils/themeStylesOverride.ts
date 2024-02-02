@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import type { IThemeState } from "5-app/theme/themeStore";
+import type { IThemeState } from "5-app/GlobalState/themeStore";
 import type { PaletteMode } from "@mui/material";
 
 // переопределяет базовые стили material UI
