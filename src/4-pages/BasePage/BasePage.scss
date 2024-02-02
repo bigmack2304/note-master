@@ -5,8 +5,16 @@
     display: flex;
 }
 
-.BasePage .BasePage__workSpace {
+.BasePage .BasePage__workSpace_wrapper {
     margin-top: 64px;
+    flex-grow: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BasePage .BasePage__workSpace {
     padding: 10px 20px;
     flex-grow: 1;
+    overflow: auto;
 }

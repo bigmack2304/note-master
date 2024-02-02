@@ -1,9 +1,14 @@
 import React from "react";
 import { Box } from "@mui/material";
+import type { SxProps } from "@mui/material";
 
 type TWorkSpaceProps = {
     children: React.ReactNode;
     addClassNames?: string[];
+};
+
+const workSpaceStyle: SxProps = {
+    position: "relative",
 };
 
 function WorkSpace({ children, addClassNames = [] }: TWorkSpaceProps) {
@@ -11,7 +16,7 @@ function WorkSpace({ children, addClassNames = [] }: TWorkSpaceProps) {
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
-        <Box className={genClassName} component={"div"}>
+        <Box className={genClassName} component={"div"} sx={workSpaceStyle}>
             {children}
         </Box>
     );
