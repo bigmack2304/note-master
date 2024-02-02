@@ -4,12 +4,13 @@ import ColorLensIcon from "@mui/icons-material/ColorLens";
 import { ToggleThemeButton } from "2-features/components/ToggleThemeButton/ToggleThemeButton";
 import type { SxProps } from "@mui/material";
 import "./SettingsContent.scss";
+import { OUTLINE_LIGHT_COLOR } from "5-app/settings";
 
 type TSettingsContentProps = {};
 
 const dialogListStyle: SxProps = {
     width: "clamp(0px, 1000px, 100%)",
-    outline: "1px #00000024 solid",
+    outline: `1px ${OUTLINE_LIGHT_COLOR} solid`,
     borderRadius: "10px",
 };
 
