@@ -9,13 +9,13 @@ import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 type TNoteHeadProps = {
     addClassNames?: string[];
     onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+    onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
     children?: React.ReactNode;
     typographySettings?: GetProps<typeof Typography>;
 };
 
 const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     return {
-        cursor: "pointer",
         display: "inline-block",
 
         ...(isChildren
@@ -29,14 +29,14 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     } as SxProps;
 };
 
-function NoteHead({ addClassNames = [], onClick, children, typographySettings }: TNoteHeadProps) {
+function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteHeadProps) {
     const defaultClassName = "NoteHead";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
 
     return (
-        <Typography className={genClassName} variant="h4" onClick={onClick} sx={typographyStyle(isChildren, themeMode)} {...typographySettings}>
+        <Typography className={genClassName} variant="h4" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)} {...typographySettings}>
             {children}
         </Typography>
     );
