@@ -6,6 +6,7 @@ import { AUTO_THEME_DETECT } from "5-app/settings";
 interface IAppLocalStorage {
     isDark: boolean;
     isAuto: boolean;
+    isToolBar: boolean;
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -13,6 +14,7 @@ const STORAGE_KEY = "app_note_master_local_data";
 const STORAGE_DEF_VALUE: IAppLocalStorage = {
     isDark: false,
     isAuto: AUTO_THEME_DETECT,
+    isToolBar: true,
 };
 
 // возвращает состояние local storage в виде обьекта
