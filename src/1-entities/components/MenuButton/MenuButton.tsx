@@ -9,7 +9,7 @@ type TMenuButtonprops = {
 
 function MenuButton({ clickCallback = () => {}, disabled = false }: TMenuButtonprops) {
     return (
-        <IconButton aria-label="меню" size="large" onClick={clickCallback} disabled={disabled}>
+        <IconButton aria-label="меню" size="large" onClick={clickCallback} disabled={disabled} title="меню">
             <MenuIcon fontSize="inherit" />
         </IconButton>
     );

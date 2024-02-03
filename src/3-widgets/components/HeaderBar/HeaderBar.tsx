@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
 import { AppBar } from "0-shared/components/AppBar/AppBar";
-import { ToggleMenuButton, ToggleMenuButtonMemo } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
+import { ToggleMenuButton } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
 import { SettingsContent } from "1-entities/components/SettingsContent/SettingsContent";
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import { InputFile } from "0-shared/components/InputFile/InputFile";
+import { ToggleToolBarButton } from "2-features/components/ToggleToolBarButton/ToggleToolBarButton";
 
 type THeaderBarProps = {};
 
@@ -36,7 +37,8 @@ function HeaderBar({}: THeaderBarProps) {
 
     return (
         <AppBar>
-            <ToggleMenuButtonMemo menuContentProps={{ onSettingsClick: onSettingsOpen, onInfoClick: onInfoOpen, onLoadClick: onLoadClick }} />
+            <ToggleMenuButton menuContentProps={{ onSettingsClick: onSettingsOpen, onInfoClick: onInfoOpen, onLoadClick: onLoadClick }} />
+            <ToggleToolBarButton />
             <DialogWindow headerText="Меню настроек" isOpen={isSettingsOpen} onClose={onSettingsClose}>
                 <SettingsContent />
             </DialogWindow>
