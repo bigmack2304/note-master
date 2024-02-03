@@ -12,9 +12,12 @@ interface TBodyComponentText {
 }
 //////////////////////////////////////////////////////////////////
 
+type nodeType = "component" | "note" | "folder";
+
 // общие поля компонентов внутри заметки
 interface IDataTreeitemBody {
-    note_сomponent_id: string; // локальный id компонента внутри заметки
+    id: string; // глобальный id во всем дереве
+    type: nodeType;
 }
 
 // тип поля body в заметке
@@ -37,6 +40,7 @@ interface IDataTreeNote {
     id: string; // глобальный id во всем дереве
     tags?: IGlobalTag["tag_name"][];
     name: string;
+    type: nodeType;
     body: TNoteBody[];
 }
 
@@ -45,6 +49,7 @@ interface IDataTreeFolder {
     name: string;
     color: string;
     id: string; // глобальный id во всем дереве
+    type: nodeType;
     children?: TchildrenType[];
 }
 
@@ -55,4 +60,4 @@ interface IDataSave {
     data_tree: IDataTreeFolder;
 }
 
-export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody };
+export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, nodeType, IDataTreeitemBody };
