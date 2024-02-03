@@ -69,7 +69,7 @@ async function setTempDataDB({ onComplete = () => {}, onError = () => {}, callba
     const data = tx.store;
     data.put(value, TEMP_DATA_KEY);
     callback(value);
-    dispatchEventIndexedDBTempUpdate(value);
+    dispatchEventIndexedDBTempUpdate();
     await tx.done;
 }
 
@@ -89,8 +89,8 @@ async function delTempDataDB({ onComplete = () => {}, onError = () => {} }: delT
 }
 
 // генерирует событие при вызове set_storage_data
-function dispatchEventIndexedDBTempUpdate(value: IDataSave) {
-    window.dispatchEvent(new CustomEvent("appIndexedDBTempUpdate", { detail: value }));
+function dispatchEventIndexedDBTempUpdate() {
+    window.dispatchEvent(new CustomEvent("appIndexedDBTempUpdate"));
 }
 
 // удаляем временные данные из DB
