@@ -3,10 +3,10 @@
     width: 100dvw;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
 }
 
 .BasePage .BasePage__workSpace_wrapper {
-    margin-top: 64px;
     flex-grow: 1;
     overflow: auto;
     display: flex;
@@ -17,4 +17,12 @@
     padding: 10px 20px;
     flex-grow: 1;
     overflow: auto;
+}
+
+.BasePage .ToolBar_wrapper {
+    margin-top: 64px;
+}
+
+.BasePage .BasePage__toolbar {
+    width: 100%;
 }
