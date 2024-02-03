@@ -1,8 +1,9 @@
 import React, { useRef, useImperativeHandle } from "react";
 import { useFileReader } from "0-shared/hooks/useFileReader";
 import type { Ref } from "0-shared/utils/typeHelpers";
-
+import type { IDataSave } from "0-shared/types/dataSave";
 import { inputLoadStringHandler } from "2-features/utils/inputLoadStringHandler";
+import { setTempDataDB } from "2-features/utils/appIndexedDB";
 
 type TInputFileProps = {
     inputSettings?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -10,14 +11,13 @@ type TInputFileProps = {
 
 function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInputElement | null>) {
     const inputElement = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => inputElement.current!, [inputElement.current]);
 
-    const onSucc = (val: any) => {
-        console.log(val);
+    const onSucessLoad = (data: IDataSave) => {
+        setTempDataDB({ value: data });
     };
 
-    const fileReader = useFileReader({ loadHandler: inputLoadStringHandler, loadSucessCallback: onSucc });
-
-    useImperativeHandle(ref, () => inputElement.current!, [inputElement.current]);
+    const fileReader = useFileReader<IDataSave>({ loadHandler: inputLoadStringHandler, loadSucessCallback: onSucessLoad });
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file: File | null = e.target.files ? e.target.files[0] : null;
