@@ -2,7 +2,7 @@ import React from "react";
 import "./BasePage.scss";
 import { HeaderBar } from "3-widgets/components/HeaderBar/HeaderBar";
 import { WorkSpace } from "0-shared/components/WorkSpace/WorkSpace";
-import { Note } from "1-entities/components/Note/Note";
+import { Note } from "3-widgets/components/Note/Note";
 import { TreeViewer } from "3-widgets/components/TreeViewer/TreeViewer";
 import { ToolBar } from "3-widgets/components/ToolBar/ToolBar";
 
