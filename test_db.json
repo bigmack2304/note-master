@@ -1,0 +1,85 @@
+{
+  "db_type": "note_Master",
+  "global_tags": [
+    {
+      "tag_name": "tag1",
+      "color": "red",
+      "text": "Tag 1"
+    },
+    {
+      "tag_name": "tag2",
+      "color": "blue",
+      "text": "Tag 2"
+    }
+  ],
+  "data_tree": {
+    "id": "root",
+    "type": "folder",
+    "name": "root",
+    "color": "green",
+    "children": [
+      {
+        "id": "2",
+        "type": "note",
+        "name": "Note 1",
+        "tags": ["tag1"],
+        "body": [
+          {
+            "id": "3",
+            "type": "component",
+            "component": "header",
+            "value": "Header 1"
+          },
+          {
+            "id": "4",
+            "type": "component",
+            "component": "header",
+            "value": "header 2"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "type": "note",
+        "name": "Note 2",
+        "tags": ["tag2"],
+        "body": [
+          {
+            "id": "6",
+            "type": "component",
+            "component": "header",
+            "value": "Header 3"
+          },
+          {
+            "id": "7",
+            "type": "component",
+            "component": "header",
+            "value": "Header 4"
+          }
+        ]
+      },
+      {
+        "id": "9",
+        "type": "folder",
+        "name": "folder 1",
+        "color": "green",
+        "children": [
+          {
+            "id": "10",
+            "type": "note",
+            "name": "Note 3",
+            "tags": ["tag1"],
+            "body": [
+              {
+                "id": "11",
+                "type": "component",
+                "component": "header",
+                "value": "Header 5"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
