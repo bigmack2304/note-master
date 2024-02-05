@@ -30,7 +30,7 @@ async function mergeNodeById(newNode: TchildrenType) {
 /**
  * изменяет своиство value в обьекте заметки
  * @param note обьект заметки
- * @param target_id id компонента который в котором нужно поменять value
+ * @param target_id id компонента в котором нужно поменять value
  * @param newValue новое значение value
  * @returns
  */
@@ -45,4 +45,16 @@ function updateNodeValue(note: IDataTreeNote, target_id: string, newValue: strin
     return cloneNode;
 }
 
-export { mergeNodeById, updateNodeValue };
+/**
+ * удаление компонента из заметки
+ * @param note заметка
+ * @param target_id id компонента который нужно удалить
+ */
+function deleteComponentInNote(note: IDataTreeNote, target_id: string) {
+    const cloneNode = JSON.parse(JSON.stringify(note)) as IDataTreeNote;
+    cloneNode.body = cloneNode.body.filter((item) => item.id !== target_id);
+
+    return cloneNode;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote };

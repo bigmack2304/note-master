@@ -7,6 +7,7 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNote } from "5-app/GlobalState/saveDataInspectStore";
 import { updateNodeValue } from "2-features/utils/saveDataEdit";
+import { deleteComponentInNote } from "2-features/utils/saveDataEdit";
 
 type TEditableHeaderProps = {
     defaultText?: string;
@@ -52,6 +53,11 @@ function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditab
         dispatch(updateNote(updateNodeValue(currentNoteData, edit_id, "")));
     };
 
+    const onMenuDelete = () => {
+        if (!edit_id || !currentNoteData) return;
+        dispatch(updateNote(deleteComponentInNote(currentNoteData, edit_id)));
+    };
+
     // клики в форме редактирования
     const onInputExit = () => {
         setIsEdit(false);
@@ -76,7 +82,12 @@ function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditab
                     </NoteHead>
 
                     <DopContextMenu isOpen={isMenuOpen} onClose={onMenuClose} anchorEl={menuAnchorEl}>
-                        <ContextMenuEditContent onEditClick={onMenuEdit} onClearClick={onMenuClear} isClearDisabled={headerValue.length > 0 ? false : true} />
+                        <ContextMenuEditContent
+                            onEditClick={onMenuEdit}
+                            onClearClick={onMenuClear}
+                            onDeleteClick={onMenuDelete}
+                            isClearDisabled={headerValue.length > 0 ? false : true}
+                        />
                     </DopContextMenu>
                 </>
             )}
