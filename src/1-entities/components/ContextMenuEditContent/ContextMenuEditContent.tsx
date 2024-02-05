@@ -22,7 +22,10 @@ const menuItemStyle: SxProps = {
 /**
  * вариант содержимого для компонента DopContextMenu.
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
- * @returns
+ * @prop onEditClick - вызывается при нажатии на кнопку "Редактировать"
+ * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
+ * @prop onClearClick - вызывается при нажатии на кнопку "Отчистить"
+ * @prop isClearDisabled - boolean - disabled для кнопки "Отчистить"
  */
 function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick, onClearClick, isClearDisabled = false }: TContextMenuEditContentProps) {
     const defaultClassName = "ContextMenuEditContent";

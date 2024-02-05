@@ -32,6 +32,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
     const dispatch = useAppDispatch();
+
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
     });
