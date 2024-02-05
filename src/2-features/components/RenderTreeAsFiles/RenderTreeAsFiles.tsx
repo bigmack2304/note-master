@@ -6,25 +6,31 @@ import { isDataTreeFolder } from "0-shared/utils/typeHelpers";
 
 type TRenderTreeAsFileProps = {
     node: TchildrenType;
-    onClickNodeCallback?: (nodeData: TchildrenType) => void;
+    onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
+    onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
 };
 
 /**
  * рендерит дерево node в виде фаилов и папок
  * @prop node - обьект типа IDataTreeFolder | IDataTreeNote
- * @prop onClickNodeCallback(nodeData) - колбек сработает при клике на отрендеренную node, nodeData - обьект типа IDataTreeFolder | IDataTreeNote без своиства children
+ * @prop onClickNodeCallback(nodeData, event) - колбек сработает при клике на отрендеренную node, nodeData - обьект типа IDataTreeFolder | IDataTreeNote без своиства children
+ * @prop onNodeContextCallback(nodeData, event) - колбек сработает при попытке вызвать контекстное меню на ноде.
  * @returns
  */
-function RenderTreeAsFile({ node, onClickNodeCallback }: TRenderTreeAsFileProps) {
+function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }: TRenderTreeAsFileProps) {
     const nodeData = nodeWithoutChildren(node);
 
-    const onClick = () => {
-        onClickNodeCallback && onClickNodeCallback(nodeData);
+    const onClick = (e: React.MouseEvent) => {
+        onClickNodeCallback && onClickNodeCallback(nodeData, e);
+    };
+
+    const onContextMenu = (e: React.MouseEvent) => {
+        onNodeContextCallback && onNodeContextCallback(nodeData, e);
     };
 
     return (
-        <TreeItem key={node.id} nodeId={node.id} label={node.name} onClick={onClick}>
-            {isDataTreeFolder(node) && node.children && node.children.map((node) => RenderTreeAsFile({ node, onClickNodeCallback }))}
+        <TreeItem key={node.id} nodeId={node.id} label={node.name} onClick={onClick} onContextMenu={onContextMenu}>
+            {isDataTreeFolder(node) && node.children && node.children.map((node) => RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }))}
         </TreeItem>
     );
 }

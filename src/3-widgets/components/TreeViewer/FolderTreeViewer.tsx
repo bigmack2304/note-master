@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import Box from "@mui/material/Box";
-import type { SxProps } from "@mui/material";
 import { useIndexedDBTempDataUpdate } from "0-shared/hooks/useIndexedDBTempUpdate";
+import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setCurrentNote, setCurrentFolder } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
+import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
+import type { SxProps } from "@mui/material";
+import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 
 type TFolderTreeViewerProps = {};
 
@@ -31,13 +33,18 @@ const FolderTreeViewerStyle: SxProps = {
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
+    const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
+    const isContextMenuOpen = Boolean(contextMenuAnchorEl);
+    const nodeDataRef = useRef<TchildrenType | null>(); // запоминаем значение без лишнего обновления
 
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
     });
 
-    const onClickNode = (nodeData: TchildrenType) => {
+    // клик по ноде
+    const onClickNode = (nodeData: TchildrenType, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (isDataTreeFolder(nodeData)) {
             dispatch(setCurrentFolder(nodeData));
         }
@@ -46,6 +53,35 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         }
     };
 
+    // контекстное меню папок и заметок
+    const onNodeContext = (nodeData: TchildrenType, e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        nodeDataRef.current = nodeData;
+        setContextMenuAnchorEl(e.currentTarget as HTMLElement);
+        if (isDataTreeFolder(nodeData)) {
+        }
+        if (isDataTreeNote(nodeData)) {
+        }
+    };
+
+    const onContextMenuClose = () => {
+        setContextMenuAnchorEl(null);
+        nodeDataRef.current = null;
+    };
+
+    // элементы контекстного меню
+    const onRenameClick = (e: React.MouseEvent) => {
+        console.log(`rename click id: ${nodeDataRef.current?.id}`);
+        setContextMenuAnchorEl(null);
+    };
+
+    const onDeleteClick = (e: React.MouseEvent) => {
+        console.log(`delete click id: ${nodeDataRef.current?.id}`);
+        setContextMenuAnchorEl(null);
+    };
+
+    // получение данных из IndexedDB
     if (isNeedUpdate) {
         getTempDataDB({
             callback: (val) => {
@@ -62,8 +98,12 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                     RenderTreeAsFile({
                         node: dataValue.data_tree,
                         onClickNodeCallback: onClickNode,
+                        onNodeContextCallback: onNodeContext,
                     })}
             </TreeView>
+            <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
+                <ContextMenuTreeFolderContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
+            </DopContextMenu>
         </Box>
     );
 }
