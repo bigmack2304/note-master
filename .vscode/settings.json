@@ -1,4 +1,65 @@
 {
+    "editor.fontSize": 14,
+    "window.openFilesInNewWindow": "off",
+
+    // standart wrapping (nowrap)
+    "diffEditor.wordWrap": "inherit",
+    "editor.wrappingIndent": "same",
+    "editor.wordWrapColumn": 80,
+
+    // scrolling
+    "editor.smoothScrolling": true,
+    "terminal.integrated.smoothScrolling": false,
+    "workbench.list.smoothScrolling": true,
+
+    // tab
+    "editor.tabSize": 4,
+
+    // автоформатирование
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
+
+    // tag rename
+    // аналог auto-rename-tag (plugin)
+    "editor.linkedEditing": true,
+
+    // вкладки
+    "window.density.editorTabHeight": "default",
+
+    // остальное
+    "editor.accessibilitySupport": "off",
+    "workbench.activityBar.location": "side",
+
+    // стандартное окно подсказки в VS CODE
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.quickSuggestionsDelay": 10,
+
+    // prettier (plugin)
+    "prettier.useEditorConfig": false,
+    "prettier.printWidth": 180,
+    "prettier.tabWidth": 4,
+
+    // runOnSave (plugin)
+    "runOnSave.commands": [
+        // {
+        //     "command": "npx tsc",
+        //     "runIn": "terminal"
+        // }
+    ],
+
+    // code runner
+    "code-runner.executorMapByGlob": {
+        "pom.xml": "cd $dir && mvn clean package",
+        "*.js": "node",
+        "*.ts": "ts-node",
+        "*.tsx": "ts-node"
+    },
+    "code-runner.executorMap": {
+        "javascript": "node",
+        "typescript": "ts-node"
+    }
 }
