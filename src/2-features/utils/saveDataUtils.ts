@@ -1,15 +1,19 @@
 import type { IDataTreeFolder, TchildrenType } from "0-shared/types/dataSave";
 // разные вспомогательные функции для работы с tempData в indexedDB
 
-// возвращает обьект TchildrenType без поля children
+/**
+ * возвращает обьект TchildrenType без поля children
+ * @param node обьект типа IDataTreeFolder | IDataTreeNote
+ * @returns
+ */
 function nodeWithoutChildren(node: TchildrenType) {
-  let obj: any = {};
+    let obj: any = {};
 
-  for (let elem in node) {
-    if (elem === "children") continue;
-    obj[elem] = node[elem as keyof typeof node];
-  }
-  return obj as TchildrenType;
+    for (let elem in node) {
+        if (elem === "children") continue;
+        obj[elem] = node[elem as keyof typeof node];
+    }
+    return obj as TchildrenType;
 }
 
 export { nodeWithoutChildren };

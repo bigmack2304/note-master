@@ -7,6 +7,7 @@ import type { IDataSave, IDataTreeFolder, IGlobalTag } from "0-shared/types/data
 
 const DB_NAME = "app_note_master_db_data";
 const DB_VERSION = 1;
+const TEMP_DATA_KEY = "0";
 
 interface MyDB extends DBSchema {
     savedData: {
@@ -19,6 +20,29 @@ interface MyDB extends DBSchema {
     };
 }
 
+type TGetTempDataDBParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: IDataSave | undefined) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+};
+
+type TSetTempDataDBParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: IDataSave | undefined) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    value: IDataSave;
+};
+
+type TDelTempDataDBParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    callback?: () => void;
+};
+
+/**
+ * async функция, возвращает обьект indexed db
+ * @returns
+ */
 async function openIndexedDB() {
     const db = await openDB<MyDB>(DB_NAME, DB_VERSION, {
         upgrade(db, oldVersion, newVersion, transaction, event) {
@@ -33,52 +57,51 @@ async function openIndexedDB() {
     return db;
 }
 
-type getTempDataDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataSave | undefined) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    // key: MyDB["tempData"]["key"];
-};
-
-const TEMP_DATA_KEY = "0";
-
-async function getTempDataDB({ onComplete = () => {}, onError = () => {}, callback = () => {} }: getTempDataDBParams = {}) {
+/**
+ * возвращает обьект TempData из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(IDataSave | undefined): вызывается после применения изменений
+ * @returns Promise<IDataSave | undefined>
+ */
+async function getTempDataDB({ onComplete = () => {}, onError = () => {}, callback }: TGetTempDataDBParams = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("tempData", "readonly");
     tx.onerror = onError;
     tx.oncomplete = onComplete;
     const data = tx.store;
     let value = await data.get(TEMP_DATA_KEY);
-    callback(value);
     await tx.done;
+    callback && callback(value);
+    return value;
 }
 
-type setTempDataDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataSave | undefined) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    value: IDataSave;
-    // key: MyDB["tempData"]["key"];
-};
-
-async function setTempDataDB({ onComplete = () => {}, onError = () => {}, callback = () => {}, value }: setTempDataDBParams) {
+/**
+ * Записывает новое значение вместо обьекта TempData в indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(value): вызывается после применения изменений
+ * @property value: новое значение
+ */
+async function setTempDataDB({ onComplete = () => {}, onError = () => {}, callback, value }: TSetTempDataDBParams) {
     const db = await openIndexedDB();
     const tx = db.transaction("tempData", "readwrite");
     tx.onerror = onError;
     tx.oncomplete = onComplete;
     const data = tx.store;
     data.put(value, TEMP_DATA_KEY);
-    callback(value);
-    dispatchEventIndexedDBTempUpdate();
     await tx.done;
+    callback && callback(value);
+    dispatchEventIndexedDBTempUpdate();
 }
 
-type delTempDataDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-};
-
-async function delTempDataDB({ onComplete = () => {}, onError = () => {} }: delTempDataDBParams = {}) {
+/**
+ * удаляет TempData из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(): вызывается после применения изменений
+ */
+async function delTempDataDB({ onComplete = () => {}, onError = () => {}, callback }: TDelTempDataDBParams = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("tempData", "readwrite");
     tx.onerror = onError;
@@ -86,28 +109,37 @@ async function delTempDataDB({ onComplete = () => {}, onError = () => {} }: delT
     const data = tx.store;
     data.delete(TEMP_DATA_KEY);
     await tx.done;
+    callback && callback();
 }
 
-// генерирует событие при вызове set_storage_data
+/**
+ * генерирует событие при вызове set_storage_data
+ */
 function dispatchEventIndexedDBTempUpdate() {
     window.dispatchEvent(new CustomEvent("appIndexedDBTempUpdate"));
 }
 
-// удаляем временные данные из DB
-window.addEventListener(
-    "beforeunload",
-    (e) => {
-        delTempDataDB();
-    },
-    { once: true }
-);
+/**
+ * удаляем временные данные (TempData) из DB при закрытии приложения
+ */
+function removeTempDataOnExit() {
+    window.addEventListener(
+        "beforeunload",
+        (e) => {
+            delTempDataDB();
+        },
+        { once: true }
+    );
 
-window.addEventListener(
-    "DOMContentLoaded",
-    (e) => {
-        delTempDataDB();
-    },
-    { once: true }
-);
+    window.addEventListener(
+        "DOMContentLoaded",
+        (e) => {
+            delTempDataDB();
+        },
+        { once: true }
+    );
+}
+
+removeTempDataOnExit();
 
 export { getTempDataDB, setTempDataDB, delTempDataDB };

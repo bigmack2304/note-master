@@ -4,9 +4,10 @@ import type { RootState } from "5-app/GlobalState/store";
 import { createTheme } from "@mui/material/styles";
 import { themeOverrideStyles } from "2-features/utils/themeStylesOverride";
 
-// возвращает обьект темы material UI, автоматически меняет цвета темы в обьекте, операясь на глобальное состояние
-// используется для провайдера темы
-
+/**
+ *  возвращает обьект темы material UI, автоматически меняет цвета темы в обьекте, операясь на глобальное состояние.
+ *  @ Используется для провайдера темы
+ */
 function useUiTeme() {
     let theme = createTheme({});
     const storeTheme = useAppSelector((state) => state.theme);

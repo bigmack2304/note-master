@@ -4,13 +4,15 @@ import { IconButton } from "@mui/material";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { toggleIsActive } from "5-app/GlobalState/toolBarStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 
-type TToggleToolBarButtonProps = {
-    menuContentProps?: TMenuContentProps;
-};
+type TToggleToolBarButtonProps = {};
 
-function ToggleToolBarButton({ menuContentProps }: TToggleToolBarButtonProps) {
+/**
+ * кнопка показа панели инструментов
+ * @TODO: незаконченый компонент
+ * @returns
+ */
+function ToggleToolBarButton({}: TToggleToolBarButtonProps) {
     const dispatch = useAppDispatch();
 
     const onClick = (e: React.MouseEvent) => {

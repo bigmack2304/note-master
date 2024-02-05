@@ -10,6 +10,17 @@ type TuseFileReaderParams<returnType> = {
     loadHandler?: (rawData: any) => returnType | Error; // функция которая будет обрабатывать считанные данные
 };
 
+/**
+ * хук возвращает мемоизированный обьект fileReader.
+ *
+ * @prop errorCallback(e) - вызывается после loadEndCallback, если есть ошибка.
+ * @prop abortCallback() - вызывается если был вызван .abort()
+ * @prop loadStartCallback() - вызывается когда начался процесс чтения
+ * @prop loadEndCallback() - вызывается когда чтение завершено, независимо от успеха
+ * @prop loadSucessCallback(data) - вызывается когда чтение завершено c успехом,
+ * @prop loadSucessErrCalback(е) - вызывается если loadHandler вернет Error
+ * @prop loadHandler(raWData) - вызывается для обработки данных полученных через fileReader, должен возвращать либо обработанные данные либо Error(например если есть кастомная валидация)
+ */
 function useFileReader<returnType extends any>({
     errorCallback,
     abortCallback,

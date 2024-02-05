@@ -14,6 +14,12 @@ type TAppBarProps = {
 
 const MuiAppBarStyle: SxProps = {};
 
+/**
+ * блок описывает хедер страницы, не имеет своего содержимого
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop children - компонент можно использовать как обертка для других компонентов.
+ * @prop AppBarSettings - пропсы для настройки внутреннего компонента m.ui - AppBar
+ */
 function AppBar({ addClassNames = [], children, AppBarSettings = {} }: TAppBarProps) {
     const defaultClassName = "AppBar";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

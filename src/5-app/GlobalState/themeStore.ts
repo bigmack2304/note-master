@@ -26,6 +26,9 @@ function init_values() {
     }
 }
 
+/**
+ * слой redux store, содержит настройки связанные с темой
+ */
 const themeSlice = createSlice({
     name: "theme",
     initialState,

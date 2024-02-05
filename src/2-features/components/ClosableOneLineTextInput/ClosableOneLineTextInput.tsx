@@ -45,6 +45,15 @@ const dividerStyle: SxProps = {
     padding: "3px",
 };
 
+/**
+ * одностройчная форма для ввода текста, с кнопками (закрыть\подтвердить)
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop onClose - вызывается при нажатии на кнопку закрыть
+ * @prop onCloseSave(inputValue) - вызывается нажатии на кнопку подтвердить, inputValue - текст в форме на момент вызова
+ * @prop inputDefValue - дефолтное значение в форме
+ * @prop placeholder - плейсхолдер формы
+ * @returns
+ */
 function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder }: TClosableOneLineTextInputProps) {
     const defaultClassName = "ClosableOneLineTextInput";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

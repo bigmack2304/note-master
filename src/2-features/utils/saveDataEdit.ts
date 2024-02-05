@@ -1,51 +1,48 @@
 import { getNodeById } from "./saveDataParse";
 import { setTempDataDB, getTempDataDB } from "./appIndexedDB";
-import type {
-  TchildrenType,
-  TNoteBody,
-  IDataSave,
-  IDataTreeNote,
-} from "0-shared/types/dataSave";
+import type { TchildrenType, TNoteBody, IDataSave, IDataTreeNote } from "0-shared/types/dataSave";
 
 // функции для применения изменений к tempData в indexedDB
 
-// слияние нод по id, tempData с newNode
+/**
+ * слияние нод по id, tempData с newNode
+ * @param newNode измененная нода
+ */
 async function mergeNodeById(newNode: TchildrenType) {
-  const target_id = newNode.id;
+    const target_id = newNode.id;
 
-  const onGetNode = (
-    node: TchildrenType | TNoteBody | null,
-    allTempData: IDataSave
-  ) => {
-    if (node) {
-      Object.assign(node, newNode);
-      setTempDataDB({ value: allTempData });
-    }
-  };
+    const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataSave) => {
+        if (node) {
+            Object.assign(node, newNode);
+            setTempDataDB({ value: allTempData });
+        }
+    };
 
-  getTempDataDB({
-    callback(value) {
-      if (!value) return;
-      let findResult = getNodeById(value, target_id);
-      onGetNode(findResult, value);
-    },
-  });
+    getTempDataDB({
+        callback(value) {
+            if (!value) return;
+            let findResult = getNodeById(value, target_id);
+            onGetNode(findResult, value);
+        },
+    });
 }
 
-// слияние ноды в сторе и отредактированной заметки
-function updateNodeValue(
-  note: IDataTreeNote,
-  target_id: string,
-  newValue: string
-) {
-  const cloneNode = JSON.parse(JSON.stringify(note)) as IDataTreeNote;
+/**
+ * изменяет своиство value в обьекте заметки
+ * @param note обьект заметки
+ * @param target_id id компонента который в котором нужно поменять value
+ * @param newValue новое значение value
+ * @returns
+ */
+function updateNodeValue(note: IDataTreeNote, target_id: string, newValue: string) {
+    const cloneNode = JSON.parse(JSON.stringify(note)) as IDataTreeNote;
 
-  for (let component of cloneNode.body) {
-    if (component.id !== target_id) continue;
-    component.value = newValue;
-  }
+    for (let component of cloneNode.body) {
+        if (component.id !== target_id) continue;
+        component.value = newValue;
+    }
 
-  return cloneNode;
+    return cloneNode;
 }
 
 export { mergeNodeById, updateNodeValue };

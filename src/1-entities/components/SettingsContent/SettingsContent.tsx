@@ -14,6 +14,9 @@ const dialogListStyle: SxProps = {
     borderRadius: "10px",
 };
 
+/**
+ * содержимое для DialogWindow, (страница с настройками)
+ */
 function SettingsContent({}: TSettingsContentProps) {
     return (
         <>

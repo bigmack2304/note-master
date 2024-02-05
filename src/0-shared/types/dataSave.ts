@@ -1,68 +1,75 @@
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
 interface TBodyComponentHeader {
-  component: "header";
-  value: string;
+    component: "header";
+    value: string;
 }
 
 // текст
 interface TBodyComponentText {
-  component: "text";
-  texValue: string;
+    component: "text";
+    texValue: string;
 }
 //////////////////////////////////////////////////////////////////
-
+/**
+ * все возможные значения type в node
+ */
 type TNodeType = "component" | "note" | "folder";
 
-// общие поля компонентов внутри заметки
+/**
+ * общие поля компонентов внутри заметки
+ */
 interface IDataTreeNode {
-  id: string; // глобальный id во всем дереве
-  type: TNodeType;
+    id: string; // глобальный id во всем дереве
+    type: TNodeType;
 }
 
-// тип поля body в заметке
 // TODO: потом тип пойдет по такому примеру
 //type TNoteBody = IDataTreeitemBody & (TBodyComponentHeader | TBodyComponentText);
+/**
+ * тип поля body в заметке
+ */
 type TNoteBody = IDataTreeNode & TBodyComponentHeader;
 
-// типизация тега заметок
+/**
+ * типизация тега заметок
+ */
 interface IGlobalTag {
-  tag_name: string;
-  color: string;
-  text: string;
+    tag_name: string;
+    color: string;
+    text: string;
 }
 
-// тип, папка или заметка
+/**
+ * тип, папка или заметка
+ */
 type TchildrenType = IDataTreeFolder | IDataTreeNote;
 
-// типизация заметки
+/**
+ * типизация заметки
+ */
 interface IDataTreeNote extends IDataTreeNode {
-  tags?: IGlobalTag["tag_name"][];
-  name: string;
-  body: TNoteBody[];
+    tags?: IGlobalTag["tag_name"][];
+    name: string;
+    body: TNoteBody[];
 }
 
-// типизация папки
+/**
+ * типизация папки
+ */
 interface IDataTreeFolder extends IDataTreeNode {
-  name: string;
-  color: string;
-  children?: TchildrenType[];
+    name: string;
+    color: string;
+    children?: TchildrenType[];
 }
 
-// типизация фаила с сохранением
+/**
+ * типизация фаила с сохранением
+ */
 interface IDataSave {
-  db_type: string;
-  global_tags: IGlobalTag[];
-  data_tree: IDataTreeFolder;
+    db_type: string;
+    global_tags: IGlobalTag[];
+    data_tree: IDataTreeFolder;
 }
 
-export type {
-  IDataSave,
-  IDataTreeFolder,
-  IDataTreeNote,
-  IGlobalTag,
-  TNoteBody,
-  TchildrenType,
-  TNodeType,
-  IDataTreeNode,
-};
+export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode };

@@ -15,6 +15,9 @@ function init_values() {
     initialState.isActive = get_stprage_data().isToolBar;
 }
 
+/**
+ * слой redux store, содержит настройки с панелью инструментов
+ */
 const ToolBarSlice = createSlice({
     name: "toolBar",
     initialState,

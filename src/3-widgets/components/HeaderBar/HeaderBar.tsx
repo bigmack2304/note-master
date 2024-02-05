@@ -8,6 +8,10 @@ import { ToggleToolBarButton } from "2-features/components/ToggleToolBarButton/T
 
 type THeaderBarProps = {};
 
+/**
+ * панель, на верху страницы
+ * @returns
+ */
 function HeaderBar({}: THeaderBarProps) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isInfoOpen, setIsInfoOpen] = useState(false);

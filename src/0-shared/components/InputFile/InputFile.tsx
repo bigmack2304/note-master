@@ -29,6 +29,11 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
     return <input className="visually_hidden" type="file" accept=".txt,.json" name="file" tabIndex={-1} ref={inputElement} onChange={onInputChange} {...inputSettings}></input>;
 }
 
+/**
+ * обычный input для загрузки фаилов типа .txt или .json, имеет класс visually_hidden
+ * @prop inputSettings - параметры для внутреннего htmlElement input
+ * @param ref - перенаправляется на внутренний input
+ */
 const InputFile = React.forwardRef(InputFileComponent);
 
 export { InputFile };

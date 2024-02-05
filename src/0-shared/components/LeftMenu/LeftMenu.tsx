@@ -10,6 +10,14 @@ type TLeftMenuProps = {
     children?: React.ReactNode;
 };
 
+/**
+ * меню приложения, появляется с лева. Не имеет своего содержимого.
+ * @prop isOpen - boolean, нужноли открыть боковое меню ?
+ * @prop closeCallback - вызывается при закрытии
+ * @prop drawerSettings - пропсы для внутреннего m.iu компонента Drawer
+ * @prop children - компонент можно использовать как обертка для других компонентов.
+ * @returns
+ */
 function LeftMenu({ isOpen = false, closeCallback = () => {}, drawerSettings = {}, children }: TLeftMenuProps) {
     return (
         <Drawer anchor={"left"} open={isOpen} onClose={closeCallback} {...drawerSettings} transitionDuration={TRANSITION_DURATION}>

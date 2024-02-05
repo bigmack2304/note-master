@@ -9,6 +9,9 @@ import type { SxProps } from "@mui/material";
 
 const containerStyles: SxProps = {};
 
+/**
+ * базовый кормпонент, инициализация приложения
+ */
 function App() {
     const theme = useUiTeme();
 

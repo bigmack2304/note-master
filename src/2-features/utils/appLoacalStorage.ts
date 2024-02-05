@@ -17,7 +17,10 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     isToolBar: true,
 };
 
-// возвращает состояние local storage в виде обьекта
+/**
+ * возвращает состояние local storage в виде обьекта
+ * @returns
+ */
 function get_stprage_data() {
     const read_data = localStorage.getItem(STORAGE_KEY);
 
@@ -28,25 +31,35 @@ function get_stprage_data() {
     return STORAGE_DEF_VALUE;
 }
 
-// перезаписывает local storage новыми данными
+/**
+ * перезаписывает local storage новыми данными
+ * @param data
+ */
 function set_storage_data(data: IAppLocalStorage) {
     dispatchEventStorageUpdate();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-// генерирует событие при вызове set_storage_data
+/**
+ * генерирует событие при вызове set_storage_data
+ */
 function dispatchEventStorageUpdate() {
     window.dispatchEvent(new CustomEvent("appLocalStorageUpdate"));
 }
 
-// более красивый способ перезаписи отдельных значений в local storage
-// альтернатива этому: set_storage_data({ ...get_stprage_data(), key: new_value });
+/**
+ * более красивый способ перезаписи отдельных значений в local storage.
+ * Альтернатива этому: set_storage_data({ ...get_stprage_data(), key: new_value });
+ * @param key ключ в LocalStorage
+ * @param value новое значение
+ */
 function storage_save_value<K extends keyof IAppLocalStorage>(key: K, value: IAppLocalStorage[K]) {
     set_storage_data({ ...get_stprage_data(), [key]: value });
 }
 
-// инициализируем local storage если он еще не создан
-storage_init();
+/**
+ * инициалация local storage если он еще не создан
+ */
 function storage_init() {
     const is_storage = localStorage.getItem(STORAGE_KEY);
 
@@ -54,6 +67,8 @@ function storage_init() {
         set_storage_data(STORAGE_DEF_VALUE);
     }
 }
+
+storage_init();
 
 export { STORAGE_KEY, STORAGE_DEF_VALUE, get_stprage_data, set_storage_data, storage_save_value };
 export type { IAppLocalStorage };

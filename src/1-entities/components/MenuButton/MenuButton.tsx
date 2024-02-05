@@ -7,6 +7,11 @@ type TMenuButtonprops = {
     disabled?: boolean;
 };
 
+/**
+ * кнопка бургер
+ * @prop clickCallback - вызывается при клике на нее
+ * @prop disabled - boolean для значения disabled этой кнопки
+ */
 function MenuButton({ clickCallback = () => {}, disabled = false }: TMenuButtonprops) {
     return (
         <IconButton aria-label="меню" size="large" onClick={clickCallback} disabled={disabled} title="меню">

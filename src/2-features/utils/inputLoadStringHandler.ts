@@ -1,5 +1,10 @@
 type TAnyFunc = (...args: any[]) => void;
 
+/**
+ * обработчик загружаемого фаила (сохранения) заметок
+ * @param rawData данные
+ * @returns обработанные данные
+ */
 function inputLoadStringHandler<returnType>(rawData: any) {
     if (typeof rawData !== "string") return new Error("format not supported");
     const data = JSON.parse(rawData);

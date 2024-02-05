@@ -7,40 +7,71 @@ import type { PaletteMode } from "@mui/material";
 
 type TTheme = ReturnType<typeof createTheme>;
 
-// цвет primary (кнопки переключалки)
+/**
+ * цвет палитры primary (кнопки переключалки)
+ * @param theme текущая тема
+ * @returns
+ */
 function primaryThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#288CEF";
     return "#e2e3e7";
 }
 
-// цвет info (поле над background)
+/**
+ * цвет палитры info
+ * @param theme текущая тема
+ * @returns
+ */
 function infoThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#6DC2F3";
     return "#4E525C";
 }
 
-// цвет background
+/**
+ *  цвет background
+ * @param theme текущая тема
+ * @returns
+ */
 function backgroundThemeColor(theme: PaletteMode) {
     if (theme === "light") return "#fff";
     return "#292c31";
 }
 
-// цвет иконок
+/**
+ * цвет иконок
+ * @param theme текущая тема
+ * @returns
+ */
 function svgThemeColor(theme: PaletteMode) {
     return theme === "light" ? "#212121" : "#fbffff";
 }
 
-// цвет шрифта
+/**
+ * цвет шрифта
+ * @param theme текущая тема
+ * @returns
+ */
 function textThemeColor(theme: PaletteMode) {
     if (theme === "light") return { primary: "#212121", secondary: "#666666", disabled: "#9e9e9e" };
     return { primary: "#fbffff", secondary: "#fcffff", disabled: "#fdffff" };
 }
 
-// цвет текста для Typography
+/**
+ * цвет текста для Typography
+ * @param theme текущая тема
+ * @returns
+ */
 function fontThemeColor(theme: PaletteMode) {
     return theme === "light" ? "#212121" : "#fbffff";
 }
 
+/**
+ * переопределяет стандартные стили компонентов material ui
+ * @param theme
+ * @param themeValue текущая тема
+ * @param storeTheme обьект настройки темы из redux store
+ * @returns сконфигурированный обьект типа Theme
+ */
 function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme: IThemeState) {
     let themeOverrided = createTheme(theme, {
         components: {

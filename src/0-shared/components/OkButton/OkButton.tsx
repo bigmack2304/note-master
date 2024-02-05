@@ -12,6 +12,11 @@ const ButtonStyle: SxProps = {
     padding: "5px",
 };
 
+/**
+ * круглая кнопка с галочкой
+ * @prop onClick - вызывается при клике на кнопку
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ */
 function OkButton({ onClick = () => {}, addClassNames = [] }: TOkButtonProps) {
     const defaultClassName = "OkButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

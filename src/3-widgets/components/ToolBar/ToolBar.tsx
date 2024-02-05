@@ -14,6 +14,11 @@ const toolbarStyle: SxProps = {
     backgroundColor: "red",
 };
 
+/**
+ * панель инструментов
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @returns
+ */
 function ToolBar({ addClassNames = [] }: TToolBarprops) {
     const defaultClassName = "ToolBar";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

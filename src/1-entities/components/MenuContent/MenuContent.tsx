@@ -22,6 +22,15 @@ const ListSubheaderStyle: SxProps = {
     fontSize: "1.3rem",
 };
 
+/**
+ * содержимое для бокового меню приложения
+ * @prop onSettingsClick - вызывается при клике на "Настройки"
+ * @prop onNewNoteClick - вызывается при клике на "новая заметка"
+ * @prop onSaveClick - вызывается при клике на "Сохранить"
+ * @prop onLoadClick - вызывается при клике на "Загрузить"
+ * @prop onInfoClick - вызывается при клике на "О приложении"
+ * @returns
+ */
 function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
     return (
         <List sx={listStyle}>

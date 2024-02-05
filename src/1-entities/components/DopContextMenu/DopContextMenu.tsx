@@ -13,6 +13,16 @@ type TDopContextMenuProps = {
     addClassNames?: string[];
 };
 
+/**
+ * Кастомное контекстное меню, без содержимого
+ * @prop isOpen - boolean, открыто или закрыто меню
+ * @prop anchorEl - htmlElement к которому это меню привязано
+ * @prop onClose - вызывается при закрытии этого меню
+ * @prop children - компонент может быть оберткой для других компонентов
+ * @prop menuSettings - пропсы для material ui компонента Menu
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @returns
+ */
 function DopContextMenu({ isOpen, anchorEl, onClose, children, menuSettings, addClassNames = [] }: TDopContextMenuProps) {
     const defaultClassName = "DopContextMenu";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

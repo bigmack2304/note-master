@@ -43,6 +43,14 @@ const dialogActionsStyle = (theme: PaletteMode) => {
     } as SxProps;
 };
 
+/**
+ * full Screen Dialog окно с кнопеой закрыть, без контента
+ * @prop dialogSettings - пропсы для material ui компонента Dialog
+ * @prop isOpen - boolean, открыто или закрыто окно
+ * @prop onClose - вызывается при закрытии окна
+ * @prop children - компонент может быть оберткой для других компонентов
+ * @prop headerText - заголовок окна
+ */
 function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, headerText }: TDialogWindowProps) {
     const handleCloseDialog = () => {
         const event = {};

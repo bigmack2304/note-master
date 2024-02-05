@@ -1,34 +1,35 @@
 // генератор ID в виде строки из 24 символов
 
+/**
+ * класс для генерации уникальных ID
+ * @constructor_Param cache - Set(string) обьект с данными который будет использоватся в качестве кеша
+ */
 class IdGenerator {
-  private charMap: string =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  private cache: Set<string> = new Set();
+    private charMap: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private cache: Set<string> = new Set();
 
-  constructor(cache: Set<string>) {
-    this.cache = cache;
-  }
+    constructor(cache: Set<string>) {
+        this.cache = cache;
+    }
 
-  public generateId(): string {
-    const generator = () => {
-      let result = "";
-      for (let i = 0; i < 24; i++) {
-        result += this.charMap.charAt(
-          Math.floor(Math.random() * this.charMap.length)
-        );
-      }
-      return result;
-    };
+    public generateId(): string {
+        const generator = () => {
+            let result = "";
+            for (let i = 0; i < 24; i++) {
+                result += this.charMap.charAt(Math.floor(Math.random() * this.charMap.length));
+            }
+            return result;
+        };
 
-    let newId: string;
+        let newId: string;
 
-    do {
-      newId = generator();
-    } while (this.cache.has(newId));
+        do {
+            newId = generator();
+        } while (this.cache.has(newId));
 
-    this.cache.add(newId);
-    return newId;
-  }
+        this.cache.add(newId);
+        return newId;
+    }
 }
 
 export { IdGenerator };

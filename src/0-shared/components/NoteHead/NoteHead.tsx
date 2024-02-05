@@ -29,6 +29,14 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     } as SxProps;
 };
 
+/**
+ * Компонент описывает заголовок внутри заметки
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop onClick - вызывается при клике на текст
+ * @prop children - компонент можно использовать как обертка для других компонентов.
+ * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
+ * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
+ */
 function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteHeadProps) {
     const defaultClassName = "NoteHead";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

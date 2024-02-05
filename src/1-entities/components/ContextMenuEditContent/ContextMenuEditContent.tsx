@@ -19,6 +19,11 @@ const menuItemStyle: SxProps = {
     gap: "10px",
 };
 
+/**
+ * вариант содержимого для компонента DopContextMenu.
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @returns
+ */
 function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick, onClearClick, isClearDisabled = false }: TContextMenuEditContentProps) {
     const defaultClassName = "ContextMenuEditContent";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
