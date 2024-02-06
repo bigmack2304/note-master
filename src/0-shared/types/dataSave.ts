@@ -64,12 +64,20 @@ interface IDataTreeFolder extends IDataTreeNode {
 }
 
 /**
+ * типизация корневой папки
+ */
+interface IDataTreeRootFolder extends IDataTreeFolder {
+    name: "root";
+    id: "root";
+}
+
+/**
  * типизация фаила с сохранением
  */
 interface IDataSave {
     db_type: string;
     global_tags: IGlobalTag[];
-    data_tree: IDataTreeFolder;
+    data_tree: IDataTreeRootFolder;
 }
 
 export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode };

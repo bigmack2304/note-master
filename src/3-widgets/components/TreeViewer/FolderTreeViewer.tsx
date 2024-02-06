@@ -23,6 +23,7 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
+import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 
 type TFolderTreeViewerProps = {};
 
@@ -42,13 +43,15 @@ const FolderTreeViewerStyle: SxProps = {
  */
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
+    const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
+    const [renamedItemName, setRenamedItemName] = useState<string>("");
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
-    const clockedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик, апоминаем значение без лишнего обновления
+    const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик, апоминаем значение без лишнего обновления
 
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
@@ -69,57 +72,58 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const onNodeContext = (nodeData: TchildrenType, e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        clockedNodeDataRef.current = nodeData;
+        clickedNodeDataRef.current = nodeData;
         setContextMenuAnchorEl(e.currentTarget as HTMLElement);
     };
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
         setTimeout(() => {
-            clockedNodeDataRef.current = null;
+            clickedNodeDataRef.current = null;
         }, 50);
     };
 
     // элементы контекстного меню
     //TODO: добавить возможность переименовать содержимое
     const onRenameClick = (e: React.MouseEvent) => {
-        console.log(`rename click id: ${clockedNodeDataRef.current?.id}`);
         setContextMenuAnchorEl(null);
+
+        if (!clickedNodeDataRef.current || !dataValue) return;
+        setIsRenameDialogOpen(true);
+        setRenamedItemName(clickedNodeDataRef.current.name);
     };
 
     const onDeleteClick = (e: React.MouseEvent) => {
-        console.log(`delete click id: ${clockedNodeDataRef.current?.id}`);
-
-        if (!clockedNodeDataRef.current || !dataValue) return;
         setContextMenuAnchorEl(null);
+        if (!clickedNodeDataRef.current || !dataValue) return;
 
         // удаляем папку
-        if (isDataTreeFolder(clockedNodeDataRef.current)) {
+        if (isDataTreeFolder(clickedNodeDataRef.current)) {
             if (currentNote) {
                 // проверяем что активная заметка не является частью этой папки
-                let treeFolder = getNodeById(dataValue, clockedNodeDataRef.current.id);
+                let treeFolder = getNodeById(dataValue, clickedNodeDataRef.current.id);
                 if (treeFolder && getNodeById(treeFolder, currentNote.id)) {
                     dispatch(setCurrentNote(undefined));
                 }
             }
 
             // если эта папка активная то удаляем ее из стора
-            if (currentFolder && currentFolder.id === clockedNodeDataRef.current.id) {
-                dispatch(deleteCurrentFolder_and_folderIndb([clockedNodeDataRef.current, dataValue]));
+            if (currentFolder && currentFolder.id === clickedNodeDataRef.current.id) {
+                dispatch(deleteCurrentFolder_and_folderIndb([clickedNodeDataRef.current, dataValue]));
                 return;
             }
 
-            dispatch(deleteFolderInDb([clockedNodeDataRef.current, dataValue]));
+            dispatch(deleteFolderInDb([clickedNodeDataRef.current, dataValue]));
         }
         // удаляем заметку
-        if (isDataTreeNote(clockedNodeDataRef.current)) {
+        if (isDataTreeNote(clickedNodeDataRef.current)) {
             // если удаляемая заметка эта текущая заметка
-            if (currentNote && currentNote.id === clockedNodeDataRef.current.id) {
-                dispatch(deleteCurrentNote_and_noteIndb([clockedNodeDataRef.current, dataValue]));
+            if (currentNote && currentNote.id === clickedNodeDataRef.current.id) {
+                dispatch(deleteCurrentNote_and_noteIndb([clickedNodeDataRef.current, dataValue]));
                 return;
             }
 
-            dispatch(deleteNoteInDb([clockedNodeDataRef.current, dataValue]));
+            dispatch(deleteNoteInDb([clickedNodeDataRef.current, dataValue]));
         }
     };
 
@@ -129,6 +133,15 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onNewNoteClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
+    };
+
+    // функции Rename Dialog
+    const onCloseRDialog = () => {
+        setIsRenameDialogOpen(false);
+    };
+
+    const onSaveCloseRDialog = () => {
+        setIsRenameDialogOpen(false);
     };
 
     // получение данных из IndexedDB
@@ -143,6 +156,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     return (
         <Box sx={FolderTreeViewerStyle}>
+            {/* //TODO: вынести это в memo */}
             <TreeView aria-label="структура заметок" defaultCollapseIcon={<ExpandMoreIcon />} defaultExpandIcon={<ChevronRightIcon />}>
                 {dataValue &&
                     RenderTreeAsFile({
@@ -152,18 +166,25 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                     })}
             </TreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
-                {clockedNodeDataRef.current && isDataTreeFolder(clockedNodeDataRef.current) ? (
+                {clickedNodeDataRef.current && isDataTreeFolder(clickedNodeDataRef.current) ? (
                     <ContextMenuTreeFolderContent
                         onDeleteClick={onDeleteClick}
                         onRenameClick={onRenameClick}
                         onNewFolderClick={onNewFolderClick}
                         onNewNoteClick={onNewNoteClick}
-                        isDelDisabled={clockedNodeDataRef.current && clockedNodeDataRef.current.id === "root" ? true : false}
+                        isDelDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                     />
-                ) : clockedNodeDataRef.current && isDataTreeNote(clockedNodeDataRef.current) ? (
+                ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
                     <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
                 ) : null}
             </DopContextMenu>
+            <TreeItemRenameDialog
+                dialogHeader="Изменить имя"
+                isOpen={isRenameDialogOpen}
+                inputDefValue={renamedItemName}
+                onClose={onCloseRDialog}
+                onCloseSave={onSaveCloseRDialog}
+            />
         </Box>
     );
 }
