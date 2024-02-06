@@ -4,7 +4,7 @@ import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 // функции для поиска разлиных элементов в tempData в indexedDB
 
 /**
- * сбор всех ID из tempData в indexedDB
+ * сбор всех ID из IDataSave
  * @param data обьект сохранения IDataSave
  * @returns
  */
@@ -35,6 +35,37 @@ function getAllIds(data: IDataSave) {
     parser(data_tree);
 
     return allIds;
+}
+
+/**
+ * возвращает массив всех вложенных id внутри Node
+ * @param folder обьект типа IDataTreeFolder | IDataTreeNote
+ */
+function getAllIdsInNode(node: IDataTreeFolder | IDataTreeNote) {
+    const allIds = new Set<string>();
+
+    const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
+        for (let prop in node) {
+            if (prop === "id") {
+                if (allIds.has(node[prop])) throw new Error("Duplicate id in tempData");
+                allIds.add(node[prop]);
+                continue;
+            }
+            if (prop === "children") {
+                for (let item of (node as IDataTreeFolder)[prop]!) {
+                    parser(item);
+                }
+            }
+            if (prop === "body") {
+                for (let item of (node as IDataTreeNote)[prop]) {
+                    parser(item);
+                }
+            }
+        }
+    };
+
+    parser(node);
+    return Array.from(allIds);
 }
 
 /**
@@ -78,4 +109,4 @@ function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined
     return null;
 }
 
-export { getAllIds, getNodeById };
+export { getAllIds, getNodeById, getAllIdsInNode };

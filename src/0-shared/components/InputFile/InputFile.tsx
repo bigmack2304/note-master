@@ -4,6 +4,8 @@ import type { Ref } from "0-shared/utils/typeHelpers";
 import type { IDataSave } from "0-shared/types/dataSave";
 import { inputLoadStringHandler } from "2-features/utils/inputLoadStringHandler";
 import { setTempDataDB } from "2-features/utils/appIndexedDB";
+import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
+import { getAllIds } from "2-features/utils/saveDataParse";
 
 type TInputFileProps = {
     inputSettings?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -14,6 +16,7 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
     useImperativeHandle(ref, () => inputElement.current!, [inputElement.current]);
 
     const onSucessLoad = (data: IDataSave) => {
+        savedIdGenerator.instatnceIdGenerator = new IdGenerator(getAllIds(data));
         setTempDataDB({ value: data });
     };
 
