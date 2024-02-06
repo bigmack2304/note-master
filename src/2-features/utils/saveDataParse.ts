@@ -1,5 +1,6 @@
 import type { IDataSave, IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import { getTempDataDB } from "./appIndexedDB";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 
@@ -109,4 +110,10 @@ function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined
     return null;
 }
 
-export { getAllIds, getNodeById, getAllIdsInNode };
+async function getNodeById_noRoot(find_id: string) {
+    let IDataSave = await getTempDataDB();
+    if (!IDataSave) return;
+    return getNodeById(IDataSave, find_id);
+}
+
+export { getAllIds, getNodeById, getAllIdsInNode, getNodeById_noRoot };

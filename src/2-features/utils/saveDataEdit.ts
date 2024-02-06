@@ -9,7 +9,7 @@ import { savedIdGenerator } from "0-shared/utils/idGenerator";
  * слияние нод по id, tempData с newNode
  * @param newNode измененная нода
  */
-async function mergeNodeById(newNode: TchildrenType) {
+function mergeNodeById(newNode: TchildrenType) {
     const target_id = newNode.id;
 
     const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataSave) => {
@@ -44,6 +44,31 @@ function updateNodeValue(note: IDataTreeNote, target_id: string, newValue: strin
     }
 
     return cloneNode;
+}
+/////////////////////////////////////////////////////
+/**
+ * изменяет своиство value в обьекте заметки
+ * @param note обьект заметки
+ * @param target_id id компонента в котором нужно поменять value
+ * @param newValue новое значение value
+ */
+function updateNodeName(target_id: string, newName: string) {
+    const onGetNode = (node: TchildrenType, allTempData: IDataSave) => {
+        if (node) {
+            node.name = newName;
+            setTempDataDB({ value: allTempData });
+        }
+    };
+
+    getTempDataDB({
+        callback(value) {
+            if (!value) return;
+            let targetNode = getNodeById(value, target_id);
+            if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
+                onGetNode(targetNode, value);
+            }
+        },
+    });
 }
 
 /**
@@ -111,4 +136,4 @@ function deleteById(data: IDataSave, target_id: string) {
     setTempDataDB({ value: data });
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById };
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName };
