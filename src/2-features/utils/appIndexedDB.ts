@@ -61,7 +61,7 @@ async function openIndexedDB() {
  * возвращает обьект TempData из indexed db
  * @property onComplete: определение колбека db.transaction,
  * @property onError: определение колбека db.transaction,
- * @property callback(IDataSave | undefined): вызывается после применения изменений
+ * @property callback(IDataSave | undefined): вызывается после поиска
  * @returns Promise<IDataSave | undefined>
  */
 async function getTempDataDB({ onComplete = () => {}, onError = () => {}, callback }: TGetTempDataDBParams = {}) {
@@ -93,6 +93,7 @@ async function setTempDataDB({ onComplete = () => {}, onError = () => {}, callba
     await tx.done;
     callback && callback(value);
     dispatchEventIndexedDBTempUpdate();
+    return value;
 }
 
 /**
@@ -110,6 +111,7 @@ async function delTempDataDB({ onComplete = () => {}, onError = () => {}, callba
     data.delete(TEMP_DATA_KEY);
     await tx.done;
     callback && callback();
+    return true;
 }
 
 /**
