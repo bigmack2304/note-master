@@ -8,7 +8,14 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { setCurrentNote, setCurrentFolder, deleteCurrentNote, deleteCurrentFolder } from "5-app/GlobalState/saveDataInspectStore";
+import {
+    setCurrentNote,
+    setCurrentFolder,
+    deleteCurrentNote_and_noteIndb,
+    deleteCurrentFolder_and_folderIndb,
+    deleteFolderInDb,
+    deleteNoteInDb,
+} from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { getNodeById } from "2-features/utils/saveDataParse";
@@ -35,11 +42,12 @@ const FolderTreeViewerStyle: SxProps = {
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
-    const CurrentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
+    const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
+    const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
-    const nodeDataRef = useRef<TchildrenType | null>(); // запоминаем значение без лишнего обновления
+    const clockedNodeDataRef = useRef<TchildrenType | null>(); // запоминаем значение без лишнего обновления
 
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
@@ -60,43 +68,55 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const onNodeContext = (nodeData: TchildrenType, e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        nodeDataRef.current = nodeData;
+        clockedNodeDataRef.current = nodeData;
         setContextMenuAnchorEl(e.currentTarget as HTMLElement);
     };
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
-        nodeDataRef.current = null;
+        clockedNodeDataRef.current = null;
     };
 
     // элементы контекстного меню
     //TODO: добавить возможность переименовать содержимое
     const onRenameClick = (e: React.MouseEvent) => {
-        console.log(`rename click id: ${nodeDataRef.current?.id}`);
+        console.log(`rename click id: ${clockedNodeDataRef.current?.id}`);
         setContextMenuAnchorEl(null);
     };
 
     const onDeleteClick = (e: React.MouseEvent) => {
-        console.log(`delete click id: ${nodeDataRef.current?.id}`);
+        console.log(`delete click id: ${clockedNodeDataRef.current?.id}`);
 
-        if (!nodeDataRef.current || !dataValue) return;
+        if (!clockedNodeDataRef.current || !dataValue) return;
         setContextMenuAnchorEl(null);
 
         // удаляем папку
-        if (isDataTreeFolder(nodeDataRef.current)) {
-            if (CurrentNote?.id) {
+        if (isDataTreeFolder(clockedNodeDataRef.current)) {
+            if (currentNote) {
                 // проверяем что активная заметка не является частью этой папки
-                let treeFolder = getNodeById(dataValue, nodeDataRef.current.id);
-                if (treeFolder && getNodeById(treeFolder, CurrentNote.id)) {
+                let treeFolder = getNodeById(dataValue, clockedNodeDataRef.current.id);
+                if (treeFolder && getNodeById(treeFolder, currentNote.id)) {
                     dispatch(setCurrentNote(undefined));
                 }
             }
 
-            dispatch(deleteCurrentFolder([nodeDataRef.current, dataValue]));
+            // если эта папка активная то удаляем ее из стора
+            if (currentFolder && currentFolder.id === clockedNodeDataRef.current.id) {
+                dispatch(deleteCurrentFolder_and_folderIndb([clockedNodeDataRef.current, dataValue]));
+                return;
+            }
+
+            dispatch(deleteFolderInDb([clockedNodeDataRef.current, dataValue]));
         }
         // удаляем заметку
-        if (isDataTreeNote(nodeDataRef.current)) {
-            dispatch(deleteCurrentNote([nodeDataRef.current, dataValue]));
+        if (isDataTreeNote(clockedNodeDataRef.current)) {
+            // если удаляемая заметка эта текущая заметка
+            if (currentNote && currentNote.id === clockedNodeDataRef.current.id) {
+                dispatch(deleteCurrentNote_and_noteIndb([clockedNodeDataRef.current, dataValue]));
+                return;
+            }
+
+            dispatch(deleteNoteInDb([clockedNodeDataRef.current, dataValue]));
         }
     };
 
