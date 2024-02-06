@@ -3,6 +3,8 @@ import MenuItem from "@mui/material/MenuItem";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BrowserNotSupportedIcon from "@mui/icons-material/BrowserNotSupported";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import type { SxProps } from "@mui/material";
 
 // содержимое для DopContextMenu. с вариантом редактирования
@@ -34,16 +36,22 @@ function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick
     return (
         <>
             <MenuItem className={genClassName} onClick={onEditClick} sx={menuItemStyle}>
-                <EditIcon fontSize="small" />
-                Редактировать
+                <ListItemIcon>
+                    <EditIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Редактировать</ListItemText>
             </MenuItem>
             <MenuItem className={genClassName} disabled={isClearDisabled} onClick={onClearClick} sx={menuItemStyle}>
-                <BrowserNotSupportedIcon fontSize="small" />
-                Отчистить
+                <ListItemIcon>
+                    <BrowserNotSupportedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Отчистить</ListItemText>
             </MenuItem>
             <MenuItem className={genClassName} onClick={onDeleteClick} sx={menuItemStyle}>
-                <DeleteIcon fontSize="small" />
-                Удалить
+                <ListItemIcon>
+                    <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Удалить</ListItemText>
             </MenuItem>
         </>
     );

@@ -2,20 +2,15 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import type { SxProps } from "@mui/material";
 
 // содержимое для DopContextMenu. с вариантом редактирования
 
-type TContextMenuTreeFolderContentProps = {
+type TContextMenuTreeNoteContentProps = {
     onRenameClick?: (e: React.MouseEvent) => void;
-    onNewNoteClick?: (e: React.MouseEvent) => void;
-    onNewFolderClick?: (e: React.MouseEvent) => void;
     onDeleteClick?: (e: React.MouseEvent) => void;
-    isDelDisabled?: boolean;
     addClassNames?: string[];
 };
 
@@ -28,42 +23,20 @@ const menuItemStyle: SxProps = {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop onRenameClick - вызывается при нажатии на кнопку "Переименовать"
  * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
- * @prop onNewFolderClick - вызывается при нажатии на кнопку "Добавить папку"
- * @prop onNewNoteClick - вызывается при нажатии на кнопку "Добавить заметку"
- * @prop isDelDisabled - будетли кнопка удалять не доступна?
  */
-function ContextMenuTreeFolderContent({
-    addClassNames = [],
-    onRenameClick,
-    onDeleteClick,
-    onNewNoteClick,
-    onNewFolderClick,
-    isDelDisabled = false,
-}: TContextMenuTreeFolderContentProps) {
-    const defaultClassName = "ContextMenuTreeFolderContent";
+function ContextMenuTreeNoteContent({ addClassNames = [], onRenameClick, onDeleteClick }: TContextMenuTreeNoteContentProps) {
+    const defaultClassName = "ContextMenuTreeNoteContent";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
         <>
-            <MenuItem className={genClassName} onClick={onNewNoteClick} sx={menuItemStyle}>
-                <ListItemIcon>
-                    <NoteAddIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Добавить заметку</ListItemText>
-            </MenuItem>
-            <MenuItem className={genClassName} onClick={onNewFolderClick} sx={menuItemStyle}>
-                <ListItemIcon>
-                    <CreateNewFolderIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Добавить папку</ListItemText>
-            </MenuItem>
             <MenuItem className={genClassName} onClick={onRenameClick} sx={menuItemStyle}>
                 <ListItemIcon>
                     <EditIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Переименовать</ListItemText>
             </MenuItem>
-            <MenuItem className={genClassName} onClick={onDeleteClick} sx={menuItemStyle} disabled={isDelDisabled}>
+            <MenuItem className={genClassName} onClick={onDeleteClick} sx={menuItemStyle}>
                 <ListItemIcon>
                     <DeleteIcon fontSize="small" />
                 </ListItemIcon>
@@ -73,4 +46,7 @@ function ContextMenuTreeFolderContent({
     );
 }
 
-export { ContextMenuTreeFolderContent };
+{
+}
+
+export { ContextMenuTreeNoteContent };

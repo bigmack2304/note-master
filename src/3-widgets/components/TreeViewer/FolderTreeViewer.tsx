@@ -22,6 +22,7 @@ import { getNodeById } from "2-features/utils/saveDataParse";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
+import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 
 type TFolderTreeViewerProps = {};
 
@@ -47,7 +48,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
-    const clockedNodeDataRef = useRef<TchildrenType | null>(); // запоминаем значение без лишнего обновления
+    const clockedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик, апоминаем значение без лишнего обновления
 
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
@@ -74,7 +75,9 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
-        clockedNodeDataRef.current = null;
+        setTimeout(() => {
+            clockedNodeDataRef.current = null;
+        }, 50);
     };
 
     // элементы контекстного меню
@@ -120,6 +123,14 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         }
     };
 
+    const onNewFolderClick = (e: React.MouseEvent) => {
+        setContextMenuAnchorEl(null);
+    };
+
+    const onNewNoteClick = (e: React.MouseEvent) => {
+        setContextMenuAnchorEl(null);
+    };
+
     // получение данных из IndexedDB
     if (isNeedUpdate) {
         getTempDataDB({
@@ -141,7 +152,17 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                     })}
             </TreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
-                <ContextMenuTreeFolderContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
+                {clockedNodeDataRef.current && isDataTreeFolder(clockedNodeDataRef.current) ? (
+                    <ContextMenuTreeFolderContent
+                        onDeleteClick={onDeleteClick}
+                        onRenameClick={onRenameClick}
+                        onNewFolderClick={onNewFolderClick}
+                        onNewNoteClick={onNewNoteClick}
+                        isDelDisabled={clockedNodeDataRef.current && clockedNodeDataRef.current.id === "root" ? true : false}
+                    />
+                ) : clockedNodeDataRef.current && isDataTreeNote(clockedNodeDataRef.current) ? (
+                    <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
+                ) : null}
             </DopContextMenu>
         </Box>
     );

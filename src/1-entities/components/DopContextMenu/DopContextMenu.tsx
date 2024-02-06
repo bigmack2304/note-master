@@ -1,5 +1,6 @@
 import React from "react";
 import Menu from "@mui/material/Menu";
+import MenuList from "@mui/material/MenuList";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
 // контекстное меню, отерывающееся по левому клику мыши по обьекту
@@ -29,7 +30,7 @@ function DopContextMenu({ isOpen, anchorEl, onClose, children, menuSettings, add
 
     return (
         <Menu className={genClassName} open={isOpen} anchorEl={anchorEl} onClose={onClose} autoFocus={false} {...menuSettings}>
-            {children}
+            <MenuList>{children}</MenuList>
         </Menu>
     );
 }
