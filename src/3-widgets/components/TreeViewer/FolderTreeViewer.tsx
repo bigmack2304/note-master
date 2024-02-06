@@ -8,9 +8,11 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { setCurrentNote, setCurrentFolder } from "5-app/GlobalState/saveDataInspectStore";
+import { setCurrentNote, setCurrentFolder, deleteCurrentNote, deleteCurrentFolder } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
+import { getNodeById } from "2-features/utils/saveDataParse";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 
@@ -33,6 +35,7 @@ const FolderTreeViewerStyle: SxProps = {
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
+    const CurrentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
@@ -59,10 +62,6 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         e.preventDefault();
         nodeDataRef.current = nodeData;
         setContextMenuAnchorEl(e.currentTarget as HTMLElement);
-        if (isDataTreeFolder(nodeData)) {
-        }
-        if (isDataTreeNote(nodeData)) {
-        }
     };
 
     const onContextMenuClose = () => {
@@ -71,6 +70,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     };
 
     // элементы контекстного меню
+    //TODO: добавить возможность переименовать содержимое
     const onRenameClick = (e: React.MouseEvent) => {
         console.log(`rename click id: ${nodeDataRef.current?.id}`);
         setContextMenuAnchorEl(null);
@@ -78,7 +78,26 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onDeleteClick = (e: React.MouseEvent) => {
         console.log(`delete click id: ${nodeDataRef.current?.id}`);
+
+        if (!nodeDataRef.current || !dataValue) return;
         setContextMenuAnchorEl(null);
+
+        // удаляем папку
+        if (isDataTreeFolder(nodeDataRef.current)) {
+            if (CurrentNote?.id) {
+                // проверяем что активная заметка не является частью этой папки
+                let treeFolder = getNodeById(dataValue, nodeDataRef.current.id);
+                if (treeFolder && getNodeById(treeFolder, CurrentNote.id)) {
+                    dispatch(setCurrentNote(undefined));
+                }
+            }
+
+            dispatch(deleteCurrentFolder([nodeDataRef.current, dataValue]));
+        }
+        // удаляем заметку
+        if (isDataTreeNote(nodeDataRef.current)) {
+            dispatch(deleteCurrentNote([nodeDataRef.current, dataValue]));
+        }
     };
 
     // получение данных из IndexedDB
