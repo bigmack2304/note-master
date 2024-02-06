@@ -5,7 +5,6 @@ import type { SxProps } from "@mui/material";
 
 type TTreeItemRenameDialogProps = {
     inputDefValue?: string;
-    isOpen: boolean;
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (inputValue: string) => void;
     dialogHeader?: string;
@@ -20,12 +19,11 @@ const inputStyle: SxProps = {
 /**
  * Диалоговое окно для редактирования одной строки текста
  * @prop inputDefValue - дефолтный текст
- * @prop isOpen - boolean, открыто или закрыто окно
  * @prop onClose - вызывается при закрытии окна
  * @prop onCloseSave - вызывается при сохранении текста
  * @prop dialogHeader - заголовок окна
  */
-function TreeItemRenameDialog({ inputDefValue, isOpen, onClose, onCloseSave, dialogHeader }: TTreeItemRenameDialogProps) {
+function TreeItemRenameDialog({ inputDefValue, onClose, onCloseSave, dialogHeader }: TTreeItemRenameDialogProps) {
     const [inputValue, setInputValue] = useState(inputDefValue || "");
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +35,7 @@ function TreeItemRenameDialog({ inputDefValue, isOpen, onClose, onCloseSave, dia
     };
 
     return (
-        <TreeEditDialig isOpen={isOpen} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
+        <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
             <Input value={inputValue} placeholder="имя" onChange={onInputChange} sx={inputStyle} />
         </TreeEditDialig>
     );

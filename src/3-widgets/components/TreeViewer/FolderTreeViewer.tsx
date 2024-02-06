@@ -178,13 +178,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                     <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
                 ) : null}
             </DopContextMenu>
-            <TreeItemRenameDialog
-                dialogHeader="Изменить имя"
-                isOpen={isRenameDialogOpen}
-                inputDefValue={renamedItemName}
-                onClose={onCloseRDialog}
-                onCloseSave={onSaveCloseRDialog}
-            />
+
+            {isRenameDialogOpen && <TreeItemRenameDialog dialogHeader="Изменить имя" inputDefValue={renamedItemName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
         </Box>
     );
 }
