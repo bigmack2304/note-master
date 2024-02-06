@@ -18,7 +18,9 @@ type Ref<T> = Parameters<ForwardRefRenderFunction<T>>[1];
  * @param node
  * @returns boolean
  */
-function isDataTreeNote(node: TchildrenType | TNoteBody): node is IDataTreeNote {
+function isDataTreeNote(node: any): node is IDataTreeNote {
+    if (typeof node !== "object") return false;
+    if (!("type" in node)) return false;
     return node.type === "note";
 }
 
@@ -27,7 +29,9 @@ function isDataTreeNote(node: TchildrenType | TNoteBody): node is IDataTreeNote 
  * @param node
  * @returns boolean
  */
-function isDataTreeFolder(node: TchildrenType | TNoteBody): node is IDataTreeFolder {
+function isDataTreeFolder(node: any): node is IDataTreeFolder {
+    if (typeof node !== "object") return false;
+    if (!("type" in node)) return false;
     return node.type === "folder";
 }
 
@@ -36,7 +40,9 @@ function isDataTreeFolder(node: TchildrenType | TNoteBody): node is IDataTreeFol
  * @param node
  * @returns boolean
  */
-function isDataNoteBody(node: TchildrenType | TNoteBody): node is TNoteBody {
+function isDataNoteBody(node: any): node is TNoteBody {
+    if (typeof node !== "object") return false;
+    if (!("type" in node)) return false;
     return node.type === "component";
 }
 
