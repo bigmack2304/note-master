@@ -24,6 +24,7 @@ import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
+import { renameNodeName } from "5-app/GlobalState/saveDataInspectStore";
 
 type TFolderTreeViewerProps = {};
 
@@ -78,13 +79,13 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
-        setTimeout(() => {
-            clickedNodeDataRef.current = null;
-        }, 50);
+        // через setTimeout чтобы анимация DopContextMenu успела проигратся при закрытии
+        // setTimeout(() => {
+        //     clickedNodeDataRef.current = null;
+        // });
     };
 
     // элементы контекстного меню
-    //TODO: добавить возможность переименовать содержимое
     const onRenameClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
 
@@ -140,8 +141,11 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         setIsRenameDialogOpen(false);
     };
 
-    const onSaveCloseRDialog = () => {
+    const onSaveCloseRDialog = (newValue: string) => {
         setIsRenameDialogOpen(false);
+        //TODO: добавить возможность переименовать содержимое
+        if (!clickedNodeDataRef.current) return;
+        dispatch(renameNodeName({ newName: newValue, nodeId: clickedNodeDataRef.current.id }));
     };
 
     // получение данных из IndexedDB

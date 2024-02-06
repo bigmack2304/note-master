@@ -3,7 +3,7 @@ import "./BasePage.scss";
 import { HeaderBar } from "3-widgets/components/HeaderBar/HeaderBar";
 import { WorkSpace } from "0-shared/components/WorkSpace/WorkSpace";
 import { Note } from "3-widgets/components/Note/Note";
-import { FolderTreeViewer } from "3-widgets/components/TreeViewer/FolderTreeViewer";
+import { FolderTreeViewer } from "3-widgets/components/FolderTreeViewer/FolderTreeViewer";
 import { ToolBar } from "3-widgets/components/ToolBar/ToolBar";
 
 type TBasePageprops = {
