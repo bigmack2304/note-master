@@ -3,9 +3,9 @@ import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
-import { buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
 import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName } from "2-features/utils/saveDataEdit";
 import { getNodeById } from "2-features/utils/saveDataParse";
+import { createAppSlice } from "./scliceCreator";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -18,10 +18,6 @@ const initialState: ISaveDataInspectStore = {
     currentFolder: undefined,
     currentNote: undefined,
 };
-
-const createAppSlice = buildCreateSlice({
-    creators: { asyncThunk: asyncThunkCreator },
-});
 
 // в начале загружаем значения из localStorage
 init_values();
