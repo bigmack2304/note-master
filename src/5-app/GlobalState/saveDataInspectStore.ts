@@ -1,13 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import type { IDataTreeNote, IDataTreeFolder, IDataSave, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
-import { mergeNodeById, updateNodeName } from "2-features/utils/saveDataEdit";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import { deleteById } from "2-features/utils/saveDataEdit";
-import { getNodeById_noRoot } from "2-features/utils/saveDataParse";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
+import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
+import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName } from "2-features/utils/saveDataEdit";
+import { getNodeById } from "2-features/utils/saveDataParse";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -44,64 +42,132 @@ const saveDataInspectSlice = createAppSlice({
         setCurrentNote: create.reducer<ISaveDataInspectStore["currentNote"]>((state, action) => {
             state.currentNote = action.payload;
         }),
-        // удаляем активную заметку из стора и из indexedDB
-        deleteCurrentNote_and_noteIndb: create.reducer<[IDataTreeNote, IDataSave]>((state, action) => {
-            if (action.payload[0].id === "root") return;
-            state.currentNote = undefined;
-            deleteById(action.payload[1], action.payload[0].id);
-        }),
-        // удаляем активную папку из стора и из indexedDB
-        deleteCurrentFolder_and_folderIndb: create.reducer<[IDataTreeFolder, IDataSave]>((state, action) => {
-            if (action.payload[0].id === "root") return;
-            state.currentFolder = undefined;
-            deleteById(action.payload[1], action.payload[0].id);
-        }),
-        // удаляем папку из indexedDB
-        deleteFolderInDb: create.reducer<[IDataTreeFolder, IDataSave]>((state, action) => {
-            if (action.payload[0].id === "root") return;
-            deleteById(action.payload[1], action.payload[0].id);
-        }),
-        // удаляем заметку из indexedDB
-        deleteNoteInDb: create.reducer<[IDataTreeNote, IDataSave]>((state, action) => {
-            if (action.payload[0].id === "root") return;
-            deleteById(action.payload[1], action.payload[0].id);
-        }),
-        // обновляем данные в активной заметке и в indexedDB
-        updateNote: create.reducer<ISaveDataInspectStore["currentNote"]>((state, action) => {
-            state.currentNote = action.payload;
-            if (!action.payload) return;
-            mergeNodeById(action.payload);
-        }),
-        // переименование ноды
-        renameNodeName: create.asyncThunk<{ nodeId: string; newName: string }, { node: TchildrenType | TNoteBody | null | undefined; newName: string } | undefined>(
+        // удалить папку или заметку из indexedDB
+        deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
             async (payload, thunkApi) => {
-                const state = thunkApi.getState() as RootState;
-                updateNodeName(payload.nodeId, payload.newName);
+                const datasSave = await getTempDataDB();
 
-                // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
-                if (state.saveDataInspect.currentNote && state.saveDataInspect.currentNote.id === payload.nodeId) {
-                    const node = await getNodeById_noRoot(payload.nodeId);
-                    return { node: node, newName: payload.newName };
-                }
+                if (!datasSave) return;
 
-                // если id изменяемой папки совпадает с id текущей папки, то обновляем данные и в сторе
-                if (state.saveDataInspect.currentFolder && state.saveDataInspect.currentFolder.id === payload.nodeId) {
-                    const node = await getNodeById_noRoot(payload.nodeId);
-                    return { node: node, newName: payload.newName };
+                const deletedNode = deleteById(datasSave, payload.nodeId);
+
+                if (deletedNode) {
+                    return { deletedNode: deletedNode };
                 }
             },
             {
                 pending: (state) => {},
                 rejected: (state, action) => {},
                 fulfilled: (state, action) => {
-                    if (action.payload && action.payload.node && isDataTreeNote(action.payload.node)) {
-                        action.payload.node.name = action.payload.newName;
-                        state.currentNote = action.payload.node;
+                    if (!action.payload || !action.payload.deletedNode) return;
+                    let {
+                        payload: { deletedNode },
+                    } = action;
+
+                    // если id удаляемой ноды совпадает с текущей активной заметкой то и ее удаляем
+                    if (state.currentNote && state.currentNote.id === deletedNode.id && isDataTreeNote(deletedNode)) {
+                        state.currentNote = undefined;
                         return;
                     }
-                    if (action.payload && action.payload.node && isDataTreeFolder(action.payload.node)) {
-                        action.payload.node.name = action.payload.newName;
-                        state.currentFolder = nodeWithoutChildren(action.payload.node) as IDataTreeFolder;
+
+                    // если id удаляемой ноды совпадает с текущей активной папкой то и ее удаляем
+                    if (state.currentFolder && state.currentFolder.id === deletedNode.id && isDataTreeFolder(deletedNode)) {
+                        state.currentFolder = undefined;
+                        // если в нутри удаленной папки была активная заметка то ее удаляем из стора
+                        if (state.currentNote && getNodeById(deletedNode, state.currentNote.id)) {
+                            state.currentNote = undefined;
+                        }
+                    }
+                },
+            }
+        ),
+        // удалить компонент внутри заметки
+        deleteNoteComponent: create.asyncThunk<{ noteId: string; componentId: string }, { updatedNote: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const updatedNote = deleteComponentInNote(datasSave, payload.noteId, payload.componentId);
+
+                if (updatedNote) {
+                    return { updatedNote: updatedNote };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNote) return;
+                    let {
+                        payload: { updatedNote },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNote.id || !isDataTreeNote(updatedNote)) return;
+
+                    state.currentNote = updatedNote;
+                },
+            }
+        ),
+        // обновляем component.value в активной заметке и в indexedDB
+        updateNoteComponentValue: create.asyncThunk<{ noteId: string; componentId: string; newValue: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const updatedNode = updateNodeValue(datasSave, payload.noteId, payload.componentId, payload.newValue);
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
+        // переименование ноды
+        renameNodeName: create.asyncThunk<{ nodeId: string; newName: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const updatedNode = updateNodeName(datasSave, payload.nodeId, payload.newName);
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (state.currentNote && state.currentNote.id === updatedNode.id && isDataTreeNote(updatedNode)) {
+                        state.currentNote = updatedNode;
+                        return;
+                    }
+
+                    // если id изменяемой ноды совпадает с id текущей папки, то обновляем данные и в сторе
+                    if (state.currentFolder && state.currentFolder.id === updatedNode.id && isDataTreeFolder(updatedNode)) {
+                        state.currentFolder = nodeWithoutChildren(updatedNode) as IDataTreeFolder;
                     }
                 },
             }
@@ -109,16 +175,7 @@ const saveDataInspectSlice = createAppSlice({
     }),
 });
 
-export const {
-    setCurrentFolder,
-    setCurrentNote,
-    updateNote,
-    deleteCurrentNote_and_noteIndb,
-    deleteCurrentFolder_and_folderIndb,
-    deleteFolderInDb,
-    deleteNoteInDb,
-    renameNodeName,
-} = saveDataInspectSlice.actions;
+export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
 export type { ISaveDataInspectStore };

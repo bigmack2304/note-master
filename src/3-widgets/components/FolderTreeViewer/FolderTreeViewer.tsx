@@ -8,23 +8,14 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import {
-    setCurrentNote,
-    setCurrentFolder,
-    deleteCurrentNote_and_noteIndb,
-    deleteCurrentFolder_and_folderIndb,
-    deleteFolderInDb,
-    deleteNoteInDb,
-} from "5-app/GlobalState/saveDataInspectStore";
+import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
-import { getNodeById } from "2-features/utils/saveDataParse";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
-import { renameNodeName } from "5-app/GlobalState/saveDataInspectStore";
 
 type TFolderTreeViewerProps = {};
 
@@ -79,10 +70,6 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
-        // через setTimeout чтобы анимация DopContextMenu успела проигратся при закрытии
-        // setTimeout(() => {
-        //     clickedNodeDataRef.current = null;
-        // });
     };
 
     // элементы контекстного меню
@@ -97,35 +84,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const onDeleteClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
         if (!clickedNodeDataRef.current || !dataValue) return;
-
-        // удаляем папку
-        if (isDataTreeFolder(clickedNodeDataRef.current)) {
-            if (currentNote) {
-                // проверяем что активная заметка не является частью этой папки
-                let treeFolder = getNodeById(dataValue, clickedNodeDataRef.current.id);
-                if (treeFolder && getNodeById(treeFolder, currentNote.id)) {
-                    dispatch(setCurrentNote(undefined));
-                }
-            }
-
-            // если эта папка активная то удаляем ее из стора
-            if (currentFolder && currentFolder.id === clickedNodeDataRef.current.id) {
-                dispatch(deleteCurrentFolder_and_folderIndb([clickedNodeDataRef.current, dataValue]));
-                return;
-            }
-
-            dispatch(deleteFolderInDb([clickedNodeDataRef.current, dataValue]));
-        }
-        // удаляем заметку
-        if (isDataTreeNote(clickedNodeDataRef.current)) {
-            // если удаляемая заметка эта текущая заметка
-            if (currentNote && currentNote.id === clickedNodeDataRef.current.id) {
-                dispatch(deleteCurrentNote_and_noteIndb([clickedNodeDataRef.current, dataValue]));
-                return;
-            }
-
-            dispatch(deleteNoteInDb([clickedNodeDataRef.current, dataValue]));
-        }
+        dispatch(deleteNoteOrFolder({ nodeId: clickedNodeDataRef.current.id }));
     };
 
     const onNewFolderClick = (e: React.MouseEvent) => {
@@ -143,7 +102,6 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onSaveCloseRDialog = (newValue: string) => {
         setIsRenameDialogOpen(false);
-        //TODO: добавить возможность переименовать содержимое
         if (!clickedNodeDataRef.current) return;
         dispatch(renameNodeName({ newName: newValue, nodeId: clickedNodeDataRef.current.id }));
     };

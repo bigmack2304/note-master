@@ -5,9 +5,7 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { updateNote } from "5-app/GlobalState/saveDataInspectStore";
-import { updateNodeValue } from "2-features/utils/saveDataEdit";
-import { deleteComponentInNote } from "2-features/utils/saveDataEdit";
+import { updateNoteComponentValue, deleteNoteComponent } from "5-app/GlobalState/saveDataInspectStore";
 
 type TEditableHeaderProps = {
     defaultText?: string;
@@ -50,12 +48,12 @@ function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditab
         setHeaderValue("");
 
         if (!edit_id || !currentNoteData) return;
-        dispatch(updateNote(updateNodeValue(currentNoteData, edit_id, "")));
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: "" }));
     };
 
     const onMenuDelete = () => {
         if (!edit_id || !currentNoteData) return;
-        dispatch(updateNote(deleteComponentInNote(currentNoteData, edit_id)));
+        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: edit_id }));
     };
 
     // клики в форме редактирования
@@ -68,7 +66,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditab
         setHeaderValue(inputValue);
 
         if (!edit_id || !currentNoteData) return;
-        dispatch(updateNote(updateNodeValue(currentNoteData, edit_id, inputValue)));
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
     };
 
     return (

@@ -80,4 +80,4 @@ interface IDataSave {
     data_tree: IDataTreeRootFolder;
 }
 
-export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode };
+export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode, IDataTreeRootFolder };

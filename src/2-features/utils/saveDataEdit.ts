@@ -1,6 +1,6 @@
 import { getNodeById, getAllIdsInNode } from "./saveDataParse";
 import { setTempDataDB, getTempDataDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataSave, IDataTreeNote, IDataTreeFolder } from "0-shared/types/dataSave";
+import type { TchildrenType, TNoteBody, IDataSave, IDataTreeFolder } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 // функции для применения изменений к tempData в indexedDB
@@ -30,79 +30,82 @@ function mergeNodeById(newNode: TchildrenType) {
 
 /**
  * изменяет своиство value в обьекте заметки
- * @param note обьект заметки
- * @param target_id id компонента в котором нужно поменять value
+ * @param rootFolder обьект IDataSave
+ * @param noteId id компонента в котором нужно поменять value
+ * @param componentId id компонента в котором меняется value
  * @param newValue новое значение value
  * @returns
  */
-function updateNodeValue(note: IDataTreeNote, target_id: string, newValue: string) {
-    const cloneNode = JSON.parse(JSON.stringify(note)) as IDataTreeNote;
+function updateNodeValue(rootFolder: IDataSave, noteId: string, componentId: string, newValue: string) {
+    let targetNote = getNodeById(rootFolder, noteId);
 
-    for (let component of cloneNode.body) {
-        if (component.id !== target_id) continue;
-        component.value = newValue;
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== componentId) continue;
+            component.value = newValue;
+            break;
+        }
+        setTempDataDB({ value: rootFolder });
     }
 
-    return cloneNode;
+    return targetNote;
 }
-/////////////////////////////////////////////////////
-/**
- * изменяет своиство value в обьекте заметки
- * @param note обьект заметки
- * @param target_id id компонента в котором нужно поменять value
- * @param newValue новое значение value
- */
-function updateNodeName(target_id: string, newName: string) {
-    const onGetNode = (node: TchildrenType, allTempData: IDataSave) => {
-        if (node) {
-            node.name = newName;
-            setTempDataDB({ value: allTempData });
-        }
-    };
 
-    getTempDataDB({
-        callback(value) {
-            if (!value) return;
-            let targetNode = getNodeById(value, target_id);
-            if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
-                onGetNode(targetNode, value);
-            }
-        },
-    });
+/**
+ * изменяет своиство Name в ноде дерева
+ * @param rootFolder обьект IDataSave
+ * @param target_id id компонента в котором нужно поменять Name
+ * @param newValue новое значение Name
+ */
+function updateNodeName(rootFolder: IDataSave, target_id: string, newName: string) {
+    let targetNode = getNodeById(rootFolder, target_id);
+
+    if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
+        targetNode.name = newName;
+        setTempDataDB({ value: rootFolder });
+    }
+
+    return targetNode;
 }
 
 /**
  * удаление компонента из заметки
- * @param note заметка
- * @param target_id id компонента который нужно удалить
+ * @param rootFolder обьект IDataSave
+ * @param noteID id заметки
+ * @param componentID id компонента который нужно удалить
  */
-function deleteComponentInNote(note: IDataTreeNote, target_id: string) {
+function deleteComponentInNote(rootFolder: IDataSave, noteID: string, componentID: string) {
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
-    const cloneNode = JSON.parse(JSON.stringify(note)) as IDataTreeNote;
 
-    cloneNode.body = cloneNode.body.filter((item) => {
-        if (item.id === target_id) {
-            insIdGenerator.deleteId(target_id);
-            return false;
-        }
-        return true;
-    });
+    let targetNote = getNodeById(rootFolder, noteID);
 
-    return cloneNode;
+    if (targetNote && isDataTreeNote(targetNote)) {
+        targetNote.body = targetNote.body.filter((item) => {
+            if (item.id === componentID) {
+                insIdGenerator.deleteId(componentID);
+                return false;
+            }
+            return true;
+        });
+
+        setTempDataDB({ value: rootFolder });
+    }
+    return targetNote;
 }
 
 /**
- * удаляет ноду по id из tempData в indexedDB
+ * удаляет ноду типа TchildrenType по id из tempData в indexedDB
  * @param data - обьект сохранения IDataSave
  * @param target_id - id ноды которую нужно удалить
  */
 function deleteById(data: IDataSave, target_id: string) {
     let parent: IDataTreeFolder;
+    let deletedNode: TchildrenType | undefined;
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
-    const finder = (node: TchildrenType | TNoteBody) => {
+    const finder = (node: TchildrenType) => {
         if (node.id === target_id && node.id !== "root") {
             parent.children = parent.children!.filter((child) => {
                 if (child.id === target_id) {
@@ -110,6 +113,7 @@ function deleteById(data: IDataSave, target_id: string) {
                         getAllIdsInNode(child).map((id) => insIdGenerator.deleteId(id));
                     }
                     insIdGenerator.deleteId(target_id);
+                    deletedNode = child;
                     return false;
                 }
                 return true;
@@ -134,6 +138,7 @@ function deleteById(data: IDataSave, target_id: string) {
     let result = finder(data.data_tree);
     if (!result) throw new Error(`node not found`);
     setTempDataDB({ value: data });
+    return deletedNode;
 }
 
 export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName };
