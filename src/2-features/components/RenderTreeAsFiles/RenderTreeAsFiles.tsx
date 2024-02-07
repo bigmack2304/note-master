@@ -5,7 +5,7 @@ import type { TchildrenType } from "0-shared/types/dataSave";
 import { isDataTreeFolder } from "0-shared/utils/typeHelpers";
 
 type TRenderTreeAsFileProps = {
-    node: TchildrenType;
+    node: TchildrenType | undefined;
     onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
     onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
 };
@@ -17,7 +17,10 @@ type TRenderTreeAsFileProps = {
  * @prop onNodeContextCallback(nodeData, event) - колбек сработает при попытке вызвать контекстное меню на ноде.
  * @returns
  */
+
 function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }: TRenderTreeAsFileProps) {
+    if (!node) return <></>;
+
     const nodeData = nodeWithoutChildren(node);
 
     const onClick = (e: React.MouseEvent) => {
