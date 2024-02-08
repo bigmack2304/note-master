@@ -1,20 +1,29 @@
-import { DataNode } from "./saveDataNode";
-import type { IDataTreeNote, TNoteBody, TNodeType } from "0-shared/types/dataSave";
+import type { IDataTreeNote } from "0-shared/types/dataSave";
+import { savedIdGenerator } from "0-shared/utils/idGenerator";
 
 /**
  *  класс для создания новых заметок в дереве IDataTreeRootFolder
  */
-class DataNote extends DataNode implements IDataTreeNote {
-    public name: string;
-    public tags: string[];
-    public body: TNoteBody[];
+class DataNote implements IDataTreeNote {
+    public name!: IDataTreeNote["name"];
+    public tags?: IDataTreeNote["tags"];
+    public body!: IDataTreeNote["body"];
+    public id!: IDataTreeNote["id"];
+    public type!: IDataTreeNote["type"];
 
     constructor(name: string, tags?: string[]) {
-        super("note");
+        const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
+        if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
-        this.name = name;
-        this.tags = tags || [];
-        this.body = [];
+        let that = Object.create(null) as IDataTreeNote;
+
+        that.name = name;
+        that.tags = tags || [];
+        that.body = [];
+        that.id = insIdGenerator.generateId();
+        that.type = "note";
+
+        return that;
     }
 }
 
