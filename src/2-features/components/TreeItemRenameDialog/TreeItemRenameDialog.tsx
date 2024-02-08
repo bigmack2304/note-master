@@ -18,6 +18,8 @@ const inputStyle: SxProps = {
 
 /**
  * Диалоговое окно для редактирования одной строки текста
+ * @ используется при периименовании фаила в блоке фаиловой структуры
+ *
  * @prop inputDefValue - дефолтный текст
  * @prop onClose - вызывается при закрытии окна
  * @prop onCloseSave - вызывается при сохранении текста
@@ -36,7 +38,7 @@ function TreeItemRenameDialog({ inputDefValue, onClose, onCloseSave, dialogHeade
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
-            <Input value={inputValue} placeholder="имя" onChange={onInputChange} sx={inputStyle} />
+            <Input value={inputValue} placeholder="имя" onChange={onInputChange} sx={inputStyle} required />
         </TreeEditDialig>
     );
 }

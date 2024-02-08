@@ -9,7 +9,6 @@ import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { SxProps, DialogProps, PaletteMode } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import FormControl from "@mui/material/FormControl";
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 

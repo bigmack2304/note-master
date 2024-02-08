@@ -66,6 +66,15 @@ function fontThemeColor(theme: PaletteMode) {
 }
 
 /**
+ * цвет текста для Chip
+ * @param theme текущая тема
+ * @returns
+ */
+function chipThemeColor(theme: PaletteMode) {
+    return theme === "light" ? "#00000017" : "#00000059";
+}
+
+/**
  * переопределяет стандартные стили компонентов material ui
  * @param theme
  * @param themeValue текущая тема
@@ -96,7 +105,33 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     },
                 },
             },
-
+            MuiChip: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: chipThemeColor(themeValue),
+                    },
+                },
+            },
+            MuiMenuItem: {
+                styleOverrides: {
+                    root: {
+                        "&.Mui-selected": {
+                            backgroundColor: !storeTheme.isDark ? "#0092e74f" : "#00b4ff52",
+                        },
+                        "&.Mui-selected:hover": {
+                            backgroundColor: !storeTheme.isDark ? "#0092e77d" : "#00b4ff1f",
+                        },
+                    },
+                },
+            },
+            MuiFormLabel: {
+                styleOverrides: {
+                    root: {
+                        // paddingRight: "7px",
+                        // backgroundColor: !storeTheme.isDark ? "inherit" : "inherit",
+                    },
+                },
+            },
             MuiDivider: {
                 defaultProps: {},
             },
