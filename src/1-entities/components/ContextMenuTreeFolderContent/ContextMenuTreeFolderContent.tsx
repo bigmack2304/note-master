@@ -18,6 +18,8 @@ type TContextMenuTreeFolderContentProps = {
     onDeleteClick?: (e: React.MouseEvent) => void;
     onMoveClick?: (e: React.MouseEvent) => void;
     isDelDisabled?: boolean;
+    isRenDisabled?: boolean;
+    isMowDisabled?: boolean;
     addClassNames?: string[];
 };
 
@@ -43,6 +45,8 @@ function ContextMenuTreeFolderContent({
     onNewFolderClick,
     onMoveClick,
     isDelDisabled = false,
+    isRenDisabled = false,
+    isMowDisabled = false,
 }: TContextMenuTreeFolderContentProps) {
     const defaultClassName = "ContextMenuTreeFolderContent";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
@@ -61,13 +65,13 @@ function ContextMenuTreeFolderContent({
                 </ListItemIcon>
                 <ListItemText>Добавить папку</ListItemText>
             </MenuItem>
-            <MenuItem className={genClassName} onClick={onRenameClick} sx={menuItemStyle}>
+            <MenuItem className={genClassName} onClick={onRenameClick} sx={menuItemStyle} disabled={isRenDisabled}>
                 <ListItemIcon>
                     <EditIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Переименовать</ListItemText>
             </MenuItem>
-            <MenuItem className={genClassName} onClick={onMoveClick} sx={menuItemStyle}>
+            <MenuItem className={genClassName} onClick={onMoveClick} sx={menuItemStyle} disabled={isMowDisabled}>
                 <ListItemIcon>
                     <DriveFileMoveIcon fontSize="small" />
                 </ListItemIcon>

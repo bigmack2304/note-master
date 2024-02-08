@@ -169,6 +169,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                         onNewFolderClick={onNewFolderClick}
                         onNewNoteClick={onNewNoteClick}
                         isDelDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
+                        isRenDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
+                        isMowDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                     />
                 ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
                     <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
