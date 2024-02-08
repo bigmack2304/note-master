@@ -1,11 +1,13 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataSave } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
-import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName } from "2-features/utils/saveDataEdit";
-import { getNodeById } from "2-features/utils/saveDataParse";
+import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo } from "2-features/utils/saveDataEdit";
+import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
+import { DataFolder } from "0-shared/utils/saveDataFolder";
+import { DataNote } from "0-shared/utils/saveDataNote";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -168,10 +170,73 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+        // добавление папки
+        addFolder: create.asyncThunk<{ nodeName: string; insertToId: string; color?: string }, { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const newNode = new DataFolder(payload.nodeName, payload.color);
+                const addedNode = await addNodeTo(datasSave, payload.insertToId, newNode);
+
+                if (addedNode) {
+                    return { addedNode: addedNode };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                },
+            }
+        ),
+        // добавление заметки
+        addNote: create.asyncThunk<
+            { nodeName: string; insertToId: string; tags?: string[] },
+            { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody; datasSave: IDataSave } | undefined
+        >(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                let datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const newNode = new DataNote(payload.nodeName);
+                const addedNode = await addNodeTo(datasSave, payload.insertToId, newNode);
+                datasSave = await getTempDataDB();
+
+                if (addedNode && datasSave) {
+                    return { addedNode, datasSave };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                    let {
+                        payload: { addedNode, datasSave },
+                    } = action;
+
+                    if (isDataTreeNote(addedNode)) {
+                        state.currentNote = addedNode;
+                        let nodeParent = getParentNode(datasSave, addedNode.id);
+
+                        if (isDataTreeFolder(nodeParent)) {
+                            state.currentFolder = nodeWithoutChildren(nodeParent) as IDataTreeFolder;
+                        }
+                    }
+                },
+            }
+        ),
     }),
 });
 
-export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent } = saveDataInspectSlice.actions;
+export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent, addFolder, addNote } =
+    saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
 export type { ISaveDataInspectStore };

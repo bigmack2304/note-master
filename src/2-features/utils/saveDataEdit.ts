@@ -1,7 +1,7 @@
 import { getNodeById, getAllIdsInNode } from "./saveDataParse";
 import { setTempDataDB, getTempDataDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataSave, IDataTreeFolder } from "0-shared/types/dataSave";
-import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import type { TchildrenType, TNoteBody, IDataSave, IDataTreeFolder, IDataTreeNote } from "0-shared/types/dataSave";
+import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 // функции для применения изменений к tempData в indexedDB
 
@@ -141,4 +141,33 @@ function deleteById(data: IDataSave, target_id: string) {
     return deletedNode;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName };
+/**
+ * Добавляет ноду в дерево
+ * @param data - обьект сохранения IDataSave
+ * @param insertToId - id ноды в которую нужно добавить
+ * @param newNode - обьект новой ноды (классы из 0-shared/utils/saveData... .ts)
+ */
+async function addNodeTo(data: IDataSave, insertToId: string, newNode: TchildrenType | TNoteBody): Promise<null | IDataTreeFolder | IDataTreeNote | TNoteBody> {
+    let targetNode = getNodeById(data, insertToId);
+
+    if (!targetNode) return null;
+
+    // в папку мы можем добавить другую папку или заметку
+    if (isDataTreeFolder(targetNode) && (isDataTreeFolder(newNode) || isDataTreeNote(newNode))) {
+        if (!targetNode.children) targetNode.children = [];
+        targetNode.children.push(newNode);
+        setTempDataDB({ value: data });
+        return newNode;
+    }
+
+    // в заметку мы можем добавить компонент
+    if (isDataTreeNote(targetNode) && isDataNoteBody(newNode)) {
+        targetNode.body.push(newNode);
+        setTempDataDB({ value: data });
+        return newNode;
+    }
+
+    return null;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo };

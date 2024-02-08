@@ -1,6 +1,5 @@
-import type { IDataSave, IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType } from "0-shared/types/dataSave";
+import type { IDataSave, IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import { getTempDataDB } from "./appIndexedDB";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 
@@ -110,10 +109,56 @@ function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined
     return null;
 }
 
-async function getNodeById_noRoot(find_id: string) {
-    let IDataSave = await getTempDataDB();
-    if (!IDataSave) return;
-    return getNodeById(IDataSave, find_id);
+/**
+ * ищет родителя ноды.
+ * @param rootNode обект типа IDataSave | TchildrenType | TNoteBody
+ * @param nodeId id ноды для которой нужно отыскать родителя
+ */
+function getParentNode(rootNode: IDataSave | TchildrenType | TNoteBody, nodeId: string): IDataTreeNote | IDataTreeFolder | TNoteBody | null {
+    type TTreeElement = IDataTreeNote | IDataTreeFolder | TNoteBody;
+
+    let parent: IDataTreeNote | IDataTreeFolder | IDataTreeRootFolder | undefined;
+
+    if ("data_tree" in rootNode) parent = rootNode.data_tree;
+    if ("children" in rootNode) parent = rootNode;
+    if ("body" in rootNode) parent = rootNode;
+    if (!parent) return null;
+
+    let result: TTreeElement | null;
+
+    const finder = (node: TTreeElement): TTreeElement | null => {
+        if (node.id === nodeId) {
+            return parent as TTreeElement;
+        }
+
+        if (isDataTreeFolder(node)) {
+            if (node.children) {
+                let saveParent = parent;
+                parent = node;
+                for (let child of node.children) {
+                    let finder_result = finder(child);
+                    if (finder_result) return finder_result;
+                }
+                parent = saveParent;
+            }
+            return null;
+        }
+
+        if (isDataTreeNote(node)) {
+            let saveParent = parent;
+            parent = node;
+            for (let component of node.body) {
+                let finder_result = finder(component);
+                if (finder_result) return finder_result;
+            }
+            parent = saveParent;
+        }
+
+        return null;
+    };
+
+    result = finder(parent);
+    return result;
 }
 
-export { getAllIds, getNodeById, getAllIdsInNode, getNodeById_noRoot };
+export { getAllIds, getNodeById, getAllIdsInNode, getParentNode };

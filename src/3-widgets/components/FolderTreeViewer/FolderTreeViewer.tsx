@@ -9,7 +9,7 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName } from "5-app/GlobalState/saveDataInspectStore";
+import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
@@ -17,6 +17,8 @@ import type { SxProps } from "@mui/material";
 import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
+import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
+import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 
 type TFolderTreeViewerProps = {};
 
@@ -38,13 +40,15 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
     const [renamedItemName, setRenamedItemName] = useState<string>("");
+    const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState<boolean>(false);
+    const [isNewNoteDialogOpen, setIsNewNoteDialogOpen] = useState<boolean>(false);
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
-    const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик, апоминаем значение без лишнего обновления
+    const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
 
     useIndexedDBTempDataUpdate(() => {
         setIsNeedUpdate(true);
@@ -93,10 +97,16 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     const onNewFolderClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
+
+        if (!clickedNodeDataRef.current || !dataValue) return;
+        setIsNewFolderDialogOpen(true);
     };
 
     const onNewNoteClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
+
+        if (!clickedNodeDataRef.current || !dataValue) return;
+        setIsNewNoteDialogOpen(true);
     };
 
     // функции Rename Dialog
@@ -108,6 +118,28 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         setIsRenameDialogOpen(false);
         if (!clickedNodeDataRef.current) return;
         dispatch(renameNodeName({ newName: newValue, nodeId: clickedNodeDataRef.current.id }));
+    };
+
+    // функции new folder Dialog
+    const onCloseNFDialog = () => {
+        setIsNewFolderDialogOpen(false);
+    };
+
+    const onSaveCloseNFDialog = (inputValue: string, selectValue: string) => {
+        setIsNewFolderDialogOpen(false);
+        if (!clickedNodeDataRef.current) return;
+        dispatch(addFolder({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, color: selectValue }));
+    };
+
+    // функции new note Dialog
+    const onCloseNNDialog = () => {
+        setIsNewNoteDialogOpen(false);
+    };
+
+    const onSaveCloseNNDialog = (inputValue: string, selectValue: string[]) => {
+        setIsNewNoteDialogOpen(false);
+        if (!clickedNodeDataRef.current) return;
+        dispatch(addNote({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, tags: selectValue }));
     };
 
     // получение данных из IndexedDB
@@ -144,6 +176,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
             </DopContextMenu>
 
             {isRenameDialogOpen && <TreeItemRenameDialog dialogHeader="Изменить имя" inputDefValue={renamedItemName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
+            {isNewFolderDialogOpen && <TreeAddFolderDialog dialogHeader="Новая папка" onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
+            {isNewNoteDialogOpen && <TreeAddNoteDialog dialogHeader="Новая заметка" onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
         </Box>
     );
 }
