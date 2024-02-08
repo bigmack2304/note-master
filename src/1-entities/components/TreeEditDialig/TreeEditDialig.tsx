@@ -9,6 +9,7 @@ import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { SxProps, DialogProps, PaletteMode } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
+import FormControl from "@mui/material/FormControl";
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 
@@ -39,9 +40,10 @@ const dialogTitleStyle = (theme: PaletteMode) => {
 const dialogContentStyle: SxProps = {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
     overflow: "hidden",
     overflowY: "auto",
+    alignItems: "stretch",
+    rowGap: "25px",
 };
 
 const dialogActionsStyle = (theme: PaletteMode) => {
@@ -65,7 +67,8 @@ function TreeEditDialig({ children, isOpen, dialogSettings, onClose, onCloseSave
         onClose && onClose(event, reason);
     };
 
-    const handleCloseSaveDialog = () => {
+    const handleCloseSaveDialog = (e: React.FormEvent) => {
+        e.preventDefault();
         const event = {};
         const reason = "escapeKeyDown";
         onCloseSave && onCloseSave(event, reason);
@@ -75,20 +78,22 @@ function TreeEditDialig({ children, isOpen, dialogSettings, onClose, onCloseSave
 
     return (
         <Dialog open={isOpen} sx={dialogStyle} {...dialogSettings} onClose={onClose}>
-            <div style={dialogTitleStyle(themeValue) as React.CSSProperties}>
-                <DialogTitle>{headerText}</DialogTitle>
-                <CloseButton onClick={handleCloseDialog}></CloseButton>
-            </div>
-            <DialogContent dividers sx={dialogContentStyle}>
-                {children}
-            </DialogContent>
-            <DialogActions sx={dialogActionsStyle(themeValue)}>
-                <div className="SettingsContent__actionsInner">
-                    <Button variant="contained" onClick={handleCloseSaveDialog}>
-                        Сохранить
-                    </Button>
+            <form onSubmit={handleCloseSaveDialog} autoComplete="off">
+                <div style={dialogTitleStyle(themeValue) as React.CSSProperties}>
+                    <DialogTitle>{headerText}</DialogTitle>
+                    <CloseButton onClick={handleCloseDialog}></CloseButton>
                 </div>
-            </DialogActions>
+                <DialogContent dividers sx={dialogContentStyle}>
+                    {children}
+                </DialogContent>
+                <DialogActions sx={dialogActionsStyle(themeValue)}>
+                    <div className="SettingsContent__actionsInner">
+                        <Button variant="contained" type="submit">
+                            Сохранить
+                        </Button>
+                    </div>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 }
