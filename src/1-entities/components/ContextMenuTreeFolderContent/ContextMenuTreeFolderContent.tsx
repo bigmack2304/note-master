@@ -7,6 +7,7 @@ import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import type { SxProps } from "@mui/material";
+import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 
 // содержимое для DopContextMenu. с вариантом редактирования
 
@@ -15,6 +16,7 @@ type TContextMenuTreeFolderContentProps = {
     onNewNoteClick?: (e: React.MouseEvent) => void;
     onNewFolderClick?: (e: React.MouseEvent) => void;
     onDeleteClick?: (e: React.MouseEvent) => void;
+    onMoveClick?: (e: React.MouseEvent) => void;
     isDelDisabled?: boolean;
     addClassNames?: string[];
 };
@@ -30,6 +32,7 @@ const menuItemStyle: SxProps = {
  * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
  * @prop onNewFolderClick - вызывается при нажатии на кнопку "Добавить папку"
  * @prop onNewNoteClick - вызывается при нажатии на кнопку "Добавить заметку"
+ * @prop onMoveClick - вызывается при нажатии на кнопку "Переместить"
  * @prop isDelDisabled - будетли кнопка удалять не доступна?
  */
 function ContextMenuTreeFolderContent({
@@ -38,6 +41,7 @@ function ContextMenuTreeFolderContent({
     onDeleteClick,
     onNewNoteClick,
     onNewFolderClick,
+    onMoveClick,
     isDelDisabled = false,
 }: TContextMenuTreeFolderContentProps) {
     const defaultClassName = "ContextMenuTreeFolderContent";
@@ -62,6 +66,12 @@ function ContextMenuTreeFolderContent({
                     <EditIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Переименовать</ListItemText>
+            </MenuItem>
+            <MenuItem className={genClassName} onClick={onMoveClick} sx={menuItemStyle}>
+                <ListItemIcon>
+                    <DriveFileMoveIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Переместить</ListItemText>
             </MenuItem>
             <MenuItem className={genClassName} onClick={onDeleteClick} sx={menuItemStyle} disabled={isDelDisabled}>
                 <ListItemIcon>
