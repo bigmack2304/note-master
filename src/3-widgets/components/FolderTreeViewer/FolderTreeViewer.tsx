@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TreeView } from "@mui/x-tree-view/TreeView";
-import { MemoTreeView } from "1-entities/components/CustomTreeView/CustomTreeView";
+import { MemoTreeView, CustomTreeView } from "1-entities/components/CustomTreeView/CustomTreeView";
 import Box from "@mui/material/Box";
 import { useIndexedDBTempDataUpdate } from "0-shared/hooks/useIndexedDBTempUpdate";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
@@ -52,23 +52,25 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     });
 
     // клик по ноде
-    const onClickNode = useCallback((nodeData: TchildrenType, e: React.MouseEvent) => {
+    const onClickNode = (nodeData: TchildrenType, e: React.MouseEvent) => {
         e.stopPropagation();
         if (isDataTreeFolder(nodeData)) {
+            if (currentFolder && currentFolder.id === nodeData.id) return;
             dispatch(setCurrentFolder(nodeData));
         }
         if (isDataTreeNote(nodeData)) {
+            if (currentNote && currentNote.id === nodeData.id) return;
             dispatch(setCurrentNote(nodeData));
         }
-    }, []);
+    };
 
     // контекстное меню папок и заметок
-    const onNodeContext = useCallback((nodeData: TchildrenType, e: React.MouseEvent) => {
+    const onNodeContext = (nodeData: TchildrenType, e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
         clickedNodeDataRef.current = nodeData;
         setContextMenuAnchorEl(e.currentTarget as HTMLElement);
-    }, []);
+    };
 
     const onContextMenuClose = () => {
         setContextMenuAnchorEl(null);
@@ -120,16 +122,13 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     return (
         <Box sx={FolderTreeViewerStyle}>
-            <MemoTreeView
-                isRender={Boolean(dataValue)}
-                TreeViewSettings={{ "aria-label": "структура заметок", defaultCollapseIcon: <ExpandMoreIcon />, defaultExpandIcon: <ChevronRightIcon /> }}
-            >
+            <CustomTreeView TreeViewSettings={{ "aria-label": "структура заметок", defaultCollapseIcon: <ExpandMoreIcon />, defaultExpandIcon: <ChevronRightIcon /> }}>
                 {RenderTreeAsFile({
                     node: dataValue?.data_tree,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
                 })}
-            </MemoTreeView>
+            </CustomTreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
                 {clickedNodeDataRef.current && isDataTreeFolder(clickedNodeDataRef.current) ? (
                     <ContextMenuTreeFolderContent
