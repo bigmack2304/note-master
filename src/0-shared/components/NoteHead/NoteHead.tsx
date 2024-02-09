@@ -22,7 +22,6 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
             ? {}
             : {
                   minHeight: "3rem",
-                  width: "clamp(10px, 300px, 100%)",
                   backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
                   borderRadius: "3px",
               }),
@@ -39,9 +38,16 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
  */
 function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteHeadProps) {
     const defaultClassName = "NoteHead";
-    const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
+
+    // если children пуст, то добавляем в Typography класс text_empty
+    if (!isChildren) {
+        let tempClassName = genClassName.split(" ");
+        tempClassName.push("text_empty");
+        genClassName = tempClassName.join(" ");
+    }
 
     return (
         <Typography className={genClassName} variant="h4" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)} {...typographySettings}>

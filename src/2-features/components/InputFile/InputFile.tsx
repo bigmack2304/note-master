@@ -6,12 +6,15 @@ import { inputLoadStringHandler } from "2-features/utils/inputLoadStringHandler"
 import { setTempDataDB } from "2-features/utils/appIndexedDB";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
 import { getAllIds } from "2-features/utils/saveDataParse";
+import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 
 type TInputFileProps = {
     inputSettings?: React.InputHTMLAttributes<HTMLInputElement>;
 };
 
 function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInputElement | null>) {
+    const dispatch = useAppDispatch();
     const inputElement = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => inputElement.current!, [inputElement.current]);
 
@@ -24,7 +27,7 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file: File | null = e.target.files ? e.target.files[0] : null;
-
+        dispatch(setIsOpen({ isOpen: false }));
         if (!file) return;
         fileReader.readAsText(file);
     };

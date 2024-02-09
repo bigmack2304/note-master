@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { LeftMenu } from "0-shared/components/LeftMenu/LeftMenu";
 import { MenuButton } from "1-entities/components/MenuButton/MenuButton";
 import { MenuContent } from "1-entities/components/MenuContent/MenuContent";
 import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import { toggleLeftMenu, setIsOpen } from "5-app/GlobalState/leftMenuStore";
 
 type TToggleMenuButtonProps = {
     menuContentProps?: TMenuContentProps;
@@ -13,14 +16,15 @@ type TToggleMenuButtonProps = {
  * @returns
  */
 function ToggleMenuButton({ menuContentProps }: TToggleMenuButtonProps) {
-    const [isLeftMenuOpen, setIsLeftMenuOpen] = useState(false);
+    const isLeftMenuOpen = useAppSelector((state) => state.leftMenu.isOpen);
+    const dispatch = useAppDispatch();
 
     const onOpenMenu = (e: React.MouseEvent) => {
-        setIsLeftMenuOpen((isOpen) => !isOpen);
+        dispatch(toggleLeftMenu());
     };
 
     const onCloseMenu = (event: React.KeyboardEvent | React.MouseEvent) => {
-        setIsLeftMenuOpen(false);
+        dispatch(setIsOpen({ isOpen: false }));
     };
 
     return (

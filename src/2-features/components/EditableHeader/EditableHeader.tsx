@@ -11,6 +11,7 @@ type TEditableHeaderProps = {
     defaultText?: string;
     editable?: boolean;
     edit_id?: string;
+    addClassNames?: string[];
 };
 
 /**
@@ -18,9 +19,9 @@ type TEditableHeaderProps = {
  * @prop defaultText - значение по умолчанию
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
  * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
- * @returns
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditableHeaderProps) {
+function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [] }: TEditableHeaderProps) {
     const [isEdit, setIsEdit] = useState(editable);
     const [headerValue, setHeaderValue] = useState(defaultText);
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -72,10 +73,10 @@ function EditableHeader({ defaultText = "", editable = false, edit_id }: TEditab
     return (
         <>
             {isEdit ? (
-                <ClosableOneLineTextInput addClassNames={["note__head"]} inputDefValue={headerValue} placeholder="заголовок" onClose={onInputExit} onCloseSave={onInputSave} />
+                <ClosableOneLineTextInput addClassNames={addClassNames} inputDefValue={headerValue} placeholder="заголовок" onClose={onInputExit} onCloseSave={onInputSave} />
             ) : (
                 <>
-                    <NoteHead addClassNames={["note__head"]} onContextMenu={onClickMoreActions}>
+                    <NoteHead addClassNames={addClassNames} onContextMenu={onClickMoreActions}>
                         {headerValue}
                     </NoteHead>
 

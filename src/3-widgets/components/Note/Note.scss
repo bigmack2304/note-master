@@ -1,7 +1,19 @@
 .note {
 }
 
+// заголовок, включая форму редактирования
 .note .note__head {
     text-align: center;
     align-self: center;
+    width: 100%;
+}
+
+// заголовок с тестом
+.note h4[class~="note__head"] {
+    width: initial;
+}
+
+// заголовок с без текста
+.note h4[class~="note__head"][class~="text_empty"] {
+    width: 100%;
 }
