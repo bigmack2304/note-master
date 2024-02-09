@@ -3,7 +3,7 @@ import { useFileReader } from "0-shared/hooks/useFileReader";
 import type { Ref } from "0-shared/utils/typeHelpers";
 import type { IDataSave } from "0-shared/types/dataSave";
 import { inputLoadStringHandler } from "2-features/utils/inputLoadStringHandler";
-import { setTempDataDB } from "2-features/utils/appIndexedDB";
+import { setTempDataDB, setAllTempDataDB } from "2-features/utils/appIndexedDB";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
 import { getAllIds } from "2-features/utils/saveDataParse";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
@@ -20,7 +20,8 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
 
     const onSucessLoad = (data: IDataSave) => {
         savedIdGenerator.instatnceIdGenerator = new IdGenerator(getAllIds(data));
-        setTempDataDB({ value: data });
+        //setTempDataDB({ value: data });
+        setAllTempDataDB({ value: data });
     };
 
     const fileReader = useFileReader<IDataSave>({ loadHandler: inputLoadStringHandler, loadSucessCallback: onSucessLoad });
