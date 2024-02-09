@@ -1,0 +1,20 @@
+.NoteTagList {
+    display: flex;
+    column-gap: 10px;
+    padding: 5px;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.NoteTagList .NoteTagList__tags_head {
+    align-self: flex-start;
+}
+
+.NoteTagList .NoteTagList__tags {
+    display: flex;
+    gap: 5px;
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
