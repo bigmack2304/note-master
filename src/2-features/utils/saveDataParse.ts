@@ -13,21 +13,18 @@ function getAllIds(data: IDataSave) {
     const { data_tree } = data;
 
     const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
-        for (let elem in node) {
-            if (elem === "id") {
-                if (allIds.has(node[elem])) throw new Error("Duplicate id in tempData");
-                allIds.add(node[elem]);
-                continue;
+        if (allIds.has(node.id)) throw new Error("Duplicate id in tempData");
+        allIds.add(node.id);
+
+        if (isDataTreeFolder(node) && node.children) {
+            for (let item of node.children) {
+                parser(item);
             }
-            if (elem === "children") {
-                for (let item of (node as IDataTreeFolder)[elem]!) {
-                    parser(item);
-                }
-            }
-            if (elem === "body") {
-                for (let item of (node as IDataTreeNote)[elem]) {
-                    parser(item);
-                }
+        }
+
+        if (isDataTreeNote(node)) {
+            for (let item of node.body) {
+                parser(item);
             }
         }
     };
@@ -39,7 +36,7 @@ function getAllIds(data: IDataSave) {
 
 /**
  * возвращает массив всех вложенных id внутри Node
- * @param folder обьект типа IDataTreeFolder | IDataTreeNote
+ * @param node обьект типа IDataTreeFolder | IDataTreeNote внутри которого нужно собрать id
  */
 function getAllIdsInNode(node: IDataTreeFolder | IDataTreeNote) {
     const allIds = new Set<string>();
