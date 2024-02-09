@@ -4,23 +4,29 @@ import ColorLensIcon from "@mui/icons-material/ColorLens";
 import { ToggleThemeButton } from "2-features/components/ToggleThemeButton/ToggleThemeButton";
 import type { SxProps } from "@mui/material";
 import "./SettingsContent.scss";
-import { OUTLINE_LIGHT_COLOR } from "5-app/settings";
+import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
+import type { PaletteMode } from "@mui/material";
+import { useTemeMode } from "0-shared/hooks/useThemeMode";
 
 type TSettingsContentProps = {};
 
-const dialogListStyle: SxProps = {
-    width: "clamp(0px, 1000px, 100%)",
-    outline: `1px ${OUTLINE_LIGHT_COLOR} solid`,
-    borderRadius: "10px",
+const dialogListStyle = (theme: PaletteMode) => {
+    return {
+        width: "clamp(0px, 1000px, 100%)",
+        outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
+        borderRadius: "10px",
+    } as SxProps;
 };
 
 /**
  * содержимое для DialogWindow, (страница с настройками)
  */
 function SettingsContent({}: TSettingsContentProps) {
+    const themeValue = useTemeMode();
+
     return (
         <>
-            <List sx={dialogListStyle}>
+            <List sx={dialogListStyle(themeValue)}>
                 <ListItem>
                     <ListItemIcon>
                         <ColorLensIcon />

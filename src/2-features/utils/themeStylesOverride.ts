@@ -43,7 +43,7 @@ function backgroundThemeColor(theme: PaletteMode) {
  * @returns
  */
 function svgThemeColor(theme: PaletteMode) {
-    return theme === "light" ? "#212121" : "#fbffff";
+    return theme === "light" ? "#303030" : "#fbffff";
 }
 
 /**
@@ -94,7 +94,10 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
             MuiSvgIcon: {
                 styleOverrides: {
                     root: {
-                        color: svgThemeColor(themeValue),
+                        // применяем свой цвет только если он уже не задан через color
+                        "&:not([class*=MuiSvgIcon-color])": {
+                            color: svgThemeColor(themeValue),
+                        },
                     },
                 },
             },

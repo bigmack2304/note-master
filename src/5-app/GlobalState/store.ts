@@ -3,13 +3,15 @@ import { themeSlice } from "./themeStore"; // реэкспорт через ин
 import { ToolBarSlice } from "./toolBarStore";
 import { saveDataInspectSlice } from "./saveDataInspectStore";
 import { leftMenuSlice } from "./leftMenuStore";
+import { editDataSlice } from "./noteStore";
 
 const store = configureStore({
     reducer: {
-        theme: themeSlice.reducer,
-        toolBar: ToolBarSlice.reducer,
-        saveDataInspect: saveDataInspectSlice.reducer,
-        leftMenu: leftMenuSlice.reducer,
+        [themeSlice.name]: themeSlice.reducer,
+        [ToolBarSlice.name]: ToolBarSlice.reducer,
+        [saveDataInspectSlice.name]: saveDataInspectSlice.reducer,
+        [leftMenuSlice.name]: leftMenuSlice.reducer,
+        [editDataSlice.name]: editDataSlice.reducer,
     },
 });
 
