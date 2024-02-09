@@ -9,16 +9,17 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote } from "5-app/GlobalState/saveDataInspectStore";
+import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
-import type { IDataSave, TchildrenType } from "0-shared/types/dataSave";
+import type { IDataSave, TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
+import { TreeItemMoveDialog } from "2-features/components/TreeItemMoveDialog/TreeItemMoveDialog";
 
 type TFolderTreeViewerProps = {};
 
@@ -39,9 +40,10 @@ const FolderTreeViewerStyle: SxProps = {
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [dataValue, setDataValue] = useState<IDataSave>();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
-    const [renamedItemName, setRenamedItemName] = useState<string>("");
+    const [contextNodeName, setContextNodeName] = useState<string>(""); // имя ноды на которой открывается контекстное меню
     const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState<boolean>(false);
     const [isNewNoteDialogOpen, setIsNewNoteDialogOpen] = useState<boolean>(false);
+    const [isMoveDialogOpen, setIsMoveDialogOpen] = useState<boolean>(false);
     const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
@@ -86,7 +88,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
         if (!clickedNodeDataRef.current || !dataValue) return;
         setIsRenameDialogOpen(true);
-        setRenamedItemName(clickedNodeDataRef.current.name);
+        setContextNodeName(clickedNodeDataRef.current.name);
     };
 
     const onDeleteClick = (e: React.MouseEvent) => {
@@ -107,6 +109,14 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
         if (!clickedNodeDataRef.current || !dataValue) return;
         setIsNewNoteDialogOpen(true);
+    };
+
+    const onMoveClick = (e: React.MouseEvent) => {
+        setContextMenuAnchorEl(null);
+
+        if (!clickedNodeDataRef.current || !dataValue) return;
+        setIsMoveDialogOpen(true);
+        setContextNodeName(clickedNodeDataRef.current.name);
     };
 
     // функции Rename Dialog
@@ -142,6 +152,18 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         dispatch(addNote({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, tags: selectValue }));
     };
 
+    // функции move node dialog
+    const onCloseMNDialog = () => {
+        setIsMoveDialogOpen(false);
+    };
+
+    const onSaveCloseMNDialog = (inputValue: string, selectFolderJSON: string) => {
+        setIsMoveDialogOpen(false);
+        const objFolder = JSON.parse(selectFolderJSON) as IDataTreeFolder;
+        if (!clickedNodeDataRef.current || !objFolder) return;
+        dispatch(moveFolderOrNote({ muvedNodeID: clickedNodeDataRef.current.id, muveToID: objFolder.id }));
+    };
+
     // получение данных из IndexedDB
     if (isNeedUpdate) {
         getTempDataDB({
@@ -168,18 +190,20 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                         onRenameClick={onRenameClick}
                         onNewFolderClick={onNewFolderClick}
                         onNewNoteClick={onNewNoteClick}
+                        onMoveClick={onMoveClick}
                         isDelDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                         isRenDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                         isMowDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                     />
                 ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
-                    <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} />
+                    <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} onMoveClick={onMoveClick} />
                 ) : null}
             </DopContextMenu>
 
-            {isRenameDialogOpen && <TreeItemRenameDialog dialogHeader="Изменить имя" inputDefValue={renamedItemName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
+            {isRenameDialogOpen && <TreeItemRenameDialog dialogHeader="Изменить имя" inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
             {isNewFolderDialogOpen && <TreeAddFolderDialog dialogHeader="Новая папка" onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
             {isNewNoteDialogOpen && <TreeAddNoteDialog dialogHeader="Новая заметка" onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
+            {isMoveDialogOpen && <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />}
         </Box>
     );
 }

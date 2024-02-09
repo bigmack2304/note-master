@@ -1,5 +1,6 @@
 import type { IDataSave, IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import { nodeWithoutChildren } from "./saveDataUtils";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 
@@ -158,4 +159,29 @@ function getParentNode(rootNode: IDataSave | TchildrenType | TNoteBody, nodeId: 
     return result;
 }
 
-export { getAllIds, getNodeById, getAllIdsInNode, getParentNode };
+/**
+ * возвращает все папки внутри data, на любой вложенности
+ * @param data обьект сохранения IDataSave
+ * @returns
+ */
+function getAllFolders(data: IDataSave) {
+    const allFolders: IDataTreeFolder[] = [];
+    const { data_tree } = data;
+
+    const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
+        if (isDataTreeFolder(node)) {
+            allFolders.push(nodeWithoutChildren(node) as IDataTreeFolder);
+
+            if (!node.children) return;
+            for (let item of node.children) {
+                parser(item);
+            }
+        }
+    };
+
+    parser(data_tree);
+
+    return allFolders;
+}
+
+export { getAllIds, getNodeById, getAllIdsInNode, getParentNode, getAllFolders };

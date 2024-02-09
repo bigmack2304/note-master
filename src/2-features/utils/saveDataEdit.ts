@@ -1,4 +1,4 @@
-import { getNodeById, getAllIdsInNode } from "./saveDataParse";
+import { getNodeById, getAllIdsInNode, getParentNode } from "./saveDataParse";
 import { setTempDataDB, getTempDataDB } from "./appIndexedDB";
 import type { TchildrenType, TNoteBody, IDataSave, IDataTreeFolder, IDataTreeNote } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
@@ -170,4 +170,38 @@ async function addNodeTo(data: IDataSave, insertToId: string, newNode: Tchildren
     return null;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo };
+/**
+ * перемещает заметку или папку в другую папку
+ * @param data - обьект сохранения IDataSave
+ * @param muvedNodeID - id ноды которую перемещаем
+ * @param muveToID - id ноды куда перемещаем
+ */
+async function nodeMuveTo(data: IDataSave, muvedNodeID: string, muveToID: string): Promise<IDataTreeFolder | IDataTreeNote | TNoteBody | null> {
+    let muvedNode = getNodeById(data, muvedNodeID);
+    let muvedNodeParent = muvedNode && getParentNode(data, muvedNode.id);
+    let moveToNode = getNodeById(data, muveToID);
+
+    if (!muvedNode || !muvedNodeParent || !moveToNode) return null;
+    if (muvedNodeParent.id === moveToNode.id) return muvedNode; // если, откуда = куда перемещаем то ничего не делаем
+    if (moveToNode.id === muvedNodeID) return muvedNode; // чтобы нельзя было перемещать элементы самих в себя
+
+    // убераем muvedNode из дочерних элементов muvedNodeParent
+    if (isDataTreeFolder(muvedNodeParent)) {
+        muvedNodeParent.children = muvedNodeParent.children!.filter((element) => {
+            if (element.id === muvedNode!.id) return false;
+            return true;
+        });
+    }
+
+    if (isDataTreeFolder(moveToNode)) {
+        if (!isDataTreeFolder(muvedNode) && !isDataTreeNote(muvedNode)) return null;
+        if (!moveToNode.children) moveToNode.children = [];
+        moveToNode.children.push(muvedNode);
+        setTempDataDB({ value: data });
+        return muvedNode;
+    }
+
+    return null;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo };

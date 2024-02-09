@@ -3,7 +3,7 @@ import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
 import { getTempDataDB } from "2-features/utils/appIndexedDB";
-import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo } from "2-features/utils/saveDataEdit";
+import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
@@ -232,10 +232,32 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+        // перемещение папки или заметки в другую папку
+        moveFolderOrNote: create.asyncThunk<{ muvedNodeID: string; muveToID: string }, { muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const datasSave = await getTempDataDB();
+
+                if (!datasSave) return;
+
+                const muvedNode = await nodeMuveTo(datasSave, payload.muvedNodeID, payload.muveToID);
+
+                if (muvedNode) {
+                    return { muvedNode };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                },
+            }
+        ),
     }),
 });
 
-export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent, addFolder, addNote } =
+export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent, addFolder, addNote, moveFolderOrNote } =
     saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
