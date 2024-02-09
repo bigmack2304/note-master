@@ -1,4 +1,10 @@
 .note {
+    &__content_wrapper {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        flex-grow: 1;
+    }
 }
 
 // заголовок, включая форму редактирования
@@ -16,4 +22,15 @@
 // заголовок с без текста
 .note h4[class~="note__head"][class~="text_empty"] {
     width: 100%;
+}
+
+.note .note__editBlock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    border-radius: 10px;
+    padding: 5px;
 }
