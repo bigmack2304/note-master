@@ -69,7 +69,7 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
                     {allFolders.map((folder) => {
                         if (folder.name.includes(inputValue)) {
                             return (
-                                <MenuItem value={JSON.stringify(folder)} key={folder.id}>
+                                <MenuItem divider value={JSON.stringify(folder)} key={folder.id}>
                                     {folder.name}
                                 </MenuItem>
                             );

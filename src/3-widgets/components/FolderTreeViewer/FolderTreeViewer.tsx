@@ -135,10 +135,10 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         setIsNewFolderDialogOpen(false);
     };
 
-    const onSaveCloseNFDialog = (inputValue: string, selectValue: string) => {
+    const onSaveCloseNFDialog = (inputValue: string) => {
         setIsNewFolderDialogOpen(false);
         if (!clickedNodeDataRef.current) return;
-        dispatch(addFolder({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, color: selectValue }));
+        dispatch(addFolder({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, color: "" }));
     };
 
     // функции new note Dialog

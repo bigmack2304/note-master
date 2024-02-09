@@ -10,7 +10,8 @@ import FormControl from "@mui/material/FormControl";
 
 type TTreeAddFolderDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (inputValue: string, selectValue: string) => void;
+    //onCloseSave?: (inputValue: string, selectValue: string) => void;
+    onCloseSave?: (inputValue: string) => void;
     dialogHeader?: string;
 };
 
@@ -30,31 +31,32 @@ const inputStyle: SxProps = {
  */
 function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddFolderDialogProps) {
     const [inputValue, setInputValue] = useState("");
-    const [selectValue, setSelectValue] = useState("#00000000");
-    const selectLabelID = useId();
+    //const [selectValue, setSelectValue] = useState("#00000000");
+    //const selectLabelID = useId();
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     };
 
-    const onSelectChange = (event: SelectChangeEvent) => {
-        setSelectValue(event.target.value as string);
-    };
+    // const onSelectChange = (event: SelectChangeEvent) => {
+    //     setSelectValue(event.target.value as string);
+    // };
 
     const onSave = () => {
-        onCloseSave && onCloseSave(inputValue, selectValue);
+        //onCloseSave && onCloseSave(inputValue, selectValue);
+        onCloseSave && onCloseSave(inputValue);
     };
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
             <Input value={inputValue} placeholder="имя папки" onChange={onInputChange} sx={inputStyle} required />
-            <FormControl>
+            {/* <FormControl>
                 <InputLabel id={selectLabelID}>Цвет</InputLabel>
                 <Select defaultValue={"#00000000"} labelId={selectLabelID} value={selectValue} label="Цвет" onChange={onSelectChange}>
                     <MenuItem value={"lol kek"}>ПОКА НЕ РИАЛИЗОВАНО</MenuItem>
                     <MenuItem value={"#00000000"}>отсутствует</MenuItem>
                 </Select>
-            </FormControl>
+            </FormControl> */}
         </TreeEditDialig>
     );
 }

@@ -135,6 +135,15 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
             MuiDivider: {
                 defaultProps: {},
             },
+            MuiList: {
+                styleOverrides: {
+                    root: {
+                        maxHeight: "35dvh",
+                        overflow: "hidden",
+                        overflowY: "auto",
+                    },
+                },
+            },
         },
         palette: {
             primary: theme.palette.augmentColor({
