@@ -32,12 +32,21 @@ interface IDataTreeNode {
 type TNoteBody = IDataTreeNode & TBodyComponentHeader;
 
 /**
+ * цвета тега
+ */
+type TTagColors = "red" | "blue" | "gray" | "yellow" | "green";
+
+/**
  * типизация тега заметок
  */
 interface IGlobalTag {
     tag_name: string;
-    color: string;
-    text: string;
+    color: TTagColors;
+}
+
+// все теги
+interface IAllTags {
+    [TAG_NAME: string]: IGlobalTag;
 }
 
 /**
@@ -76,8 +85,8 @@ interface IDataTreeRootFolder extends IDataTreeFolder {
  */
 interface IDataSave {
     db_type: string;
-    global_tags: IGlobalTag[];
+    global_tags: IAllTags;
     data_tree: IDataTreeRootFolder;
 }
 
-export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode, IDataTreeRootFolder };
+export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode, IDataTreeRootFolder, TTagColors, IAllTags };
