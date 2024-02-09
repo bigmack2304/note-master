@@ -53,7 +53,7 @@ function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddNoteD
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
-            <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} sx={inputStyle} required autoComplete="off" />
+            <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} sx={inputStyle} required />
             <FormControl>
                 <InputLabel id={selectLabelID}>Теги</InputLabel>
                 <Select

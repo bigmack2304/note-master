@@ -70,7 +70,7 @@ function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, in
 
     return (
         <Box className={genClassName} component={"div"} sx={boxStyles(themeValue)}>
-            <Input value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} />
+            <Input value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} autoFocus />
             <Divider sx={dividerStyle} orientation="vertical" />
 
             <CloseButton onClick={onClose} />
