@@ -16,7 +16,9 @@ type TMenuContentProps = {
     onInfoClick?: (e: React.MouseEvent) => void;
 };
 
-const listStyle: SxProps = {};
+const listStyle: SxProps = {
+    maxHeight: "100dvh",
+};
 
 const ListSubheaderStyle: SxProps = {
     fontSize: "1.3rem",
@@ -34,7 +36,7 @@ const ListSubheaderStyle: SxProps = {
 function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
     return (
         <List sx={listStyle}>
-            <ListSubheader component="div" id="nested-list-subheader" sx={ListSubheaderStyle}>
+            <ListSubheader component="div" sx={ListSubheaderStyle}>
                 Меню
             </ListSubheader>
             <Divider />
