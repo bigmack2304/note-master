@@ -9,15 +9,10 @@ const DB_NAME = "app_note_master_db_data";
 const DB_VERSION = 1;
 const TEMP_DATA_KEY = "0";
 
-const tempStoreData = ["tempData", "db_type", "data_tree", "global_tags"] as const; //TODO: потом удалим "tempData"
+const tempStoreData = ["db_type", "data_tree", "global_tags"] as const;
 
 interface MyDB extends DBSchema {
     savedData: {
-        key: string;
-        value: IDataSave;
-    };
-    //TODO: потом это удалим
-    tempData: {
         key: string;
         value: IDataSave;
     };
@@ -35,14 +30,8 @@ interface MyDB extends DBSchema {
         value: IAllTags;
     };
 }
-//TODO: потом это удалим
-type TGetTempDataDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataSave | undefined) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-};
-//TODO: потом переименуем TSetAllTempDataDBParams
-type TSetTempDataDBParams = {
+
+type TSetAllTempDataDBParams = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
     callback?: (value: IDataSave | undefined) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
@@ -62,6 +51,12 @@ type TSetDataTreeDBParams = {
     value: IDataTreeRootFolder;
 };
 
+type TGetDataTreeParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: IDataTreeRootFolder | undefined) => void;
+};
+
 type TSetGlobalTagsParams = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
@@ -69,11 +64,23 @@ type TSetGlobalTagsParams = {
     value: IAllTags;
 };
 
+type TGetGlobalTagsParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: IAllTags | undefined) => void;
+};
+
 type TSetDbTypeParams = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
     callback?: (value: string) => void;
     value: string;
+};
+
+type TGetDbTypeDBParams = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: string | undefined) => void;
 };
 
 function def_onError(e: Event) {
@@ -92,7 +99,6 @@ async function openIndexedDB() {
     const db = await openDB<MyDB>(DB_NAME, DB_VERSION, {
         upgrade(db, oldVersion, newVersion, transaction, event) {
             const savedDataDB = db.createObjectStore("savedData");
-            const tempDataDB = db.createObjectStore("tempData"); //TODO: потом это удалим
             ////////////////////////////////
             const other = db.createObjectStore("db_type");
             const data_tree = db.createObjectStore("data_tree");
@@ -106,47 +112,13 @@ async function openIndexedDB() {
     return db;
 }
 
-//TODO: потом это удалим
 /**
- * возвращает обьект TempData из indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(IDataSave | undefined): вызывается после поиска
- * @returns Promise<IDataSave | undefined>
- */
-async function getTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetTempDataDBParams = {}) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("tempData", "readonly");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    const data = tx.store;
-    let value = await data.get(TEMP_DATA_KEY);
-    await tx.done;
-    callback && callback(value);
-    return value;
-}
-
-//TODO: потом это удалим
-/**
- * Записывает новое значение вместо обьекта TempData в indexed db
+ * Записывает новое значение вместо обьекта db_type в indexed db
  * @property onComplete: определение колбека db.transaction,
  * @property onError: определение колбека db.transaction,
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetTempDataDBParams) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("tempData", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    const data = tx.store;
-    data.put(value, TEMP_DATA_KEY);
-    await tx.done;
-    callback && callback(value);
-    dispatchEventIndexedDBTempUpdate();
-    return value;
-}
-
 async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDbTypeParams) {
     const db = await openIndexedDB();
     const tx = db.transaction("db_type", "readwrite");
@@ -159,6 +131,31 @@ async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError,
     return value;
 }
 
+/**
+ * возвращает обьект db_type из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(db_type | undefined): вызывается после поиска
+ * @returns Promise<db_type | undefined>
+ */
+async function getDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDbTypeDBParams = {}) {
+    const db = await openIndexedDB();
+    const tx = db.transaction("db_type", "readonly");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+    let value = await tx.store.get(TEMP_DATA_KEY);
+    await tx.done;
+    callback && callback(value);
+    return value;
+}
+
+/**
+ * Записывает новое значение вместо обьекта data_tree в indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(value): вызывается после применения изменений
+ * @property value: новое значение
+ */
 async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataTreeDBParams) {
     const db = await openIndexedDB();
     const tx = db.transaction("data_tree", "readwrite");
@@ -171,6 +168,31 @@ async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onErro
     return value;
 }
 
+/**
+ * возвращает обьект data_tree из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(data_tree | undefined): вызывается после поиска
+ * @returns Promise<data_tree | undefined>
+ */
+async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataTreeParams = {}) {
+    const db = await openIndexedDB();
+    const tx = db.transaction("data_tree", "readonly");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+    let value = await tx.store.get(TEMP_DATA_KEY);
+    await tx.done;
+    callback && callback(value);
+    return value;
+}
+
+/**
+ * Записывает новое значение вместо обьекта global_tags в indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(value): вызывается после применения изменений
+ * @property value: новое значение
+ */
 async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetGlobalTagsParams) {
     const db = await openIndexedDB();
     const tx = db.transaction("global_tags", "readwrite");
@@ -184,13 +206,31 @@ async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
 }
 
 /**
+ * возвращает обьект global_tags из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(global_tags | undefined): вызывается после поиска
+ * @returns Promise<global_tags | undefined>
+ */
+async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetGlobalTagsParams = {}) {
+    const db = await openIndexedDB();
+    const tx = db.transaction("global_tags", "readonly");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+    let value = await tx.store.get(TEMP_DATA_KEY);
+    await tx.done;
+    callback && callback(value);
+    return value;
+}
+
+/**
  * Записывает загржунный фаил IDataSave в indexed db, распределяяя его по блокам
  * @property onComplete: определение колбека db.transaction,
  * @property onError: определение колбека db.transaction,
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetTempDataDBParams) {
+async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetAllTempDataDBParams) {
     const db = await openIndexedDB();
     const tx = db.transaction(tempStoreData, "readwrite");
     tx.onerror = onError;
@@ -199,7 +239,6 @@ async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onE
     tx.objectStore("data_tree").put(value.data_tree, TEMP_DATA_KEY);
     tx.objectStore("global_tags").put(value.global_tags, TEMP_DATA_KEY);
     tx.objectStore("db_type").put(value.db_type, TEMP_DATA_KEY);
-    tx.objectStore("tempData").put(value, TEMP_DATA_KEY); //TODO: потом это удалим
 
     await tx.done;
     callback && callback(value);
@@ -258,4 +297,4 @@ function removeTempDataOnExit() {
 
 removeTempDataOnExit();
 
-export { getTempDataDB, setTempDataDB, delTempDataDB, setAllTempDataDB };
+export { delTempDataDB, setAllTempDataDB, setGlobalTagsDB, getGlobalTagsDB, getDataTreeDB, setDataTreeDB, getDbTypeDB, setDbTypeDB };

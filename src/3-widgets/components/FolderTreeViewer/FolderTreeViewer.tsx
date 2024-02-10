@@ -6,7 +6,7 @@ import { MemoTreeView, CustomTreeView } from "1-entities/components/CustomTreeVi
 import Box from "@mui/material/Box";
 import { useIndexedDBTempDataUpdate } from "0-shared/hooks/useIndexedDBTempUpdate";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
-import { getTempDataDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
@@ -14,7 +14,7 @@ import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/Render
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
-import type { IDataSave, TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
+import type { IDataTreeRootFolder, TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -38,7 +38,7 @@ const FolderTreeViewerStyle: SxProps = {
  * @returns
  */
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
-    const [dataValue, setDataValue] = useState<IDataSave>();
+    const [dataValue, setDataValue] = useState<IDataTreeRootFolder>();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
     const [contextNodeName, setContextNodeName] = useState<string>(""); // имя ноды на которой открывается контекстное меню
     const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState<boolean>(false);
@@ -166,7 +166,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
     // получение данных из IndexedDB
     if (isNeedUpdate) {
-        getTempDataDB({
+        getDataTreeDB({
             callback: (val) => {
                 setDataValue(val);
                 setIsNeedUpdate(false);
@@ -178,7 +178,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         <Box sx={FolderTreeViewerStyle}>
             <CustomTreeView TreeViewSettings={{ "aria-label": "структура заметок", defaultCollapseIcon: <ExpandMoreIcon />, defaultExpandIcon: <ChevronRightIcon /> }}>
                 {RenderTreeAsFile({
-                    node: dataValue?.data_tree,
+                    node: dataValue,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
                 })}

@@ -1,8 +1,8 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataSave } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
-import { getTempDataDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -43,11 +43,11 @@ const saveDataInspectSlice = createAppSlice({
         // удалить папку или заметку из indexedDB
         deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
             async (payload, thunkApi) => {
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
-                const deletedNode = deleteById(datasSave, payload.nodeId);
+                const deletedNode = deleteById(dataTree, payload.nodeId);
 
                 if (deletedNode) {
                     return { deletedNode: deletedNode };
@@ -82,11 +82,11 @@ const saveDataInspectSlice = createAppSlice({
         // удалить компонент внутри заметки
         deleteNoteComponent: create.asyncThunk<{ noteId: string; componentId: string }, { updatedNote: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
-                const updatedNote = deleteComponentInNote(datasSave, payload.noteId, payload.componentId);
+                const updatedNote = deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
 
                 if (updatedNote) {
                     return { updatedNote: updatedNote };
@@ -110,11 +110,11 @@ const saveDataInspectSlice = createAppSlice({
         // обновляем component.value в активной заметке и в indexedDB
         updateNoteComponentValue: create.asyncThunk<{ noteId: string; componentId: string; newValue: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
-                const updatedNode = updateNodeValue(datasSave, payload.noteId, payload.componentId, payload.newValue);
+                const updatedNode = updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
@@ -139,11 +139,11 @@ const saveDataInspectSlice = createAppSlice({
         renameNodeName: create.asyncThunk<{ nodeId: string; newName: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
-                const updatedNode = updateNodeName(datasSave, payload.nodeId, payload.newName);
+                const updatedNode = updateNodeName(dataTree, payload.nodeId, payload.newName);
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
@@ -174,12 +174,12 @@ const saveDataInspectSlice = createAppSlice({
         addFolder: create.asyncThunk<{ nodeName: string; insertToId: string; color?: string }, { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
                 const newNode = new DataFolder(payload.nodeName, payload.color);
-                const addedNode = await addNodeTo(datasSave, payload.insertToId, newNode);
+                const addedNode = await addNodeTo(dataTree, payload.insertToId, newNode);
 
                 if (addedNode) {
                     return { addedNode: addedNode };
@@ -196,20 +196,20 @@ const saveDataInspectSlice = createAppSlice({
         // добавление заметки
         addNote: create.asyncThunk<
             { nodeName: string; insertToId: string; tags?: string[] },
-            { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody; datasSave: IDataSave } | undefined
+            { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody; dataTree: IDataTreeRootFolder } | undefined
         >(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
-                let datasSave = await getTempDataDB();
+                let dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
                 const newNode = new DataNote(payload.nodeName);
-                const addedNode = await addNodeTo(datasSave, payload.insertToId, newNode);
-                datasSave = await getTempDataDB();
+                const addedNode = await addNodeTo(dataTree, payload.insertToId, newNode);
+                dataTree = await getDataTreeDB();
 
-                if (addedNode && datasSave) {
-                    return { addedNode, datasSave };
+                if (addedNode && dataTree) {
+                    return { addedNode, dataTree };
                 }
             },
             {
@@ -218,12 +218,12 @@ const saveDataInspectSlice = createAppSlice({
                 fulfilled: (state, action) => {
                     if (!action.payload) return;
                     let {
-                        payload: { addedNode, datasSave },
+                        payload: { addedNode, dataTree },
                     } = action;
 
                     if (isDataTreeNote(addedNode)) {
                         state.currentNote = addedNode;
-                        let nodeParent = getParentNode(datasSave, addedNode.id);
+                        let nodeParent = getParentNode(dataTree, addedNode.id);
 
                         if (isDataTreeFolder(nodeParent)) {
                             state.currentFolder = nodeWithoutChildren(nodeParent) as IDataTreeFolder;
@@ -236,11 +236,11 @@ const saveDataInspectSlice = createAppSlice({
         moveFolderOrNote: create.asyncThunk<{ muvedNodeID: string; muveToID: string }, { muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
-                const datasSave = await getTempDataDB();
+                const dataTree = await getDataTreeDB();
 
-                if (!datasSave) return;
+                if (!dataTree) return;
 
-                const muvedNode = await nodeMuveTo(datasSave, payload.muvedNodeID, payload.muveToID);
+                const muvedNode = await nodeMuveTo(dataTree, payload.muvedNodeID, payload.muveToID);
 
                 if (muvedNode) {
                     return { muvedNode };

@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { SelectChangeEvent } from "@mui/material";
-import { getTempDataDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { getAllFolders } from "2-features/utils/saveDataParse";
 import type { IDataTreeFolder } from "0-shared/types/dataSave";
 
@@ -52,7 +52,7 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
     };
 
     useEffect(() => {
-        getTempDataDB({
+        getDataTreeDB({
             callback: (dataSave) => {
                 if (!dataSave) return;
                 setAllFolders(getAllFolders(dataSave));

@@ -1,17 +1,16 @@
-import type { IDataSave, IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder } from "0-shared/types/dataSave";
-import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import type { IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder, IDataSave } from "0-shared/types/dataSave";
+import { isDataTreeFolder, isDataTreeNote, isDataSave } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "./saveDataUtils";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 
 /**
- * сбор всех ID из IDataSave
- * @param data обьект сохранения IDataSave
+ * сбор всех ID из IDataTreeRootFolder
+ * @param data обьект сохранения IDataTreeRootFolder
  * @returns
  */
-function getAllIds(data: IDataSave) {
+function getAllIds(data: IDataTreeRootFolder | IDataSave) {
     const allIds = new Set<string>();
-    const { data_tree } = data;
 
     const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
         if (allIds.has(node.id)) throw new Error("Duplicate id in tempData");
@@ -30,7 +29,7 @@ function getAllIds(data: IDataSave) {
         }
     };
 
-    parser(data_tree);
+    parser(isDataSave(data) ? data.data_tree : data);
 
     return allIds;
 }
@@ -68,11 +67,11 @@ function getAllIdsInNode(node: IDataTreeFolder | IDataTreeNote) {
 
 /**
  * ищет ноду по заданному id и возвращает ее
- * @param rootNode обект типа IDataSave | TchildrenType | TNoteBody | undefined
+ * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody | undefined
  * @param find_id искомый ID
  * @returns
  */
-function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined, find_id: string) {
+function getNodeById(rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody | undefined, find_id: string) {
     const finder = (node: TchildrenType | TNoteBody): TchildrenType | TNoteBody | null => {
         if (node.id === find_id) {
             return node;
@@ -100,7 +99,6 @@ function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined
 
     if (rootNode) {
         let root = rootNode;
-        if ("data_tree" in root) root = root.data_tree;
         return finder(root as TchildrenType | TNoteBody);
     }
 
@@ -109,15 +107,15 @@ function getNodeById(rootNode: IDataSave | TchildrenType | TNoteBody | undefined
 
 /**
  * ищет родителя ноды.
- * @param rootNode обект типа IDataSave | TchildrenType | TNoteBody
+ * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody
  * @param nodeId id ноды для которой нужно отыскать родителя
  */
-function getParentNode(rootNode: IDataSave | TchildrenType | TNoteBody, nodeId: string): IDataTreeNote | IDataTreeFolder | TNoteBody | null {
+function getParentNode(rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody, nodeId: string): IDataTreeNote | IDataTreeFolder | TNoteBody | null {
     type TTreeElement = IDataTreeNote | IDataTreeFolder | TNoteBody;
 
-    let parent: IDataTreeNote | IDataTreeFolder | IDataTreeRootFolder | undefined;
+    let parent: IDataTreeNote | IDataTreeFolder | IDataTreeRootFolder | TNoteBody;
 
-    if ("data_tree" in rootNode) parent = rootNode.data_tree;
+    parent = rootNode;
     if ("children" in rootNode) parent = rootNode;
     if ("body" in rootNode) parent = rootNode;
     if (!parent) return null;
@@ -161,12 +159,11 @@ function getParentNode(rootNode: IDataSave | TchildrenType | TNoteBody, nodeId: 
 
 /**
  * возвращает все папки внутри data, на любой вложенности
- * @param data обьект сохранения IDataSave
+ * @param data обьект сохранения IDataTreeRootFolder
  * @returns
  */
-function getAllFolders(data: IDataSave) {
+function getAllFolders(data: IDataTreeRootFolder) {
     const allFolders: IDataTreeFolder[] = [];
-    const { data_tree } = data;
 
     const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
         if (isDataTreeFolder(node)) {
@@ -179,7 +176,7 @@ function getAllFolders(data: IDataSave) {
         }
     };
 
-    parser(data_tree);
+    parser(data);
 
     return allFolders;
 }
