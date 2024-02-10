@@ -1,5 +1,5 @@
 import { ForwardRefRenderFunction } from "react";
-import type { IDataTreeNote, IDataTreeFolder, TNoteBody, TchildrenType } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
 
 /**
  * вычисляет пропсы компонента
@@ -46,5 +46,18 @@ function isDataNoteBody(node: any): node is TNoteBody {
     return node.type === "component";
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу IDataSave
+ * @param node
+ * @returns boolean
+ */
+function isDataSave(node: any): node is IDataSave {
+    if (typeof node !== "object") return false;
+    if (!("db_type" in node)) return false;
+    if (!("data_tree" in node)) return false;
+    if (!("global_tags" in node)) return false;
+    return true;
+}
+
+export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave };
 export type { GetProps, Ref };
