@@ -7,16 +7,31 @@ import type { SxProps } from "@mui/material";
 import { TOOLBAR_BG_DARK_COLOR, TOOLBAR_BG_LIGHT_COLOR } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { PaletteMode } from "@mui/material";
+import { NewTagButton } from "2-features/components/NewTagButton/NewTagButton";
 
 type TToolBarprops = {
     addClassNames?: string[];
 };
 
 const toolbarStyle = (theme: PaletteMode) => {
-    return {
-        height: "30px",
-        backgroundColor: theme === "light" ? TOOLBAR_BG_LIGHT_COLOR : TOOLBAR_BG_DARK_COLOR,
-    } as SxProps;
+    let style: React.CSSProperties = {};
+
+    if (theme === "light") {
+        style.backgroundColor = TOOLBAR_BG_LIGHT_COLOR;
+    } else {
+        style.backgroundColor = TOOLBAR_BG_DARK_COLOR;
+    }
+
+    style.height = "40px";
+    style.overflow = "hidden";
+    style.display = "flex";
+    style.flexDirection = "row";
+    style.flexWrap = "wrap";
+    style.alignContent = "center";
+    style.justifyContent = "center";
+    style.alignItems = "center";
+
+    return style as SxProps;
 };
 
 /**
@@ -32,7 +47,9 @@ function ToolBar({ addClassNames = [] }: TToolBarprops) {
 
     return (
         <Collapse in={isActive} className={"ToolBar_wrapper"} orientation="vertical">
-            <Box className={genClassName} sx={toolbarStyle(themeValue)}></Box>
+            <Box className={genClassName} sx={toolbarStyle(themeValue)}>
+                <NewTagButton></NewTagButton>
+            </Box>
         </Collapse>
     );
 }
