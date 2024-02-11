@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { SxProps } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
@@ -12,6 +12,8 @@ import { AddButton } from "0-shared/components/AddButton/AddButton";
 import type { IGlobalTag } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { noteDelTag } from "5-app/GlobalState/saveDataInspectStore";
+import { NoteAddTagDialog } from "../NoteAddTagDialog/NoteAddTagDialog";
+import { noteAddTag } from "5-app/GlobalState/saveDataInspectStore";
 
 type TNoteTagListProps = {};
 
@@ -26,6 +28,7 @@ const noteTagListStyle = (theme: PaletteMode) => {
  * содержимое для DialogWindow, (страница с настройками)
  */
 function NoteTagList({}: TNoteTagListProps) {
+    const [isAddTagDialog, setIsAddTagDialog] = useState<boolean>(false);
     const themeValue = useTemeMode();
     const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
     const noteTags = useAppSelector((state) => state.saveDataInspect.currentNote?.tags);
@@ -37,19 +40,35 @@ function NoteTagList({}: TNoteTagListProps) {
         dispatch(noteDelTag({ tag: tagData }));
     };
 
+    const onAddTag = () => {
+        setIsAddTagDialog(true);
+    };
+
+    const addTagDialogClose = () => {
+        setIsAddTagDialog(false);
+    };
+
+    const addTagDialogCloseSave = (selectValue: string | string[]) => {
+        dispatch(noteAddTag({ tag: selectValue }));
+        setIsAddTagDialog(false);
+    };
+
     return (
-        <div className="NoteTagList" style={noteTagListStyle(themeValue)}>
-            <Typography className="NoteTagList__tags_head" variant="body1">
-                Теги:
-            </Typography>
-            <div className="NoteTagList__tags">
-                {isTags &&
-                    noteTags!.map((tagName) => {
-                        return <NoteTag isEdit={isNoteEdit} tagObj={tags![tagName]} key={tags![tagName].tag_name} onDel={onDelTag} />;
-                    })}
+        <>
+            <div className="NoteTagList" style={noteTagListStyle(themeValue)}>
+                <Typography className="NoteTagList__tags_head" variant="body1">
+                    Теги:
+                </Typography>
+                <div className="NoteTagList__tags">
+                    {isTags &&
+                        noteTags!.map((tagName) => {
+                            return <NoteTag isEdit={isNoteEdit} tagObj={tags![tagName]} key={tags![tagName].tag_name} onDel={onDelTag} />;
+                        })}
+                </div>
+                {isNoteEdit && <AddButton onClick={onAddTag} addClassNames={["NoteTagList__edit_button"]} />}
             </div>
-            {isNoteEdit && <AddButton />}
-        </div>
+            {isAddTagDialog && <NoteAddTagDialog dialogHeader="Добавить тег" onClose={addTagDialogClose} onCloseSave={addTagDialogCloseSave} />}
+        </>
     );
 }
 

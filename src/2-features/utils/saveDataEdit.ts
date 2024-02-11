@@ -227,4 +227,37 @@ async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, ta
     return targetNote;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag };
+/**
+ * добавляет тег в заметку
+ * @param data обьект IDataTreeRootFolder
+ * @param targetNoteID id заметки в которую добавляем
+ * @param tag имена тегов которые нужно добавить
+ */
+async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: string | string[]) {
+    let targetNote = getNodeById(data, targetNoteID);
+
+    let prepareTags: string[] = [];
+
+    if (Array.isArray(tag) && tag.length > 0) {
+        prepareTags = [...tag];
+    }
+
+    if (typeof tag === "string" && tag !== "") {
+        prepareTags.push(tag);
+    }
+
+    if (!targetNote) return null;
+    if (!isDataTreeNote(targetNote)) return null;
+
+    if (!("tags" in targetNote)) {
+        targetNote.tags = [];
+    }
+
+    targetNote.tags = targetNote.tags!.concat(prepareTags);
+
+    setDataTreeDB({ value: data });
+
+    return targetNote;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag };

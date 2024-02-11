@@ -11,14 +11,24 @@ class DataNote implements IDataTreeNote {
     public id!: IDataTreeNote["id"];
     public type!: IDataTreeNote["type"];
 
-    constructor(name: string, tags?: string[]) {
+    constructor(name: string, tags: string[] | string) {
         const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
         if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
         let that = Object.create(null) as IDataTreeNote;
 
+        let prepareTags: string[] = [];
+
+        if (tags && Array.isArray(tags)) {
+            prepareTags = [...tags];
+        }
+
+        if (tags && typeof tags === "string" && tags !== "") {
+            prepareTags.push(tags);
+        }
+
         that.name = name;
-        that.tags = tags || [];
+        that.tags = prepareTags;
         that.body = [];
         that.id = insIdGenerator.generateId();
         that.type = "note";

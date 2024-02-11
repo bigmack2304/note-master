@@ -3,7 +3,7 @@ import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
 import { getDataTreeDB } from "2-features/utils/appIndexedDB";
-import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag } from "2-features/utils/saveDataEdit";
+import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag as noteAdTag } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
@@ -195,7 +195,7 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // добавление заметки
         addNote: create.asyncThunk<
-            { nodeName: string; insertToId: string; tags?: string[] },
+            { nodeName: string; insertToId: string; tags: string[] | string },
             { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody; dataTree: IDataTreeRootFolder } | undefined
         >(
             async (payload, thunkApi) => {
@@ -204,7 +204,7 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const newNode = new DataNote(payload.nodeName);
+                const newNode = new DataNote(payload.nodeName, payload.tags);
                 const addedNode = await addNodeTo(dataTree, payload.insertToId, newNode);
                 dataTree = await getDataTreeDB();
 
@@ -282,6 +282,35 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+
+        //добавляет тег в заметку
+        noteAddTag: create.asyncThunk<{ tag: string | string[] }, { editedNote: IDataTreeNote } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const dataTree = await getDataTreeDB();
+                const currentNote = state.saveDataInspect.currentNote;
+
+                if (!currentNote || !dataTree) return;
+
+                const editedNote = await noteAdTag(dataTree, currentNote.id, payload.tag);
+
+                if (editedNote) {
+                    return { editedNote };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                    let {
+                        payload: { editedNote },
+                    } = action;
+
+                    state.currentNote = editedNote;
+                },
+            }
+        ),
     }),
 });
 
@@ -296,6 +325,7 @@ export const {
     addNote,
     moveFolderOrNote,
     noteDelTag,
+    noteAddTag,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

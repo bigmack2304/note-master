@@ -14,7 +14,7 @@ import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/Render
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
-import type { IDataTreeRootFolder, TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
+import type { TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -104,6 +104,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
 
         if (!clickedNodeDataRef.current || !dataTree) return;
         setIsNewNoteDialogOpen(true);
+        dispatch(setCurrentNote(undefined)); // сбрасываем активную заметку если пытаемся создать новую. На этой логике работает форма выставления тегов
     };
 
     const onMoveClick = (e: React.MouseEvent) => {
@@ -141,7 +142,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         setIsNewNoteDialogOpen(false);
     };
 
-    const onSaveCloseNNDialog = (inputValue: string, selectValue: string[]) => {
+    const onSaveCloseNNDialog = (inputValue: string, selectValue: string[] | string) => {
         setIsNewNoteDialogOpen(false);
         if (!clickedNodeDataRef.current) return;
         dispatch(addNote({ insertToId: clickedNodeDataRef.current.id, nodeName: inputValue, tags: selectValue }));

@@ -15,7 +15,12 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
+    align-items: center;
     gap: 5px;
     text-transform: uppercase;
     flex-basis: 100%;
+}
+
+.NoteTagList .NoteTagList__edit_button {
+    align-self: flex-start;
 }
