@@ -10,6 +10,8 @@ import { useTags } from "0-shared/hooks/useTags";
 import "./NoteTagList.scss";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
 import type { IGlobalTag } from "0-shared/types/dataSave";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { noteDelTag } from "5-app/GlobalState/saveDataInspectStore";
 
 type TNoteTagListProps = {};
 
@@ -29,9 +31,10 @@ function NoteTagList({}: TNoteTagListProps) {
     const noteTags = useAppSelector((state) => state.saveDataInspect.currentNote?.tags);
     const tags = useTags();
     const isTags = Boolean(noteTags && tags);
+    const dispatch = useAppDispatch();
 
     const onDelTag = (tagData: IGlobalTag) => {
-        console.dir(tagData);
+        dispatch(noteDelTag({ tag: tagData }));
     };
 
     return (

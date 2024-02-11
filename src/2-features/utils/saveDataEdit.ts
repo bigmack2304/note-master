@@ -1,6 +1,6 @@
 import { getNodeById, getAllIdsInNode, getParentNode } from "./saveDataParse";
 import { setDataTreeDB, getDataTreeDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder } from "0-shared/types/dataSave";
+import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 // функции для применения изменений к tempData в indexedDB
@@ -204,4 +204,27 @@ async function nodeMuveTo(data: IDataTreeRootFolder, muvedNodeID: string, muveTo
     return null;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo };
+/**
+ * удаляет тег у заметки
+ * @param data обьект IDataTreeRootFolder
+ * @param targetNoteID id заметки в которой удаляем
+ * @param tag обьект тега который нужно убрать
+ */
+async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, tag: IGlobalTag) {
+    let targetNote = getNodeById(data, targetNoteID);
+
+    if (!targetNote) return null;
+    if (!isDataTreeNote(targetNote)) return null;
+    if (!("tags" in targetNote)) return null;
+
+    targetNote.tags = targetNote.tags!.filter((tagName) => {
+        if (tagName === tag.tag_name) return false;
+        return true;
+    });
+
+    setDataTreeDB({ value: data });
+
+    return targetNote;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag };

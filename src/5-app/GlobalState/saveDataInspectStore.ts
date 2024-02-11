@@ -1,9 +1,9 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
 import { getDataTreeDB } from "2-features/utils/appIndexedDB";
-import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo } from "2-features/utils/saveDataEdit";
+import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
@@ -254,11 +254,49 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+        // удаляет тег у заметки
+        noteDelTag: create.asyncThunk<{ tag: IGlobalTag }, { editedNote: IDataTreeNote } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const dataTree = await getDataTreeDB();
+                const currentNote = state.saveDataInspect.currentNote;
+
+                if (!currentNote || !dataTree) return;
+
+                const editedNote = await noteDeleteTag(dataTree, currentNote.id, payload.tag);
+
+                if (editedNote) {
+                    return { editedNote };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                    let {
+                        payload: { editedNote },
+                    } = action;
+
+                    state.currentNote = editedNote;
+                },
+            }
+        ),
     }),
 });
 
-export const { setCurrentFolder, setCurrentNote, updateNoteComponentValue, deleteNoteOrFolder, renameNodeName, deleteNoteComponent, addFolder, addNote, moveFolderOrNote } =
-    saveDataInspectSlice.actions;
+export const {
+    setCurrentFolder,
+    setCurrentNote,
+    updateNoteComponentValue,
+    deleteNoteOrFolder,
+    renameNodeName,
+    deleteNoteComponent,
+    addFolder,
+    addNote,
+    moveFolderOrNote,
+    noteDelTag,
+} = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
 export type { ISaveDataInspectStore };
