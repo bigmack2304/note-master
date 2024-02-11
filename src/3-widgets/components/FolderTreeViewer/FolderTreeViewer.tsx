@@ -20,6 +20,7 @@ import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 import { TreeItemMoveDialog } from "2-features/components/TreeItemMoveDialog/TreeItemMoveDialog";
+import { useDataTree } from "0-shared/hooks/useDataTree";
 
 type TFolderTreeViewerProps = {};
 
@@ -38,24 +39,18 @@ const FolderTreeViewerStyle: SxProps = {
  * @returns
  */
 function FolderTreeViewer({}: TFolderTreeViewerProps) {
-    const [dataValue, setDataValue] = useState<IDataTreeRootFolder>();
+    const dataTree = useDataTree();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
     const [contextNodeName, setContextNodeName] = useState<string>(""); // имя ноды на которой открывается контекстное меню
     const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState<boolean>(false);
     const [isNewNoteDialogOpen, setIsNewNoteDialogOpen] = useState<boolean>(false);
     const [isMoveDialogOpen, setIsMoveDialogOpen] = useState<boolean>(false);
-    const [isNeedUpdate, setIsNeedUpdate] = useState<boolean>(false);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
-
-    useIndexedDBTempDataUpdate(() => {
-        setIsNeedUpdate(true);
-        console.log("db upd");
-    });
 
     // клик по ноде
     const onClickNode = (nodeData: TchildrenType, e: React.MouseEvent) => {
@@ -86,35 +81,35 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const onRenameClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
 
-        if (!clickedNodeDataRef.current || !dataValue) return;
+        if (!clickedNodeDataRef.current || !dataTree) return;
         setIsRenameDialogOpen(true);
         setContextNodeName(clickedNodeDataRef.current.name);
     };
 
     const onDeleteClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
-        if (!clickedNodeDataRef.current || !dataValue) return;
+        if (!clickedNodeDataRef.current || !dataTree) return;
         dispatch(deleteNoteOrFolder({ nodeId: clickedNodeDataRef.current.id }));
     };
 
     const onNewFolderClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
 
-        if (!clickedNodeDataRef.current || !dataValue) return;
+        if (!clickedNodeDataRef.current || !dataTree) return;
         setIsNewFolderDialogOpen(true);
     };
 
     const onNewNoteClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
 
-        if (!clickedNodeDataRef.current || !dataValue) return;
+        if (!clickedNodeDataRef.current || !dataTree) return;
         setIsNewNoteDialogOpen(true);
     };
 
     const onMoveClick = (e: React.MouseEvent) => {
         setContextMenuAnchorEl(null);
 
-        if (!clickedNodeDataRef.current || !dataValue) return;
+        if (!clickedNodeDataRef.current || !dataTree) return;
         setIsMoveDialogOpen(true);
         setContextNodeName(clickedNodeDataRef.current.name);
     };
@@ -164,21 +159,11 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         dispatch(moveFolderOrNote({ muvedNodeID: clickedNodeDataRef.current.id, muveToID: objFolder.id }));
     };
 
-    // получение данных из IndexedDB
-    if (isNeedUpdate) {
-        getDataTreeDB({
-            callback: (val) => {
-                setDataValue(val);
-                setIsNeedUpdate(false);
-            },
-        });
-    }
-
     return (
         <Box sx={FolderTreeViewerStyle}>
             <CustomTreeView TreeViewSettings={{ "aria-label": "структура заметок", defaultCollapseIcon: <ExpandMoreIcon />, defaultExpandIcon: <ChevronRightIcon /> }}>
                 {RenderTreeAsFile({
-                    node: dataValue,
+                    node: dataTree,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
                 })}

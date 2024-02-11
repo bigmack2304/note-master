@@ -1,4 +1,4 @@
-import React, { useState, useId, useEffect } from "react";
+import React, { useState, useId } from "react";
 import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
@@ -7,9 +7,8 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { SelectChangeEvent } from "@mui/material";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { getAllFolders } from "2-features/utils/saveDataParse";
-import type { IDataTreeFolder } from "0-shared/types/dataSave";
+import { useDataTree } from "0-shared/hooks/useDataTree";
 
 type TTreeItemMoveDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -36,7 +35,8 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
     const selectLabelID = useId();
     const [inputValue, setInputValue] = useState("");
     const [selectValue, setSelectValue] = useState<string>("");
-    const [allFolders, setAllFolders] = useState<IDataTreeFolder[]>([]);
+    const dataTree = useDataTree();
+    const allFolders = dataTree ? getAllFolders(dataTree) : [];
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
@@ -50,15 +50,6 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
     const onSave = () => {
         onCloseSave && onCloseSave(inputValue, selectValue);
     };
-
-    useEffect(() => {
-        getDataTreeDB({
-            callback: (dataSave) => {
-                if (!dataSave) return;
-                setAllFolders(getAllFolders(dataSave));
-            },
-        });
-    }, []);
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={TreeEditDialigHeader}>
