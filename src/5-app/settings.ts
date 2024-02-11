@@ -8,12 +8,13 @@ const THEME_DARK_GRAY = "#00000029"; // затемнение для backround п
 const OUTLINE_LIGHT_COLOR = "#00000024";
 const OUTLINE_DARK_COLOR = "#ffffff24";
 
-const TAGS_COLORS: Record<TTagColors, string> = {
-    red: "#BA2D2D",
-    blue: "#3357CC",
-    gray: "#3C3C3C2F",
+// цвета для тегов при светлой и темной теме
+const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
+    red: "#ff4e4e",
+    blue: "#6ba8ff",
+    gray: "#c7c7c7",
     yellow: "#E1DD20",
     green: "#39C726",
 };
 
-export { TRANSITION_DURATION, AUTO_THEME_DETECT, THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR, TAGS_COLORS };
+export { TRANSITION_DURATION, AUTO_THEME_DETECT, THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR, TAGS_COLORS_LIGHT };

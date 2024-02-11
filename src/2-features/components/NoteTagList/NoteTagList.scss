@@ -12,9 +12,10 @@
 
 .NoteTagList .NoteTagList__tags {
     display: flex;
-    gap: 5px;
-    flex-grow: 1;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
+    gap: 5px;
+    text-transform: uppercase;
+    flex-basis: 100%;
 }

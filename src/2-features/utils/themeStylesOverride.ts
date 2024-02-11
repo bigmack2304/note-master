@@ -113,6 +113,9 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     root: {
                         backgroundColor: chipThemeColor(themeValue),
                     },
+                    deleteIcon: {
+                        color: "#21212169",
+                    },
                 },
             },
             MuiMenuItem: {
