@@ -19,7 +19,7 @@ type TAddTagSelectProps = {
 };
 
 const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMode) => {
-    let style = {} as any;
+    let style = {} as React.CSSProperties;
 
     if (isColored) {
         let colorMix = theme === "light" ? "#FFFFFF" : "#000000";
