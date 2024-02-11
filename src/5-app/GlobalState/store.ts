@@ -4,6 +4,7 @@ import { ToolBarSlice } from "./toolBarStore";
 import { saveDataInspectSlice } from "./saveDataInspectStore";
 import { leftMenuSlice } from "./leftMenuStore";
 import { editDataSlice } from "./noteStore";
+import { settingsSlice } from "./settingsStore";
 
 const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
         [saveDataInspectSlice.name]: saveDataInspectSlice.reducer,
         [leftMenuSlice.name]: leftMenuSlice.reducer,
         [editDataSlice.name]: editDataSlice.reducer,
+        [settingsSlice.name]: settingsSlice.reducer,
     },
 });
 

@@ -20,7 +20,7 @@ type TNoteTagListProps = {};
 const noteTagListStyle = (theme: PaletteMode) => {
     return {
         backgroundColor: theme == "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-        outline: theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR,
+        outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
     } as React.CSSProperties;
 };
 

@@ -7,6 +7,7 @@ interface IAppLocalStorage {
     isDark: boolean;
     isAuto: boolean;
     isToolBar: boolean;
+    highlightingTagsInForms: boolean;
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -15,6 +16,7 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     isDark: false,
     isAuto: AUTO_THEME_DETECT,
     isToolBar: true,
+    highlightingTagsInForms: false,
 };
 
 /**

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { AppBar } from "0-shared/components/AppBar/AppBar";
 import { ToggleMenuButton } from "2-features/components/ToggleMenuButton/ToggleMenuButton";
-import { SettingsContent } from "1-entities/components/SettingsContent/SettingsContent";
+import { SettingsContent } from "2-features/components/SettingsContent/SettingsContent";
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import { InputFile } from "2-features/components/InputFile/InputFile";
 import { ToggleToolBarButton } from "2-features/components/ToggleToolBarButton/ToggleToolBarButton";

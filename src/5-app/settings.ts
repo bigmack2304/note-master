@@ -8,6 +8,9 @@ const THEME_DARK_GRAY = "#00000029"; // затемнение для backround п
 const OUTLINE_LIGHT_COLOR = "#00000024";
 const OUTLINE_DARK_COLOR = "#ffffff24";
 
+const TOOLBAR_BG_LIGHT_COLOR = "#32b6e4";
+const TOOLBAR_BG_DARK_COLOR = "#1e3156";
+
 // цвета для тегов при светлой и темной теме
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
     red: "#ff4e4e",
@@ -17,4 +20,14 @@ const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
     green: "#39C726",
 };
 
-export { TRANSITION_DURATION, AUTO_THEME_DETECT, THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR, TAGS_COLORS_LIGHT };
+export {
+    TRANSITION_DURATION,
+    AUTO_THEME_DETECT,
+    THEME_LIGHT_GRAY,
+    THEME_DARK_GRAY,
+    OUTLINE_LIGHT_COLOR,
+    OUTLINE_DARK_COLOR,
+    TAGS_COLORS_LIGHT,
+    TOOLBAR_BG_LIGHT_COLOR,
+    TOOLBAR_BG_DARK_COLOR,
+};

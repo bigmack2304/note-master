@@ -7,6 +7,8 @@ import "./SettingsContent.scss";
 import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
 import type { PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import ViewStreamIcon from "@mui/icons-material/ViewStream";
+import { TagColoringInForms } from "2-features/components/TagColoringInForms/TagColoringInForms";
 
 type TSettingsContentProps = {};
 
@@ -33,6 +35,13 @@ function SettingsContent({}: TSettingsContentProps) {
                     </ListItemIcon>
                     <ListItemText>Цветовая тема</ListItemText>
                     <ToggleThemeButton />
+                </ListItem>
+                <ListItem>
+                    <ListItemIcon>
+                        <ViewStreamIcon />
+                    </ListItemIcon>
+                    <ListItemText>Подцветка тегов в формах</ListItemText>
+                    <TagColoringInForms />
                 </ListItem>
             </List>
         </>

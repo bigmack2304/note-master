@@ -4,14 +4,19 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import Collapse from "@mui/material/Collapse";
 import type { RootState } from "5-app/GlobalState/store";
 import type { SxProps } from "@mui/material";
+import { TOOLBAR_BG_DARK_COLOR, TOOLBAR_BG_LIGHT_COLOR } from "5-app/settings";
+import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import type { PaletteMode } from "@mui/material";
 
 type TToolBarprops = {
     addClassNames?: string[];
 };
 
-const toolbarStyle: SxProps = {
-    height: "30px",
-    backgroundColor: "red",
+const toolbarStyle = (theme: PaletteMode) => {
+    return {
+        height: "30px",
+        backgroundColor: theme === "light" ? TOOLBAR_BG_LIGHT_COLOR : TOOLBAR_BG_DARK_COLOR,
+    } as SxProps;
 };
 
 /**
@@ -20,13 +25,14 @@ const toolbarStyle: SxProps = {
  * @returns
  */
 function ToolBar({ addClassNames = [] }: TToolBarprops) {
+    const themeValue = useTemeMode();
     const defaultClassName = "ToolBar";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const isActive = useAppSelector((state) => state.toolBar.isActive);
 
     return (
         <Collapse in={isActive} className={"ToolBar_wrapper"} orientation="vertical">
-            <Box className={genClassName} sx={toolbarStyle}></Box>
+            <Box className={genClassName} sx={toolbarStyle(themeValue)}></Box>
         </Collapse>
     );
 }

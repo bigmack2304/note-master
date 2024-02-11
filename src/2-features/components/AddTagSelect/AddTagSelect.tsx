@@ -11,9 +11,20 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { useTags } from "0-shared/hooks/useTags";
 import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
 import type { IGlobalTag } from "0-shared/types/dataSave";
+import type { PaletteMode, SxProps } from "@mui/material";
 
 type TAddTagSelectProps = {
     onChange?: (tagNames: string | string[]) => void;
+};
+
+const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean) => {
+    let style = {} as any;
+
+    if (isColored) {
+        style.backgroundColor = `color-mix(in hsl, ${tag.color}, #FFFFFF00 50%)`;
+    }
+
+    return style as SxProps;
 };
 
 /**
@@ -23,6 +34,7 @@ function AddTagSelect({ onChange }: TAddTagSelectProps) {
     const selectLabelID = useId();
     const [selectValue, setSelectValue] = useState<string[]>([]);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
+    const tagColored = useAppSelector((state) => state.settingsData.highlightingTagsInForms);
     const allTags = useTags();
 
     // массив доступных тегов. (если в активной заметке есть какието теги то они считаются недоступными)
@@ -63,7 +75,7 @@ function AddTagSelect({ onChange }: TAddTagSelectProps) {
             >
                 {availableTags.map((tag) => {
                     return (
-                        <MenuItem value={tag.tag_name} key={tag.tag_name}>
+                        <MenuItem value={tag.tag_name} key={tag.tag_name} sx={addTagSelectStyle(tag, tagColored)}>
                             {tag.tag_name}
                         </MenuItem>
                     );
