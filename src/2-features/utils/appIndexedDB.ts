@@ -88,7 +88,7 @@ function def_onError(e: Event) {
 }
 
 function def_onComplete(e: Event) {
-    console.log(e);
+    //    console.log(e);
 }
 
 /**
