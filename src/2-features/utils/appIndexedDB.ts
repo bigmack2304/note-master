@@ -127,7 +127,7 @@ async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError,
     tx.store.put(value, TEMP_DATA_KEY);
     await tx.done;
     callback && callback(value);
-    dispatchEventIndexedDBTempUpdate();
+    //dispatchEventIndexedDBTempUpdate();
     return value;
 }
 
@@ -164,7 +164,7 @@ async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onErro
     tx.store.put(value, TEMP_DATA_KEY);
     await tx.done;
     callback && callback(value);
-    dispatchEventIndexedDBTempUpdate();
+    dispatchEventIndexedDBTreeUpdate();
     return value;
 }
 
@@ -201,7 +201,7 @@ async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
     tx.store.put(value, TEMP_DATA_KEY);
     await tx.done;
     callback && callback(value);
-    dispatchEventIndexedDBTempUpdate();
+    dispatchEventIndexedDBTagsUpdate();
     return value;
 }
 
@@ -242,7 +242,7 @@ async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onE
 
     await tx.done;
     callback && callback(value);
-    dispatchEventIndexedDBTempUpdate();
+    dispatchEventIndexedDBTreeUpdate();
     return value;
 }
 
@@ -268,10 +268,14 @@ async function delTempDataDB({ onComplete = def_onComplete, onError = def_onErro
 }
 
 /**
- * генерирует событие при вызове set_storage_data
+ * генерирует событие при вызове set_storage...
  */
-function dispatchEventIndexedDBTempUpdate() {
-    window.dispatchEvent(new CustomEvent("appIndexedDBTempUpdate"));
+function dispatchEventIndexedDBTreeUpdate() {
+    window.dispatchEvent(new CustomEvent("appIndexedDBTreeUpdate"));
+}
+
+function dispatchEventIndexedDBTagsUpdate() {
+    window.dispatchEvent(new CustomEvent("appIndexedDBTagsUpdate"));
 }
 
 /**

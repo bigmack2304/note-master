@@ -3,10 +3,10 @@ import { useHandleUpdate } from "./useHandleUpdate";
 import type { IDataSave } from "0-shared/types/dataSave";
 
 /**
- * подписка на обновление tempData в indexed db
+ * подписка на обновление data_tree в indexed db
  * @param onUpdCallback вызовится когда произойдет изменение tempData в indexed db
  */
-function useIndexedDBTempDataUpdate(onUpdCallback?: () => void) {
+function useIndexedDBTreeUpdate(onUpdCallback?: () => void) {
     const [handleupdate] = useHandleUpdate();
 
     const onUpdate = () => {
@@ -15,12 +15,12 @@ function useIndexedDBTempDataUpdate(onUpdCallback?: () => void) {
     };
 
     useEffect(() => {
-        window.addEventListener("appIndexedDBTempUpdate", onUpdate as EventListener);
+        window.addEventListener("appIndexedDBTreeUpdate", onUpdate as EventListener);
 
         return () => {
-            window.removeEventListener("appIndexedDBTempUpdate", onUpdate as EventListener);
+            window.removeEventListener("appIndexedDBTreeUpdate", onUpdate as EventListener);
         };
     }, []);
 }
 
-export { useIndexedDBTempDataUpdate };
+export { useIndexedDBTreeUpdate };

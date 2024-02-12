@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { getDataTreeDB } from "2-features/utils/appIndexedDB";
-import { useIndexedDBTempDataUpdate } from "./useIndexedDBTempUpdate";
+import { useIndexedDBTreeUpdate } from "./useIndexedDBTreeUpdate";
 
 /**
  * возвращает data_tree из indexed db
@@ -9,7 +9,7 @@ import { useIndexedDBTempDataUpdate } from "./useIndexedDBTempUpdate";
 function useDataTree(): IDataTreeRootFolder | undefined {
     const [dataTreeValue, setDataTreeValue] = useState<IDataTreeRootFolder | undefined>(undefined);
 
-    useIndexedDBTempDataUpdate(() => {
+    useIndexedDBTreeUpdate(() => {
         getDataTreeDB({
             callback: (dataTree) => {
                 setDataTreeValue(dataTree);

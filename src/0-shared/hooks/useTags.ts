@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { IAllTags } from "0-shared/types/dataSave";
 import { getGlobalTagsDB } from "2-features/utils/appIndexedDB";
-import { useIndexedDBTempDataUpdate } from "./useIndexedDBTempUpdate";
+import { useIndexedDBTagsUpdate } from "./useIndexedDBTagsUpdate";
 
 /**
  * возвращает global_tags из indexed db
@@ -9,7 +9,7 @@ import { useIndexedDBTempDataUpdate } from "./useIndexedDBTempUpdate";
 function useTags(): IAllTags | undefined {
     const [allTagsValue, setAllTagsValue] = useState<IAllTags | undefined>(undefined);
 
-    useIndexedDBTempDataUpdate(() => {
+    useIndexedDBTagsUpdate(() => {
         getGlobalTagsDB({
             callback: (allTags) => {
                 setAllTagsValue(allTags);
