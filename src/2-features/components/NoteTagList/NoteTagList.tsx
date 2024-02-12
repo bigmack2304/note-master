@@ -62,7 +62,12 @@ function NoteTagList({}: TNoteTagListProps) {
                 <div className="NoteTagList__tags">
                     {isTags &&
                         noteTags!.map((tagName) => {
-                            return <NoteTag isEdit={isNoteEdit} tagObj={tags![tagName]} key={tags![tagName].tag_name} onDel={onDelTag} />;
+                            //TODO: при удалении тега с открытой заметкой происходит вылит (если тут имя удаленного тега) если нет этой проверки
+                            //TODO: это происходит потому что useTags обновляется раньше чем noteTags изза асинхронности + потомычто теги и заметки лежат в разных деревьях и обновляются независимо
+
+                            if (!tags) return;
+                            if (!tags[tagName]) return;
+                            return <NoteTag isEdit={isNoteEdit} tagObj={tags[tagName]} key={tags[tagName].tag_name} onDel={onDelTag} />;
                         })}
                 </div>
                 {isNoteEdit && <AddButton onClick={onAddTag} addClassNames={["NoteTagList__edit_button"]} />}
