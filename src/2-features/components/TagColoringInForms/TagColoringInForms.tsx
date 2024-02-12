@@ -1,9 +1,10 @@
 import React from "react";
-import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import Switch from "@mui/material/Switch";
 import { setHGLGTagsInForms } from "5-app/GlobalState/settingsStore";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 type TTagColoringInFormsProps = {};
 /**
@@ -20,7 +21,11 @@ function TagColoringInForms({}: TTagColoringInFormsProps) {
 
     return (
         <>
-            <Switch size="medium" checked={isColoring} onChange={onChange} />
+            <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="caption">OFF</Typography>
+                <Switch size="medium" checked={isColoring} onChange={onChange} />
+                <Typography variant="caption">ON</Typography>
+            </Stack>
         </>
     );
 }
