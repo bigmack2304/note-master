@@ -22,8 +22,8 @@ const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMo
     let style = {} as React.CSSProperties;
 
     if (isColored) {
-        let colorMix = theme === "light" ? "#FFFFFF" : "#000000";
-        let colorOpacyty = theme === "light" ? "30%" : "85%";
+        let colorMix = theme === "light" ? "#FFFFFF0F" : "#000000";
+        let colorOpacyty = theme === "light" ? "60%" : "85%";
         style.backgroundColor = `color-mix(in srgb-linear, ${tag.color}, ${colorMix} ${colorOpacyty})`;
     }
 
