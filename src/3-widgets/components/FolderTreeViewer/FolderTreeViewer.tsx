@@ -1,12 +1,9 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { TreeView } from "@mui/x-tree-view/TreeView";
-import { MemoTreeView, CustomTreeView } from "1-entities/components/CustomTreeView/CustomTreeView";
+import { CustomTreeView } from "1-entities/components/CustomTreeView/CustomTreeView";
 import Box from "@mui/material/Box";
-import { useIndexedDBTempDataUpdate } from "0-shared/hooks/useIndexedDBTempUpdate";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
