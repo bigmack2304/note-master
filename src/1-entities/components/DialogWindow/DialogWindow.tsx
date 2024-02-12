@@ -18,6 +18,7 @@ type TDialogWindowProps = {
     onClose?: TDialogOnClose;
     children?: React.ReactNode;
     headerText?: string;
+    addClassNames?: string[];
 };
 
 const dialogStyle: SxProps = {};
@@ -50,8 +51,12 @@ const dialogActionsStyle = (theme: PaletteMode) => {
  * @prop onClose - вызывается при закрытии окна
  * @prop children - компонент может быть оберткой для других компонентов
  * @prop headerText - заголовок окна
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, headerText }: TDialogWindowProps) {
+function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, headerText, addClassNames = [] }: TDialogWindowProps) {
+    const defaultClassName = "DialogWindow";
+    const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+
     const handleCloseDialog = () => {
         const event = {};
         const reason = "escapeKeyDown";
@@ -67,6 +72,7 @@ function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, he
             {...dialogSettings}
             onClose={onClose}
             fullScreen={true}
+            className={genClassName}
             TransitionComponent={TransitionSlideRightForvardRef}
             transitionDuration={TRANSITION_DURATION}
         >
