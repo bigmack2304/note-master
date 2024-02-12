@@ -6,6 +6,8 @@ import type { SxProps } from "@mui/material";
 type TAddButtonProps = {
     onClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
+    size?: "inherit" | "small" | "medium" | "large";
+    title?: string;
 };
 
 const ButtonStyle: SxProps = {
@@ -13,17 +15,17 @@ const ButtonStyle: SxProps = {
 };
 
 /**
- * круглая кнопка с галочкой
+ * круглая кнопка с плюсиком
  * @prop onClick - вызывается при клике на кнопку
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function AddButton({ onClick = () => {}, addClassNames = [] }: TAddButtonProps) {
+function AddButton({ onClick = () => {}, addClassNames = [], title, size = "large" }: TAddButtonProps) {
     const defaultClassName = "AddButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
-        <IconButton className={genClassName} aria-label="добавить элемент" size="large" sx={ButtonStyle} onClick={onClick}>
-            <AddCircleIcon fontSize="large" color="primary" />
+        <IconButton className={genClassName} aria-label="добавить элемент" sx={ButtonStyle} onClick={onClick} title={title}>
+            <AddCircleIcon fontSize={size} color="primary" />
         </IconButton>
     );
 }
