@@ -144,9 +144,18 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
             MuiList: {
                 styleOverrides: {
                     root: {
-                        maxHeight: "35dvh",
+                        //maxHeight: "35dvh",
                         overflow: "hidden",
                         overflowY: "auto",
+                    },
+                },
+            },
+            MuiButtonBase: {
+                styleOverrides: {
+                    root: {
+                        "&.Mui-disabled .MuiSvgIcon-root": {
+                            color: "#00000048",
+                        },
                     },
                 },
             },
