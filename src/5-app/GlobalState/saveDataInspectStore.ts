@@ -1,22 +1,36 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
-import { updateNodeValue, deleteById, deleteComponentInNote, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag as noteAdTag } from "2-features/utils/saveDataEdit";
+import { getDataTreeDB, getGlobalTagsDB } from "2-features/utils/appIndexedDB";
+import {
+    updateNodeValue,
+    deleteById,
+    deleteComponentInNote,
+    updateNodeName,
+    addNodeTo,
+    nodeMuveTo,
+    noteDeleteTag,
+    noteAddTag as noteAdTag,
+    projectAddTag,
+    projectDeleteTag as projectDelTag,
+} from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
 import { DataNote } from "0-shared/utils/saveDataNote";
+import { DataTag } from "0-shared/utils/saveDataTag";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
+    isProjectOpen: boolean;
     currentFolder: Omit<IDataTreeFolder, "children"> | undefined;
     currentNote: IDataTreeNote | undefined;
 }
 
 const initialState: ISaveDataInspectStore = {
+    isProjectOpen: false,
     currentFolder: undefined,
     currentNote: undefined,
 };
@@ -40,6 +54,10 @@ const saveDataInspectSlice = createAppSlice({
         setCurrentNote: create.reducer<ISaveDataInspectStore["currentNote"]>((state, action) => {
             state.currentNote = action.payload;
         }),
+        // устанавливаем состояние проекта (открыт или нет)
+        setProjectOpen: create.reducer<ISaveDataInspectStore["isProjectOpen"]>((state, action) => {
+            state.isProjectOpen = action.payload;
+        }),
         // удалить папку или заметку из indexedDB
         deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
             async (payload, thunkApi) => {
@@ -47,7 +65,7 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const deletedNode = deleteById(dataTree, payload.nodeId);
+                const deletedNode = await deleteById(dataTree, payload.nodeId);
 
                 if (deletedNode) {
                     return { deletedNode: deletedNode };
@@ -86,7 +104,7 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const updatedNote = deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
+                const updatedNote = await deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
 
                 if (updatedNote) {
                     return { updatedNote: updatedNote };
@@ -114,7 +132,7 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const updatedNode = updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
+                const updatedNode = await updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
@@ -143,7 +161,7 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const updatedNode = updateNodeName(dataTree, payload.nodeId, payload.newName);
+                const updatedNode = await updateNodeName(dataTree, payload.nodeId, payload.newName);
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
@@ -282,7 +300,6 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
-
         //добавляет тег в заметку
         noteAddTag: create.asyncThunk<{ tag: string | string[] }, { editedNote: IDataTreeNote } | undefined>(
             async (payload, thunkApi) => {
@@ -311,6 +328,72 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+        //добавляет новый тег в проект
+        projectAddNewTag: create.asyncThunk<{ tagName: string; tagColor: TTagColors }, { addedTag: IGlobalTag } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const allTags = await getGlobalTagsDB();
+
+                if (!allTags) return;
+
+                for (let tag in allTags) {
+                    // не должно быть тегов с одинаковыми названиями
+                    if (allTags[tag].tag_name === payload.tagName) {
+                        return;
+                    }
+                }
+
+                const newTag = new DataTag(payload.tagName, payload.tagColor);
+                const addedTag = await projectAddTag(allTags, newTag);
+
+                if (addedTag) {
+                    return { addedTag };
+                }
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload) return;
+                },
+            }
+        ),
+        //удаляет тег из всего проекта
+        projectDeleteTag: create.asyncThunk<{ tagName: string }, { deletedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const allTags = await getGlobalTagsDB();
+                let dataTree = await getDataTreeDB();
+
+                if (!allTags || !dataTree) return;
+
+                const deletedTagName = await projectDelTag(allTags, dataTree, payload.tagName);
+
+                let curentNoteInDB: ReturnType<typeof getNodeById> = null;
+
+                // после удаляения тега, нужно обновить данниы в редаксе, потомучто в активной заметке мог быть удаляемый тег
+                if (state.saveDataInspect.currentNote) {
+                    dataTree = await getDataTreeDB();
+                    curentNoteInDB = getNodeById(dataTree, state.saveDataInspect.currentNote.id);
+                }
+
+                return { deletedTagName, curentNoteInDB };
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload || !action.payload.curentNoteInDB || !action.payload.deletedTagName) return;
+                    const {
+                        payload: { curentNoteInDB },
+                    } = action;
+
+                    if (state.currentNote && isDataTreeNote(curentNoteInDB)) {
+                        state.currentNote = curentNoteInDB;
+                    }
+                },
+            }
+        ),
     }),
 });
 
@@ -326,6 +409,9 @@ export const {
     moveFolderOrNote,
     noteDelTag,
     noteAddTag,
+    setProjectOpen,
+    projectAddNewTag,
+    projectDeleteTag,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
