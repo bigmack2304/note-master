@@ -1,0 +1,33 @@
+.AllTagsEdit {
+    border-radius: 10px;
+    margin-top: 15px;
+    flex-grow: 1;
+    width: clamp(0px, 1000px, 100%);
+}
+
+.AllTagsEdit .AllTagsEdit__form {
+    width: 100%;
+}
+
+.AllTagsEdit .AllTagsEdit__form_inner {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.AllTagsEdit .AllTagsEdit__inpits {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.AllTagsEdit .AllTagsEdit__Buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+}

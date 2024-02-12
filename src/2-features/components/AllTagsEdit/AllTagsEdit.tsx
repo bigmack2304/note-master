@@ -1,0 +1,90 @@
+import React from "react";
+import { List, ListItem, TextField } from "@mui/material";
+import { ColorTagSelect } from "../ColorTagSelect/ColorTagSelect";
+import { SaveButton } from "0-shared/components/SaveButton/SaveButton";
+import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
+import { useTags } from "0-shared/hooks/useTags";
+import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
+import type { SxProps, PaletteMode } from "@mui/material";
+import type { IGlobalTag } from "0-shared/types/dataSave";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { projectDeleteTag } from "5-app/GlobalState/saveDataInspectStore";
+import "./AllTagsEdit.scss";
+
+type TAllTagsEditProps = {
+    addClassNames?: string[];
+    sortName?: string;
+};
+
+const dialogInnerListStyle = (theme: PaletteMode) => {
+    return {
+        outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
+    } as SxProps;
+};
+
+/**
+ * список всех тегов с возможностью их редактирования
+ * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop sortName - отображать теки которые включают в себя эту подстроку
+ */
+function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
+    const defaultClassName = "AllTagsEdit";
+    const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    const themeValue = useTemeMode();
+    const allTags = useTags();
+    const dispatch = useAppDispatch();
+    let prepareAllTags: IGlobalTag[] = [];
+
+    if (allTags) {
+        prepareAllTags = Object.values(allTags);
+        prepareAllTags = prepareAllTags.filter((tag) => {
+            if (tag.tag_name.includes(sortName)) return true;
+            return false;
+        });
+    }
+
+    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const oldName = form.dataset.oldName;
+        const oldColor = form.dataset.oldColor;
+        const newName = formData.get("tagName");
+        const newColor = formData.get("tagColor");
+
+        if (oldName !== newName || oldColor !== newColor) {
+            console.log("обновляем данные");
+        }
+    };
+
+    const onDeleteClick = (e: React.FormEvent, customData: IGlobalTag) => {
+        dispatch(projectDeleteTag({ tagName: customData.tag_name }));
+    };
+
+    return (
+        <List className={genClassName} sx={dialogInnerListStyle(themeValue)}>
+            {prepareAllTags.map((tag) => {
+                return (
+                    <ListItem key={tag.tag_name} divider className="AllTagsEdit__Item">
+                        <form autoComplete="off" className="AllTagsEdit__form" onSubmit={onFormSubmit} data-old-name={tag.tag_name} data-old-color={tag.color}>
+                            {/* TODO: AllTagsEdit__form_inner поставил, иначе при клике в пустое место фармы появлялась ошибка "Failed to execute 'matches' on 'Element'" */}
+                            <div className="AllTagsEdit__form_inner">
+                                <div className="AllTagsEdit__inpits">
+                                    <TextField name="tagName" label="Имя тега" placeholder="Имя тега" variant="standard" defaultValue={tag.tag_name} autoComplete="off" required />
+                                    <ColorTagSelect name="tagColor" defaultVal={tag.color} required />
+                                </div>
+                                <div className="AllTagsEdit__Buttons">
+                                    <SaveButton size="large" title="Сохранить" type="submit" />
+                                    <DeleteButton size="large" title="Удалить" onClick={onDeleteClick} customData={tag} />
+                                </div>
+                            </div>
+                        </form>
+                    </ListItem>
+                );
+            })}
+        </List>
+    );
+}
+
+export { AllTagsEdit };
