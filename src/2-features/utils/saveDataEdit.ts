@@ -1,15 +1,18 @@
-import { getNodeById, getAllIdsInNode, getParentNode } from "./saveDataParse";
-import { setDataTreeDB, getDataTreeDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag } from "0-shared/types/dataSave";
+import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
+import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB } from "./appIndexedDB";
+import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
+import type { DataTag } from "0-shared/utils/saveDataTag";
+import type { DataNote } from "0-shared/utils/saveDataNote";
+import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
 
 /**
  * слияние нод по id, tempData с newNode
  * @param newNode измененная нода
  */
-function mergeNodeById(newNode: TchildrenType) {
+async function mergeNodeById(newNode: TchildrenType) {
     const target_id = newNode.id;
 
     const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataTreeRootFolder) => {
@@ -36,7 +39,7 @@ function mergeNodeById(newNode: TchildrenType) {
  * @param newValue новое значение value
  * @returns
  */
-function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: string) {
+async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: string) {
     let targetNote = getNodeById(rootFolder, noteId);
 
     if (targetNote && isDataTreeNote(targetNote)) {
@@ -45,7 +48,7 @@ function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, compon
             component.value = newValue;
             break;
         }
-        setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: rootFolder });
     }
 
     return targetNote;
@@ -57,12 +60,12 @@ function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, compon
  * @param target_id id компонента в котором нужно поменять Name
  * @param newValue новое значение Name
  */
-function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newName: string) {
+async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newName: string) {
     let targetNode = getNodeById(rootFolder, target_id);
 
     if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
         targetNode.name = newName;
-        setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: rootFolder });
     }
 
     return targetNode;
@@ -74,7 +77,7 @@ function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newN
  * @param noteID id заметки
  * @param componentID id компонента который нужно удалить
  */
-function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, componentID: string) {
+async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, componentID: string) {
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
@@ -89,7 +92,7 @@ function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, 
             return true;
         });
 
-        setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: rootFolder });
     }
     return targetNote;
 }
@@ -99,7 +102,7 @@ function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, 
  * @param data - обьект сохранения IDataTreeRootFolder
  * @param target_id - id ноды которую нужно удалить
  */
-function deleteById(data: IDataTreeRootFolder, target_id: string) {
+async function deleteById(data: IDataTreeRootFolder, target_id: string) {
     let parent: IDataTreeFolder;
     let deletedNode: TchildrenType | undefined;
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
@@ -137,7 +140,7 @@ function deleteById(data: IDataTreeRootFolder, target_id: string) {
     parent = data;
     let result = finder(data);
     if (!result) throw new Error(`node not found`);
-    setDataTreeDB({ value: data });
+    await setDataTreeDB({ value: data });
     return deletedNode;
 }
 
@@ -147,7 +150,11 @@ function deleteById(data: IDataTreeRootFolder, target_id: string) {
  * @param insertToId - id ноды в которую нужно добавить
  * @param newNode - обьект новой ноды (классы из 0-shared/utils/saveData... .ts)
  */
-async function addNodeTo(data: IDataTreeRootFolder, insertToId: string, newNode: TchildrenType | TNoteBody): Promise<null | IDataTreeFolder | IDataTreeNote | TNoteBody> {
+async function addNodeTo(
+    data: IDataTreeRootFolder,
+    insertToId: string,
+    newNode: TchildrenType | TNoteBody | DataNote | DataFolder
+): Promise<null | IDataTreeFolder | IDataTreeNote | TNoteBody> {
     let targetNode = getNodeById(data, insertToId);
 
     if (!targetNode) return null;
@@ -156,14 +163,14 @@ async function addNodeTo(data: IDataTreeRootFolder, insertToId: string, newNode:
     if (isDataTreeFolder(targetNode) && (isDataTreeFolder(newNode) || isDataTreeNote(newNode))) {
         if (!targetNode.children) targetNode.children = [];
         targetNode.children.push(newNode);
-        setDataTreeDB({ value: data });
+        await setDataTreeDB({ value: data });
         return newNode;
     }
 
     // в заметку мы можем добавить компонент
     if (isDataTreeNote(targetNode) && isDataNoteBody(newNode)) {
         targetNode.body.push(newNode);
-        setDataTreeDB({ value: data });
+        await setDataTreeDB({ value: data });
         return newNode;
     }
 
@@ -197,7 +204,7 @@ async function nodeMuveTo(data: IDataTreeRootFolder, muvedNodeID: string, muveTo
         if (!isDataTreeFolder(muvedNode) && !isDataTreeNote(muvedNode)) return null;
         if (!moveToNode.children) moveToNode.children = [];
         moveToNode.children.push(muvedNode);
-        setDataTreeDB({ value: data });
+        await setDataTreeDB({ value: data });
         return muvedNode;
     }
 
@@ -222,7 +229,7 @@ async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, ta
         return true;
     });
 
-    setDataTreeDB({ value: data });
+    await setDataTreeDB({ value: data });
 
     return targetNote;
 }
@@ -255,9 +262,48 @@ async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: 
 
     targetNote.tags = targetNote.tags!.concat(prepareTags);
 
-    setDataTreeDB({ value: data });
+    await setDataTreeDB({ value: data });
 
     return targetNote;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag };
+/**
+ * добавляет тег в проект
+ * @param tagData обьект
+ * @param newTag - обьект нового тега (классы из 0-shared/utils/saveDataTag.ts)
+ */
+async function projectAddTag(tagData: IAllTags, newTag: IGlobalTag | DataTag) {
+    tagData[newTag.tag_name] = newTag;
+
+    await setGlobalTagsDB({ value: tagData });
+
+    return newTag;
+}
+
+/**
+ * удаляет тег из проекта
+ * @param tagData обьект
+ * @param data обьект IDataTreeRootFolder
+ * @param tagName - имя тега который нужно удалить
+ */
+async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, tagName: string) {
+    delete tagData[tagName];
+    const allNotes = getAllNotes(data);
+
+    for (let note of allNotes) {
+        if (!note.tags) continue;
+        note.tags = note.tags.filter((tag) => {
+            if (tag === tagName) return false;
+            return true;
+        });
+    }
+
+    // удалить этот тег из всех заметок
+
+    await setGlobalTagsDB({ value: tagData });
+    await setDataTreeDB({ value: data });
+
+    return tagName;
+}
+
+export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag };

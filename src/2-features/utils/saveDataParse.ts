@@ -181,4 +181,30 @@ function getAllFolders(data: IDataTreeRootFolder) {
     return allFolders;
 }
 
-export { getAllIds, getNodeById, getAllIdsInNode, getParentNode, getAllFolders };
+/**
+ * возвращает все заметки внутри data, на любой вложенности
+ * @param data обьект сохранения IDataTreeRootFolder
+ * @returns
+ */
+function getAllNotes(data: IDataTreeRootFolder) {
+    const allNotes: IDataTreeNote[] = [];
+
+    const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
+        if (isDataTreeFolder(node)) {
+            if (!node.children) return;
+            for (let item of node.children) {
+                parser(item);
+            }
+        }
+
+        if (isDataTreeNote(node)) {
+            allNotes.push(node);
+        }
+    };
+
+    parser(data);
+
+    return allNotes;
+}
+
+export { getAllIds, getNodeById, getAllIdsInNode, getParentNode, getAllFolders, getAllNotes };
