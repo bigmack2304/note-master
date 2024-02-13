@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useHandleUpdate } from "./useHandleUpdate";
 
 /**
@@ -8,10 +8,10 @@ import { useHandleUpdate } from "./useHandleUpdate";
 function useIndexedDBTagsUpdate(onUpdCallback?: () => void) {
     const [handleupdate] = useHandleUpdate();
 
-    const onUpdate = () => {
+    const onUpdate = useCallback(() => {
         handleupdate();
         onUpdCallback && onUpdCallback();
-    };
+    }, []);
 
     useEffect(() => {
         window.addEventListener("appIndexedDBTagsUpdate", onUpdate as EventListener);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useHandleUpdate } from "./useHandleUpdate";
 import type { IDataSave } from "0-shared/types/dataSave";
 
@@ -9,10 +9,10 @@ import type { IDataSave } from "0-shared/types/dataSave";
 function useIndexedDBTreeUpdate(onUpdCallback?: () => void) {
     const [handleupdate] = useHandleUpdate();
 
-    const onUpdate = () => {
+    const onUpdate = useCallback(() => {
         handleupdate();
         onUpdCallback && onUpdCallback();
-    };
+    }, []);
 
     useEffect(() => {
         window.addEventListener("appIndexedDBTreeUpdate", onUpdate as EventListener);
