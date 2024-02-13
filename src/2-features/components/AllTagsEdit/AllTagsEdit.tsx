@@ -55,7 +55,6 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
 
         if (!newName || !newColor || !oldName) return;
         if (oldName !== newName || oldColor !== newColor) {
-            console.log("обновляем данные");
             dispatch(projectEditTag({ newTagName: newName, newTagColor: newColor, oldTagName: oldName }));
         }
     };
