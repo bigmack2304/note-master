@@ -14,6 +14,7 @@ import {
     noteAddTag as noteAdTag,
     projectAddTag,
     projectDeleteTag as projectDelTag,
+    projectEditeTag,
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -394,6 +395,46 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+
+        //изменяет тег во всем проекте
+        projectEditTag: create.asyncThunk<
+            { newTagName: string; newTagColor: TTagColors; oldTagName: string },
+            { editedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined
+        >(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+                const allTags = await getGlobalTagsDB();
+                let dataTree = await getDataTreeDB();
+
+                if (!allTags || !dataTree) return;
+
+                const editedTagName = await projectEditeTag(allTags, dataTree, payload.oldTagName, payload.newTagName, payload.newTagColor);
+
+                let curentNoteInDB: ReturnType<typeof getNodeById> = null;
+
+                // после изменения тега, нужно обновить данниые в редаксе, потомучто в активной заметке мог быть удаляемый тег
+                if (state.saveDataInspect.currentNote) {
+                    dataTree = await getDataTreeDB();
+                    curentNoteInDB = getNodeById(dataTree, state.saveDataInspect.currentNote.id);
+                }
+
+                return { editedTagName, curentNoteInDB };
+            },
+            {
+                pending: (state) => {},
+                rejected: (state, action) => {},
+                fulfilled: (state, action) => {
+                    if (!action.payload || !action.payload.curentNoteInDB || !action.payload.editedTagName) return;
+                    const {
+                        payload: { curentNoteInDB },
+                    } = action;
+
+                    if (state.currentNote && isDataTreeNote(curentNoteInDB)) {
+                        state.currentNote = curentNoteInDB;
+                    }
+                },
+            }
+        ),
     }),
 });
 
@@ -412,6 +453,7 @@ export const {
     setProjectOpen,
     projectAddNewTag,
     projectDeleteTag,
+    projectEditTag,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

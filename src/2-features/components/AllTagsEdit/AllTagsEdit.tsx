@@ -7,9 +7,9 @@ import { useTags } from "0-shared/hooks/useTags";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
 import type { SxProps, PaletteMode } from "@mui/material";
-import type { IGlobalTag } from "0-shared/types/dataSave";
+import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { projectDeleteTag } from "5-app/GlobalState/saveDataInspectStore";
+import { projectDeleteTag, projectEditTag } from "5-app/GlobalState/saveDataInspectStore";
 import "./AllTagsEdit.scss";
 
 type TAllTagsEditProps = {
@@ -49,12 +49,14 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
         const oldName = form.dataset.oldName;
-        const oldColor = form.dataset.oldColor;
-        const newName = formData.get("tagName");
-        const newColor = formData.get("tagColor");
+        const oldColor = form.dataset.oldColor as TTagColors | undefined;
+        const newName = formData.get("tagName") as string | null;
+        const newColor = formData.get("tagColor") as TTagColors | undefined;
 
+        if (!newName || !newColor || !oldName) return;
         if (oldName !== newName || oldColor !== newColor) {
             console.log("обновляем данные");
+            dispatch(projectEditTag({ newTagName: newName, newTagColor: newColor, oldTagName: oldName }));
         }
     };
 

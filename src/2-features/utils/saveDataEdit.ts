@@ -3,7 +3,7 @@ import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB } from "./appIndexedDB";
 import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
-import type { DataTag } from "0-shared/utils/saveDataTag";
+import { DataTag } from "0-shared/utils/saveDataTag";
 import type { DataNote } from "0-shared/utils/saveDataNote";
 import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -306,4 +306,60 @@ async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, ta
     return tagName;
 }
 
-export { mergeNodeById, updateNodeValue, deleteComponentInNote, deleteById, updateNodeName, addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag };
+/**
+ * изменяет тег во всем проекте
+ * @param tagData обьект
+ * @param data обьект IDataTreeRootFolder
+ * @param oldTagName - старое имя тега
+ * @param newTagName - новое имя тега
+ * @param newTagColor - новый цвет тега
+ */
+async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, oldTagName: string, newTagName: string, newTagColor: TTagColors) {
+    if (oldTagName !== newTagName) {
+        if (!(newTagName in tagData)) {
+            delete tagData[oldTagName];
+            tagData[newTagName] = new DataTag(newTagName, newTagColor);
+            const allNotes = getAllNotes(data);
+
+            for (let note of allNotes) {
+                if (!note.tags) continue;
+                let isTag = false;
+                note.tags = note.tags.filter((tag) => {
+                    if (tag === oldTagName) {
+                        isTag = true;
+                        return false;
+                    }
+                    return true;
+                });
+                if (isTag) {
+                    note.tags.push(newTagName);
+                }
+            }
+
+            await setDataTreeDB({ value: data });
+        }
+    } else {
+        tagData[oldTagName].color = newTagColor;
+    }
+
+    // удалить этот тег из всех заметок
+
+    await setGlobalTagsDB({ value: tagData });
+
+    return newTagName;
+}
+
+export {
+    mergeNodeById,
+    updateNodeValue,
+    deleteComponentInNote,
+    deleteById,
+    updateNodeName,
+    addNodeTo,
+    nodeMuveTo,
+    noteDeleteTag,
+    noteAddTag,
+    projectAddTag,
+    projectDeleteTag,
+    projectEditeTag,
+};
