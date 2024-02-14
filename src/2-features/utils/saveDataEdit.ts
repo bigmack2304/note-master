@@ -315,6 +315,8 @@ async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, ta
  * @param newTagColor - новый цвет тега
  */
 async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, oldTagName: string, newTagName: string, newTagColor: TTagColors) {
+    // так как теги в db хранятся в обьекте по (ключу = имя тега), если имя изменилось то и ключ должен изменится
+    // TODO: возможно в будующем добавлю тегам id и в качестве ключа к тегу будет его id, это серьезно упростит работу с изменением тегов, + положительно скажется на визуальном отображаении. (речь идет о том как рендерится список с key в react ), ведь key равен имяни тега а значит и ключу в db
     if (oldTagName !== newTagName) {
         if (!(newTagName in tagData)) {
             delete tagData[oldTagName];
@@ -323,16 +325,9 @@ async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, old
 
             for (let note of allNotes) {
                 if (!note.tags) continue;
-                let isTag = false;
-                note.tags = note.tags.filter((tag) => {
-                    if (tag === oldTagName) {
-                        isTag = true;
-                        return false;
-                    }
-                    return true;
-                });
-                if (isTag) {
-                    note.tags.push(newTagName);
+                const indexTagOldName = note.tags.indexOf(oldTagName);
+                if (indexTagOldName !== -1) {
+                    note.tags[indexTagOldName] = newTagName;
                 }
             }
 
@@ -341,8 +336,6 @@ async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, old
     } else {
         tagData[oldTagName].color = newTagColor;
     }
-
-    // удалить этот тег из всех заметок
 
     await setGlobalTagsDB({ value: tagData });
 
