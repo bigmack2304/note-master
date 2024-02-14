@@ -206,6 +206,7 @@ async function nodeMuveTo(
 
     if (!muvedNode || !muvedNodeParent || !moveToNode) return { muvedNode: null, resultBool };
     if (muvedNode.id === "root") return { muvedNode: muvedNode, resultBool };
+    if (getNodeById(muvedNode, moveToNode.id)) return { muvedNode: muvedNode, resultBool }; // чтобы нельзя было переместить папку в ее дочернюю папку
     if (muvedNodeParent.id === moveToNode.id) return { muvedNode, resultBool }; // если, откуда = куда перемещаем то ничего не делаем
     if (moveToNode.id === muvedNodeID) return { muvedNode, resultBool }; // чтобы нельзя было перемещать элементы самих в себя
 
