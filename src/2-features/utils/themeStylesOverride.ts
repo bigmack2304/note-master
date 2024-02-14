@@ -159,6 +159,16 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     },
                 },
             },
+            MuiLinearProgress: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: "#f5f5f5",
+                    },
+                    bar: {
+                        backgroundColor: themeValue === "light" ? "#248b29" : "#000f65",
+                    },
+                },
+            },
         },
         palette: {
             primary: theme.palette.augmentColor({
