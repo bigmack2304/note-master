@@ -7,7 +7,7 @@ interface IEditDataSlice {
 }
 
 const initialState: IEditDataSlice = {
-    isEdit: true,
+    isEdit: false,
     isLoading: false,
 };
 
@@ -18,8 +18,8 @@ const editDataSlice = createSlice({
     name: "noteEditData",
     initialState,
     reducers: {
-        setIsEdit: (state, action: PayloadAction<IEditDataSlice["isEdit"]>) => {
-            state.isEdit = action.payload;
+        toggleIsEdit: (state) => {
+            state.isEdit = !state.isEdit;
         },
         setIsLoading: (state, action: PayloadAction<IEditDataSlice["isLoading"]>) => {
             state.isLoading = action.payload;
@@ -27,7 +27,7 @@ const editDataSlice = createSlice({
     },
 });
 
-export const { setIsEdit, setIsLoading } = editDataSlice.actions;
+export const { toggleIsEdit, setIsLoading } = editDataSlice.actions;
 export const { reducer } = editDataSlice;
 export { editDataSlice };
 export type { IEditDataSlice };

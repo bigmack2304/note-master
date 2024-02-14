@@ -8,6 +8,7 @@ import { TOOLBAR_BG_DARK_COLOR, TOOLBAR_BG_LIGHT_COLOR } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { PaletteMode } from "@mui/material";
 import { NewTagButton } from "2-features/components/NewTagButton/NewTagButton";
+import { NoteEditButton } from "2-features/components/EditButton/EditButton";
 
 type TToolBarprops = {
     addClassNames?: string[];
@@ -48,6 +49,7 @@ function ToolBar({ addClassNames = [] }: TToolBarprops) {
     return (
         <Collapse in={isActive} className={"ToolBar_wrapper"} orientation="vertical">
             <Box className={genClassName} sx={toolbarStyle(themeValue)}>
+                <NoteEditButton></NoteEditButton>
                 <NewTagButton></NewTagButton>
             </Box>
         </Collapse>
