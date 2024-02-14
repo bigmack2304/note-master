@@ -44,6 +44,7 @@ function NewTagButton({ addClassNames = [] }: TNewTagButtonProps) {
 
     const onDialogClose = () => {
         setIsDialogOpen(false);
+        setFindTag("");
     };
 
     return (
