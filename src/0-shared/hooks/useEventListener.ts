@@ -3,7 +3,7 @@ import { useHandleUpdate } from "./useHandleUpdate";
 
 type TuseEventListenerProps = {
     updateOnReset?: boolean;
-    eventName?: string;
+    eventName?: string | string[];
     onEvent?: () => void;
 };
 
@@ -26,12 +26,24 @@ function useEventListener({ updateOnReset, onEvent, eventName }: TuseEventListen
 
     useEffect(() => {
         if (eventName) {
-            window.addEventListener(eventName, onEvt);
+            if (Array.isArray(eventName)) {
+                for (let nameItem of eventName) {
+                    window.addEventListener(nameItem, onEvt);
+                }
+            } else {
+                window.addEventListener(eventName, onEvt);
+            }
         }
 
         return () => {
             if (eventName) {
-                window.removeEventListener(eventName, onEvt);
+                if (Array.isArray(eventName)) {
+                    for (let nameItem of eventName) {
+                        window.removeEventListener(nameItem, onEvt);
+                    }
+                } else {
+                    window.removeEventListener(eventName, onEvt);
+                }
             }
         };
     }, []);
