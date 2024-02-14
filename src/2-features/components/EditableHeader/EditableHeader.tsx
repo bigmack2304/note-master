@@ -28,6 +28,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
     const isMenuOpen = Boolean(menuAnchorEl);
     const dispatch = useAppDispatch();
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
+    let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -86,6 +87,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                             onClearClick={onMenuClear}
                             onDeleteClick={onMenuDelete}
                             isClearDisabled={headerValue.length > 0 ? false : true}
+                            isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenu>
                 </>

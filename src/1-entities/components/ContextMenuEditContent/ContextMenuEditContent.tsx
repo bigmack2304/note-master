@@ -15,6 +15,7 @@ type TContextMenuEditContentProps = {
     onClearClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
     isClearDisabled?: boolean;
+    isAllDisabled?: boolean;
 };
 
 const menuItemStyle: SxProps = {
@@ -28,26 +29,27 @@ const menuItemStyle: SxProps = {
  * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
  * @prop onClearClick - вызывается при нажатии на кнопку "Отчистить"
  * @prop isClearDisabled - boolean - disabled для кнопки "Отчистить"
+ * @prop isAllDisabled - boolean - disabled для кнопки всех кнопок
  */
-function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick, onClearClick, isClearDisabled = false }: TContextMenuEditContentProps) {
+function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick, onClearClick, isClearDisabled = false, isAllDisabled = false }: TContextMenuEditContentProps) {
     const defaultClassName = "ContextMenuEditContent";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
         <>
-            <MenuItem className={genClassName} onClick={onEditClick} sx={menuItemStyle}>
+            <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onEditClick} sx={menuItemStyle}>
                 <ListItemIcon>
                     <EditIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Редактировать</ListItemText>
             </MenuItem>
-            <MenuItem className={genClassName} disabled={isClearDisabled} onClick={onClearClick} sx={menuItemStyle}>
+            <MenuItem className={genClassName} disabled={isClearDisabled || isAllDisabled} onClick={onClearClick} sx={menuItemStyle}>
                 <ListItemIcon>
                     <BrowserNotSupportedIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Отчистить</ListItemText>
             </MenuItem>
-            <MenuItem className={genClassName} onClick={onDeleteClick} sx={menuItemStyle}>
+            <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onDeleteClick} sx={menuItemStyle}>
                 <ListItemIcon>
                     <DeleteIcon fontSize="small" />
                 </ListItemIcon>
