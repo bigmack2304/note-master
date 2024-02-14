@@ -10,6 +10,7 @@ import type { SxProps, PaletteMode } from "@mui/material";
 import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { projectDeleteTag, projectEditTag } from "5-app/GlobalState/saveDataInspectStore";
+import { useEventDispatch } from "0-shared/hooks/useEventDispatch";
 import "./AllTagsEdit.scss";
 
 type TAllTagsEditProps = {
@@ -34,6 +35,7 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
     const themeValue = useTemeMode();
     const allTags = useTags();
     const dispatch = useAppDispatch();
+    const [dispatchEvent] = useEventDispatch({ eventName: "AllTagsEditSelectReset" });
     let prepareAllTags: IGlobalTag[] = [];
 
     if (allTags) {
@@ -56,6 +58,8 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
         if (!newName || !newColor || !oldName) return;
         if (oldName !== newName || oldColor !== newColor) {
             dispatch(projectEditTag({ newTagName: newName, newTagColor: newColor, oldTagName: oldName }));
+            form.reset(); // сброс нативных инпутов
+            dispatchEvent(); // сброс селектов
         }
     };
 
@@ -73,7 +77,7 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
                             <div className="AllTagsEdit__form_inner">
                                 <div className="AllTagsEdit__inpits">
                                     <TextField name="tagName" label="Имя тега" placeholder="Имя тега" variant="standard" defaultValue={tag.tag_name} autoComplete="off" required />
-                                    <ColorTagSelect name="tagColor" defaultVal={tag.color} required />
+                                    <ColorTagSelect name="tagColor" defaultValue={tag.color} updateOnEvent="AllTagsEditSelectReset" resetOnEvent required />
                                 </div>
                                 <div className="AllTagsEdit__Buttons">
                                     <SaveButton size="large" title="Сохранить" type="submit" />

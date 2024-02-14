@@ -10,12 +10,17 @@ import type { PaletteMode, SxProps } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { ColorBox } from "0-shared/components/ColorBox/ColorBox";
 import { TAGS_COLORS_LIGHT } from "5-app/settings";
+import { useEventListener } from "0-shared/hooks/useEventListener";
+
+type TSelectValue = TTagColors | "";
 
 type TColorTagSelectProps = {
-    onChange?: (selectColor: TTagColors | "") => void;
-    defaultVal?: TTagColors | "";
+    onChange?: (selectValue: TSelectValue) => void;
+    defaultValue?: TSelectValue;
     required?: boolean;
     name?: string;
+    updateOnEvent?: string;
+    resetOnEvent?: boolean;
 };
 
 const ColorTagSelectStyle = (theme: PaletteMode) => {
@@ -29,17 +34,32 @@ const ColorTagSelectStyle = (theme: PaletteMode) => {
 /**
  * выводит селект со всеми возможными цветами тегов
  * @prop onChange(selectColor) вызывается при выборе цвета
- * @prop defaultVal дефолтное значение селекта
+ * @prop defaultValue дефолтное значение селекта
  * @prop required долженли быть селект обязательным
+ * @prop name имя селектора, если он будет юзатся в форме
+ * @prop updateOnEvent любое имя события на которое нужно подписатся (подписка идет через useEventListener соответстыенно вызов такого события возможен через useEventDispatch)
+ * @prop resetOnEvent сброс селекта до значения defaultValue, при появлении события указанного в updateOnEvent
  */
-function ColorTagSelect({ onChange, defaultVal, required, name }: TColorTagSelectProps) {
+function ColorTagSelect({ onChange, required, name, defaultValue = "", updateOnEvent, resetOnEvent }: TColorTagSelectProps) {
     const selectLabelID = useId();
-    const [selectValue, setSelectValue] = useState<TTagColors | "">(defaultVal || "");
+    const [selectValue, setSelectValue] = useState<TSelectValue>(defaultValue);
     const colorList = Object.keys(TAGS_COLORS_LIGHT) as TTagColors[];
     const themeValue = useTemeMode();
 
-    const onSelectChange = (event: SelectChangeEvent<TTagColors>) => {
-        const colorValue = event.target.value as TTagColors;
+    const selectReset = () => {
+        setSelectValue(defaultValue);
+    };
+
+    const onCustomEvent = () => {
+        if (resetOnEvent) {
+            selectReset();
+        }
+    };
+
+    useEventListener({ onEvent: onCustomEvent, eventName: updateOnEvent });
+
+    const onSelectChange = (e: SelectChangeEvent<TTagColors>) => {
+        const colorValue = e.target.value as TSelectValue;
         setSelectValue(colorValue);
         onChange && onChange(colorValue);
     };
@@ -49,10 +69,10 @@ function ColorTagSelect({ onChange, defaultVal, required, name }: TColorTagSelec
             <InputLabel id={selectLabelID}>Цвет</InputLabel>
             <Select
                 labelId={selectLabelID}
+                onChange={onSelectChange}
                 value={selectValue}
                 label="Цвет"
                 name={name}
-                onChange={onSelectChange}
                 required={required}
                 input={<OutlinedInput label="Цвет" />}
                 renderValue={(selectedColor) => <ColorBox color={TAGS_COLORS_LIGHT[selectedColor as TTagColors]} />}

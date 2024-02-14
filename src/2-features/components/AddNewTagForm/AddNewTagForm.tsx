@@ -5,6 +5,7 @@ import { OkButton } from "0-shared/components/OkButton/OkButton";
 import type { TTagColors } from "0-shared/types/dataSave";
 import { projectAddNewTag } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { useEventDispatch } from "0-shared/hooks/useEventDispatch";
 import "./AddNewTagForm.scss";
 
 type TAddNewTagFormProps = {
@@ -21,12 +22,15 @@ function AddNewTagForm({ addClassNames = [] }: TAddNewTagFormProps) {
     const [newTagName, setNewTagName] = useState<string>("");
     const [selectValue, setSelectValue] = useState<TTagColors | "">("");
     const dispatch = useAppDispatch();
+    const [dispatchEvent] = useEventDispatch({ eventName: "AddNewTagFormSelectReset" });
 
     const onFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const form = e.target as HTMLFormElement;
         dispatch(projectAddNewTag({ tagColor: selectValue as TTagColors, tagName: newTagName }));
 
-        setNewTagName("");
+        dispatchEvent(); // сбрасываем значение в селекте
+        setNewTagName(""); // сбрасываем значение инпута
     };
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +50,7 @@ function AddNewTagForm({ addClassNames = [] }: TAddNewTagFormProps) {
                 <div className="AddNewTagForm__inner">
                     <div className="AddNewTagForm__inputs">
                         <TextField value={newTagName} label="Новый тег" placeholder="Имя тега" variant="standard" onChange={onInputChange} required />
-                        <ColorTagSelect onChange={onSelectChange} required />
+                        <ColorTagSelect onChange={onSelectChange} updateOnEvent="AddNewTagFormSelectReset" resetOnEvent required />
                     </div>
                     <OkButton type="submit" />
                 </div>
