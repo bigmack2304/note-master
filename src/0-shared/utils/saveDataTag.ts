@@ -4,16 +4,14 @@ import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
  *  класс для создания новых тегов для IAllTags
  */
 class DataTag implements IGlobalTag {
-    public tag_name!: IGlobalTag["tag_name"];
-    public color!: IGlobalTag["color"];
+    public tag_name: IGlobalTag["tag_name"];
+    public color: IGlobalTag["color"];
 
     constructor(name: string, color: TTagColors) {
-        let that = Object.create(null) as IGlobalTag;
+        this.tag_name = name;
+        this.color = color;
 
-        that.tag_name = name;
-        that.color = color;
-
-        return that;
+        Object.setPrototypeOf(this, null);
     }
 }
 
