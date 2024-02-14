@@ -1,5 +1,12 @@
 import type { TTagColors } from "0-shared/types/dataSave";
 
+// события для асинхронных редьюсеров в saveDataInspectSlice
+// REJECT не обязательно значит что произошла ошибка, возможно не прошла какаято валидация
+const EV_NAME_SAVE_DATA_REDUCER_START = "saveDataInspectReducerSart"; // начало операции
+const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // ошибка
+const EV_NAME_SAVE_DATA_REDUCER_END = "saveDataInspectReducerEnd"; // конец редьюсера, неважно ошибка или успех
+const EV_NAME_SAVE_DATA_REDUCER_FULFILLED = "saveDataInspectReducerFulfield"; // успех
+
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
 
@@ -30,4 +37,8 @@ export {
     TAGS_COLORS_LIGHT,
     TOOLBAR_BG_LIGHT_COLOR,
     TOOLBAR_BG_DARK_COLOR,
+    EV_NAME_SAVE_DATA_REDUCER_START,
+    EV_NAME_SAVE_DATA_REDUCER_REJECT,
+    EV_NAME_SAVE_DATA_REDUCER_END,
+    EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
 };

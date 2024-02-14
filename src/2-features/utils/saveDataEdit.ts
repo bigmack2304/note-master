@@ -1,5 +1,5 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
-import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB } from "./appIndexedDB";
+import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
 import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -41,6 +41,7 @@ async function mergeNodeById(newNode: TchildrenType) {
  */
 async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: string) {
     let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
 
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
@@ -48,10 +49,11 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
             component.value = newValue;
             break;
         }
+        resultBool = true;
         await setDataTreeDB({ value: rootFolder });
     }
 
-    return targetNote;
+    return { targetNote, resultBool };
 }
 
 /**
@@ -62,13 +64,15 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
  */
 async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newName: string) {
     let targetNode = getNodeById(rootFolder, target_id);
+    let resultBool = false;
 
     if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
         targetNode.name = newName;
+        resultBool = true;
         await setDataTreeDB({ value: rootFolder });
     }
 
-    return targetNode;
+    return { targetNode, resultBool };
 }
 
 /**
@@ -80,6 +84,7 @@ async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string
 async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, componentID: string) {
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
+    let resultBool = false;
 
     let targetNote = getNodeById(rootFolder, noteID);
 
@@ -92,9 +97,10 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
             return true;
         });
 
+        resultBool = true;
         await setDataTreeDB({ value: rootFolder });
     }
-    return targetNote;
+    return { targetNote, resultBool };
 }
 
 /**
@@ -106,6 +112,7 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string) {
     let parent: IDataTreeFolder;
     let deletedNode: TchildrenType | undefined;
     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
+    let resultBool = false;
     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
     const finder = (node: TchildrenType) => {
@@ -121,6 +128,7 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string) {
                 }
                 return true;
             });
+            resultBool = true;
             return true;
         }
 
@@ -141,7 +149,7 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string) {
     let result = finder(data);
     if (!result) throw new Error(`node not found`);
     await setDataTreeDB({ value: data });
-    return deletedNode;
+    return { deletedNode, resultBool };
 }
 
 /**
@@ -154,27 +162,30 @@ async function addNodeTo(
     data: IDataTreeRootFolder,
     insertToId: string,
     newNode: TchildrenType | TNoteBody | DataNote | DataFolder
-): Promise<null | IDataTreeFolder | IDataTreeNote | TNoteBody> {
+): Promise<{ newNode: null | IDataTreeFolder | IDataTreeNote | TNoteBody; resultBool: boolean }> {
     let targetNode = getNodeById(data, insertToId);
+    let resultBool = false;
 
-    if (!targetNode) return null;
+    if (!targetNode) return { newNode: null, resultBool };
 
     // в папку мы можем добавить другую папку или заметку
     if (isDataTreeFolder(targetNode) && (isDataTreeFolder(newNode) || isDataTreeNote(newNode))) {
         if (!targetNode.children) targetNode.children = [];
         targetNode.children.push(newNode);
+        resultBool = true;
         await setDataTreeDB({ value: data });
-        return newNode;
+        return { newNode, resultBool };
     }
 
     // в заметку мы можем добавить компонент
     if (isDataTreeNote(targetNode) && isDataNoteBody(newNode)) {
         targetNode.body.push(newNode);
+        resultBool = true;
         await setDataTreeDB({ value: data });
-        return newNode;
+        return { newNode, resultBool };
     }
 
-    return null;
+    return { newNode: null, resultBool };
 }
 
 /**
@@ -183,14 +194,20 @@ async function addNodeTo(
  * @param muvedNodeID - id ноды которую перемещаем
  * @param muveToID - id ноды куда перемещаем
  */
-async function nodeMuveTo(data: IDataTreeRootFolder, muvedNodeID: string, muveToID: string): Promise<IDataTreeFolder | IDataTreeNote | TNoteBody | null> {
+async function nodeMuveTo(
+    data: IDataTreeRootFolder,
+    muvedNodeID: string,
+    muveToID: string
+): Promise<{ muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody | null; resultBool: boolean }> {
     let muvedNode = getNodeById(data, muvedNodeID);
     let muvedNodeParent = muvedNode && getParentNode(data, muvedNode.id);
     let moveToNode = getNodeById(data, muveToID);
+    let resultBool = false;
 
-    if (!muvedNode || !muvedNodeParent || !moveToNode) return null;
-    if (muvedNodeParent.id === moveToNode.id) return muvedNode; // если, откуда = куда перемещаем то ничего не делаем
-    if (moveToNode.id === muvedNodeID) return muvedNode; // чтобы нельзя было перемещать элементы самих в себя
+    if (!muvedNode || !muvedNodeParent || !moveToNode) return { muvedNode: null, resultBool };
+    if (muvedNode.id === "root") return { muvedNode: muvedNode, resultBool };
+    if (muvedNodeParent.id === moveToNode.id) return { muvedNode, resultBool }; // если, откуда = куда перемещаем то ничего не делаем
+    if (moveToNode.id === muvedNodeID) return { muvedNode, resultBool }; // чтобы нельзя было перемещать элементы самих в себя
 
     // убераем muvedNode из дочерних элементов muvedNodeParent
     if (isDataTreeFolder(muvedNodeParent)) {
@@ -201,14 +218,15 @@ async function nodeMuveTo(data: IDataTreeRootFolder, muvedNodeID: string, muveTo
     }
 
     if (isDataTreeFolder(moveToNode)) {
-        if (!isDataTreeFolder(muvedNode) && !isDataTreeNote(muvedNode)) return null;
+        if (!isDataTreeFolder(muvedNode) && !isDataTreeNote(muvedNode)) return { muvedNode: null, resultBool };
         if (!moveToNode.children) moveToNode.children = [];
         moveToNode.children.push(muvedNode);
+        resultBool = true;
         await setDataTreeDB({ value: data });
-        return muvedNode;
+        return { muvedNode, resultBool };
     }
 
-    return null;
+    return { muvedNode: null, resultBool };
 }
 
 /**
@@ -219,19 +237,21 @@ async function nodeMuveTo(data: IDataTreeRootFolder, muvedNodeID: string, muveTo
  */
 async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, tag: IGlobalTag) {
     let targetNote = getNodeById(data, targetNoteID);
+    let resultBool = false;
 
-    if (!targetNote) return null;
-    if (!isDataTreeNote(targetNote)) return null;
-    if (!("tags" in targetNote)) return null;
+    if (!targetNote) return { targetNote: null, resultBool };
+    if (!isDataTreeNote(targetNote)) return { targetNote: null, resultBool };
+    if (!("tags" in targetNote)) return { targetNote: null, resultBool };
 
     targetNote.tags = targetNote.tags!.filter((tagName) => {
         if (tagName === tag.tag_name) return false;
         return true;
     });
 
+    resultBool = true;
     await setDataTreeDB({ value: data });
 
-    return targetNote;
+    return { targetNote, resultBool };
 }
 
 /**
@@ -242,19 +262,28 @@ async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, ta
  */
 async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: string | string[]) {
     let targetNote = getNodeById(data, targetNoteID);
-
+    const allTags = await getGlobalTagsDB();
     let prepareTags: string[] = [];
+    let resultBool = false;
+
+    if (!allTags) return { targetNote: null, resultBool };
 
     if (Array.isArray(tag) && tag.length > 0) {
+        for (let tagItem of tag) {
+            if (!(tagItem in allTags)) return { targetNote: null, resultBool };
+        }
         prepareTags = [...tag];
     }
 
     if (typeof tag === "string" && tag !== "") {
+        if (!(tag in allTags)) {
+            return { targetNote: null, resultBool };
+        }
         prepareTags.push(tag);
     }
 
-    if (!targetNote) return null;
-    if (!isDataTreeNote(targetNote)) return null;
+    if (!targetNote) return { targetNote: null, resultBool };
+    if (!isDataTreeNote(targetNote)) return { targetNote: null, resultBool };
 
     if (!("tags" in targetNote)) {
         targetNote.tags = [];
@@ -262,9 +291,10 @@ async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: 
 
     targetNote.tags = targetNote.tags!.concat(prepareTags);
 
+    resultBool = true;
     await setDataTreeDB({ value: data });
 
-    return targetNote;
+    return { targetNote, resultBool };
 }
 
 /**
@@ -287,23 +317,27 @@ async function projectAddTag(tagData: IAllTags, newTag: IGlobalTag | DataTag) {
  * @param tagName - имя тега который нужно удалить
  */
 async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, tagName: string) {
-    delete tagData[tagName];
-    const allNotes = getAllNotes(data);
+    let resultBool = false;
 
-    for (let note of allNotes) {
-        if (!note.tags) continue;
-        note.tags = note.tags.filter((tag) => {
-            if (tag === tagName) return false;
-            return true;
-        });
+    if (tagName in tagData) {
+        delete tagData[tagName];
+        const allNotes = getAllNotes(data);
+
+        for (let note of allNotes) {
+            if (!note.tags) continue;
+            note.tags = note.tags.filter((tag) => {
+                if (tag === tagName) return false;
+                return true;
+            });
+        }
+
+        // удалить этот тег из всех заметок
+        resultBool = true;
+        await setGlobalTagsDB({ value: tagData });
+        await setDataTreeDB({ value: data });
     }
 
-    // удалить этот тег из всех заметок
-
-    await setGlobalTagsDB({ value: tagData });
-    await setDataTreeDB({ value: data });
-
-    return tagName;
+    return { tagName, resultBool };
 }
 
 /**
@@ -317,6 +351,8 @@ async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, ta
 async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, oldTagName: string, newTagName: string, newTagColor: TTagColors) {
     // так как теги в db хранятся в обьекте по (ключу = имя тега), если имя изменилось то и ключ должен изменится
     // TODO: возможно в будующем добавлю тегам id и в качестве ключа к тегу будет его id, это серьезно упростит работу с изменением тегов, + положительно скажется на визуальном отображаении. (речь идет о том как рендерится список с key в react ), ведь key равен имяни тега а значит и ключу в db
+    let resultBool = false;
+
     if (oldTagName !== newTagName) {
         if (!(newTagName in tagData)) {
             delete tagData[oldTagName];
@@ -330,16 +366,17 @@ async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, old
                     note.tags[indexTagOldName] = newTagName;
                 }
             }
-
+            resultBool = true;
             await setDataTreeDB({ value: data });
         }
     } else {
+        resultBool = true;
         tagData[oldTagName].color = newTagColor;
     }
 
     await setGlobalTagsDB({ value: tagData });
 
-    return newTagName;
+    return { newTagName, resultBool };
 }
 
 export {

@@ -21,6 +21,7 @@ import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
 import { DataNote } from "0-shared/utils/saveDataNote";
 import { DataTag } from "0-shared/utils/saveDataTag";
+import { EV_NAME_SAVE_DATA_REDUCER_END, EV_NAME_SAVE_DATA_REDUCER_FULFILLED, EV_NAME_SAVE_DATA_REDUCER_REJECT, EV_NAME_SAVE_DATA_REDUCER_START } from "5-app/settings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -60,22 +61,34 @@ const saveDataInspectSlice = createAppSlice({
             state.isProjectOpen = action.payload;
         }),
         // удалить папку или заметку из indexedDB
+        // валидация: такая нода должна сузествовать и она не должна быть root
         deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
                 if (!dataTree) return;
 
-                const deletedNode = await deleteById(dataTree, payload.nodeId);
+                const { deletedNode, resultBool } = await deleteById(dataTree, payload.nodeId);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (deletedNode) {
                     return { deletedNode: deletedNode };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload || !action.payload.deletedNode) return;
                     let {
                         payload: { deletedNode },
@@ -99,22 +112,34 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // удалить компонент внутри заметки
+        // валидация: такой компонент и заметка должны существовать
         deleteNoteComponent: create.asyncThunk<{ noteId: string; componentId: string }, { updatedNote: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
                 if (!dataTree) return;
 
-                const updatedNote = await deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
+                const { targetNote: updatedNote, resultBool } = await deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (updatedNote) {
                     return { updatedNote: updatedNote };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
                     if (!action.payload || !action.payload.updatedNote) return;
                     let {
@@ -127,22 +152,34 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // обновляем component.value в активной заметке и в indexedDB
+        // валидация: такой компонент и заметка должны существовать
         updateNoteComponentValue: create.asyncThunk<{ noteId: string; componentId: string; newValue: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
                 if (!dataTree) return;
 
-                const updatedNode = await updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
+                const { targetNote: updatedNode, resultBool } = await updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
                     if (!action.payload || !action.payload.updatedNode) return;
                     let {
@@ -155,6 +192,7 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // переименование ноды
+        // валидация: такая нода должна существовать
         renameNodeName: create.asyncThunk<{ nodeId: string; newName: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -162,16 +200,27 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const updatedNode = await updateNodeName(dataTree, payload.nodeId, payload.newName);
+                const { targetNode: updatedNode, resultBool } = await updateNodeName(dataTree, payload.nodeId, payload.newName);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (updatedNode) {
                     return { updatedNode: updatedNode };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload || !action.payload.updatedNode) return;
                     let {
                         payload: { updatedNode },
@@ -190,6 +239,7 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // добавление папки
+        // валидация: папку можно добавить только в папку
         addFolder: create.asyncThunk<{ nodeName: string; insertToId: string; color?: string }, { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -198,21 +248,33 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
 
                 const newNode = new DataFolder(payload.nodeName, payload.color);
-                const addedNode = await addNodeTo(dataTree, payload.insertToId, newNode);
+                const { newNode: addedNode, resultBool } = await addNodeTo(dataTree, payload.insertToId, newNode);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (addedNode) {
                     return { addedNode: addedNode };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                 },
             }
         ),
         // добавление заметки
+        // валидация: заметку можно добавить только в папку
         addNote: create.asyncThunk<
             { nodeName: string; insertToId: string; tags: string[] | string },
             { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody; dataTree: IDataTreeRootFolder } | undefined
@@ -224,7 +286,12 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
 
                 const newNode = new DataNote(payload.nodeName, payload.tags);
-                const addedNode = await addNodeTo(dataTree, payload.insertToId, newNode);
+                const { newNode: addedNode, resultBool } = await addNodeTo(dataTree, payload.insertToId, newNode);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
                 dataTree = await getDataTreeDB();
 
                 if (addedNode && dataTree) {
@@ -232,9 +299,16 @@ const saveDataInspectSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                     let {
                         payload: { addedNode, dataTree },
@@ -252,6 +326,7 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // перемещение папки или заметки в другую папку
+        // валидация: короче папки и ноды должны существовать, root нельзя перемещать и папку саму в себя нельзя перемещать
         moveFolderOrNote: create.asyncThunk<{ muvedNodeID: string; muveToID: string }, { muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -259,21 +334,33 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const muvedNode = await nodeMuveTo(dataTree, payload.muvedNodeID, payload.muveToID);
+                const { muvedNode, resultBool } = await nodeMuveTo(dataTree, payload.muvedNodeID, payload.muveToID);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (muvedNode) {
                     return { muvedNode };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                 },
             }
         ),
         // удаляет тег у заметки
+        // валидация: заметка должна существовать и тег в ней должен существовать
         noteDelTag: create.asyncThunk<{ tag: IGlobalTag }, { editedNote: IDataTreeNote } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -282,16 +369,27 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!currentNote || !dataTree) return;
 
-                const editedNote = await noteDeleteTag(dataTree, currentNote.id, payload.tag);
+                const { targetNote: editedNote, resultBool } = await noteDeleteTag(dataTree, currentNote.id, payload.tag);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (editedNote) {
                     return { editedNote };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                     let {
                         payload: { editedNote },
@@ -302,6 +400,7 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         //добавляет тег в заметку
+        //валидация: если есть какието проблемы с currentNote или имя тега неверное то ошибка
         noteAddTag: create.asyncThunk<{ tag: string | string[] }, { editedNote: IDataTreeNote } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -310,16 +409,27 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!currentNote || !dataTree) return;
 
-                const editedNote = await noteAdTag(dataTree, currentNote.id, payload.tag);
+                const { targetNote: editedNote, resultBool } = await noteAdTag(dataTree, currentNote.id, payload.tag);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 if (editedNote) {
                     return { editedNote };
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                     let {
                         payload: { editedNote },
@@ -330,6 +440,7 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         //добавляет новый тег в проект
+        //валидация: нельзя добавить тег, если тег с таким имянем уже существует
         projectAddNewTag: create.asyncThunk<{ tagName: string; tagColor: TTagColors }, { addedTag: IGlobalTag } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -337,11 +448,9 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!allTags) return;
 
-                for (let tag in allTags) {
-                    // не должно быть тегов с одинаковыми названиями
-                    if (allTags[tag].tag_name === payload.tagName) {
-                        return;
-                    }
+                // не должно быть тегов с одинаковыми названиями
+                if (payload.tagName in allTags) {
+                    throw new Error();
                 }
 
                 const newTag = new DataTag(payload.tagName, payload.tagColor);
@@ -352,14 +461,22 @@ const saveDataInspectSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload) return;
                 },
             }
         ),
         //удаляет тег из всего проекта
+        //валидация: если такого тега в проекте небыло то и нечего удалять
         projectDeleteTag: create.asyncThunk<{ tagName: string }, { deletedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined>(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
@@ -368,7 +485,11 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!allTags || !dataTree) return;
 
-                const deletedTagName = await projectDelTag(allTags, dataTree, payload.tagName);
+                const { tagName: deletedTagName, resultBool } = await projectDelTag(allTags, dataTree, payload.tagName);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 let curentNoteInDB: ReturnType<typeof getNodeById> = null;
 
@@ -381,9 +502,16 @@ const saveDataInspectSlice = createAppSlice({
                 return { deletedTagName, curentNoteInDB };
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload || !action.payload.curentNoteInDB || !action.payload.deletedTagName) return;
                     const {
                         payload: { curentNoteInDB },
@@ -397,6 +525,7 @@ const saveDataInspectSlice = createAppSlice({
         ),
 
         //изменяет тег во всем проекте
+        //валидация: если имя тега изменилось то оно применится только если в проекте нет другово тега с такимже имянем
         projectEditTag: create.asyncThunk<
             { newTagName: string; newTagColor: TTagColors; oldTagName: string },
             { editedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined
@@ -408,9 +537,13 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!allTags || !dataTree) return;
 
-                const editedTagName = await projectEditeTag(allTags, dataTree, payload.oldTagName, payload.newTagName, payload.newTagColor);
+                const { newTagName: editedTagName, resultBool } = await projectEditeTag(allTags, dataTree, payload.oldTagName, payload.newTagName, payload.newTagColor);
 
                 let curentNoteInDB: ReturnType<typeof getNodeById> = null;
+
+                if (!resultBool) {
+                    throw new Error();
+                }
 
                 // после изменения тега, нужно обновить данниые в редаксе, потомучто в активной заметке мог быть удаляемый тег
                 if (state.saveDataInspect.currentNote) {
@@ -421,9 +554,16 @@ const saveDataInspectSlice = createAppSlice({
                 return { editedTagName, curentNoteInDB };
             },
             {
-                pending: (state) => {},
-                rejected: (state, action) => {},
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
                 fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     if (!action.payload || !action.payload.curentNoteInDB || !action.payload.editedTagName) return;
                     const {
                         payload: { curentNoteInDB },
