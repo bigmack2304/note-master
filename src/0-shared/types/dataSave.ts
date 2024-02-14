@@ -84,7 +84,7 @@ interface IDataTreeRootFolder extends IDataTreeFolder {
  * типизация фаила с сохранением
  */
 interface IDataSave {
-    db_type: string;
+    db_type: "note_Master";
     global_tags: IAllTags;
     data_tree: IDataTreeRootFolder;
 }

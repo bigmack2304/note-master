@@ -10,7 +10,7 @@ import type { SxProps } from "@mui/material";
 
 type TMenuContentProps = {
     onSettingsClick?: (e: React.MouseEvent) => void;
-    onNewNoteClick?: (e: React.MouseEvent) => void;
+    onNewProjectClick?: (e: React.MouseEvent) => void;
     onSaveClick?: (e: React.MouseEvent) => void;
     onLoadClick?: (e: React.MouseEvent) => void;
     onInfoClick?: (e: React.MouseEvent) => void;
@@ -27,24 +27,24 @@ const ListSubheaderStyle: SxProps = {
 /**
  * содержимое для бокового меню приложения
  * @prop onSettingsClick - вызывается при клике на "Настройки"
- * @prop onNewNoteClick - вызывается при клике на "новая заметка"
+ * @prop onNewProjectClick - вызывается при клике на "новый проект"
  * @prop onSaveClick - вызывается при клике на "Сохранить"
  * @prop onLoadClick - вызывается при клике на "Загрузить"
  * @prop onInfoClick - вызывается при клике на "О приложении"
  * @returns
  */
-function MenuContent({ onSettingsClick, onNewNoteClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
+function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
     return (
         <List sx={listStyle}>
             <ListSubheader component="div" sx={ListSubheaderStyle}>
                 Меню
             </ListSubheader>
             <Divider />
-            <ListItemButton onClick={onNewNoteClick} aria-label="создать новую заметку">
+            <ListItemButton onClick={onNewProjectClick} aria-label="создать новый проект">
                 <ListItemIcon>
                     <EditNoteIcon />
                 </ListItemIcon>
-                <ListItemText>Новая заметка</ListItemText>
+                <ListItemText>Новый проект</ListItemText>
             </ListItemButton>
             <ListItemButton onClick={onSaveClick} aria-label="сохранить все на устройство">
                 <ListItemIcon>
