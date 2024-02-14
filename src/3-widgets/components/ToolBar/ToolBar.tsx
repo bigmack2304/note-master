@@ -31,6 +31,7 @@ const toolbarStyle = (theme: PaletteMode) => {
     style.alignContent = "center";
     style.justifyContent = "center";
     style.alignItems = "center";
+    style.gap = "5px";
 
     return style as SxProps;
 };

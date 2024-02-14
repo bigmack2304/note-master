@@ -9,7 +9,6 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 type TNoteEditButtonProps = {
     onClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
-    size?: "inherit" | "small" | "medium" | "large";
     type?: HTMLButtonElement["type"];
 };
 
@@ -21,8 +20,9 @@ const ButtonStyle: SxProps = {
  * круглая кнопка "редактировать"
  * @prop onClick - вызывается при клике на кнопку
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop type - возможность установить тип кнопки, на случай если будет юзатся с формой
  */
-function NoteEditButton({ onClick = () => {}, addClassNames = [], size = "small", type }: TNoteEditButtonProps) {
+function NoteEditButton({ onClick = () => {}, addClassNames = [], type }: TNoteEditButtonProps) {
     const defaultClassName = "NoteEditButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const dispatch = useAppDispatch();
@@ -34,8 +34,17 @@ function NoteEditButton({ onClick = () => {}, addClassNames = [], size = "small"
     };
 
     return (
-        <IconButton className={genClassName} type={type} aria-label="Редактировать" sx={ButtonStyle} onClick={onButtonClick} title="Редактировать" disabled={!isProjectOpen}>
-            <EditIcon fontSize={size} />
+        <IconButton
+            className={genClassName}
+            type={type}
+            aria-label="Редактировать заметку"
+            sx={ButtonStyle}
+            onClick={onButtonClick}
+            title="Редактировать заметку"
+            disabled={!isProjectOpen}
+            size="small"
+        >
+            <EditIcon fontSize="small" />
         </IconButton>
     );
 }
