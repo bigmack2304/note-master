@@ -2,7 +2,7 @@ import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTre
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
-import { getDataTreeDB, getGlobalTagsDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData } from "2-features/utils/appIndexedDB";
 import {
     updateNodeValue,
     deleteById,
@@ -16,11 +16,14 @@ import {
     projectDeleteTag as projectDelTag,
     projectEditeTag,
 } from "2-features/utils/saveDataEdit";
-import { getNodeById, getParentNode } from "2-features/utils/saveDataParse";
+import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/saveDataFolder";
 import { DataNote } from "0-shared/utils/saveDataNote";
 import { DataTag } from "0-shared/utils/saveDataTag";
+import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
+import { DataProject } from "0-shared/utils/saveDataProject";
+import { setAllTempDataDB, saveTempData } from "2-features/utils/appIndexedDB";
 import { EV_NAME_SAVE_DATA_REDUCER_END, EV_NAME_SAVE_DATA_REDUCER_FULFILLED, EV_NAME_SAVE_DATA_REDUCER_REJECT, EV_NAME_SAVE_DATA_REDUCER_START } from "5-app/settings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
@@ -60,6 +63,74 @@ const saveDataInspectSlice = createAppSlice({
         setProjectOpen: create.reducer<ISaveDataInspectStore["isProjectOpen"]>((state, action) => {
             state.isProjectOpen = action.payload;
         }),
+        // создаем новый проект
+        createNewProject: create.reducer((state, action) => {
+            state.currentFolder = undefined;
+            state.currentNote = undefined;
+            state.isProjectOpen = true;
+            const newProj = new DataProject();
+            savedIdGenerator.instatnceIdGenerator = new IdGenerator(getAllIds(newProj));
+            setAllTempDataDB({ value: newProj });
+        }),
+        // сохраняем проект в db
+        saveProjectInDb: create.asyncThunk<undefined, { resultBool: boolean } | undefined>(
+            async (payload, thunkApi) => {
+                const resultBool = await saveTempData();
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                return { resultBool };
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+            }
+        ),
+        // открываем проект из db
+        loadProjectInDb: create.asyncThunk<undefined, { resultBool: boolean } | undefined>(
+            async (payload, thunkApi) => {
+                const state = thunkApi.getState() as RootState;
+
+                const { resultBool, data } = await loadTempDataInSavedData();
+
+                if (!resultBool || !data) {
+                    throw new Error();
+                }
+
+                savedIdGenerator.instatnceIdGenerator = new IdGenerator(getAllIds(data));
+                await setAllTempDataDB({ value: data });
+
+                return { resultBool };
+            },
+            {
+                pending: (state) => {
+                    state.isProjectOpen = false;
+                    state.currentNote = undefined;
+                    state.currentFolder = undefined;
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    state.isProjectOpen = true;
+                },
+            }
+        ),
         // удалить папку или заметку из indexedDB
         // валидация: такая нода должна сузествовать и она не должна быть root
         deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
@@ -594,6 +665,9 @@ export const {
     projectAddNewTag,
     projectDeleteTag,
     projectEditTag,
+    createNewProject,
+    saveProjectInDb,
+    loadProjectInDb,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };
