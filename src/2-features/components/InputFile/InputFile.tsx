@@ -8,7 +8,7 @@ import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
 import { getAllIds } from "2-features/utils/saveDataParse";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { setProjectOpen } from "5-app/GlobalState/saveDataInspectStore";
+import { setProjectOpen, setCurrentFolder, setCurrentNote } from "5-app/GlobalState/saveDataInspectStore";
 
 type TInputFileProps = {
     inputSettings?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -22,7 +22,11 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
     const onSucessLoad = (data: IDataSave) => {
         savedIdGenerator.instatnceIdGenerator = new IdGenerator(getAllIds(data));
         dispatch(setProjectOpen(true));
+        dispatch(setCurrentFolder(undefined));
+        dispatch(setCurrentNote(undefined));
         setAllTempDataDB({ value: data });
+
+        if (inputElement.current) inputElement.current.value = "";
     };
 
     const fileReader = useFileReader<IDataSave>({ loadHandler: inputLoadStringHandler, loadSucessCallback: onSucessLoad });
