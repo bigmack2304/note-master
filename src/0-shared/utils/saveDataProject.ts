@@ -1,8 +1,7 @@
 import type { IDataSave } from "0-shared/types/dataSave";
-import { savedIdGenerator } from "0-shared/utils/idGenerator";
 
 /**
- *  класс для создания новых папок в дереве IDataTreeRootFolder
+ *  класс для создания проекта
  */
 class DataProject implements IDataSave {
     public db_type: IDataSave["db_type"];

@@ -58,6 +58,7 @@ const dialogActionsStyle = (theme: PaletteMode) => {
  * @prop onClose - вызывается при закрытии окна
  * @prop children - компонент может быть оберткой для других компонентов
  * @prop headerText - заголовок окна
+ * @prop onCloseSave - закрытие окна с подтверждением диалога
  */
 function TreeEditDialig({ children, isOpen, dialogSettings, onClose, onCloseSave, headerText = "" }: TreeEditDialigPropos) {
     const handleCloseDialog = () => {
@@ -86,11 +87,9 @@ function TreeEditDialig({ children, isOpen, dialogSettings, onClose, onCloseSave
                     {children}
                 </DialogContent>
                 <DialogActions sx={dialogActionsStyle(themeValue)}>
-                    <div className="SettingsContent__actionsInner">
-                        <Button variant="contained" type="submit">
-                            Сохранить
-                        </Button>
-                    </div>
+                    <Button variant="contained" type="submit">
+                        Сохранить
+                    </Button>
                 </DialogActions>
             </form>
         </Dialog>

@@ -7,6 +7,7 @@ import { TRANSITION_DURATION } from "5-app/settings";
 import type { PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import { Box } from "@mui/material";
 
 // диалоговое окно на весь экран с возможностью закрытия
 
@@ -41,6 +42,14 @@ const dialogActionsStyle = (theme: PaletteMode) => {
     return {
         justifyContent: "center",
         backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+    } as SxProps;
+};
+
+const dialogActionsInnerStyle = (theme: PaletteMode) => {
+    return {
+        width: "clamp(0px, 1000px, 100%)",
+        display: "flex",
+        justifyContent: "flex-end",
     } as SxProps;
 };
 
@@ -81,11 +90,11 @@ function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, he
                 {children}
             </DialogContent>
             <DialogActions sx={dialogActionsStyle(themeValue)}>
-                <div className="SettingsContent__actionsInner">
+                <Box sx={dialogActionsInnerStyle(themeValue)}>
                     <Button variant="contained" onClick={handleCloseDialog}>
                         выход
                     </Button>
-                </div>
+                </Box>
             </DialogActions>
         </Dialog>
     );
