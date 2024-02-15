@@ -16,6 +16,7 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 
 type TAddTagSelectProps = {
     onChange?: (tagNames: string | string[]) => void;
+    sortName?: string;
 };
 
 const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMode) => {
@@ -32,8 +33,10 @@ const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMo
 
 /**
  * позволяет выбрать доступные теги зиметки, с учетом активной заметки
+ * @prop onChange функция вызывается при изменении селекта
+ * @prop sortName - отображать теки которые включают в себя эту подстроку
  */
-function AddTagSelect({ onChange }: TAddTagSelectProps) {
+function AddTagSelect({ onChange, sortName = "" }: TAddTagSelectProps) {
     const selectLabelID = useId();
     const [selectValue, setSelectValue] = useState<string[]>([]);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
@@ -48,7 +51,7 @@ function AddTagSelect({ onChange }: TAddTagSelectProps) {
         let temp = [];
         for (let tag in allTags) {
             if (currentNote.tags.includes(tag)) continue;
-            temp.push(allTags[tag]);
+            if (tag.includes(sortName)) temp.push(allTags[tag]);
         }
         return temp;
     })();

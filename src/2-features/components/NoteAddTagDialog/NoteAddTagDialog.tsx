@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
+import { Input } from "@mui/material";
+import type { SxProps } from "@mui/material";
 
 type TNoteAddTagDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (selectValue: string[] | string) => void;
     dialogHeader?: string;
+};
+
+const inputStyle: SxProps = {
+    paddingLeft: "4px",
+    fontSize: "1.4rem",
 };
 
 /**
@@ -18,6 +25,11 @@ type TNoteAddTagDialogProps = {
  */
 function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDialogProps) {
     const [selectValue, setSelectValue] = useState<string[] | string>([]);
+    const [inputValue, setInputValue] = useState("");
+
+    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
+    };
 
     const onSelectChange = (tagNames: string | string[]) => {
         setSelectValue(typeof tagNames === "string" ? tagNames.split(",") : tagNames);
@@ -29,7 +41,8 @@ function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDia
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
-            <AddTagSelect onChange={onSelectChange} />
+            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} sx={inputStyle} required />
+            <AddTagSelect onChange={onSelectChange} sortName={inputValue} />
         </TreeEditDialig>
     );
 }
