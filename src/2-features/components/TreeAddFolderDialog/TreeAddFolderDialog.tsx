@@ -2,11 +2,7 @@ import React, { useState, useId } from "react";
 import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
+import { nameValidator } from "0-shared/utils/validators";
 
 type TTreeAddFolderDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -35,7 +31,9 @@ function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddFol
     //const selectLabelID = useId();
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value);
+        if (nameValidator(e.target.value)) {
+            setInputValue(e.target.value);
+        }
     };
 
     // const onSelectChange = (event: SelectChangeEvent) => {

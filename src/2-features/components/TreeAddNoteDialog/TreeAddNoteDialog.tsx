@@ -3,6 +3,7 @@ import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDia
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
+import { nameValidator } from "0-shared/utils/validators";
 
 type TTreeAddNoteDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -29,7 +30,9 @@ function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddNoteD
     const [selectValue, setSelectValue] = useState<string[] | string>([]);
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value);
+        if (nameValidator(e.target.value)) {
+            setInputValue(e.target.value);
+        }
     };
 
     const onSelectChange = (tagNames: string | string[]) => {

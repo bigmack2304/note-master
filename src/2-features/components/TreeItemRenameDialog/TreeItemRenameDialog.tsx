@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
+import { nameValidator } from "0-shared/utils/validators";
 
 type TTreeItemRenameDialogProps = {
     inputDefValue?: string;
@@ -29,7 +30,9 @@ function TreeItemRenameDialog({ inputDefValue, onClose, onCloseSave, dialogHeade
     const [inputValue, setInputValue] = useState(inputDefValue || "");
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value);
+        if (nameValidator(e.target.value)) {
+            setInputValue(e.target.value);
+        }
     };
 
     const onSave = () => {

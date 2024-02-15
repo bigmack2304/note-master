@@ -19,7 +19,7 @@ type TColorTagSelectProps = {
     defaultValue?: TSelectValue;
     required?: boolean;
     name?: string;
-    updateOnEvent?: string;
+    updateOnEvent?: string | string[];
     resetOnEvent?: boolean;
 };
 
