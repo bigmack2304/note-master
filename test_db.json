@@ -32,6 +32,8 @@
                 "id": "2",
                 "type": "note",
                 "name": "Note 1",
+                "createTime": 1697043600000,
+                "lastEditTime": 1697043600000,
                 "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
                 "body": [
                     {
@@ -52,6 +54,8 @@
                 "id": "5",
                 "type": "note",
                 "name": "Note 2",
+                "createTime": 1679043600000,
+                "lastEditTime": 1697043600000,
                 "tags": ["tag2"],
                 "body": [
                     {
@@ -78,6 +82,8 @@
                         "id": "9",
                         "type": "note",
                         "name": "Note 3",
+                        "createTime": 1279043600000,
+                        "lastEditTime": 1397043600000,
                         "tags": ["tag1"],
                         "body": [
                             {

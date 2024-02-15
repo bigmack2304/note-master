@@ -12,24 +12,24 @@ import type { DataFolder } from "0-shared/utils/saveDataFolder";
  * слияние нод по id, tempData с newNode
  * @param newNode измененная нода
  */
-async function mergeNodeById(newNode: TchildrenType) {
-    const target_id = newNode.id;
+// async function mergeNodeById(newNode: TchildrenType) {
+//     const target_id = newNode.id;
 
-    const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataTreeRootFolder) => {
-        if (node) {
-            Object.assign(node, newNode);
-            setDataTreeDB({ value: allTempData });
-        }
-    };
+//     const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataTreeRootFolder) => {
+//         if (node) {
+//             Object.assign(node, newNode);
+//             setDataTreeDB({ value: allTempData });
+//         }
+//     };
 
-    getDataTreeDB({
-        callback(value) {
-            if (!value) return;
-            let findResult = getNodeById(value, target_id);
-            onGetNode(findResult, value);
-        },
-    });
-}
+//     getDataTreeDB({
+//         callback(value) {
+//             if (!value) return;
+//             let findResult = getNodeById(value, target_id);
+//             onGetNode(findResult, value);
+//         },
+//     });
+// }
 
 /**
  * изменяет своиство value в обьекте заметки
@@ -49,6 +49,8 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
             component.value = newValue;
             break;
         }
+
+        targetNote.lastEditTime = Date.now();
         resultBool = true;
         await setDataTreeDB({ value: rootFolder });
     }
@@ -69,6 +71,9 @@ async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string
     if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
         targetNode.name = newName;
         resultBool = true;
+        if (isDataTreeNote(targetNode)) {
+            targetNode.lastEditTime = Date.now();
+        }
         await setDataTreeDB({ value: rootFolder });
     }
 
@@ -97,6 +102,7 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
             return true;
         });
 
+        targetNote.lastEditTime = Date.now();
         resultBool = true;
         await setDataTreeDB({ value: rootFolder });
     }
@@ -249,6 +255,7 @@ async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, ta
         return true;
     });
 
+    targetNote.lastEditTime = Date.now();
     resultBool = true;
     await setDataTreeDB({ value: data });
 
@@ -291,6 +298,7 @@ async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: 
     }
 
     targetNote.tags = targetNote.tags!.concat(prepareTags);
+    targetNote.lastEditTime = Date.now();
 
     resultBool = true;
     await setDataTreeDB({ value: data });
@@ -381,7 +389,7 @@ async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, old
 }
 
 export {
-    mergeNodeById,
+    //mergeNodeById,
     updateNodeValue,
     deleteComponentInNote,
     deleteById,

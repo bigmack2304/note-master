@@ -61,6 +61,8 @@ interface IDataTreeNote extends IDataTreeNode {
     tags?: IGlobalTag["tag_name"][];
     name: string;
     body: TNoteBody[];
+    createTime: number;
+    lastEditTime: number;
 }
 
 /**
