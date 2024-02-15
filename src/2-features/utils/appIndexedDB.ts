@@ -16,7 +16,7 @@ interface MyDB extends DBSchema {
         key: string;
         value: IDataSave;
     };
-    ///////////////////////////////////////////
+
     db_type: {
         key: string;
         value: string;
@@ -31,56 +31,17 @@ interface MyDB extends DBSchema {
     };
 }
 
-type TSetAllTempDataDBParams = {
+type TSetDataEntity<SET_TYPE> = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataSave | undefined) => void;
+    callback?: (value: SET_TYPE | undefined) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
-    value: IDataSave;
+    value: SET_TYPE;
 };
 
-type TDelTempDataDBParams = {
+type TGetDataEntity<CALLBACK_PARAM> = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: () => void;
-};
-
-type TSetDataTreeDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataTreeRootFolder) => void;
-    value: IDataTreeRootFolder;
-};
-
-type TGetDataTreeParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IDataTreeRootFolder | undefined) => void;
-};
-
-type TSetGlobalTagsParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IAllTags) => void;
-    value: IAllTags;
-};
-
-type TGetGlobalTagsParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: IAllTags | undefined) => void;
-};
-
-type TSetDbTypeParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: string) => void;
-    value: string;
-};
-
-type TGetDbTypeDBParams = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: string | undefined) => void;
+    callback?: (value: CALLBACK_PARAM) => void;
 };
 
 function def_onError(e: Event) {
@@ -119,7 +80,7 @@ async function openIndexedDB() {
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDbTypeParams) {
+async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["db_type"]["value"]>) {
     const db = await openIndexedDB();
     const tx = db.transaction("db_type", "readwrite");
     tx.onerror = onError;
@@ -138,7 +99,7 @@ async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError,
  * @property callback(db_type | undefined): вызывается после поиска
  * @returns Promise<db_type | undefined>
  */
-async function getDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDbTypeDBParams = {}) {
+async function getDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["db_type"]["value"] | undefined> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("db_type", "readonly");
     tx.onerror = onError;
@@ -156,7 +117,7 @@ async function getDbTypeDB({ onComplete = def_onComplete, onError = def_onError,
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataTreeDBParams) {
+async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["data_tree"]["value"]>) {
     const db = await openIndexedDB();
     const tx = db.transaction("data_tree", "readwrite");
     tx.onerror = onError;
@@ -175,7 +136,7 @@ async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onErro
  * @property callback(data_tree | undefined): вызывается после поиска
  * @returns Promise<data_tree | undefined>
  */
-async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataTreeParams = {}) {
+async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["data_tree"]["value"] | undefined> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("data_tree", "readonly");
     tx.onerror = onError;
@@ -193,7 +154,7 @@ async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onErro
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetGlobalTagsParams) {
+async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["global_tags"]["value"]>) {
     const db = await openIndexedDB();
     const tx = db.transaction("global_tags", "readwrite");
     tx.onerror = onError;
@@ -212,7 +173,7 @@ async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
  * @property callback(global_tags | undefined): вызывается после поиска
  * @returns Promise<global_tags | undefined>
  */
-async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetGlobalTagsParams = {}) {
+async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["global_tags"]["value"] | undefined> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("global_tags", "readonly");
     tx.onerror = onError;
@@ -230,7 +191,7 @@ async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetAllTempDataDBParams) {
+async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<IDataSave>) {
     const db = await openIndexedDB();
     const tx = db.transaction(tempStoreData, "readwrite");
     tx.onerror = onError;
@@ -252,7 +213,7 @@ async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onE
  * @property onError: определение колбека db.transaction,
  * @property callback(): вызывается после применения изменений
  */
-async function delTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback }: TDelTempDataDBParams = {}) {
+async function delTempDataDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<void> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction(tempStoreData, "readwrite");
     tx.onerror = onError;
