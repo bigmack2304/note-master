@@ -13,7 +13,7 @@ import type { PaletteMode } from "@mui/material";
 
 type TClosableOneLineTextInputProps = {
     addClassNames?: string[];
-    onClose?: (e: React.MouseEvent) => void;
+    onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void;
     onCloseSave?: (inputValue: string) => void;
     inputDefValue?: string;
     placeholder?: string;
@@ -65,12 +65,22 @@ function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, in
     };
 
     const onSave = () => {
-        if (onCloseSave) onCloseSave(inputValue);
+        onCloseSave && onCloseSave(inputValue);
+    };
+
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Escape") {
+            onClose && onClose(e);
+        }
+
+        if (e.key === "Enter") {
+            onCloseSave && onCloseSave(inputValue);
+        }
     };
 
     return (
         <Box className={genClassName} component={"div"} sx={boxStyles(themeValue)}>
-            <Input value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} autoFocus />
+            <Input value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} onKeyDown={onKeyDown} autoFocus />
             <Divider sx={dividerStyle} orientation="vertical" />
 
             <CloseButton onClick={onClose} />
