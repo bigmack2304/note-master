@@ -41,7 +41,7 @@ function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDia
 
     return (
         <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
-            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} sx={inputStyle} required />
+            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} sx={inputStyle} />
             <AddTagSelect onChange={onSelectChange} sortName={inputValue} />
         </TreeEditDialig>
     );
