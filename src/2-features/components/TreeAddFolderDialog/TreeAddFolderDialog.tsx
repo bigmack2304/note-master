@@ -14,7 +14,6 @@ type TTreeAddFolderDialogProps = {
 const inputStyle: SxProps = {
     paddingLeft: "4px",
     fontSize: "1.4rem",
-    width: "clamp(20px, 400px, 30dvw)",
 };
 
 /**
