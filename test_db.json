@@ -34,6 +34,7 @@
                 "name": "Note 1",
                 "createTime": 1697043600000,
                 "lastEditTime": 1697043600000,
+                "completed": true,
                 "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
                 "body": [
                     {
@@ -56,6 +57,7 @@
                 "name": "Note 2",
                 "createTime": 1679043600000,
                 "lastEditTime": 1697043600000,
+                "completed": true,
                 "tags": ["tag2"],
                 "body": [
                     {
@@ -84,6 +86,7 @@
                         "name": "Note 3",
                         "createTime": 1279043600000,
                         "lastEditTime": 1397043600000,
+                        "completed": false,
                         "tags": ["tag1"],
                         "body": [
                             {

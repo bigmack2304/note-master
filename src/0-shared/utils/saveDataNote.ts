@@ -10,6 +10,7 @@ class DataNote extends DataNode implements IDataTreeNote {
     public body: IDataTreeNote["body"];
     public createTime: IDataTreeNote["createTime"];
     public lastEditTime: IDataTreeNote["lastEditTime"];
+    public completed: IDataTreeNote["completed"];
 
     constructor(name: string, tags: string[] | string) {
         super("note");
@@ -26,6 +27,7 @@ class DataNote extends DataNode implements IDataTreeNote {
         this.tags = prepareTags;
         this.createTime = Date.now();
         this.lastEditTime = Date.now();
+        this.completed = false;
 
         Object.setPrototypeOf(this, null);
     }

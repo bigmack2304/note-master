@@ -32,7 +32,7 @@ const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMo
 };
 
 /**
- * позволяет выбрать доступные теги зиметки, с учетом активной заметки
+ * позволяет выбрать доступные теги для добавления в зиметку, с учетом активной заметки
  * @prop onChange функция вызывается при изменении селекта
  * @prop sortName - отображать теки которые включают в себя эту подстроку
  */
@@ -46,9 +46,9 @@ function AddTagSelect({ onChange, sortName = "" }: TAddTagSelectProps) {
 
     // массив доступных тегов. (если в активной заметке есть какието теги то они считаются недоступными)
     const availableTags = (function () {
-        if (!allTags) return [] as IGlobalTag[];
+        let temp = [] as IGlobalTag[];
+        if (!allTags) return temp;
         if (!currentNote || !currentNote.tags) return Object.values(allTags);
-        let temp = [];
         for (let tag in allTags) {
             if (currentNote.tags.includes(tag)) continue;
             if (tag.includes(sortName)) temp.push(allTags[tag]);

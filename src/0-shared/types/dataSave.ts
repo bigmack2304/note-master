@@ -34,7 +34,7 @@ type TNoteBody = IDataTreeNode & TBodyComponentHeader;
 /**
  * цвета тега
  */
-type TTagColors = "red" | "blue" | "gray" | "yellow" | "green";
+type TTagColors = "red" | "blue" | "gray" | "yellow" | "green" | "transparent";
 
 /**
  * типизация тега заметок
@@ -63,6 +63,7 @@ interface IDataTreeNote extends IDataTreeNode {
     body: TNoteBody[];
     createTime: number;
     lastEditTime: number;
+    completed: boolean;
 }
 
 /**
