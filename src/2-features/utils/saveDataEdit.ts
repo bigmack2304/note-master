@@ -32,6 +32,30 @@ import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // }
 
 /**
+ * изменяет своиство completed в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой нужно поменять completed
+ * @param newValue новое значение completed
+ * @returns
+ */
+async function updateNodeCompleted(rootFolder: IDataTreeRootFolder, noteId: string, newValue: boolean) {
+    let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        if (targetNote.completed !== newValue) {
+            targetNote.completed = newValue;
+            resultBool = true;
+            targetNote.lastEditTime = Date.now();
+            await setDataTreeDB({ value: rootFolder });
+        }
+        resultBool = true;
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
  * изменяет своиство value в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id компонента в котором нужно поменять value
@@ -401,4 +425,5 @@ export {
     projectAddTag,
     projectDeleteTag,
     projectEditeTag,
+    updateNodeCompleted,
 };

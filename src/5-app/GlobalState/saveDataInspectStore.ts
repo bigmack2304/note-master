@@ -15,6 +15,7 @@ import {
     projectAddTag,
     projectDeleteTag as projectDelTag,
     projectEditeTag,
+    updateNodeCompleted,
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -231,6 +232,45 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
 
                 const { targetNote: updatedNode, resultBool } = await updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
+        // обновляем note.completed в активной заметке и в indexedDB
+        updateNoteCompleted: create.asyncThunk<{ noteId: string; newCompleted: boolean }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const { targetNote: updatedNode, resultBool } = await updateNodeCompleted(dataTree, payload.noteId, payload.newCompleted);
 
                 if (!resultBool) {
                     throw new Error();
@@ -668,6 +708,7 @@ export const {
     createNewProject,
     saveProjectInDb,
     loadProjectInDb,
+    updateNoteCompleted,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

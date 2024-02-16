@@ -10,6 +10,7 @@ import { AddButton } from "0-shared/components/AddButton/AddButton";
 import { NoteTagList } from "2-features/components/NoteTagList/NoteTagList";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_DARK_COLOR, OUTLINE_LIGHT_COLOR } from "5-app/settings";
 import { ChangeTime } from "1-entities/components/ChangeTime/ChangeTime";
+import { NoteStatus } from "1-entities/components/NoteStatus/NoteStatus";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -55,6 +56,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
         <Box className={genClassName} component={"div"} sx={noteStyles(themeValue)}>
             <div className="note__content_wrapper">
                 <ChangeTime createTime_timestamp={currentNote.createTime} lastEditTime_timestamp={currentNote.lastEditTime} />
+                <NoteStatus />
                 <NoteTagList />
 
                 {currentNote.body.length > 0
