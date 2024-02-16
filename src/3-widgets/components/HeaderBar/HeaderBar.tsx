@@ -9,6 +9,7 @@ import { createNewProject, saveProjectInDb, loadProjectInDb } from "5-app/Global
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { LoadDialog } from "2-features/components/LoadDialog/LoadDialog";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
 
 type THeaderBarProps = {};
 
@@ -21,6 +22,7 @@ function HeaderBar({}: THeaderBarProps) {
     const [isInfoOpen, setIsInfoOpen] = useState(false);
     const [isLoadDialog, setIsLoadDialog] = useState(false);
     const inputFileRef = useRef<HTMLInputElement>(null);
+    const isProject = useAppSelector((state) => state.saveDataInspect.isProjectOpen);
     const dispatch = useAppDispatch();
 
     const onSettingsOpen = () => {
@@ -79,6 +81,7 @@ function HeaderBar({}: THeaderBarProps) {
                     onLoadClick: onLoadClick,
                     onNewProjectClick: onCreateNewProject,
                     onSaveClick: onsaveClick,
+                    isSaveDisabled: !isProject,
                 }}
             />
             <ToggleToolBarButton />

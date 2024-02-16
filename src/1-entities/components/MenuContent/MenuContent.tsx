@@ -14,6 +14,7 @@ type TMenuContentProps = {
     onSaveClick?: (e: React.MouseEvent) => void;
     onLoadClick?: (e: React.MouseEvent) => void;
     onInfoClick?: (e: React.MouseEvent) => void;
+    isSaveDisabled?: boolean;
 };
 
 const listStyle: SxProps = {
@@ -33,7 +34,7 @@ const ListSubheaderStyle: SxProps = {
  * @prop onInfoClick - вызывается при клике на "О приложении"
  * @returns
  */
-function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadClick, onInfoClick }: TMenuContentProps) {
+function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadClick, onInfoClick, isSaveDisabled = false }: TMenuContentProps) {
     return (
         <List sx={listStyle}>
             <ListSubheader component="div" sx={ListSubheaderStyle}>
@@ -46,7 +47,7 @@ function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadCl
                 </ListItemIcon>
                 <ListItemText>Новый проект</ListItemText>
             </ListItemButton>
-            <ListItemButton onClick={onSaveClick} aria-label="сохранить все на устройство">
+            <ListItemButton onClick={onSaveClick} aria-label="сохранить все на устройство" disabled={isSaveDisabled}>
                 <ListItemIcon>
                     <SaveIcon />
                 </ListItemIcon>
