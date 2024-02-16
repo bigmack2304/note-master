@@ -25,11 +25,11 @@ const noteStatusStyles = (theme: PaletteMode, isEdit: boolean) => {
         "& .MuiSvgIcon-root .MuiStepIcon-text": {
             fill: theme === "light" ? "#000000de" : "#f9f9f9de",
         },
-        ".MuiSvgIcon-root": {
+        "& .MuiSvgIcon-root": {
             cursor: isEdit ? "pointer" : "initial",
             transition: "transform ease-in 0.1s",
         },
-        ".MuiSvgIcon-root:hover": {
+        "& .MuiSvgIcon-root:hover": {
             transform: isEdit ? "scale(1.22)" : "scale(1.0)",
         },
     } as SxProps;
@@ -38,7 +38,7 @@ const noteStatusStyles = (theme: PaletteMode, isEdit: boolean) => {
 const noteStatusSteps = ["В процессе написания", "Завершено"];
 
 /**
- *
+ * Компонент отображает и позволяет выставить статус заметки. (закончена она или нет)
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
 function NoteStatus({ addClassNames = [] }: TNoteStatusProps) {
