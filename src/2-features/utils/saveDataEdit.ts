@@ -5,32 +5,10 @@ import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataTag } from "0-shared/utils/saveDataTag";
 import { DataComponentHeader } from "0-shared/utils/saveDataComponentHeader";
+import { saveDataComponentText } from "0-shared/utils/saveDataComponentText";
 import type { DataNote } from "0-shared/utils/saveDataNote";
 import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
-
-/**
- * слияние нод по id, tempData с newNode
- * @param newNode измененная нода
- */
-// async function mergeNodeById(newNode: TchildrenType) {
-//     const target_id = newNode.id;
-
-//     const onGetNode = (node: TchildrenType | TNoteBody | null, allTempData: IDataTreeRootFolder) => {
-//         if (node) {
-//             Object.assign(node, newNode);
-//             setDataTreeDB({ value: allTempData });
-//         }
-//     };
-
-//     getDataTreeDB({
-//         callback(value) {
-//             if (!value) return;
-//             let findResult = getNodeById(value, target_id);
-//             onGetNode(findResult, value);
-//         },
-//     });
-// }
 
 /**
  * изменяет своиство completed в обьекте заметки
@@ -429,6 +407,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "header":
                 component = new DataComponentHeader();
                 break;
+            case "text":
+                component = new saveDataComponentText();
+                break;
             default:
                 component = undefined;
                 break;
@@ -446,7 +427,6 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
 }
 
 export {
-    //mergeNodeById,
     updateNodeValue,
     deleteComponentInNote,
     deleteById,

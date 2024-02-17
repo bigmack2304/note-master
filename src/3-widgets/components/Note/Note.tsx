@@ -11,6 +11,7 @@ import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_DARK_COLOR, OUTLINE_LIGHT_CO
 import { ChangeTime } from "1-entities/components/ChangeTime/ChangeTime";
 import { NoteStatus } from "1-entities/components/NoteStatus/NoteStatus";
 import { ButtonAddComponentToNoteDialog } from "2-features/components/ButtonAddComponentToNoteDialog/ButtonAddComponentToNoteDialog";
+import { EditableText } from "2-features/components/EditableText/EditableText";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -30,12 +31,6 @@ const noteEditBlockStyles = (theme: PaletteMode) => {
         backgroundColor: theme == "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
         outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
     } as SxProps;
-};
-
-const noteTagsStyle = (theme: PaletteMode) => {
-    return {
-        backgroundColor: theme == "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-    } as React.CSSProperties;
 };
 
 /**
@@ -62,7 +57,10 @@ function Note({ addClassNames = [] }: TNoteProps) {
                 {currentNote.body.length > 0
                     ? currentNote.body.map((note) => {
                           if (note.component === "header") {
-                              return <EditableHeader addClassNames={["note__head"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
+                              return <EditableHeader addClassNames={["note__head", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
+                          }
+                          if (note.component === "text") {
+                              return <EditableText addClassNames={["note__text", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
                           }
                       })
                     : null}

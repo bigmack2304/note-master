@@ -7,21 +7,31 @@
     }
 }
 
-// заголовок, включая форму редактирования
-.note .note__head {
-    text-align: center;
-    align-self: center;
+//пользовательский контент в режиме редлактирования
+.note .note__content.editable {
     width: 100%;
 }
 
-// заголовок с тестом
-.note h4[class~="note__head"] {
+//пользовательский контент
+.note .note__content {
     width: initial;
 }
 
-// заголовок с без текста
-.note h4[class~="note__head"][class~="text_empty"] {
+//пользовательский пустрой контент
+.note .note__content[class~="text_empty"] {
     width: 100%;
+}
+
+// заголовок
+.note .note__head {
+    text-align: center;
+    align-self: center;
+}
+
+// текст
+.note .note__text {
+    text-align: left;
+    align-self: flex-start;
 }
 
 .note .note__editBlock {

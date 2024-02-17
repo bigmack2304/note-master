@@ -1,4 +1,5 @@
-type TAllComponents = "header";
+// типы всех компонентов
+type TAllComponents = "header" | "text";
 
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
@@ -10,7 +11,7 @@ interface TBodyComponentHeader {
 // текст
 interface TBodyComponentText {
     component: "text";
-    texValue: string;
+    value: string;
 }
 //////////////////////////////////////////////////////////////////
 /**
@@ -26,12 +27,10 @@ interface IDataTreeNode {
     type: TNodeType;
 }
 
-// TODO: потом тип пойдет по такому примеру
-//type TNoteBody = IDataTreeitemBody & (TBodyComponentHeader | TBodyComponentText);
 /**
  * тип поля body в заметке
  */
-type TNoteBody = IDataTreeNode & TBodyComponentHeader;
+type TNoteBody = IDataTreeNode & (TBodyComponentHeader | TBodyComponentText);
 
 /**
  * цвета тега
@@ -108,4 +107,5 @@ export type {
     IAllTags,
     TAllComponents,
     TBodyComponentHeader,
+    TBodyComponentText,
 };

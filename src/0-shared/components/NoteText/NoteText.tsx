@@ -6,7 +6,7 @@ import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 
-type TNoteHeadProps = {
+type TNoteTextProps = {
     addClassNames?: string[];
     onClick?: (e: React.MouseEvent<HTMLElement>) => void;
     onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
@@ -29,15 +29,15 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
 };
 
 /**
- * Компонент описывает заголовок внутри заметки
+ * Компонент описывает текст внутри заметки
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop onClick - вызывается при клике на текст
  * @prop children - компонент можно использовать как обертка для других компонентов.
  * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
  */
-function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteHeadProps) {
-    const defaultClassName = "NoteHead";
+function NoteText({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteTextProps) {
+    const defaultClassName = "NoteText";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
@@ -50,10 +50,10 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Typography {...typographySettings} className={genClassName} variant="h4" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)}>
+        <Typography {...typographySettings} className={genClassName} variant="body1" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)}>
             {children}
         </Typography>
     );
 }
 
-export { NoteHead };
+export { NoteText };

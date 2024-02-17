@@ -1,6 +1,7 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { FormControl, InputLabel, Select, MenuItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
 import { HeaderIcon } from "0-shared/components/HeaderIcon/HeaderIcon";
 import type { SelectChangeEvent } from "@mui/material";
 import type { TAllComponents } from "0-shared/types/dataSave";
@@ -13,6 +14,7 @@ type TNoteAddComponentDialogProps = {
 
 const selectValuesNames: Record<TAllComponents, string> = {
     header: "Заголовок",
+    text: "Текст",
 };
 
 /**
@@ -52,6 +54,12 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                             <HeaderIcon svgIconSettings={{ fontSize: "small" }} />
                         </ListItemIcon>
                         <ListItemText>Заголовок</ListItemText>
+                    </MenuItem>
+                    <MenuItem divider value="text">
+                        <ListItemIcon>
+                            <TextFieldsIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Текст</ListItemText>
                     </MenuItem>
                 </Select>
             </FormControl>

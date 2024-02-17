@@ -22,8 +22,9 @@ import { useDataTree } from "0-shared/hooks/useDataTree";
 type TFolderTreeViewerProps = {};
 
 const FolderTreeViewerStyle: SxProps = {
-    flexGrow: "1",
-    maxWidth: "300px",
+    // flexGrow: "1",
+    width: "280px", //TODO: потом ширину можно будет менять самостоятельно
+    //maxWidth: "300px",
     borderRight: "1px #0000005c solid",
     backgroundColor: "#1a1c5017",
     whiteSpace: "nowrap",
