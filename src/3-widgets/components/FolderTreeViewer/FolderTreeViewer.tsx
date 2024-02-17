@@ -183,9 +183,9 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                 ) : null}
             </DopContextMenu>
 
-            {isRenameDialogOpen && <TreeItemRenameDialog dialogHeader="Изменить имя" inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
-            {isNewFolderDialogOpen && <TreeAddFolderDialog dialogHeader="Новая папка" onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
-            {isNewNoteDialogOpen && <TreeAddNoteDialog dialogHeader="Новая заметка" onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
+            {isRenameDialogOpen && <TreeItemRenameDialog inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
+            {isNewFolderDialogOpen && <TreeAddFolderDialog onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
+            {isNewNoteDialogOpen && <TreeAddNoteDialog onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
             {isMoveDialogOpen && <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />}
         </Box>
     );

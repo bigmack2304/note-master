@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
+import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
@@ -40,10 +40,10 @@ function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDia
     };
 
     return (
-        <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
+        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
             <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} sx={inputStyle} />
             <AddTagSelect onChange={onSelectChange} sortName={inputValue} />
-        </TreeEditDialig>
+        </DialogWindowAlt>
     );
 }
 

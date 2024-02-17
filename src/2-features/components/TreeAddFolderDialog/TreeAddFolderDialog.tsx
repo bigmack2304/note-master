@@ -1,5 +1,5 @@
 import React, { useState, useId } from "react";
-import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
+import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
 import { nameValidator } from "0-shared/utils/validators";
@@ -24,7 +24,7 @@ const inputStyle: SxProps = {
  * @prop onCloseSave - вызывается при сохранении текста
  * @prop dialogHeader - заголовок окна
  */
-function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddFolderDialogProps) {
+function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader = "Новая папка" }: TTreeAddFolderDialogProps) {
     const [inputValue, setInputValue] = useState("");
     //const [selectValue, setSelectValue] = useState("#00000000");
     //const selectLabelID = useId();
@@ -45,7 +45,7 @@ function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddFol
     };
 
     return (
-        <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
+        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
             <Input value={inputValue} placeholder="имя папки" onChange={onInputChange} sx={inputStyle} required />
             {/* <FormControl>
                 <InputLabel id={selectLabelID}>Цвет</InputLabel>
@@ -54,7 +54,7 @@ function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddFol
                     <MenuItem value={"#00000000"}>отсутствует</MenuItem>
                 </Select>
             </FormControl> */}
-        </TreeEditDialig>
+        </DialogWindowAlt>
     );
 }
 

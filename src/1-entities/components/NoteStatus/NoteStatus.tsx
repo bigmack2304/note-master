@@ -1,6 +1,5 @@
-import React, { useState, useId } from "react";
-import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
-import { Box, Stepper, Step, StepLabel, Typography } from "@mui/material";
+import React from "react";
+import { Stepper, Step, StepLabel, Typography } from "@mui/material";
 import type { SxProps, PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";

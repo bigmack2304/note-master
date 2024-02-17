@@ -1,5 +1,5 @@
 import React, { useState, useId } from "react";
-import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
+import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
@@ -51,7 +51,7 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
     };
 
     return (
-        <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={TreeEditDialigHeader}>
+        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={TreeEditDialigHeader} actionButtonName="Сохранить" actionButton>
             <Input value={inputValue} placeholder="Поиск папки" onChange={onInputChange} sx={inputStyle} />
             <FormControl>
                 <InputLabel id={selectLabelID}>Переместить в</InputLabel>
@@ -67,7 +67,7 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
                     })}
                 </Select>
             </FormControl>
-        </TreeEditDialig>
+        </DialogWindowAlt>
     );
 }
 

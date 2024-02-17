@@ -96,7 +96,7 @@ function DialogWindowAlt({
     const themeValue = useTemeMode();
 
     return (
-        <Dialog open={isOpen} sx={dialogStyle} {...dialogSettings} onClose={onClose} className={genClassName}>
+        <Dialog {...dialogSettings} open={isOpen} sx={dialogStyle} onClose={onClose} className={genClassName}>
             <form onSubmit={handleCloseSaveDialog} autoComplete="off">
                 <div style={dialogTitleStyle(themeValue) as React.CSSProperties}>
                     <DialogTitle>{headerText}</DialogTitle>

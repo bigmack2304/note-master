@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TreeEditDialig } from "1-entities/components/TreeEditDialig/TreeEditDialig";
+import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
@@ -24,7 +24,7 @@ const inputStyle: SxProps = {
  * @prop onCloseSave - вызывается при сохранении текста
  * @prop dialogHeader - заголовок окна
  */
-function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddNoteDialogProps) {
+function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader = "Новая заметка" }: TTreeAddNoteDialogProps) {
     const [inputValue, setInputValue] = useState("");
     const [selectValue, setSelectValue] = useState<string[] | string>([]);
 
@@ -43,10 +43,10 @@ function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader }: TTreeAddNoteD
     };
 
     return (
-        <TreeEditDialig isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader}>
+        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
             <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} sx={inputStyle} required />
             <AddTagSelect onChange={onSelectChange} />
-        </TreeEditDialig>
+        </DialogWindowAlt>
     );
 }
 
