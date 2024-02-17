@@ -17,6 +17,7 @@ type TClosableMultiLineTextInputProps = {
     onCloseSave?: (inputValue: string) => void;
     inputDefValue?: string;
     placeholder?: string;
+    inputLabel?: string;
 };
 
 const boxStyles = (theme: PaletteMode) => {
@@ -40,9 +41,8 @@ const inputStyle: SxProps = {
     width: "100%",
 };
 
-const dividerStyle: SxProps = {
-    height: "100%",
-    padding: "3px",
+const ButtonsStyle: SxProps = {
+    alignSelf: "flex-start",
 };
 
 /**
@@ -54,7 +54,7 @@ const dividerStyle: SxProps = {
  * @prop placeholder - плейсхолдер формы
  * @returns
  */
-function ClosableMultiLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder }: TClosableMultiLineTextInputProps) {
+function ClosableMultiLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder, inputLabel }: TClosableMultiLineTextInputProps) {
     const defaultClassName = "ClosableMultiLineTextInput";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
@@ -82,11 +82,21 @@ function ClosableMultiLineTextInput({ addClassNames = [], onClose, onCloseSave, 
 
     return (
         <Box className={genClassName} component={"div"} sx={boxStyles(themeValue)}>
-            <TextField value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} onKeyDown={onKeyDown} autoFocus maxRows={10} multiline />
-            <Divider sx={dividerStyle} orientation="vertical" />
+            <TextField
+                value={inputValue}
+                placeholder={placeholder}
+                onChange={onInputChange}
+                sx={inputStyle}
+                onKeyDown={onKeyDown}
+                autoFocus
+                maxRows={10}
+                multiline
+                variant="outlined"
+                label={inputLabel}
+            />
 
-            <CloseButton onClick={onClose} />
-            <OkButton onClick={onSave} />
+            <OkButton onClick={onSave} buttonSettings={{ sx: ButtonsStyle }} />
+            <CloseButton onClick={onClose} buttonSettings={{ sx: ButtonsStyle }} />
         </Box>
     );
 }

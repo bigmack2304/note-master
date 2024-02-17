@@ -1,7 +1,6 @@
-import React from "react";
-import { Box } from "@mui/material";
-import type { SxProps } from "@mui/material";
-import type { PaletteMode } from "@mui/material";
+import React, { useRef } from "react";
+import { Box, Collapse } from "@mui/material";
+import type { SxProps, PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import "./Note.scss";
 import { EditableHeader } from "2-features/components/EditableHeader/EditableHeader";
@@ -17,12 +16,15 @@ type TNoteProps = {
     addClassNames?: string[];
 };
 
-const noteStyles = (theme: PaletteMode) => {
+const noteStyles = (theme: PaletteMode, isEdit: boolean) => {
     return {
-        display: "flex",
-        flexDirection: "column",
-        rowGap: "25px",
-        minHeight: "100%",
+        ...(isEdit
+            ? {}
+            : {
+                  "& .note__content_wrapper": {
+                      backgroundColor: theme === "light" ? "#fffefa" : THEME_DARK_GRAY,
+                  },
+              }),
     } as SxProps;
 };
 
@@ -39,16 +41,17 @@ const noteEditBlockStyles = (theme: PaletteMode) => {
  * @returns
  */
 function Note({ addClassNames = [] }: TNoteProps) {
+    const isEdit = useAppSelector((store) => store.noteEditData.isEdit);
     const defaultClassName = "note";
+    isEdit && addClassNames.push("note-edit");
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
-    const isEdit = useAppSelector((store) => store.noteEditData.isEdit);
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);
 
     if (!currentNote) return <></>;
 
     return (
-        <Box className={genClassName} component={"div"} sx={noteStyles(themeValue)}>
+        <Box className={genClassName} component={"div"} sx={noteStyles(themeValue, isEdit)}>
             <div className="note__content_wrapper">
                 <ChangeTime createTime_timestamp={currentNote.createTime} lastEditTime_timestamp={currentNote.lastEditTime} />
                 <NoteStatus />
@@ -65,11 +68,11 @@ function Note({ addClassNames = [] }: TNoteProps) {
                       })
                     : null}
             </div>
-            {isEdit && (
+            <Collapse in={isEdit} unmountOnExit sx={{ alignSelf: "end" }}>
                 <Box className={"note__editBlock"} sx={noteEditBlockStyles(themeValue)}>
                     <ButtonAddComponentToNoteDialog />
                 </Box>
-            )}
+            </Collapse>
         </Box>
     );
 }

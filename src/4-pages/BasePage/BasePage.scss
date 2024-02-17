@@ -22,13 +22,14 @@
 }
 
 .BasePage .BasePage__workSpace {
-    padding: 10px 20px;
     flex-grow: 1;
     overflow: hidden;
+    flex-basis: min-content;
 }
 
 .BasePage .ToolBar_wrapper {
     margin-top: 64px;
+    flex-shrink: 0;
 }
 
 .BasePage .BasePage__toolbar {

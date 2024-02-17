@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ClosableOneLineTextInput } from "2-features/components/ClosableOneLineTextInput/ClosableOneLineTextInput";
 import { NoteHead } from "0-shared/components/NoteHead/NoteHead";
-import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
+import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
@@ -24,29 +24,36 @@ type TEditableHeaderProps = {
 function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [] }: TEditableHeaderProps) {
     const [isEdit, setIsEdit] = useState(editable);
     const [headerValue, setHeaderValue] = useState(defaultText);
-    const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-    const isMenuOpen = Boolean(menuAnchorEl);
+    const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
     let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        setMenuAnchorEl(e.currentTarget);
+
+        setClickData(
+            clickData === null
+                ? {
+                      x: e.clientX + 2,
+                      y: e.clientY - 6,
+                  }
+                : null
+        );
     };
 
     const onMenuClose = () => {
-        setMenuAnchorEl(null);
+        setClickData(null);
     };
 
     // клики в меню опций
     const onMenuEdit = () => {
         setIsEdit(true);
-        setMenuAnchorEl(null);
+        setClickData(null);
     };
 
     const onMenuClear = () => {
-        setMenuAnchorEl(null);
+        setClickData(null);
         setHeaderValue("");
 
         if (!edit_id || !currentNoteData) return;
@@ -78,6 +85,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                     addClassNames={[...addClassNames, "editable"]}
                     inputDefValue={headerValue}
                     placeholder="заголовок"
+                    inputLabel="заголовок"
                     onClose={onInputExit}
                     onCloseSave={onInputSave}
                 />
@@ -87,7 +95,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                         {headerValue}
                     </NoteHead>
 
-                    <DopContextMenu isOpen={isMenuOpen} onClose={onMenuClose} anchorEl={menuAnchorEl}>
+                    <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
                         <ContextMenuEditContent
                             onEditClick={onMenuEdit}
                             onClearClick={onMenuClear}
@@ -95,7 +103,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                             isClearDisabled={headerValue.length > 0 ? false : true}
                             isAllDisabled={!isNoteEdit}
                         />
-                    </DopContextMenu>
+                    </DopContextMenuFree>
                 </>
             )}
         </>

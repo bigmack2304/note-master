@@ -27,6 +27,7 @@ function NoteEditButton({ onClick = () => {}, addClassNames = [], type }: TNoteE
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const dispatch = useAppDispatch();
     const isProjectOpen = useAppSelector((state) => state.saveDataInspect.isProjectOpen);
+    const isEdit = useAppSelector((state) => state.noteEditData.isEdit);
 
     const onButtonClick = (e: React.MouseEvent) => {
         dispatch(toggleIsEdit());
@@ -44,7 +45,7 @@ function NoteEditButton({ onClick = () => {}, addClassNames = [], type }: TNoteE
             disabled={!isProjectOpen}
             size="small"
         >
-            <EditIcon fontSize="small" />
+            <EditIcon fontSize="small" color={!isEdit ? "inherit" : "warning"} sx={{ stroke: "black", strokeWidth: "2%" }} />
         </IconButton>
     );
 }

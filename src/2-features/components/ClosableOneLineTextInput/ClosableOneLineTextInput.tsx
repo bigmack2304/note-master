@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input } from "@mui/material";
+import { TextField } from "@mui/material";
 import { Box } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
@@ -17,6 +17,7 @@ type TClosableOneLineTextInputProps = {
     onCloseSave?: (inputValue: string) => void;
     inputDefValue?: string;
     placeholder?: string;
+    inputLabel?: string;
 };
 
 const boxStyles = (theme: PaletteMode) => {
@@ -54,7 +55,7 @@ const dividerStyle: SxProps = {
  * @prop placeholder - плейсхолдер формы
  * @returns
  */
-function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder }: TClosableOneLineTextInputProps) {
+function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder, inputLabel }: TClosableOneLineTextInputProps) {
     const defaultClassName = "ClosableOneLineTextInput";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
@@ -80,11 +81,19 @@ function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, in
 
     return (
         <Box className={genClassName} component={"div"} sx={boxStyles(themeValue)}>
-            <Input value={inputValue} placeholder={placeholder} onChange={onInputChange} sx={inputStyle} onKeyDown={onKeyDown} autoFocus />
-            <Divider sx={dividerStyle} orientation="vertical" />
+            <TextField
+                value={inputValue}
+                placeholder={placeholder}
+                onChange={onInputChange}
+                sx={inputStyle}
+                onKeyDown={onKeyDown}
+                variant="outlined"
+                label={inputLabel}
+                autoFocus
+            />
 
-            <CloseButton onClick={onClose} />
             <OkButton onClick={onSave} />
+            <CloseButton onClick={onClose} />
         </Box>
     );
 }
