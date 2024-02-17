@@ -74,7 +74,13 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
     return (
         <>
             {isEdit ? (
-                <ClosableOneLineTextInput addClassNames={addClassNames} inputDefValue={headerValue} placeholder="заголовок" onClose={onInputExit} onCloseSave={onInputSave} />
+                <ClosableOneLineTextInput
+                    addClassNames={[...addClassNames, "editable"]}
+                    inputDefValue={headerValue}
+                    placeholder="заголовок"
+                    onClose={onInputExit}
+                    onCloseSave={onInputSave}
+                />
             ) : (
                 <>
                     <NoteHead addClassNames={addClassNames} onContextMenu={onClickMoreActions}>
