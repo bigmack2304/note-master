@@ -1,3 +1,5 @@
+type TAllComponents = "header";
+
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
 interface TBodyComponentHeader {
@@ -92,4 +94,18 @@ interface IDataSave {
     data_tree: IDataTreeRootFolder;
 }
 
-export type { IDataSave, IDataTreeFolder, IDataTreeNote, IGlobalTag, TNoteBody, TchildrenType, TNodeType, IDataTreeNode, IDataTreeRootFolder, TTagColors, IAllTags };
+export type {
+    IDataSave,
+    IDataTreeFolder,
+    IDataTreeNote,
+    IGlobalTag,
+    TNoteBody,
+    TchildrenType,
+    TNodeType,
+    IDataTreeNode,
+    IDataTreeRootFolder,
+    TTagColors,
+    IAllTags,
+    TAllComponents,
+    TBodyComponentHeader,
+};

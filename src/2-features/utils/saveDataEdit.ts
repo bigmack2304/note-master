@@ -1,9 +1,10 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
 import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors } from "0-shared/types/dataSave";
+import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors, TAllComponents } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataTag } from "0-shared/utils/saveDataTag";
+import { DataComponentHeader } from "0-shared/utils/saveDataComponentHeader";
 import type { DataNote } from "0-shared/utils/saveDataNote";
 import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -412,6 +413,38 @@ async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, old
     return { newTagName, resultBool };
 }
 
+/**
+ * Добавляет новый компонент в заметку
+ * @param data обьект IDataTreeRootFolder
+ * @param noteId id заметки в которую нужно добавить компонент
+ * @param componentType тип добавляемого компонента (заголовок, текст... короче TAllComponents)
+ */
+async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, componentType: TAllComponents) {
+    let updatedNote = getNodeById(data, noteId);
+    let resultBool = false;
+
+    if (updatedNote && isDataTreeNote(updatedNote)) {
+        let component: TNoteBody | undefined;
+        switch (componentType) {
+            case "header":
+                component = new DataComponentHeader();
+                break;
+            default:
+                component = undefined;
+                break;
+        }
+
+        if (component !== undefined) {
+            updatedNote.lastEditTime = Date.now();
+            resultBool = true;
+            updatedNote.body.push(component);
+            await setDataTreeDB({ value: data });
+        }
+    }
+
+    return { updatedNote, resultBool };
+}
+
 export {
     //mergeNodeById,
     updateNodeValue,
@@ -426,4 +459,5 @@ export {
     projectDeleteTag,
     projectEditeTag,
     updateNodeCompleted,
+    addNewComponentToNote,
 };

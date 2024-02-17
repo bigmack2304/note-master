@@ -6,11 +6,11 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import "./Note.scss";
 import { EditableHeader } from "2-features/components/EditableHeader/EditableHeader";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { AddButton } from "0-shared/components/AddButton/AddButton";
 import { NoteTagList } from "2-features/components/NoteTagList/NoteTagList";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_DARK_COLOR, OUTLINE_LIGHT_COLOR } from "5-app/settings";
 import { ChangeTime } from "1-entities/components/ChangeTime/ChangeTime";
 import { NoteStatus } from "1-entities/components/NoteStatus/NoteStatus";
+import { ButtonAddComponentToNoteDialog } from "2-features/components/ButtonAddComponentToNoteDialog/ButtonAddComponentToNoteDialog";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -69,7 +69,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
             </div>
             {isEdit && (
                 <Box className={"note__editBlock"} sx={noteEditBlockStyles(themeValue)}>
-                    <AddButton />
+                    <ButtonAddComponentToNoteDialog />
                 </Box>
             )}
         </Box>
