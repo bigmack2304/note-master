@@ -205,5 +205,5 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
     return themeOverrided;
 }
 
-export { themeOverrideStyles };
+export { themeOverrideStyles, svgThemeColor };
 export type { PaletteMode, TTheme };

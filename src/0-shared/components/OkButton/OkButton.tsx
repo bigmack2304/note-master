@@ -2,7 +2,6 @@ import React from "react";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import type { SxProps } from "@mui/material";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TOkButtonProps = {
     onClick?: (e: React.MouseEvent) => void;
