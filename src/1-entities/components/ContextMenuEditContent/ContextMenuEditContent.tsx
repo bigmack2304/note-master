@@ -24,6 +24,8 @@ const menuItemStyle: SxProps = {
 
 /**
  * вариант содержимого для компонента DopContextMenu.
+ * @ содержимое для редактирования компонентов
+ *
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop onEditClick - вызывается при нажатии на кнопку "Редактировать"
  * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
@@ -37,24 +39,30 @@ function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick
 
     return (
         <>
-            <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onEditClick} sx={menuItemStyle}>
-                <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Редактировать</ListItemText>
-            </MenuItem>
-            <MenuItem className={genClassName} disabled={isClearDisabled || isAllDisabled} onClick={onClearClick} sx={menuItemStyle}>
-                <ListItemIcon>
-                    <BrowserNotSupportedIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Отчистить</ListItemText>
-            </MenuItem>
-            <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onDeleteClick} sx={menuItemStyle}>
-                <ListItemIcon>
-                    <DeleteIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Удалить</ListItemText>
-            </MenuItem>
+            {onEditClick && (
+                <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onEditClick} sx={menuItemStyle}>
+                    <ListItemIcon>
+                        <EditIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Редактировать</ListItemText>
+                </MenuItem>
+            )}
+            {onClearClick && (
+                <MenuItem className={genClassName} disabled={isClearDisabled || isAllDisabled} onClick={onClearClick} sx={menuItemStyle}>
+                    <ListItemIcon>
+                        <BrowserNotSupportedIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Отчистить</ListItemText>
+                </MenuItem>
+            )}
+            {onDeleteClick && (
+                <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onDeleteClick} sx={menuItemStyle}>
+                    <ListItemIcon>
+                        <DeleteIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Удалить</ListItemText>
+                </MenuItem>
+            )}
         </>
     );
 }
