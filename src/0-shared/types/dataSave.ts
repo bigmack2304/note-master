@@ -12,6 +12,9 @@ interface TBodyComponentHeader {
 interface TBodyComponentText {
     component: "text";
     value: string;
+    background: boolean;
+    formatting: boolean;
+    font: "default" | "code";
 }
 //////////////////////////////////////////////////////////////////
 /**

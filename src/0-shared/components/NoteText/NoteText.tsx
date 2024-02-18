@@ -5,6 +5,7 @@ import type { SxProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import "./NoteText.scss";
 
 type TNoteTextProps = {
     addClassNames?: string[];

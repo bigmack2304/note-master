@@ -1,6 +1,17 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
 import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
-import type { TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote, IDataTreeRootFolder, IGlobalTag, IAllTags, TTagColors, TAllComponents } from "0-shared/types/dataSave";
+import type {
+    TchildrenType,
+    TNoteBody,
+    IDataTreeFolder,
+    IDataTreeNote,
+    IDataTreeRootFolder,
+    IGlobalTag,
+    IAllTags,
+    TTagColors,
+    TAllComponents,
+    TBodyComponentText,
+} from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataTag } from "0-shared/utils/saveDataTag";
@@ -46,6 +57,7 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
     let targetNote = getNodeById(rootFolder, noteId);
     let resultBool = false;
 
+    // TODO: потом нужно это оптимизировать
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
             if (component.id !== componentId) continue;
@@ -56,6 +68,45 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
         await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента текста в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id компонента в котором нужно поменять value
+ * @param componentId id компонента в котором меняется value
+ * @param textBackground значение фона для текста
+ * @param textFormat нужноли форматировать текст
+ * @param fontValue тип шрифта для текста
+ */
+async function updateNoteComponentTextSettings(
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    textBackground: boolean,
+    textFormat: boolean,
+    fontValue: TBodyComponentText["font"]
+) {
+    let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== componentId) continue;
+            if (component.component === "text") {
+                component.background = textBackground;
+                component.font = fontValue;
+                component.formatting = textFormat;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: rootFolder });
+                break;
+            }
+        }
     }
 
     return { targetNote, resultBool };
@@ -440,4 +491,5 @@ export {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
+    updateNoteComponentTextSettings,
 };

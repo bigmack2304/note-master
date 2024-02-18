@@ -14,7 +14,7 @@ type TNoteAddComponentDialogProps = {
 
 const selectValuesNames: Record<TAllComponents, string> = {
     header: "Заголовок",
-    text: "Форматируемый текст",
+    text: "текст",
 };
 
 /**
@@ -59,7 +59,7 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                         <ListItemIcon>
                             <TextFieldsIcon fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText>Форматируемый текст</ListItemText>
+                        <ListItemText>текст</ListItemText>
                     </MenuItem>
                 </Select>
             </FormControl>

@@ -1,4 +1,4 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag, TTagColors, TAllComponents } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag, TTagColors, TAllComponents, TBodyComponentText } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
@@ -17,6 +17,7 @@ import {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
+    updateNoteComponentTextSettings as componentTextSettings
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -264,6 +265,48 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+
+
+        updateNoteComponentTextSettings: create.asyncThunk<{ noteId: string; componentId: string; textBackground: boolean; textFormat: boolean, fontValue: TBodyComponentText["font"] }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const { targetNote: updatedNote, resultBool } = await componentTextSettings(dataTree, payload.noteId, payload.componentId, payload.textBackground, payload.textFormat, payload.fontValue);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                if (updatedNote) {
+                    return { updatedNode: updatedNote };
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
+
+
         // обновляем note.completed в активной заметке и в indexedDB
         updateNoteCompleted: create.asyncThunk<{ noteId: string; newCompleted: boolean }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
@@ -751,6 +794,7 @@ export const {
     loadProjectInDb,
     updateNoteCompleted,
     addNewComponentInNote,
+    updateNoteComponentTextSettings
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

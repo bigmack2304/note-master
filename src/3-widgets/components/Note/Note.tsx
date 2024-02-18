@@ -63,7 +63,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
                               return <EditableHeader addClassNames={["note__head", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
                           }
                           if (note.component === "text") {
-                              return <EditableText addClassNames={["note__text", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
+                              return <EditableText addClassNames={["note__text", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} componentData={note} />;
                           }
                       })
                     : null}

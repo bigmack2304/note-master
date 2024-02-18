@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import BrowserNotSupportedIcon from "@mui/icons-material/BrowserNotSupported";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import TuneIcon from "@mui/icons-material/Tune";
 import type { SxProps } from "@mui/material";
 
 // содержимое для DopContextMenu. с вариантом редактирования
@@ -13,6 +14,7 @@ type TContextMenuEditContentProps = {
     onEditClick?: (e: React.MouseEvent) => void;
     onDeleteClick?: (e: React.MouseEvent) => void;
     onClearClick?: (e: React.MouseEvent) => void;
+    onParamsClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
     isClearDisabled?: boolean;
     isAllDisabled?: boolean;
@@ -33,7 +35,15 @@ const menuItemStyle: SxProps = {
  * @prop isClearDisabled - boolean - disabled для кнопки "Отчистить"
  * @prop isAllDisabled - boolean - disabled для кнопки всех кнопок
  */
-function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick, onClearClick, isClearDisabled = false, isAllDisabled = false }: TContextMenuEditContentProps) {
+function ContextMenuEditContent({
+    addClassNames = [],
+    onEditClick,
+    onDeleteClick,
+    onClearClick,
+    onParamsClick,
+    isClearDisabled = false,
+    isAllDisabled = false,
+}: TContextMenuEditContentProps) {
     const defaultClassName = "ContextMenuEditContent";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
@@ -53,6 +63,14 @@ function ContextMenuEditContent({ addClassNames = [], onEditClick, onDeleteClick
                         <BrowserNotSupportedIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Отчистить</ListItemText>
+                </MenuItem>
+            )}
+            {onParamsClick && (
+                <MenuItem className={genClassName} disabled={isAllDisabled} onClick={onParamsClick} sx={menuItemStyle}>
+                    <ListItemIcon>
+                        <TuneIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Параметры</ListItemText>
                 </MenuItem>
             )}
             {onDeleteClick && (

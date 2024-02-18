@@ -1,10 +1,8 @@
 import React from "react";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import Switch from "@mui/material/Switch";
 import { setHGLGTagsInForms } from "5-app/GlobalState/settingsStore";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 
 type TTagColoringInFormsProps = {};
 /**
@@ -21,15 +19,9 @@ function TagColoringInForms({}: TTagColoringInFormsProps) {
 
     return (
         <>
-            <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="caption">OFF</Typography>
-                <Switch size="medium" checked={isColoring} onChange={onChange} />
-                <Typography variant="caption">ON</Typography>
-            </Stack>
+            <SwitchCustom onChange={onChange} checked={isColoring} />
         </>
     );
 }
 
-const TagColoringInFormsMemo = React.memo(TagColoringInForms);
-
-export { TagColoringInForms, TagColoringInFormsMemo };
+export { TagColoringInForms };
