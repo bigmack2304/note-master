@@ -5,20 +5,57 @@ import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/Dop
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { updateNoteComponentValue, deleteNoteComponent } from "5-app/GlobalState/saveDataInspectStore";
+import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentHeaderSettings } from "5-app/GlobalState/saveDataInspectStore";
+import { NoteHeaderEditDialog } from "../NoteHeaderEditDialog/NoteHeaderEditDialog";
+import type { TBodyComponentHeader } from "0-shared/types/dataSave";
 
 type TEditableHeaderProps = {
     defaultText?: string;
     editable?: boolean;
     edit_id?: string;
     addClassNames?: string[];
+    componentData: TBodyComponentHeader;
 };
 
-const genTextDopClasses = (data: { isEdit: boolean }) => {
+const genTextDopClasses = (data: { isEdit: boolean; textAligin: TBodyComponentHeader["textAligin"]; headerSize: TBodyComponentHeader["headerSize"] }) => {
     const classes: string[] = [];
 
     if (data.isEdit) {
         classes.push("NoteHead--editable");
+    }
+
+    switch (data.textAligin) {
+        case "left":
+            classes.push("NoteHead--aliginLeft");
+            break;
+        case "center":
+            classes.push("NoteHead--aliginCenter");
+            break;
+        case "right":
+            classes.push("NoteHead--aliginRight");
+            break;
+        default:
+            break;
+    }
+
+    switch (data.headerSize) {
+        case "h2":
+            classes.push("NoteHead--sizeH2");
+            break;
+        case "h3":
+            classes.push("NoteHead--sizeH3");
+            break;
+        case "h4":
+            classes.push("NoteHead--sizeH4");
+            break;
+        case "h5":
+            classes.push("NoteHead--sizeH5");
+            break;
+        case "h6":
+            classes.push("NoteHead--sizeH6");
+            break;
+        default:
+            break;
     }
 
     return classes;
@@ -30,18 +67,22 @@ const genTextDopClasses = (data: { isEdit: boolean }) => {
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
  * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [] }: TEditableHeaderProps) {
+function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableHeaderProps) {
     const [isEdit, setIsEdit] = useState(editable);
     const [headerValue, setHeaderValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();
+    const [isHeaderEditDialog, setIsHeaderEditDialog] = useState(false);
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
     let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
 
     // вычесляем дополнительгые классы для заголовка
     let textDopClasses = genTextDopClasses({
         isEdit: isNoteEdit,
+        textAligin: componentData.textAligin,
+        headerSize: componentData.headerSize,
     });
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
@@ -80,6 +121,11 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
         dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: edit_id }));
     };
 
+    const onMenuParams = () => {
+        setClickData(null);
+        setIsHeaderEditDialog(true);
+    };
+
     // клики в форме редактирования
     const onInputExit = () => {
         setIsEdit(false);
@@ -91,6 +137,18 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
 
         if (!edit_id || !currentNoteData) return;
         dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
+    };
+
+    // функции окна с вормой настроек заголовка
+
+    const onEditHeaderDialogClose = () => {
+        setIsHeaderEditDialog(false);
+    };
+
+    const onEditHeaderDialogCloseSave = (data: { textAligin: TBodyComponentHeader["textAligin"]; headerSize: TBodyComponentHeader["headerSize"] }) => {
+        setIsHeaderEditDialog(false);
+        if (!edit_id || !currentNoteData) return;
+        dispatch(updateNoteComponentHeaderSettings({ componentId: edit_id, noteId: currentNoteData.id, headerSize: data.headerSize, textAligin: data.textAligin }));
     };
 
     return (
@@ -115,10 +173,12 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                             onEditClick={onMenuEdit}
                             onClearClick={onMenuClear}
                             onDeleteClick={onMenuDelete}
+                            onParamsClick={onMenuParams}
                             isClearDisabled={headerValue.length > 0 ? false : true}
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
+                    {isHeaderEditDialog && <NoteHeaderEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
                 </>
             )}
         </>

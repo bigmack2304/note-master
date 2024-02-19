@@ -191,9 +191,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isTextEditDialog && (
-                        <NoteTextEditDialog onClose={onEditTextDialogClose} onCloseSave={onEditTextDialogCloseSave} editId={edit_id} componentData={componentData} />
-                    )}
+                    {isTextEditDialog && <NoteTextEditDialog onClose={onEditTextDialogClose} onCloseSave={onEditTextDialogCloseSave} componentData={componentData} />}
                 </>
             )}
         </>

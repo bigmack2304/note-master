@@ -1,9 +1,8 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { SxProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import type { PaletteMode } from "@mui/material";
+import type { PaletteMode, SxProps } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 
 type TNoteHeadProps = {
@@ -28,7 +27,36 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
         "&.NoteHead--editable:hover": {
             outline: "1px red solid",
         },
+
+        "&.NoteHead--aliginLeft": {
+            textAlign: "left",
+        },
+        "&.NoteHead--aliginCenter": {
+            textAlign: "center",
+        },
+        "&.NoteHead--aliginRight": {
+            textAlign: "right",
+        },
     } as SxProps;
+};
+
+const typographyVariant = (addClassNames: string[]): GetProps<typeof Typography>["variant"] => {
+    if (addClassNames.includes("NoteHead--sizeH2")) {
+        return "h2";
+    }
+    if (addClassNames.includes("NoteHead--sizeH3")) {
+        return "h3";
+    }
+    if (addClassNames.includes("NoteHead--sizeH4")) {
+        return "h4";
+    }
+    if (addClassNames.includes("NoteHead--sizeH5")) {
+        return "h5";
+    }
+    if (addClassNames.includes("NoteHead--sizeH6")) {
+        return "h6";
+    }
+    return "h3";
 };
 
 /**
@@ -53,7 +81,14 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Typography {...typographySettings} className={genClassName} variant="h4" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)}>
+        <Typography
+            {...typographySettings}
+            className={genClassName}
+            variant={typographyVariant(addClassNames)}
+            onContextMenu={onContextMenu}
+            onClick={onClick}
+            sx={typographyStyle(isChildren, themeMode)}
+        >
             {children}
         </Typography>
     );

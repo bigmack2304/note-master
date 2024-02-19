@@ -11,6 +11,7 @@ import type {
     TTagColors,
     TAllComponents,
     TBodyComponentText,
+    TBodyComponentHeader,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -82,16 +83,15 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
  * @param textFormat нужноли форматировать текст
  * @param fontValue тип шрифта для текста
  */
-async function updateNoteComponentTextSettings(data:{
-    rootFolder: IDataTreeRootFolder,
-    noteId: string,
-    componentId: string,
-    textBackground: boolean,
-    textFormat: boolean,
-    fontValue: TBodyComponentText["font"]
-    lineBreak:boolean
-}
-) {
+async function updateNoteComponentTextSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    textBackground: boolean;
+    textFormat: boolean;
+    fontValue: TBodyComponentText["font"];
+    lineBreak: boolean;
+}) {
     let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
@@ -103,6 +103,43 @@ async function updateNoteComponentTextSettings(data:{
                 component.font = data.fontValue;
                 component.formatting = data.textFormat;
                 component.lineBreak = data.lineBreak;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента заголовка в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id компонента в котором нужно поменять value
+ * @param componentId id компонента в котором меняется value
+ * @param textBackground значение фона для текста
+ * @param textFormat нужноли форматировать текст
+ * @param fontValue тип шрифта для текста
+ */
+async function updateNoteComponentHeaderSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    textAligin: TBodyComponentHeader["textAligin"];
+    headerSize: TBodyComponentHeader["headerSize"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "header") {
+                component.headerSize = data.headerSize;
+                component.textAligin = data.textAligin;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;
@@ -495,4 +532,5 @@ export {
     updateNodeCompleted,
     addNewComponentToNote,
     updateNoteComponentTextSettings,
+    updateNoteComponentHeaderSettings,
 };

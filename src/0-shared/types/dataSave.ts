@@ -6,6 +6,8 @@ type TAllComponents = "header" | "text";
 interface TBodyComponentHeader {
     component: "header";
     value: string;
+    textAligin: "left" | "center" | "right";
+    headerSize: "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
 // текст

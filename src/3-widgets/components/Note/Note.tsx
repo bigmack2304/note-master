@@ -58,12 +58,28 @@ function Note({ addClassNames = [] }: TNoteProps) {
                 <NoteTagList />
 
                 {currentNote.body.length > 0
-                    ? currentNote.body.map((note) => {
-                          if (note.component === "header") {
-                              return <EditableHeader addClassNames={["note__head", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} />;
+                    ? currentNote.body.map((noteComponent) => {
+                          if (noteComponent.component === "header") {
+                              return (
+                                  <EditableHeader
+                                      addClassNames={["note__head", "note__content"]}
+                                      defaultText={noteComponent.value}
+                                      key={noteComponent.id}
+                                      edit_id={noteComponent.id}
+                                      componentData={noteComponent}
+                                  />
+                              );
                           }
-                          if (note.component === "text") {
-                              return <EditableText addClassNames={["note__text", "note__content"]} defaultText={note.value} key={note.id} edit_id={note.id} componentData={note} />;
+                          if (noteComponent.component === "text") {
+                              return (
+                                  <EditableText
+                                      addClassNames={["note__text", "note__content"]}
+                                      defaultText={noteComponent.value}
+                                      key={noteComponent.id}
+                                      edit_id={noteComponent.id}
+                                      componentData={noteComponent}
+                                  />
+                              );
                           }
                       })
                     : null}

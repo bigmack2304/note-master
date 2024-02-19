@@ -2,7 +2,7 @@ import type { TBodyComponentText } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
 
 /**
- *  класс для создания новых папок в дереве IDataTreeRootFolder
+ *  класс для создания новых компонентов текста заметки
  */
 class saveDataComponentText extends DataNode implements TBodyComponentText {
     public component: TBodyComponentText["component"];
