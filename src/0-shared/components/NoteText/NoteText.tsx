@@ -45,19 +45,31 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
         "&.NoteText--overflowXScroll": {
             whiteSpace: "pre",
         },
+        "&.NoteText--editable:hover": {
+            outline: "1px red solid",
+        },
     } as SxProps;
 };
 
 const noteTextWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     return {
         overflow: "hidden",
+        lineHeight: "0px",
 
         "&:has(> .NoteText[class*='NoteText--bg'])": {
             borderRadius: "5px",
         },
 
+        "&:has(> .NoteText[class*='text_empty'])": {
+            borderRadius: "5px",
+        },
+
         "&:has(> .NoteText--overflowXScroll)": {
             overflowX: "auto",
+        },
+
+        "&:has(> .NoteText[class*='NoteText--editable']):hover": {
+            outline: "1px red solid",
         },
     } as SxProps;
 };

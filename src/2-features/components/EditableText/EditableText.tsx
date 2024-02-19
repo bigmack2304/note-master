@@ -21,7 +21,14 @@ type TEditableTextProps = {
     componentData: TBodyComponentText;
 };
 
-const genTextDopClasses = (data: { textBackground: boolean; textFormat: boolean; fontType: TBodyComponentText["font"]; theme: PaletteMode; lineBreak: boolean }) => {
+const genTextDopClasses = (data: {
+    textBackground: boolean;
+    textFormat: boolean;
+    fontType: TBodyComponentText["font"];
+    theme: PaletteMode;
+    lineBreak: boolean;
+    isEdit: boolean;
+}) => {
     const classes: string[] = [];
 
     if (data.textBackground) {
@@ -31,6 +38,10 @@ const genTextDopClasses = (data: { textBackground: boolean; textFormat: boolean;
         if (data.theme === "dark") {
             classes.push("NoteText--bg-dark");
         }
+    }
+
+    if (data.isEdit) {
+        classes.push("NoteText--editable");
     }
 
     if (!data.textFormat) {
@@ -73,6 +84,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
         textBackground: componentData.background,
         textFormat: componentData.formatting,
         theme: themeValue,
+        isEdit: isNoteEdit,
     });
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {

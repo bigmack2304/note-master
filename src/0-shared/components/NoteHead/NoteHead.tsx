@@ -25,6 +25,9 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
                   backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
                   borderRadius: "3px",
               }),
+        "&.NoteHead--editable:hover": {
+            outline: "1px red solid",
+        },
     } as SxProps;
 };
 

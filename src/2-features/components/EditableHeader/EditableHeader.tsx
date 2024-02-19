@@ -14,6 +14,16 @@ type TEditableHeaderProps = {
     addClassNames?: string[];
 };
 
+const genTextDopClasses = (data: { isEdit: boolean }) => {
+    const classes: string[] = [];
+
+    if (data.isEdit) {
+        classes.push("NoteHead--editable");
+    }
+
+    return classes;
+};
+
 /**
  * Заголовок заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
@@ -28,6 +38,11 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
     const dispatch = useAppDispatch();
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
     let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
+
+    // вычесляем дополнительгые классы для заголовка
+    let textDopClasses = genTextDopClasses({
+        isEdit: isNoteEdit,
+    });
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -91,7 +106,7 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                 />
             ) : (
                 <>
-                    <NoteHead addClassNames={addClassNames} onContextMenu={onClickMoreActions}>
+                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions}>
                         {headerValue}
                     </NoteHead>
 
