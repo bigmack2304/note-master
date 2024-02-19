@@ -1,4 +1,14 @@
-import type { IDataTreeNote, IDataTreeFolder, TchildrenType, TNoteBody, IDataTreeRootFolder, IGlobalTag, TTagColors, TAllComponents, TBodyComponentText } from "0-shared/types/dataSave";
+import type {
+    IDataTreeNote,
+    IDataTreeFolder,
+    TchildrenType,
+    TNoteBody,
+    IDataTreeRootFolder,
+    IGlobalTag,
+    TTagColors,
+    TAllComponents,
+    TBodyComponentText,
+} from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
@@ -17,7 +27,7 @@ import {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
-    updateNoteComponentTextSettings as componentTextSettings
+    updateNoteComponentTextSettings as componentTextSettings,
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -266,14 +276,24 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
 
-
-        updateNoteComponentTextSettings: create.asyncThunk<{ noteId: string; componentId: string; textBackground: boolean; textFormat: boolean, fontValue: TBodyComponentText["font"] }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+        updateNoteComponentTextSettings: create.asyncThunk<
+            { noteId: string; componentId: string; textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNote, resultBool } = await componentTextSettings(dataTree, payload.noteId, payload.componentId, payload.textBackground, payload.textFormat, payload.fontValue);
+                const { targetNote: updatedNote, resultBool } = await componentTextSettings({
+                    rootFolder: dataTree,
+                    noteId: payload.noteId,
+                    componentId: payload.componentId,
+                    textBackground: payload.textBackground,
+                    textFormat: payload.textFormat,
+                    fontValue: payload.fontValue,
+                    lineBreak: payload.lineBreak,
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -305,7 +325,6 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
-
 
         // обновляем note.completed в активной заметке и в indexedDB
         updateNoteCompleted: create.asyncThunk<{ noteId: string; newCompleted: boolean }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
@@ -794,7 +813,7 @@ export const {
     loadProjectInDb,
     updateNoteCompleted,
     addNewComponentInNote,
-    updateNoteComponentTextSettings
+    updateNoteComponentTextSettings,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

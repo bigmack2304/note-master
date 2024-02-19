@@ -21,24 +21,28 @@ type TEditableTextProps = {
     componentData: TBodyComponentText;
 };
 
-const genTextDopClasses = (textBackground: boolean, textFormat: boolean, fontType: TBodyComponentText["font"], theme: PaletteMode) => {
+const genTextDopClasses = (data: { textBackground: boolean; textFormat: boolean; fontType: TBodyComponentText["font"]; theme: PaletteMode; lineBreak: boolean }) => {
     const classes: string[] = [];
 
-    if (textBackground) {
-        if (theme === "light") {
-            classes.push("EditableText--bg-light");
+    if (data.textBackground) {
+        if (data.theme === "light") {
+            classes.push("NoteText--bg-light");
         }
-        if (theme === "dark") {
-            classes.push("EditableText--bg-dark");
+        if (data.theme === "dark") {
+            classes.push("NoteText--bg-dark");
         }
     }
 
-    if (!textFormat) {
-        classes.push("EditableText--noFormat");
+    if (!data.textFormat) {
+        classes.push("NoteText--noFormat");
     }
 
-    if (fontType === "code") {
-        classes.push("EditableText--font-code");
+    if (data.fontType === "code") {
+        classes.push("NoteText--font-code");
+    }
+
+    if (!data.lineBreak) {
+        classes.push("NoteText--overflowXScroll");
     }
 
     return classes;
@@ -63,7 +67,13 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
     const themeValue = useTemeMode();
 
     // текст может иметь дополнительные стили в зависимости от настроек поэтому сразу их вычисляем
-    let textDopClasses = genTextDopClasses(componentData.background, componentData.formatting, componentData.font, themeValue);
+    let textDopClasses = genTextDopClasses({
+        fontType: componentData.font,
+        lineBreak: componentData.lineBreak,
+        textBackground: componentData.background,
+        textFormat: componentData.formatting,
+        theme: themeValue,
+    });
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -125,12 +135,19 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
         setIsTextEditDialog(false);
     };
 
-    const onEditTextDialogCloseSave = (textBackground: boolean, textFormat: boolean, fontValue: TBodyComponentText["font"]) => {
+    const onEditTextDialogCloseSave = (data: { textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean }) => {
         setIsTextEditDialog(false);
-        //TODO: обновляем параметры текста
+
         if (!edit_id || !currentNoteData) return;
         dispatch(
-            updateNoteComponentTextSettings({ noteId: currentNoteData.id, componentId: edit_id, fontValue: fontValue, textBackground: textBackground, textFormat: textFormat })
+            updateNoteComponentTextSettings({
+                noteId: currentNoteData.id,
+                componentId: edit_id,
+                fontValue: data.fontValue,
+                textBackground: data.textBackground,
+                textFormat: data.textFormat,
+                lineBreak: data.lineBreak,
+            })
         );
     };
 

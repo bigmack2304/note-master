@@ -9,7 +9,7 @@ import type { TBodyComponentText } from "0-shared/types/dataSave";
 
 type TNoteTextEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (textBackground: boolean, textFormat: boolean, selectValue: TBodyComponentText["font"]) => void;
+    onCloseSave?: (data: { textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean }) => void;
     dialogHeader?: string;
     editId?: string;
     componentData: TBodyComponentText;
@@ -45,11 +45,12 @@ const fontNames: Record<TBodyComponentText["font"], string> = {
 function NoteTextEditDialog({ onClose, onCloseSave, dialogHeader = "Управление текстом", editId, componentData }: TNoteTextEditDialogProps) {
     const [textBackground, setTextBackground] = useState(componentData.background);
     const [textFormat, setTextFormat] = useState(componentData.formatting);
+    const [lineBreak, setLineBreak] = useState(componentData.lineBreak);
     const [selectValue, setSelectValue] = useState<TBodyComponentText["font"]>(componentData.font);
     const selectLabelID = useId();
 
     const onSave = () => {
-        onCloseSave && onCloseSave(textBackground, textFormat, selectValue);
+        onCloseSave && onCloseSave({ textBackground, textFormat, fontValue: selectValue, lineBreak });
     };
 
     const onBgChange = (e: React.ChangeEvent<Element>, checked: boolean) => {
@@ -58,6 +59,10 @@ function NoteTextEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
 
     const onFormatChange = (e: React.ChangeEvent<Element>, checked: boolean) => {
         setTextFormat(checked);
+    };
+
+    const onLineBreak = (e: React.ChangeEvent<Element>, checked: boolean) => {
+        setLineBreak(checked);
     };
 
     const onSelectChange = (e: SelectChangeEvent) => {
@@ -72,11 +77,15 @@ function NoteTextEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                     <SwitchCustom onChange={onBgChange} checked={textBackground} />
                 </ListItem>
                 <ListItem divider>
-                    <ListItemText>Форматирование</ListItemText>
+                    <ListItemText>Автоперенос строки</ListItemText>
+                    <SwitchCustom onChange={onLineBreak} checked={lineBreak} />
+                </ListItem>
+                <ListItem divider>
+                    <ListItemText>Стандартное форматирование</ListItemText>
                     <SwitchCustom onChange={onFormatChange} checked={textFormat} />
                 </ListItem>
                 <ListItem divider>
-                    <ListItemText>шрифт</ListItemText>
+                    <ListItemText>Шрифт</ListItemText>
                     <FormControl>
                         <InputLabel id={selectLabelID}>Шрифт</InputLabel>
                         <Select

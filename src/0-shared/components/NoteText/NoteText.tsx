@@ -1,11 +1,10 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
+import { Typography, Box } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { SxProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
-import "./NoteText.scss";
 
 type TNoteTextProps = {
     addClassNames?: string[];
@@ -24,8 +23,42 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
             : {
                   minHeight: "3rem",
                   backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-                  borderRadius: "3px",
+                  borderRadius: "5px",
               }),
+
+        "&.NoteText--bg-light": {
+            backgroundColor: THEME_LIGHT_GRAY,
+            padding: "5px",
+            borderRadius: "5px",
+        },
+        "&.NoteText--bg-dark": {
+            backgroundColor: THEME_DARK_GRAY,
+            padding: "5px",
+            borderRadius: "5px",
+        },
+        "&.NoteText--noFormat": {
+            whiteSpace: "break-spaces",
+        },
+        "&.NoteText--font-code": {
+            fontFamily: "monospace",
+        },
+        "&.NoteText--overflowXScroll": {
+            whiteSpace: "pre",
+        },
+    } as SxProps;
+};
+
+const noteTextWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
+    return {
+        overflow: "hidden",
+
+        "&:has(> .NoteText[class*='NoteText--bg'])": {
+            borderRadius: "5px",
+        },
+
+        "&:has(> .NoteText--overflowXScroll)": {
+            overflowX: "auto",
+        },
     } as SxProps;
 };
 
@@ -51,9 +84,18 @@ function NoteText({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Typography {...typographySettings} className={genClassName} variant="body1" onContextMenu={onContextMenu} onClick={onClick} sx={typographyStyle(isChildren, themeMode)}>
-            {children}
-        </Typography>
+        <Box className={"NoteText_wrapper"} sx={noteTextWrapperStyle(isChildren, themeMode)}>
+            <Typography
+                {...typographySettings}
+                className={genClassName}
+                variant="body1"
+                onContextMenu={onContextMenu}
+                onClick={onClick}
+                sx={typographyStyle(isChildren, themeMode)}
+            >
+                {children}
+            </Typography>
+        </Box>
     );
 }
 

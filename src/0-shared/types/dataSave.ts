@@ -15,6 +15,7 @@ interface TBodyComponentText {
     background: boolean;
     formatting: boolean;
     font: "default" | "code";
+    lineBreak: boolean;
 }
 //////////////////////////////////////////////////////////////////
 /**

@@ -10,6 +10,7 @@ class saveDataComponentText extends DataNode implements TBodyComponentText {
     public background: TBodyComponentText["background"];
     public formatting: TBodyComponentText["formatting"];
     public font: TBodyComponentText["font"];
+    public lineBreak: TBodyComponentText["lineBreak"];
 
     constructor() {
         super("component");
@@ -19,6 +20,7 @@ class saveDataComponentText extends DataNode implements TBodyComponentText {
         this.background = false;
         this.font = "default";
         this.formatting = true;
+        this.lineBreak = true;
 
         Object.setPrototypeOf(this, null);
     }

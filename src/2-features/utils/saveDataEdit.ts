@@ -82,28 +82,31 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
  * @param textFormat нужноли форматировать текст
  * @param fontValue тип шрифта для текста
  */
-async function updateNoteComponentTextSettings(
+async function updateNoteComponentTextSettings(data:{
     rootFolder: IDataTreeRootFolder,
     noteId: string,
     componentId: string,
     textBackground: boolean,
     textFormat: boolean,
     fontValue: TBodyComponentText["font"]
+    lineBreak:boolean
+}
 ) {
-    let targetNote = getNodeById(rootFolder, noteId);
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
+            if (component.id !== data.componentId) continue;
             if (component.component === "text") {
-                component.background = textBackground;
-                component.font = fontValue;
-                component.formatting = textFormat;
+                component.background = data.textBackground;
+                component.font = data.fontValue;
+                component.formatting = data.textFormat;
+                component.lineBreak = data.lineBreak;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;
-                await setDataTreeDB({ value: rootFolder });
+                await setDataTreeDB({ value: data.rootFolder });
                 break;
             }
         }
