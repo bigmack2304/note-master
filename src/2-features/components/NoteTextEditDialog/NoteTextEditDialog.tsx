@@ -22,7 +22,7 @@ const listStyles = () => {
             columnGap: "20px",
         },
         "& .MuiSelect-select": {
-            width: "160px",
+            minWidth: "160px",
         },
     } as SxProps;
 };

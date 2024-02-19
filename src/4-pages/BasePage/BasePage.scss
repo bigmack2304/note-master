@@ -17,14 +17,17 @@
 .BasePage .BasePage__workSpace_wrapper {
     flex-grow: 1;
     overflow: auto;
-    display: flex;
-    flex-direction: row;
+    // display: flex;
+    // flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr;
 }
 
 .BasePage .BasePage__workSpace {
-    flex-grow: 1;
+    // flex-grow: 1;
     overflow: hidden;
-    flex-basis: min-content;
+    overflow-y: auto;
+    // flex-basis: min-content;
 }
 
 .BasePage .ToolBar_wrapper {

@@ -12,8 +12,22 @@ type TNoteEditButtonProps = {
     type?: HTMLButtonElement["type"];
 };
 
-const ButtonStyle: SxProps = {
-    padding: "5px",
+const buttonStyle = (isEdit: boolean) => {
+    const style: SxProps = {
+        padding: "5px",
+
+        ...(isEdit
+            ? {
+                  "&:not(.Mui-disabled) .MuiSvgIcon-root": {
+                      stroke: "black",
+                      strokeWidth: "2%",
+                      fill: "#ff4d00",
+                  },
+              }
+            : {}),
+    };
+
+    return style;
 };
 
 /**
@@ -39,13 +53,13 @@ function NoteEditButton({ onClick = () => {}, addClassNames = [], type }: TNoteE
             className={genClassName}
             type={type}
             aria-label="Редактировать заметку"
-            sx={ButtonStyle}
+            sx={buttonStyle(isEdit)}
             onClick={onButtonClick}
             title="Редактировать заметку"
             disabled={!isProjectOpen}
             size="small"
         >
-            <EditIcon fontSize="small" color={!isEdit ? "inherit" : "warning"} sx={{ stroke: "black", strokeWidth: "2%" }} />
+            <EditIcon fontSize="small" />
         </IconButton>
     );
 }
