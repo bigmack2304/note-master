@@ -4,7 +4,7 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import Collapse from "@mui/material/Collapse";
 import type { RootState } from "5-app/GlobalState/store";
 import type { SxProps } from "@mui/material";
-import { TOOLBAR_BG_DARK_COLOR, TOOLBAR_BG_LIGHT_COLOR } from "5-app/settings";
+import { TOOLBAR_BG_DARK_COLOR, TOOLBAR_BG_LIGHT_COLOR, TOOLBAR_BORDER_DARK_COLOR, TOOLBAR_BORDER_LIGHT_COLOR } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { PaletteMode } from "@mui/material";
 import { NewTagButton } from "2-features/components/NewTagButton/NewTagButton";
@@ -19,8 +19,10 @@ const toolbarStyle = (theme: PaletteMode) => {
 
     if (theme === "light") {
         style.backgroundColor = TOOLBAR_BG_LIGHT_COLOR;
+        style.borderBottom = `1px ${TOOLBAR_BORDER_LIGHT_COLOR} solid`;
     } else {
         style.backgroundColor = TOOLBAR_BG_DARK_COLOR;
+        style.borderBottom = `1px ${TOOLBAR_BORDER_DARK_COLOR} solid`;
     }
 
     style.height = "40px";

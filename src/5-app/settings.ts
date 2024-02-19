@@ -19,6 +19,8 @@ const OUTLINE_DARK_COLOR = "#ffffff24";
 
 const TOOLBAR_BG_LIGHT_COLOR = "#32b6e4";
 const TOOLBAR_BG_DARK_COLOR = "#1e3156";
+const TOOLBAR_BORDER_DARK_COLOR = "#000000ba";
+const TOOLBAR_BORDER_LIGHT_COLOR = "#000000a1";
 
 // цвета для тегов при светлой и темной теме
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
@@ -45,4 +47,6 @@ export {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
     MAX_TAG_LENGTH,
+    TOOLBAR_BORDER_DARK_COLOR,
+    TOOLBAR_BORDER_LIGHT_COLOR,
 };
