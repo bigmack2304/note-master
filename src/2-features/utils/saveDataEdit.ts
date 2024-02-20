@@ -12,12 +12,14 @@ import type {
     TAllComponents,
     TBodyComponentText,
     TBodyComponentHeader,
+    TBodyComponentCode,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataTag } from "0-shared/utils/saveDataTag";
 import { DataComponentHeader } from "0-shared/utils/saveDataComponentHeader";
 import { saveDataComponentText } from "0-shared/utils/saveDataComponentText";
+import { saveDataComponentCode } from "0-shared/utils/saveDataComponentCode";
 import type { DataNote } from "0-shared/utils/saveDataNote";
 import type { DataFolder } from "0-shared/utils/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -140,6 +142,42 @@ async function updateNoteComponentHeaderSettings(data: {
             if (component.component === "header") {
                 component.headerSize = data.headerSize;
                 component.textAligin = data.textAligin;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента кода в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id компонента в котором нужно поменять value
+ * @param componentId id компонента в котором меняется value
+ * @param codeTheme цветовая тема кода
+ * @param codeLanguage язык кода (для подцветки синтаксиса)
+ */
+async function updateNoteComponentCodeSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    codeTheme: TBodyComponentCode["codeTheme"];
+    codeLanguage: TBodyComponentCode["language"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "code") {
+                component.codeTheme = data.codeTheme;
+                component.language = data.codeLanguage;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;
@@ -501,6 +539,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "text":
                 component = new saveDataComponentText();
                 break;
+            case "code":
+                component = new saveDataComponentCode();
+                break;
             default:
                 component = undefined;
                 break;
@@ -533,4 +574,5 @@ export {
     addNewComponentToNote,
     updateNoteComponentTextSettings,
     updateNoteComponentHeaderSettings,
+    updateNoteComponentCodeSettings,
 };

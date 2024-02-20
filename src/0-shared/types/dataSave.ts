@@ -1,5 +1,7 @@
+import type { TCodeLanguages, TCodeThemes } from "0-shared/components/NoteCode/NoteCodeTypes";
+
 // типы всех компонентов
-type TAllComponents = "header" | "text";
+type TAllComponents = "header" | "text" | "code";
 
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
@@ -19,6 +21,14 @@ interface TBodyComponentText {
     font: "default" | "code";
     lineBreak: boolean;
 }
+
+// код
+interface TBodyComponentCode {
+    component: "code";
+    value: string;
+    language: TCodeLanguages;
+    codeTheme: TCodeThemes;
+}
 //////////////////////////////////////////////////////////////////
 /**
  * все возможные значения type в node
@@ -36,7 +46,7 @@ interface IDataTreeNode {
 /**
  * тип поля body в заметке
  */
-type TNoteBody = IDataTreeNode & (TBodyComponentHeader | TBodyComponentText);
+type TNoteBody = IDataTreeNode & (TBodyComponentHeader | TBodyComponentText | TBodyComponentCode);
 
 /**
  * цвета тега
@@ -114,4 +124,5 @@ export type {
     TAllComponents,
     TBodyComponentHeader,
     TBodyComponentText,
+    TBodyComponentCode,
 };

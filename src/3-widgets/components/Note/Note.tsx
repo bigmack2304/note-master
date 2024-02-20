@@ -11,6 +11,7 @@ import { ChangeTime } from "1-entities/components/ChangeTime/ChangeTime";
 import { NoteStatus } from "1-entities/components/NoteStatus/NoteStatus";
 import { ButtonAddComponentToNoteDialog } from "2-features/components/ButtonAddComponentToNoteDialog/ButtonAddComponentToNoteDialog";
 import { EditableText } from "2-features/components/EditableText/EditableText";
+import { EditableCode } from "2-features/components/EditableCode/EditableCode";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -74,6 +75,17 @@ function Note({ addClassNames = [] }: TNoteProps) {
                               return (
                                   <EditableText
                                       addClassNames={["note__text", "note__content"]}
+                                      defaultText={noteComponent.value}
+                                      key={noteComponent.id}
+                                      edit_id={noteComponent.id}
+                                      componentData={noteComponent}
+                                  />
+                              );
+                          }
+                          if (noteComponent.component === "code") {
+                              return (
+                                  <EditableCode
+                                      addClassNames={["note__code", "note__content"]}
                                       defaultText={noteComponent.value}
                                       key={noteComponent.id}
                                       edit_id={noteComponent.id}
