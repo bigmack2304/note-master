@@ -7,11 +7,9 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentTextSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteTextEditDialog } from "../NoteTextEditDialog/NoteTextEditDialog";
-import type { TBodyComponentText, TNoteBody } from "0-shared/types/dataSave";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import type { TBodyComponentText } from "0-shared/types/dataSave";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { PaletteMode } from "@mui/material";
-import { SxProps } from "@mui/material";
 
 type TEditableTextProps = {
     defaultText?: string;
@@ -69,7 +67,7 @@ const genTextDopClasses = (data: {
  */
 function EditableText({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableTextProps) {
     const [isEdit, setIsEdit] = useState(editable);
-    const [headerValue, setHeaderValue] = useState(defaultText);
+    const [textValue, setTextValue] = useState(defaultText);
     const [isTextEditDialog, setIsTextEditDialog] = useState(false);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();
@@ -112,7 +110,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
 
     const onMenuClear = () => {
         setClickData(null);
-        setHeaderValue("");
+        setTextValue("");
 
         if (!edit_id || !currentNoteData) return;
         dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: "" }));
@@ -136,7 +134,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
 
     const onInputSave = (inputValue: string) => {
         setIsEdit(false);
-        setHeaderValue(inputValue);
+        setTextValue(inputValue);
 
         if (!edit_id || !currentNoteData) return;
         dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
@@ -169,7 +167,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
             {isEdit ? (
                 <ClosableMultiLineTextInput
                     addClassNames={[...addClassNames, "editable"]}
-                    inputDefValue={headerValue}
+                    inputDefValue={textValue}
                     placeholder="текст"
                     inputLabel="текст"
                     onClose={onInputExit}
@@ -178,7 +176,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
             ) : (
                 <>
                     <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions}>
-                        {headerValue}
+                        {textValue}
                     </NoteText>
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
@@ -187,7 +185,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
                             onClearClick={onMenuClear}
                             onDeleteClick={onMenuDelete}
                             onParamsClick={onMenuParams}
-                            isClearDisabled={headerValue.length > 0 ? false : true}
+                            isClearDisabled={textValue.length > 0 ? false : true}
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
