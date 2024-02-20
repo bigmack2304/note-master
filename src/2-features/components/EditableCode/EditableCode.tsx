@@ -8,6 +8,7 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentCodeSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteCodeEditDialog } from "../NoteCodeEditDialog/NoteCodeEditDialog";
 import type { TBodyComponentCode } from "0-shared/types/dataSave";
+import { useClipboardText } from "0-shared/hooks/useClipboardText";
 
 type TEditableCodeProps = {
     defaultText?: string;
@@ -43,6 +44,7 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
     const [isCodeEditDialog, setIsCodeEditDialog] = useState(false);
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
     let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
+    const [clipboardReadText, clipboardWriteText] = useClipboardText();
 
     // вычесляем дополнительгые классы для заголовка
     let codeDopClasses = genCodeDopClasses(isNoteEdit);
@@ -86,6 +88,11 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
     const onMenuParams = () => {
         setClickData(null);
         setIsCodeEditDialog(true);
+    };
+
+    const onMenuCopy = () => {
+        setClickData(null);
+        clipboardWriteText(componentData.value);
     };
 
     // клики в форме редактирования
@@ -141,6 +148,7 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
                             onClearClick={onMenuClear}
                             onDeleteClick={onMenuDelete}
                             onParamsClick={onMenuParams}
+                            onCopyClick={onMenuCopy}
                             isClearDisabled={codeValue.length > 0 ? false : true}
                             isAllDisabled={!isNoteEdit}
                         />

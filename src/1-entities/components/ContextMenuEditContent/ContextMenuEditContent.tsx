@@ -6,6 +6,7 @@ import BrowserNotSupportedIcon from "@mui/icons-material/BrowserNotSupported";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import TuneIcon from "@mui/icons-material/Tune";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import type { SxProps } from "@mui/material";
 
 // содержимое для DopContextMenu. с вариантом редактирования
@@ -14,6 +15,7 @@ type TContextMenuEditContentProps = {
     onEditClick?: (e: React.MouseEvent) => void;
     onDeleteClick?: (e: React.MouseEvent) => void;
     onClearClick?: (e: React.MouseEvent) => void;
+    onCopyClick?: (e: React.MouseEvent) => void;
     onParamsClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
     isClearDisabled?: boolean;
@@ -27,11 +29,13 @@ const menuItemStyle: SxProps = {
 /**
  * вариант содержимого для компонента DopContextMenu.
  * @ содержимое для редактирования компонентов
+ * @ варианты содержимого активируются если есть коллбеки
  *
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop onEditClick - вызывается при нажатии на кнопку "Редактировать"
  * @prop onDeleteClick - вызывается при нажатии на кнопку "Удалить"
  * @prop onClearClick - вызывается при нажатии на кнопку "Отчистить"
+ * @prop onCopyClick - вызывается при нажатии на кнопку "копировать"
  * @prop isClearDisabled - boolean - disabled для кнопки "Отчистить"
  * @prop isAllDisabled - boolean - disabled для кнопки всех кнопок
  */
@@ -41,6 +45,7 @@ function ContextMenuEditContent({
     onDeleteClick,
     onClearClick,
     onParamsClick,
+    onCopyClick,
     isClearDisabled = false,
     isAllDisabled = false,
 }: TContextMenuEditContentProps) {
@@ -63,6 +68,14 @@ function ContextMenuEditContent({
                         <BrowserNotSupportedIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Отчистить</ListItemText>
+                </MenuItem>
+            )}
+            {onCopyClick && (
+                <MenuItem className={genClassName} onClick={onCopyClick} sx={menuItemStyle}>
+                    <ListItemIcon>
+                        <ContentCopyIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Копировать</ListItemText>
                 </MenuItem>
             )}
             {onParamsClick && (
