@@ -12,9 +12,9 @@ import type {
     TBodyComponentCode,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
+import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
 import type { RootState } from "5-app/GlobalState/store";
-import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
 import {
     updateNodeValue,
     deleteById,
@@ -422,6 +422,29 @@ const saveDataInspectSlice = createAppSlice({
                     if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
 
                     state.currentNote = updatedNode;
+                },
+            }
+        ),
+
+        // обновляет настройки компонента кода внутри заметки
+        exportTempDataSave: create.asyncThunk<{ saveAs: string }>(
+            async (payload, thunkApi) => {
+                const allTempData = await getUnitedTempData();
+                if (!allTempData) return;
+
+                saveDataAsFile(payload.saveAs, allTempData);
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                 },
             }
         ),
@@ -916,6 +939,7 @@ export const {
     updateNoteComponentTextSettings,
     updateNoteComponentHeaderSettings,
     updateNoteComponentCodeSettings,
+    exportTempDataSave,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

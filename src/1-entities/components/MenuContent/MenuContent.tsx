@@ -4,6 +4,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SaveIcon from "@mui/icons-material/Save";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import InfoIcon from "@mui/icons-material/Info";
 
 import type { SxProps } from "@mui/material";
@@ -14,7 +15,9 @@ type TMenuContentProps = {
     onSaveClick?: (e: React.MouseEvent) => void;
     onLoadClick?: (e: React.MouseEvent) => void;
     onInfoClick?: (e: React.MouseEvent) => void;
+    onExportClick?: (e: React.MouseEvent) => void;
     isSaveDisabled?: boolean;
+    isExportDisabled?: boolean;
 };
 
 const listStyle: SxProps = {
@@ -34,7 +37,16 @@ const ListSubheaderStyle: SxProps = {
  * @prop onInfoClick - вызывается при клике на "О приложении"
  * @returns
  */
-function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadClick, onInfoClick, isSaveDisabled = false }: TMenuContentProps) {
+function MenuContent({
+    onSettingsClick,
+    onNewProjectClick,
+    onSaveClick,
+    onLoadClick,
+    onInfoClick,
+    onExportClick,
+    isSaveDisabled = false,
+    isExportDisabled = false,
+}: TMenuContentProps) {
     return (
         <List sx={listStyle}>
             <ListSubheader component="div" sx={ListSubheaderStyle}>
@@ -47,11 +59,17 @@ function MenuContent({ onSettingsClick, onNewProjectClick, onSaveClick, onLoadCl
                 </ListItemIcon>
                 <ListItemText>Новый проект</ListItemText>
             </ListItemButton>
-            <ListItemButton onClick={onSaveClick} aria-label="сохранить все на устройство" disabled={isSaveDisabled}>
+            <ListItemButton onClick={onSaveClick} aria-label="сохранить проект" disabled={isSaveDisabled}>
                 <ListItemIcon>
                     <SaveIcon />
                 </ListItemIcon>
                 <ListItemText>Сохранить</ListItemText>
+            </ListItemButton>
+            <ListItemButton onClick={onExportClick} aria-label="экспортировать на устройство" disabled={isExportDisabled}>
+                <ListItemIcon>
+                    <FileDownloadIcon />
+                </ListItemIcon>
+                <ListItemText>Экспортировать</ListItemText>
             </ListItemButton>
             <ListItemButton onClick={onLoadClick} aria-label="загрузить коллекцию заметок с устроиства">
                 <ListItemIcon>

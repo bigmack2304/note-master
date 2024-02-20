@@ -237,6 +237,51 @@ async function delTempDataDB({ onComplete = def_onComplete, onError = def_onErro
 async function saveTempData({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<boolean> = {}) {
     const db = await openIndexedDB();
 
+    // const td = db.transaction(tempStoreData, "readonly");
+    // td.onerror = onError;
+    // td.oncomplete = onComplete;
+    // const temp_dbType = await td.objectStore("db_type").get(TEMP_DATA_KEY);
+    // const temp_globTags = await td.objectStore("global_tags").get(TEMP_DATA_KEY);
+    // const temp_tree = await td.objectStore("data_tree").get(TEMP_DATA_KEY);
+    // await td.done;
+
+    // if (!temp_dbType || !temp_globTags || !temp_tree) {
+    //     callback && callback(false);
+    //     return false;
+    // }
+
+    // const allTempData = {
+    //     db_type: temp_dbType as "note_Master",
+    //     global_tags: temp_globTags,
+    //     data_tree: temp_tree,
+    // };
+
+    const allTempData = await getUnitedTempData();
+
+    if (!allTempData) {
+        callback && callback(false);
+        return false;
+    }
+
+    const sd = db.transaction("savedData", "readwrite");
+    sd.onerror = onError;
+    sd.oncomplete = onComplete;
+    sd.store.put(allTempData, TEMP_DATA_KEY);
+    await sd.done;
+    callback && callback(true);
+    return true;
+}
+
+/**
+ * обьеденяет все временные фаилы и возвращает их в в иде обьекта IDataSave
+ *
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(): вызывается после применения изменений
+ */
+async function getUnitedTempData({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<boolean> = {}) {
+    const db = await openIndexedDB();
+
     const td = db.transaction(tempStoreData, "readonly");
     td.onerror = onError;
     td.oncomplete = onComplete;
@@ -256,13 +301,8 @@ async function saveTempData({ onComplete = def_onComplete, onError = def_onError
         data_tree: temp_tree,
     };
 
-    const sd = db.transaction("savedData", "readwrite");
-    sd.onerror = onError;
-    sd.oncomplete = onComplete;
-    sd.store.put(allTempData, TEMP_DATA_KEY);
-    await sd.done;
     callback && callback(true);
-    return true;
+    return allTempData;
 }
 
 /**
@@ -327,4 +367,16 @@ function removeTempDataOnExit() {
 
 removeTempDataOnExit();
 
-export { delTempDataDB, setAllTempDataDB, setGlobalTagsDB, getGlobalTagsDB, getDataTreeDB, setDataTreeDB, getDbTypeDB, setDbTypeDB, saveTempData, loadTempDataInSavedData };
+export {
+    delTempDataDB,
+    setAllTempDataDB,
+    setGlobalTagsDB,
+    getGlobalTagsDB,
+    getDataTreeDB,
+    setDataTreeDB,
+    getDbTypeDB,
+    setDbTypeDB,
+    saveTempData,
+    loadTempDataInSavedData,
+    getUnitedTempData,
+};

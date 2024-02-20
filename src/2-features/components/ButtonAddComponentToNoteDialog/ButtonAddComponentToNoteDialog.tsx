@@ -8,6 +8,9 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 
 type TButtonAddComponentToNoteDialogProps = {};
 
+/**
+ * Кнопка добавления нового компонента в заметку
+ */
 function ButtonAddComponentToNoteDialog({}: TButtonAddComponentToNoteDialogProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);

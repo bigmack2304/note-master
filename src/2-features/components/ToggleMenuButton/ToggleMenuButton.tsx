@@ -13,7 +13,6 @@ type TToggleMenuButtonProps = {
 /**
  * кнопка открывает\закрывает боковое меню приложения
  * @prop menuContentProps : пропсы для MenuContent
- * @returns
  */
 function ToggleMenuButton({ menuContentProps }: TToggleMenuButtonProps) {
     const isLeftMenuOpen = useAppSelector((state) => state.leftMenu.isOpen);

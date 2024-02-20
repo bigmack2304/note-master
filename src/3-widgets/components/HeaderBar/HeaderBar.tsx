@@ -5,11 +5,12 @@ import { SettingsContent } from "2-features/components/SettingsContent/SettingsC
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import { InputFile } from "2-features/components/InputFile/InputFile";
 import { ToggleToolBarButton } from "2-features/components/ToggleToolBarButton/ToggleToolBarButton";
-import { createNewProject, saveProjectInDb, loadProjectInDb } from "5-app/GlobalState/saveDataInspectStore";
+import { createNewProject, saveProjectInDb, loadProjectInDb, exportTempDataSave } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { LoadDialog } from "2-features/components/LoadDialog/LoadDialog";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import { ExportProjectDialog } from "2-features/components/ExportProjectDialog/ExportProjectDialog";
 
 type THeaderBarProps = {};
 
@@ -18,13 +19,15 @@ type THeaderBarProps = {};
  * @returns
  */
 function HeaderBar({}: THeaderBarProps) {
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [isInfoOpen, setIsInfoOpen] = useState(false);
-    const [isLoadDialog, setIsLoadDialog] = useState(false);
-    const inputFileRef = useRef<HTMLInputElement>(null);
-    const isProject = useAppSelector((state) => state.saveDataInspect.isProjectOpen);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false); // меню настроек открыта
+    const [isInfoOpen, setIsInfoOpen] = useState(false); // открыто окно о приложении
+    const [isExportOpen, setIsExportOpen] = useState(false); // открыта форма экспорта
+    const [isLoadDialog, setIsLoadDialog] = useState(false); // открыта форма загрузить
+    const inputFileRef = useRef<HTMLInputElement>(null); // ссылка на dom елемент загрузчика фаила с системы
+    const isProject = useAppSelector((state) => state.saveDataInspect.isProjectOpen); // открыт ли какой либо проект
     const dispatch = useAppDispatch();
 
+    // функции кнопок меню
     const onSettingsOpen = () => {
         setIsSettingsOpen(true);
     };
@@ -41,19 +44,27 @@ function HeaderBar({}: THeaderBarProps) {
         setIsInfoOpen(false);
     };
 
+    const onMenuExport = () => {
+        setIsExportOpen(true);
+    };
+
+    // загрузка
     const onLoadClick = (e: React.MouseEvent<Element, MouseEvent>) => {
         setIsLoadDialog(true);
     };
 
+    // новый проект
     const onCreateNewProject = (e: React.MouseEvent<Element, MouseEvent>) => {
         dispatch(createNewProject());
         dispatch(setIsOpen({ isOpen: false }));
     };
 
+    // сохранение
     const onsaveClick = (e: React.MouseEvent<Element, MouseEvent>) => {
         dispatch(saveProjectInDb());
     };
 
+    // окно загрузки
     const onloadDialogClose = () => {
         setIsLoadDialog(false);
     };
@@ -72,6 +83,17 @@ function HeaderBar({}: THeaderBarProps) {
         }
     };
 
+    // окно экспорта
+    const onExportDialogClose = () => {
+        setIsExportOpen(false);
+    };
+
+    const onExportDialogCloseSave = (val: string) => {
+        setIsExportOpen(false);
+        dispatch(setIsOpen({ isOpen: false }));
+        dispatch(exportTempDataSave({ saveAs: val }));
+    };
+
     return (
         <AppBar>
             <ToggleMenuButton
@@ -81,7 +103,9 @@ function HeaderBar({}: THeaderBarProps) {
                     onLoadClick: onLoadClick,
                     onNewProjectClick: onCreateNewProject,
                     onSaveClick: onsaveClick,
+                    onExportClick: onMenuExport,
                     isSaveDisabled: !isProject,
+                    isExportDisabled: !isProject,
                 }}
             />
             <ToggleToolBarButton />
@@ -90,6 +114,7 @@ function HeaderBar({}: THeaderBarProps) {
             </DialogWindow>
             <DialogWindow headerText="О приложении" isOpen={isInfoOpen} onClose={onInfoClose}></DialogWindow>
             <LoadDialog isOpen={isLoadDialog} onClose={onloadDialogClose} onCloseSave={onloadDialogCloseSave} />
+            <ExportProjectDialog isOpen={isExportOpen} onClose={onExportDialogClose} onCloseSave={onExportDialogCloseSave} />
             <InputFile ref={inputFileRef}></InputFile>
         </AppBar>
     );

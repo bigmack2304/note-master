@@ -59,7 +59,6 @@ function calcButtonCalback(index: number, lightCallback: TButtonCallback, darkCa
 
 /**
  * блок кнопок для переключения цветовой темы
- * @returns
  */
 function ToggleThemeButton() {
     const variants = ["светлая", "темная", "авто"];

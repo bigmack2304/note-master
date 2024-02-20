@@ -9,8 +9,6 @@ type TToggleToolBarButtonProps = {};
 
 /**
  * кнопка показа панели инструментов
- * @TODO: незаконченый компонент
- * @returns
  */
 function ToggleToolBarButton({}: TToggleToolBarButtonProps) {
     const dispatch = useAppDispatch();
