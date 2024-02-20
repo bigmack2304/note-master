@@ -32,12 +32,18 @@ const codeWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
 };
 
 // стили для кода
-const codeStyle = () => {
+const codeStyle = (isChildren: boolean) => {
     return {
         width: "100%",
         overflowX: "auto",
         fontFamily: "monospace",
         fontSize: "1rem",
+
+        ...(isChildren
+            ? {}
+            : {
+                  minHeight: "3rem",
+              }),
     } as React.CSSProperties;
 };
 
@@ -76,7 +82,13 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
 
     return (
         <Box className={genClassName} sx={codeWrapperStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
-            <CodeBlock text={children} language={language} showLineNumbers={true} theme={calcCodeTheme(codeTheme, themeMode)} customStyle={codeStyle() as Record<string, string>} />
+            <CodeBlock
+                text={children}
+                language={language}
+                showLineNumbers={true}
+                theme={calcCodeTheme(codeTheme, themeMode)}
+                customStyle={codeStyle(isChildren) as Record<string, string>}
+            />
         </Box>
     );
 }

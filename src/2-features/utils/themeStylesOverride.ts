@@ -62,7 +62,7 @@ function textThemeColor(theme: PaletteMode) {
  * @returns
  */
 function fontThemeColor(theme: PaletteMode) {
-    return theme === "light" ? "#212121" : "#fbffff";
+    return theme === "light" ? "#212121" : "#E7E7E7";
 }
 
 /**
