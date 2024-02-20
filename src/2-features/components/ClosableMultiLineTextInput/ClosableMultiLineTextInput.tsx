@@ -95,8 +95,8 @@ function ClosableMultiLineTextInput({ addClassNames = [], onClose, onCloseSave, 
                 label={inputLabel}
             />
 
-            <OkButton onClick={onSave} buttonSettings={{ sx: ButtonsStyle }} />
-            <CloseButton onClick={onClose} buttonSettings={{ sx: ButtonsStyle }} />
+            <OkButton onClick={onSave} sx={ButtonsStyle} />
+            <CloseButton onClick={onClose} sx={ButtonsStyle} />
         </Box>
     );
 }

@@ -10,6 +10,7 @@ type TOkButtonProps = {
     size?: "inherit" | "small" | "medium" | "large";
     title?: string;
     type?: HTMLButtonElement["type"];
+    sx?: SxProps;
     buttonSettings?: ButtonProps;
 };
 
@@ -26,12 +27,21 @@ const ButtonStyle: SxProps = {
  * @prop type - тип для формы
  * @prop buttonSettings - остальные настройки кнопки m.ui
  */
-function OkButton({ onClick = () => {}, addClassNames = [], title, size = "large", type, buttonSettings = {} }: TOkButtonProps) {
+function OkButton({ onClick = () => {}, addClassNames = [], title, size = "large", type, buttonSettings = {}, sx: addSx = {} }: TOkButtonProps) {
     const defaultClassName = "OkButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
-        <IconButton {...buttonSettings} className={genClassName} type={type} aria-label="подтвердить" size="large" sx={ButtonStyle} onClick={onClick} title={title}>
+        <IconButton
+            {...buttonSettings}
+            className={genClassName}
+            type={type}
+            aria-label="подтвердить"
+            size="large"
+            sx={{ ...ButtonStyle, ...addSx } as SxProps}
+            onClick={onClick}
+            title={title}
+        >
             <DoneIcon fontSize={size} />
         </IconButton>
     );

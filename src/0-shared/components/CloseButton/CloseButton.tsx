@@ -8,6 +8,7 @@ type TCloseButtonProps = {
     onClick?: (e: React.MouseEvent) => void;
     addClassNames?: string[];
     buttonSettings?: ButtonProps;
+    sx?: SxProps;
 };
 
 const ButtonStyle: SxProps = {
@@ -20,12 +21,12 @@ const ButtonStyle: SxProps = {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop buttonSettings - настройки для m.ui button
  */
-function CloseButton({ onClick = () => {}, addClassNames = [], buttonSettings = {} }: TCloseButtonProps) {
+function CloseButton({ onClick = () => {}, addClassNames = [], buttonSettings = {}, sx: addSx = {} }: TCloseButtonProps) {
     const defaultClassName = "CloseButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
-        <IconButton {...buttonSettings} className={genClassName} aria-label="закрыть" size="large" sx={ButtonStyle} onClick={onClick}>
+        <IconButton {...buttonSettings} className={genClassName} aria-label="закрыть" size="large" sx={{ ...ButtonStyle, ...addSx } as SxProps} onClick={onClick}>
             <CloseIcon fontSize="large" />
         </IconButton>
     );
