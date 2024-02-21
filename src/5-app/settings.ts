@@ -22,6 +22,12 @@ const TOOLBAR_BG_DARK_COLOR = "#1e3156";
 const TOOLBAR_BORDER_DARK_COLOR = "#000000ba";
 const TOOLBAR_BORDER_LIGHT_COLOR = "#000000a1";
 
+const BORDER_LIGHT = "#1A1A1A";
+const BORDER_DARK = "#E6E6E6";
+
+const NOTE_STATUS_COMPLETE = "#349515";
+const NOTE_STATUS_NO_COMPLETE = "#ff692d";
+
 // цвета для тегов при светлой и темной теме
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
     red: "#ff4e4e",
@@ -49,4 +55,8 @@ export {
     MAX_TAG_LENGTH,
     TOOLBAR_BORDER_DARK_COLOR,
     TOOLBAR_BORDER_LIGHT_COLOR,
+    BORDER_LIGHT,
+    BORDER_DARK,
+    NOTE_STATUS_COMPLETE,
+    NOTE_STATUS_NO_COMPLETE,
 };

@@ -2,11 +2,13 @@ import React from "react";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { TchildrenType } from "0-shared/types/dataSave";
-import { isDataTreeFolder } from "0-shared/utils/typeHelpers";
+import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import { CustomTreeItem } from "1-entities/components/CustomTreeItem/CustomTreeItem";
 
 type TRenderTreeAsFileProps = {
     node: TchildrenType | undefined;
-    onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
+    //onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
+    onClickNodeCallback?: (nodeData: TchildrenType) => void;
     onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
 };
 
@@ -23,18 +25,28 @@ function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }: 
 
     const nodeData = nodeWithoutChildren(node);
 
-    const onClick = (e: React.MouseEvent) => {
-        onClickNodeCallback && onClickNodeCallback(nodeData, e);
+    const onSelect = () => {
+        onClickNodeCallback && onClickNodeCallback(nodeData);
     };
 
     const onContextMenu = (e: React.MouseEvent) => {
         onNodeContextCallback && onNodeContextCallback(nodeData, e);
     };
 
+    let noteComplete: "complete" | "noComlete" | undefined;
+
+    if (isDataTreeNote(node)) {
+        noteComplete = node.completed ? "complete" : "noComlete";
+    }
+
     return (
-        <TreeItem key={node.id} nodeId={node.id} label={node.name} onClick={onClick} onContextMenu={onContextMenu}>
+        <CustomTreeItem
+            key={node.id}
+            customProps={{ nodeType: node.type, noteComplete: noteComplete, onSelectCallback: onSelect }}
+            props={{ nodeId: node.id, label: node.name, onContextMenu: onContextMenu }}
+        >
             {isDataTreeFolder(node) && node.children && node.children.map((node) => RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }))}
-        </TreeItem>
+        </CustomTreeItem>
     );
 }
 

@@ -5,6 +5,7 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteCompleted } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { NOTE_STATUS_COMPLETE, NOTE_STATUS_NO_COMPLETE } from "5-app/settings";
 
 type TNoteStatusProps = {
     addClassNames?: string[];
@@ -13,10 +14,10 @@ type TNoteStatusProps = {
 const noteStatusStyles = (theme: PaletteMode, isEdit: boolean) => {
     return {
         "& .MuiSvgIcon-root.Mui-completed": {
-            color: "#349515",
+            color: NOTE_STATUS_COMPLETE,
         },
         "& .MuiSvgIcon-root.Mui-active": {
-            color: "#ff692d",
+            color: NOTE_STATUS_NO_COMPLETE,
         },
         "& .MuiStepLabel-iconContainer.Mui-active + .MuiStepLabel-labelContainer .MuiTypography-root": {
             color: theme === "light" ? "#00000061" : "#f9f9f961",

@@ -169,6 +169,21 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     },
                 },
             },
+            MuiTreeView: {
+                styleOverrides: {
+                    root: {
+                        "& .MuiTreeItem-root .CustomTreeItemContent.Mui-selected": {
+                            backgroundColor: themeValue === "light" ? "#288bef52" : "#00000045",
+                        },
+                        "& .MuiTreeItem-root .CustomTreeItemContent.Mui-selected.Mui-focused": {
+                            backgroundColor: themeValue === "light" ? "#288BEF8D" : "#0000005E",
+                        },
+                        "& .MuiTreeItem-root .CustomTreeItemContent.Mui-focused": {
+                            backgroundColor: themeValue === "light" ? "#288BEF8D" : "#0000005E",
+                        },
+                    },
+                },
+            },
         },
         palette: {
             primary: theme.palette.augmentColor({

@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { CustomTreeView } from "1-entities/components/CustomTreeView/CustomTreeView";
+import { TreeView } from "@mui/x-tree-view";
 import Box from "@mui/material/Box";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
-import { RenderTreeAsFile } from "2-features/components/RenderTreeAsFiles/RenderTreeAsFiles";
+import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
@@ -51,8 +51,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
 
     // клик по ноде
-    const onClickNode = (nodeData: TchildrenType, e: React.MouseEvent) => {
-        e.stopPropagation();
+    //TODO: возможно потом стоит переделать это на onNodeSelect
+    const onClickNode = (nodeData: TchildrenType) => {
         if (isDataTreeFolder(nodeData)) {
             if (currentFolder && currentFolder.id === nodeData.id) return;
             dispatch(setCurrentFolder(nodeData));
@@ -158,15 +158,16 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         dispatch(moveFolderOrNote({ muvedNodeID: clickedNodeDataRef.current.id, muveToID: objFolder.id }));
     };
 
+    //TODO: expanded: [] в TreeViewSettings сворачивает всю фаиловую структуру
     return (
         <Box sx={FolderTreeViewerStyle}>
-            <CustomTreeView TreeViewSettings={{ "aria-label": "структура заметок", defaultCollapseIcon: <ExpandMoreIcon />, defaultExpandIcon: <ChevronRightIcon /> }}>
+            <TreeView aria-label="структура заметок" defaultCollapseIcon={<ExpandMoreIcon />} defaultExpandIcon={<ChevronRightIcon />}>
                 {RenderTreeAsFile({
                     node: dataTree,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
                 })}
-            </CustomTreeView>
+            </TreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
                 {clickedNodeDataRef.current && isDataTreeFolder(clickedNodeDataRef.current) ? (
                     <ContextMenuTreeFolderContent
