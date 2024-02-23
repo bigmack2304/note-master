@@ -6,6 +6,10 @@ import { Note } from "3-widgets/components/Note/Note";
 import { FolderTreeViewer } from "3-widgets/components/FolderTreeViewer/FolderTreeViewer";
 import { ToolBar } from "3-widgets/components/ToolBar/ToolBar";
 import { LoadingStatus } from "2-features/components/LoadingStatus/LoadingStatus";
+import { Resizable } from "0-shared/hoc/Resizable";
+import { setTreeViewWidth } from "5-app/GlobalState/settingsStore";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
 
 type TBasePageprops = {
     addClassNames?: string[];
@@ -19,6 +23,12 @@ type TBasePageprops = {
 function BasePage({ addClassNames = [] }: TBasePageprops) {
     const defaultClassName = "BasePage";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    const treeViewWidth = useAppSelector((state) => state.settingsData.treeViewWidth);
+    const dispatch = useAppDispatch();
+
+    const onFolderTreeViewerResize = (newWidth: number) => {
+        dispatch(setTreeViewWidth(newWidth));
+    };
 
     return (
         <>
@@ -27,7 +37,7 @@ function BasePage({ addClassNames = [] }: TBasePageprops) {
                 <HeaderBar></HeaderBar>
                 <ToolBar addClassNames={["BasePage__toolbar"]}></ToolBar>
                 <div className="BasePage__workSpace_wrapper">
-                    <FolderTreeViewer />
+                    <Resizable WrappedComponent={FolderTreeViewer} wrappedProps={{}} startSize={treeViewWidth} onResize={onFolderTreeViewerResize} optimizeMount />
                     <WorkSpace addClassNames={["BasePage__workSpace"]}>
                         <Note></Note>
                     </WorkSpace>
