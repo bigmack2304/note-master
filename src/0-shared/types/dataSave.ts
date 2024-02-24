@@ -1,35 +1,5 @@
 import type { TCodeLanguages, TCodeThemes } from "0-shared/components/NoteCode/NoteCodeTypes";
 
-// типы всех компонентов
-type TAllComponents = "header" | "text" | "code";
-
-// варианты своиств в зависимости от компонента внутри заметки
-// заголовок
-interface TBodyComponentHeader {
-    component: "header";
-    value: string;
-    textAligin: "left" | "center" | "right";
-    headerSize: "h2" | "h3" | "h4" | "h5" | "h6";
-}
-
-// текст
-interface TBodyComponentText {
-    component: "text";
-    value: string;
-    background: boolean;
-    formatting: boolean;
-    font: "default" | "code";
-    lineBreak: boolean;
-}
-
-// код
-interface TBodyComponentCode {
-    component: "code";
-    value: string;
-    language: TCodeLanguages;
-    codeTheme: TCodeThemes;
-}
-//////////////////////////////////////////////////////////////////
 /**
  * все возможные значения type в node
  */
@@ -43,10 +13,50 @@ interface IDataTreeNode {
     type: TNodeType;
 }
 
+// типы всех компонентов
+type TAllComponents = "header" | "text" | "code" | "image";
+
+// варианты своиств в зависимости от компонента внутри заметки
+// заголовок
+interface TBodyComponentHeader extends IDataTreeNode {
+    component: "header";
+    value: string;
+    textAligin: "left" | "center" | "right";
+    headerSize: "h2" | "h3" | "h4" | "h5" | "h6";
+}
+
+// текст
+interface TBodyComponentText extends IDataTreeNode {
+    component: "text";
+    value: string;
+    background: boolean;
+    formatting: boolean;
+    font: "default" | "code";
+    lineBreak: boolean;
+}
+
+// код
+interface TBodyComponentCode extends IDataTreeNode {
+    component: "code";
+    value: string;
+    language: TCodeLanguages;
+    codeTheme: TCodeThemes;
+}
+
+// картинка
+interface TBodyComponentImage extends IDataTreeNode {
+    component: "image";
+    value: string; // это поле либо пустое либо = id этого компонента, если тут  есть id то по нему будет подгружатся данные из db
+    fileName: string;
+    desc: string;
+    isDescHidden: boolean;
+}
+//////////////////////////////////////////////////////////////////
+
 /**
  * тип поля body в заметке
  */
-type TNoteBody = IDataTreeNode & (TBodyComponentHeader | TBodyComponentText | TBodyComponentCode);
+type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage;
 
 /**
  * цвета тега
@@ -61,9 +71,23 @@ interface IGlobalTag {
     color: TTagColors;
 }
 
+/**
+ * типизация картинки заметок
+ */
+interface IImage {
+    id: string;
+    src: string;
+    desc: string;
+}
+
 // все теги
 interface IAllTags {
     [TAG_NAME: string]: IGlobalTag;
+}
+
+// хранилеще картинок
+interface IDataImages {
+    [IMG_ID: string]: IImage;
 }
 
 /**
@@ -107,6 +131,7 @@ interface IDataSave {
     db_type: "note_Master";
     global_tags: IAllTags;
     data_tree: IDataTreeRootFolder;
+    data_images: IDataImages;
 }
 
 export type {
@@ -125,4 +150,7 @@ export type {
     TBodyComponentHeader,
     TBodyComponentText,
     TBodyComponentCode,
+    IImage,
+    IDataImages,
+    TBodyComponentImage,
 };

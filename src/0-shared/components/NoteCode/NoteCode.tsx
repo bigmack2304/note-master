@@ -94,4 +94,3 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
 }
 
 export { NoteCode };
-export type { TCodeLanguages };

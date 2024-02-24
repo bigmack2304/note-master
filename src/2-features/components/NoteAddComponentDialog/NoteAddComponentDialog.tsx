@@ -4,6 +4,7 @@ import { FormControl, InputLabel, Select, MenuItem, ListItemIcon, ListItemText, 
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import CodeIcon from "@mui/icons-material/Code";
 import { HeaderIcon } from "0-shared/components/HeaderIcon/HeaderIcon";
+import ImageIcon from "@mui/icons-material/Image";
 import type { SelectChangeEvent } from "@mui/material";
 import type { TAllComponents } from "0-shared/types/dataSave";
 
@@ -17,6 +18,7 @@ const selectValuesNames: Record<TAllComponents, string> = {
     header: "Заголовок",
     text: "Текст",
     code: "Код",
+    image: "Изображение",
 };
 
 /**
@@ -68,6 +70,12 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                             <CodeIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText>Код</ListItemText>
+                    </MenuItem>
+                    <MenuItem divider value="image">
+                        <ListItemIcon>
+                            <ImageIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Изображение</ListItemText>
                     </MenuItem>
                 </Select>
             </FormControl>

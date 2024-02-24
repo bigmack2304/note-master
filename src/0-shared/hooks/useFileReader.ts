@@ -71,6 +71,8 @@ function useFileReader<returnType extends any>({
                 }
 
                 data = temp;
+            } else {
+                data = rawData;
             }
 
             loadSucessCallback && loadSucessCallback(data as returnType);

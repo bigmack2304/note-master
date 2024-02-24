@@ -28,4 +28,31 @@ function lengthValidator(str: string, maxLen: number) {
     return str.length < maxLen;
 }
 
-export { checkForStartSpace, checkForSymbols, nameValidator, lengthValidator };
+/**
+ * возвращает true если строка не начинается с data: (тоесть если это не ссылка на blob)
+ * @param str проверяемая строка
+ */
+function isNoDataUrl(str: string) {
+    return !str.startsWith("data:");
+}
+
+/**
+ * возвращает true если строку можно считать как url
+ * @param str проверяемая строка
+ */
+function isUrl(str: string) {
+    let result = false;
+
+    if (str === "") return result;
+
+    try {
+        let url = new URL(str);
+        result = Boolean(url.protocol !== "" && url.host !== "");
+    } catch {
+        result = false;
+    }
+
+    return result;
+}
+
+export { checkForStartSpace, checkForSymbols, nameValidator, lengthValidator, isNoDataUrl, isUrl };

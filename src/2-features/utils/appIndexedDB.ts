@@ -2,14 +2,14 @@
 // в indexed DB будем сохранять текущий фаил сохранения с которым работаем.
 // кроме этого там будем держать и temp фаил сохранения, который при выходе удалится. (чтобы не держать его в оперативе) (возможно потом както это обыграем)
 
-import { openDB, DBSchema, deleteDB } from "idb";
+import { openDB, DBSchema } from "idb";
 import type { IDataSave, IDataTreeRootFolder, IAllTags } from "0-shared/types/dataSave";
 
 const DB_NAME = "app_note_master_db_data";
 const DB_VERSION = 1;
 const TEMP_DATA_KEY = "0";
 
-const tempStoreData = ["db_type", "data_tree", "global_tags"] as const;
+const tempStoreData = ["db_type", "data_tree", "global_tags", "data_images"] as const;
 
 interface MyDB extends DBSchema {
     savedData: {
@@ -29,6 +29,13 @@ interface MyDB extends DBSchema {
         key: string;
         value: IAllTags;
     };
+    data_images: {
+        value: {
+            id: string;
+            src: string;
+        };
+        key: string;
+    };
 }
 
 type TSetDataEntity<SET_TYPE> = {
@@ -42,6 +49,21 @@ type TGetDataEntity<CALLBACK_PARAM> = {
     onComplete?: (this: IDBTransaction, ev: Event) => void;
     onError?: (this: IDBTransaction, ev: Event) => void;
     callback?: (value: CALLBACK_PARAM) => void;
+};
+
+type TSetKeyDataEntity<SET_TYPE> = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: SET_TYPE | undefined) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    value: SET_TYPE;
+    key: string;
+};
+
+type TGetKeyDataEntity<CALLBACK_PARAM, KEY_TYPE = string> = {
+    onComplete?: (this: IDBTransaction, ev: Event) => void;
+    onError?: (this: IDBTransaction, ev: Event) => void;
+    callback?: (value: CALLBACK_PARAM) => void;
+    key: KEY_TYPE;
 };
 
 function def_onError(e: Event) {
@@ -64,6 +86,12 @@ async function openIndexedDB() {
             const other = db.createObjectStore("db_type");
             const data_tree = db.createObjectStore("data_tree");
             const global_tags = db.createObjectStore("global_tags");
+            //const data_images = db.createObjectStore("data_images");
+
+            const data_images = db.createObjectStore("data_images", {
+                keyPath: "id",
+            });
+            //data_images.createIndex("anchor_component_id", "id");
         },
         blocked(currentVersion, blockedVersion, event) {},
         blocking(currentVersion, blockedVersion, event) {},
@@ -185,6 +213,78 @@ async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
 }
 
 /**
+ * Записывает новое значение в хранилище data_images в indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(value): вызывается после применения изменений
+ * @property value: новое значение
+ */
+async function setImageDB({ onComplete = def_onComplete, onError = def_onError, callback, value, key }: TSetKeyDataEntity<MyDB["data_images"]["value"]>) {
+    const db = await openIndexedDB();
+    const tx = db.transaction("data_images", "readwrite");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+
+    const hasItemInDB = await tx.store.getKey(key);
+    if (hasItemInDB) {
+        await tx.store.delete(key);
+    }
+
+    await tx.store.add(value);
+    await tx.done;
+    callback && callback(value);
+    dispatchEventIndexedDBImagesUpdate();
+    return value;
+}
+
+/**
+ * возвращает элемент из data_images из indexed db
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(global_tags | undefined): вызывается после поиска
+ * @property key: ключь (ID) элемента который нужно получить
+ * @returns Promise<global_tags | undefined>
+ */
+async function getImageDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<MyDB["data_images"]["value"] | undefined>) {
+    if (!key) throw new Error("key ");
+    const db = await openIndexedDB();
+    const tx = db.transaction("data_images", "readonly");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+    let value = await tx.store.get(key);
+    await tx.done;
+    callback && callback(value);
+    return value;
+}
+
+/**
+ * удаляет элемент из data_images по ключу, или много элементов по массиву ключей
+ * @property onComplete: определение колбека db.transaction,
+ * @property onError: определение колбека db.transaction,
+ * @property callback(global_tags | undefined): вызывается после поиска
+ * @property key: ключь (ID) элемента который нужно получить
+ * @returns Promise<global_tags | undefined>
+ */
+async function delImageDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<boolean | undefined, string | string[]>) {
+    if (!key) throw new Error("the key is required");
+    const db = await openIndexedDB();
+    const tx = db.transaction("data_images", "readwrite");
+    tx.onerror = onError;
+    tx.oncomplete = onComplete;
+    if (Array.isArray(key)) {
+        for await (let keyItem of key) {
+            tx.store.delete(keyItem);
+        }
+    } else {
+        await tx.store.delete(key);
+    }
+    await tx.done;
+    callback && callback(true);
+    dispatchEventIndexedDBImagesUpdate();
+    return true;
+}
+
+/**
  * Записывает загржунный фаил IDataSave в indexed db, распределяяя его по блокам
  * @property onComplete: определение колбека db.transaction,
  * @property onError: определение колбека db.transaction,
@@ -200,6 +300,10 @@ async function setAllTempDataDB({ onComplete = def_onComplete, onError = def_onE
     tx.objectStore("data_tree").put(value.data_tree, TEMP_DATA_KEY);
     tx.objectStore("global_tags").put(value.global_tags, TEMP_DATA_KEY);
     tx.objectStore("db_type").put(value.db_type, TEMP_DATA_KEY);
+
+    for (let img in value.data_images) {
+        tx.objectStore("data_images").put(value.data_images[img]);
+    }
 
     await tx.done;
     callback && callback(value);
@@ -220,6 +324,11 @@ async function delTempDataDB({ onComplete = def_onComplete, onError = def_onErro
     tx.oncomplete = onComplete;
 
     for (let storeName of tempStoreData) {
+        if (storeName === "data_images") {
+            await tx.objectStore(storeName).clear();
+            continue;
+        }
+
         tx.objectStore(storeName).delete(TEMP_DATA_KEY);
     }
 
@@ -236,25 +345,6 @@ async function delTempDataDB({ onComplete = def_onComplete, onError = def_onErro
  */
 async function saveTempData({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<boolean> = {}) {
     const db = await openIndexedDB();
-
-    // const td = db.transaction(tempStoreData, "readonly");
-    // td.onerror = onError;
-    // td.oncomplete = onComplete;
-    // const temp_dbType = await td.objectStore("db_type").get(TEMP_DATA_KEY);
-    // const temp_globTags = await td.objectStore("global_tags").get(TEMP_DATA_KEY);
-    // const temp_tree = await td.objectStore("data_tree").get(TEMP_DATA_KEY);
-    // await td.done;
-
-    // if (!temp_dbType || !temp_globTags || !temp_tree) {
-    //     callback && callback(false);
-    //     return false;
-    // }
-
-    // const allTempData = {
-    //     db_type: temp_dbType as "note_Master",
-    //     global_tags: temp_globTags,
-    //     data_tree: temp_tree,
-    // };
 
     const allTempData = await getUnitedTempData();
 
@@ -288,17 +378,26 @@ async function getUnitedTempData({ onComplete = def_onComplete, onError = def_on
     const temp_dbType = await td.objectStore("db_type").get(TEMP_DATA_KEY);
     const temp_globTags = await td.objectStore("global_tags").get(TEMP_DATA_KEY);
     const temp_tree = await td.objectStore("data_tree").get(TEMP_DATA_KEY);
+    let temp_images = await td.objectStore("data_images").getAll();
     await td.done;
 
-    if (!temp_dbType || !temp_globTags || !temp_tree) {
+    if (!temp_dbType || !temp_globTags || !temp_tree || !temp_images) {
         callback && callback(false);
         return false;
     }
+
+    const prepate_images: any = {};
+
+    for (let img of temp_images) {
+        prepate_images[img.id] = img;
+    }
+    temp_images = [];
 
     const allTempData = {
         db_type: temp_dbType as "note_Master",
         global_tags: temp_globTags,
         data_tree: temp_tree,
+        data_images: prepate_images,
     };
 
     callback && callback(true);
@@ -344,6 +443,10 @@ function dispatchEventIndexedDBTagsUpdate() {
     window.dispatchEvent(new CustomEvent("appIndexedDBTagsUpdate"));
 }
 
+function dispatchEventIndexedDBImagesUpdate() {
+    window.dispatchEvent(new CustomEvent("appIndexedDBImagesUpdate"));
+}
+
 /**
  * удаляем временные данные (TempData) из DB при закрытии приложения
  */
@@ -379,4 +482,7 @@ export {
     saveTempData,
     loadTempDataInSavedData,
     getUnitedTempData,
+    setImageDB,
+    getImageDB,
+    delImageDB,
 };

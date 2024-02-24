@@ -38,7 +38,8 @@
 }
 
 //пользовательский пустрой контент
-.note .note__content[class~="text_empty"] {
+.note .note__content[class~="text_empty"],
+.note .note__content[class~="img_empty"] {
     width: 100%;
 }
 
@@ -68,6 +69,12 @@
 // код
 .note .note__code {
     align-self: flex-start;
+}
+
+// картинки
+.note .note__image {
+    align-self: center;
+    width: 70%;
 }
 
 .note .note__editBlock {

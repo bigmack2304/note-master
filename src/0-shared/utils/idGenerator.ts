@@ -2,7 +2,7 @@
 
 /**
  * класс для генерации уникальных ID, используется для генерации уникальных идентификаторов для DataTemp в indexed db
- * @constructor_Param cache - Set(string) обьект с данными который будет использоватся в качестве кеша
+ * @constructor_Param cache - Set(string) обьект с данными который будет использоватся в качестве кеша со всеми id
  */
 class IdGenerator {
     static _charMap: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -29,14 +29,14 @@ class IdGenerator {
         } while (this._cache.has(newId));
 
         this._cache.add(newId);
-        console.log(this.getIdsArray());
+        //console.log(this.getIdsArray());
         return newId;
     }
 
     public deleteId(id: string) {
         if (this._cache.has(id)) {
             this._cache.delete(id);
-            console.log(this.getIdsArray());
+            //console.log(this.getIdsArray());
         }
     }
 

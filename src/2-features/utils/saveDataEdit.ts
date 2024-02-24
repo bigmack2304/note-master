@@ -1,5 +1,5 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
-import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
+import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB, delImageDB, setImageDB } from "./appIndexedDB";
 import type {
     TchildrenType,
     TNoteBody,
@@ -20,6 +20,7 @@ import { DataTag } from "0-shared/utils/classes/saveDataTag";
 import { DataComponentHeader } from "0-shared/utils/classes/saveDataComponentHeader";
 import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentText";
 import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
+import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -51,7 +52,7 @@ async function updateNodeCompleted(rootFolder: IDataTreeRootFolder, noteId: stri
 /**
  * изменяет своиство value в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id компонента в котором нужно поменять value
+ * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняется value
  * @param newValue новое значение value
  * @returns
@@ -77,13 +78,87 @@ async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, 
 }
 
 /**
+ * изменяет компонент картинки в заметке
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняется value
+ * @param newValue новое значение value
+ * @returns
+ */
+async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newSrc: string, newName: string) {
+    let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
+
+    // TODO: потом нужно это оптимизировать
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== componentId) continue;
+            if (component.component === "image") {
+                component.fileName = newName;
+
+                if (newSrc === "") {
+                    component.value = "";
+                } else {
+                    component.value = component.id;
+                }
+                setImageDB({
+                    value: {
+                        id: componentId,
+                        src: newSrc,
+                    },
+                    key: component.id,
+                });
+            }
+            break;
+        }
+
+        targetNote.lastEditTime = Date.now();
+        resultBool = true;
+        await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента image в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняются данные
+ * @param imageDesc новое описание
+ * @param isDescHidden нужноли скрыть описание
+ */
+async function updateNoteComponentImageSettings(data: { rootFolder: IDataTreeRootFolder; noteId: string; componentId: string; imageDesc: string; isDescHidden: boolean }) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "image") {
+                component.desc = data.imageDesc;
+                component.isDescHidden = data.isDescHidden;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
  * изменяет настройки компонента текста в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id компонента в котором нужно поменять value
+ * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняется value
  * @param textBackground значение фона для текста
  * @param textFormat нужноли форматировать текст
  * @param fontValue тип шрифта для текста
+ * @param lineBreak автоматический перенос строк
  */
 async function updateNoteComponentTextSettings(data: {
     rootFolder: IDataTreeRootFolder;
@@ -120,11 +195,10 @@ async function updateNoteComponentTextSettings(data: {
 /**
  * изменяет настройки компонента заголовка в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id компонента в котором нужно поменять value
+ * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняется value
- * @param textBackground значение фона для текста
- * @param textFormat нужноли форматировать текст
- * @param fontValue тип шрифта для текста
+ * @param textAligin выравнивание текста
+ * @param headerSize размер заголовка
  */
 async function updateNoteComponentHeaderSettings(data: {
     rootFolder: IDataTreeRootFolder;
@@ -157,7 +231,7 @@ async function updateNoteComponentHeaderSettings(data: {
 /**
  * изменяет настройки компонента кода в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id компонента в котором нужно поменять value
+ * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняется value
  * @param codeTheme цветовая тема кода
  * @param codeLanguage язык кода (для подцветки синтаксиса)
@@ -194,7 +268,7 @@ async function updateNoteComponentCodeSettings(data: {
  * изменяет своиство Name в ноде дерева
  * @param rootFolder обьект IDataTreeRootFolder
  * @param target_id id компонента в котором нужно поменять Name
- * @param newValue новое значение Name
+ * @param newName новое значение Name
  */
 async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newName: string) {
     let targetNode = getNodeById(rootFolder, target_id);
@@ -229,6 +303,10 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
         targetNote.body = targetNote.body.filter((item) => {
             if (item.id === componentID) {
                 insIdGenerator.deleteId(componentID);
+                if (item.component == "image") {
+                    delImageDB({ key: item.id });
+                    item.value = "";
+                }
                 return false;
             }
             return true;
@@ -258,7 +336,11 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string) {
             parent.children = parent.children!.filter((child) => {
                 if (child.id === target_id) {
                     if (isDataTreeFolder(child) || isDataTreeNote(child)) {
-                        getAllIdsInNode(child).map((id) => insIdGenerator.deleteId(id));
+                        const innerIds = getAllIdsInNode(child);
+                        delImageDB({ key: innerIds });
+                        innerIds.map((id) => {
+                            insIdGenerator.deleteId(id);
+                        });
                     }
                     insIdGenerator.deleteId(target_id);
                     deletedNode = child;
@@ -542,6 +624,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "code":
                 component = new saveDataComponentCode();
                 break;
+            case "image":
+                component = new saveDataComponentImage();
+                break;
             default:
                 component = undefined;
                 break;
@@ -575,4 +660,6 @@ export {
     updateNoteComponentTextSettings,
     updateNoteComponentHeaderSettings,
     updateNoteComponentCodeSettings,
+    updateNodeImage,
+    updateNoteComponentImageSettings,
 };
