@@ -35,11 +35,11 @@ import {
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
-import { DataFolder } from "0-shared/utils/saveDataFolder";
-import { DataNote } from "0-shared/utils/saveDataNote";
-import { DataTag } from "0-shared/utils/saveDataTag";
+import { DataFolder } from "0-shared/utils/classes/saveDataFolder";
+import { DataNote } from "0-shared/utils/classes/saveDataNote";
+import { DataTag } from "0-shared/utils/classes/saveDataTag";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
-import { DataProject } from "0-shared/utils/saveDataProject";
+import { DataProject } from "0-shared/utils/classes/saveDataProject";
 import { setAllTempDataDB, saveTempData } from "2-features/utils/appIndexedDB";
 import { EV_NAME_SAVE_DATA_REDUCER_END, EV_NAME_SAVE_DATA_REDUCER_FULFILLED, EV_NAME_SAVE_DATA_REDUCER_REJECT, EV_NAME_SAVE_DATA_REDUCER_START } from "5-app/settings";
 

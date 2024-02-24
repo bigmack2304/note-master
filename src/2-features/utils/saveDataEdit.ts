@@ -16,12 +16,12 @@ import type {
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
-import { DataTag } from "0-shared/utils/saveDataTag";
-import { DataComponentHeader } from "0-shared/utils/saveDataComponentHeader";
-import { saveDataComponentText } from "0-shared/utils/saveDataComponentText";
-import { saveDataComponentCode } from "0-shared/utils/saveDataComponentCode";
-import type { DataNote } from "0-shared/utils/saveDataNote";
-import type { DataFolder } from "0-shared/utils/saveDataFolder";
+import { DataTag } from "0-shared/utils/classes/saveDataTag";
+import { DataComponentHeader } from "0-shared/utils/classes/saveDataComponentHeader";
+import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentText";
+import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
+import type { DataNote } from "0-shared/utils/classes/saveDataNote";
+import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
 
 /**
