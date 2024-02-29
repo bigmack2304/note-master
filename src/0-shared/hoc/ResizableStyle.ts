@@ -1,9 +1,8 @@
 import type { PaletteMode, SxProps } from "@mui/material";
 
-function resizableStyle(minSize: number, maxSize: number): SxProps {
+function resizableStyle(minSize: number): SxProps {
     return {
         minWidth: `${minSize}px`,
-        maxWidth: `${maxSize}px`,
         display: "flex",
         flexDirection: "row",
         flexWrap: "nowrap",

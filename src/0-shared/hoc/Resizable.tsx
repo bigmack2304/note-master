@@ -5,6 +5,7 @@ import { useEventListener } from "0-shared/hooks/useEventListener";
 import { resizableStyle, resizableControllerStyle, slotStyle } from "./ResizableStyle";
 import { stringAddClass, stringRemoveClass } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import { firstCallerDelayCallback } from "0-shared/utils/decorators";
 import type { ComponentType } from "react";
 
 interface IResizableProps<W extends {} = {}> {
@@ -12,7 +13,6 @@ interface IResizableProps<W extends {} = {}> {
     wrappedProps?: W;
     children?: GetProps<W> extends { children: infer C } ? C : undefined;
     minSize?: number;
-    maxSize?: number;
     startSize?: number;
     disabled?: boolean;
     onResize?: (newSize: number) => void;
@@ -28,7 +28,6 @@ interface IResizableProps<W extends {} = {}> {
  * @prop wrappedProps - пропсы для оборачеваемого компонента
  * @prop children - дочерние элементы которые применятся к оборачиваемому компоненту
  * @prop minSize - минимальный размер окна
- * @prop maxSize - максимальный размер окна
  * @prop startSize - стартовый размер окна
  * @prop disabled - если true то ресайз заблокирован
  * @prop onResize(newWidth) - вызывается после применения новых настроек ширины
@@ -41,7 +40,6 @@ function Resizable<WrappedProps extends {}>({
     wrappedProps = {} as WrappedProps,
     children,
     minSize = 7,
-    maxSize = 500,
     startSize = 250,
     disabled = false,
     optimizeMount = false,
@@ -71,16 +69,33 @@ function Resizable<WrappedProps extends {}>({
         setResizableControllerClass((oldState) => stringAddClass(oldState, "Resizable__controller--selected"));
     };
 
+    // изменяем позицию Resizable__ghost
+    const setGhostLeft = (offsetLeft: number) => {
+        if (ghostRef.current) {
+            ghostRef.current.style.left = `${offsetLeft}px`;
+        }
+    };
+
     // движение ресайзера
     useEventListener({
         eventName: "pointermove",
         onEvent: (e: PointerEvent) => {
+            //TODO: при изменении размера нужно обновлять положение ресайза, чтобы он не вышел за экран
             if (!isContrlollerDown.current) return;
-            if (e.clientX > maxSize || e.clientX < minSize) return;
-            mouseX.current = e.clientX;
-            if (ghostRef.current) {
-                ghostRef.current.style.left = `${e.clientX}px`;
+
+            if (e.clientX > window.innerWidth / 2) {
+                mouseX.current = window.innerWidth / 2;
+                setGhostLeft(mouseX.current);
+                return;
             }
+            if (e.clientX < minSize) {
+                mouseX.current = minSize;
+                setGhostLeft(mouseX.current);
+                return;
+            }
+
+            mouseX.current = e.clientX;
+            setGhostLeft(mouseX.current);
         },
     });
 
@@ -96,7 +111,21 @@ function Resizable<WrappedProps extends {}>({
         },
     });
 
-    // оменяем размер при изменении стейта,
+    // изменение размера окна браузера
+    useEventListener({
+        eventName: "resize",
+        onEvent: firstCallerDelayCallback({
+            func: () => {
+                if (Math.ceil(mouseX.current) > window.innerWidth / 2) {
+                    mouseX.current = window.innerWidth / 2;
+                    setWrapperWidth(mouseX.current);
+                }
+            },
+            delay: 200,
+        }),
+    });
+
+    // отменяем размер при изменении стейта,
     // PS: useLayoutEffect чтобы визуально компонент появлялся сразу в нужном положении, иначе он отрендерится на 0 координатах а потом перескочит на wrapperWidth
     useLayoutEffect(() => {
         if (!wrapperRef.current) return;
@@ -149,7 +178,7 @@ function Resizable<WrappedProps extends {}>({
     };
 
     return (
-        <Box component={"div"} className={genClassName} sx={resizableStyle(minSize, maxSize)} ref={wrapperRef}>
+        <Box component={"div"} className={genClassName} sx={resizableStyle(minSize)} ref={wrapperRef}>
             <Box className={"Resizable__contentSlot"} sx={slotStyle()}>
                 {renderWrapped()}
             </Box>
