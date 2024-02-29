@@ -24,7 +24,11 @@ type DialogWindowAltPropos = {
     addClassNames?: string[];
 };
 
-const dialogStyle: SxProps = {};
+const dialogStyle: SxProps = {
+    "&.DialogWindowAlt .MuiPaper-root": {
+        width: "clamp(306px, 50%, 600px)",
+    },
+};
 
 const dialogTitleStyle = (theme: PaletteMode) => {
     return {

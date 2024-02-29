@@ -39,7 +39,7 @@ function LoadDialog({ addClassNames = [], isOpen, onClose, onCloseSave }: TLoadD
     return (
         <DialogWindowAlt
             isOpen={isOpen}
-            addClassNames={[...genClassName]}
+            addClassNames={[genClassName]}
             actionButton
             actionButtonName="Подтвердить"
             headerText="Загрузка проекта"
