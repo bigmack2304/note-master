@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NoteImageEditDialog } from "../NoteImageEditDialog/NoteImageEditDialog";
-import { NoteImage } from "0-shared/components/NoteImage/NoteImage";
+import { NoteImageZoomable } from "../NoteImageZoomable/NoteImageZoomable";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
@@ -128,7 +128,7 @@ function EditableImage({ editable = false, addClassNames = [], componentData }: 
                 />
             ) : (
                 <>
-                    <NoteImage
+                    <NoteImageZoomable
                         addClassNames={[...addClassNames, ...textDopClasses]}
                         isLoading={isImageLoadDb}
                         onContextMenu={onClickMoreActions}

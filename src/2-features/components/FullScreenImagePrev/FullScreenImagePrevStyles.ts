@@ -17,6 +17,7 @@ function backdropStyle(): SxProps {
         "&.FullScreenImagePrev .MuiPaper-root": {
             backgroundColor: "initial",
             alignItems: "center",
+            overflow: "hidden",
         },
     };
 }
@@ -34,7 +35,7 @@ function controlsStyle(theme: PaletteMode): React.CSSProperties {
 
 function contentStyle(): React.CSSProperties {
     return {
-        padding: "10px",
+        margin: "10px",
         flexGrow: 1,
         overflow: "auto",
         width: "fit-content",
@@ -44,7 +45,15 @@ function contentStyle(): React.CSSProperties {
     };
 }
 
-function imgStyle(): React.CSSProperties {
+function imgStyle(data: { isZoom: boolean; wrapper: HTMLDivElement | null; img: HTMLImageElement | null }): React.CSSProperties {
+    let leftOffset = 0;
+    let topOffset = 0;
+
+    if (data.img && data.wrapper) {
+        leftOffset = Math.floor((data.img.clientWidth * 2 - data.wrapper.clientWidth) / 4);
+        topOffset = Math.max(0, Math.floor((data.img.clientHeight * 2 - data.wrapper.clientHeight) / 4)); // Math.max - если увеличенная картинка получится размером меньше wrapper, то она должна размещатся по центру
+    }
+
     return {
         objectFit: "contain",
         maxWidth: "fit-content",
@@ -52,7 +61,15 @@ function imgStyle(): React.CSSProperties {
         width: "100%",
         height: "auto",
         maxHeight: "85dvh",
-        //height: clamp(10%, 100%, 100dvh);
+        scale: data.isZoom ? "2" : "1",
+        cursor: data.isZoom ? "zoom-out" : "zoom-in",
+
+        ...(data.isZoom
+            ? {
+                  transform: `translate(${leftOffset}px, ${topOffset}px)`,
+                  touchAction: "manipulation",
+              }
+            : {}),
     };
 }
 
