@@ -8,6 +8,7 @@ const EV_NAME_SAVE_DATA_REDUCER_START = "saveDataInspectReducerSart"; // нач�
 const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // ошибка
 const EV_NAME_SAVE_DATA_REDUCER_END = "saveDataInspectReducerEnd"; // конец редьюсера, неважно ошибка или успех
 const EV_NAME_SAVE_DATA_REDUCER_FULFILLED = "saveDataInspectReducerFulfield"; // успех
+const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote";
 
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
@@ -59,4 +60,5 @@ export {
     BORDER_DARK,
     NOTE_STATUS_COMPLETE,
     NOTE_STATUS_NO_COMPLETE,
+    EV_NAME_LINK_NOTE_REDIRECT,
 };

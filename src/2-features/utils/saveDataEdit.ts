@@ -13,6 +13,7 @@ import type {
     TBodyComponentText,
     TBodyComponentHeader,
     TBodyComponentCode,
+    TBodyComponentLink,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -21,6 +22,7 @@ import { DataComponentHeader } from "0-shared/utils/classes/saveDataComponentHea
 import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentText";
 import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
 import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
+import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -115,6 +117,74 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
         await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет компонент ссылки в заметке
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняется value
+ * @param newValue новое значение value
+ * @returns
+ */
+async function updateNodeLink(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, target: TBodyComponentLink["target"], value: TBodyComponentLink["value"]) {
+    let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== componentId) continue;
+            if (component.component === "link") {
+                component.target = target;
+                component.value = value;
+            }
+            break;
+        }
+
+        targetNote.lastEditTime = Date.now();
+        resultBool = true;
+        await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента ссылки в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняются данные
+ * @param imageDesc новое описание
+ * @param isDescHidden нужноли скрыть описание
+ */
+async function updateNoteComponentLinkSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    isLabel: TBodyComponentLink["isLabel"];
+    isBg: TBodyComponentLink["background"];
+    labelVal: TBodyComponentLink["labelValue"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "link") {
+                component.background = data.isBg;
+                component.isLabel = data.isLabel;
+                component.labelValue = data.labelVal;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
     }
 
     return { targetNote, resultBool };
@@ -627,6 +697,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "image":
                 component = new saveDataComponentImage();
                 break;
+            case "link":
+                component = new saveDataComponentLink();
+                break;
             default:
                 component = undefined;
                 break;
@@ -662,4 +735,6 @@ export {
     updateNoteComponentCodeSettings,
     updateNodeImage,
     updateNoteComponentImageSettings,
+    updateNodeLink,
+    updateNoteComponentLinkSettings,
 };

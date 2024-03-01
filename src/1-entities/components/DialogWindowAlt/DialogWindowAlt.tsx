@@ -26,7 +26,7 @@ type DialogWindowAltPropos = {
 
 const dialogStyle: SxProps = {
     "&.DialogWindowAlt .MuiPaper-root": {
-        width: "clamp(306px, 50%, 600px)",
+        width: "clamp(306px, 60%, 600px)",
     },
 };
 

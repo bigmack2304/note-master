@@ -9,6 +9,7 @@ import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import type { TreeItemContentProps } from "@mui/x-tree-view";
 import type { SxProps, PaletteMode } from "@mui/material";
 import type { TCuspomProps } from "./_CustomTreeItemTypes";
+import type { TNodeType } from "0-shared/types/dataSave";
 
 const CustomTreeItemContentStyle = (theme: PaletteMode) => {
     return {
@@ -54,8 +55,10 @@ const CustomTreeItemContentStyle = (theme: PaletteMode) => {
     } as SxProps;
 };
 
-const IconTypeStyle = () => {
-    return {} as SxProps;
+const IconFolderStyle = () => {
+    return {
+        cursor: "pointer",
+    } as SxProps;
 };
 
 /**
@@ -97,6 +100,17 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
         handleSelection(event);
     };
 
+    const handleIconClick = (type: TNodeType | undefined, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (type && type == "note") {
+            handleSelectionClick(event);
+            return;
+        }
+        if (type && type == "folder") {
+            handleExpansionClick(event);
+            return;
+        }
+    };
+
     // вызывается только когда этот элемент получает статус selected
     // почему тут а не в handleSelectionClick? handleSelectionClick вызывается при клике, но selected может появится и если мы выберем элемент клавой, поэтому пока так
     useEffect(() => {
@@ -110,7 +124,9 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
             <Box onClick={handleExpansionClick} component={"div"} className={props.classes.iconContainer}>
                 {icon}
             </Box>
-            {props.nodeType && props.nodeType === "folder" ? <FolderIcon fontSize="small" sx={IconTypeStyle()} /> : <ContentPasteIcon fontSize="small" sx={IconTypeStyle()} />}
+            <Box onClick={handleIconClick.bind(null, props.nodeType)}>
+                {props.nodeType && props.nodeType === "folder" ? <FolderIcon fontSize="small" sx={IconFolderStyle()} /> : <ContentPasteIcon fontSize="small" />}
+            </Box>
             <Typography className={NodeNameClass} onClick={handleSelectionClick} component="span" ref={nameRef}>
                 {props.label}
             </Typography>

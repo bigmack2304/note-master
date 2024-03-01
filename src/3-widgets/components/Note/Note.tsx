@@ -13,6 +13,7 @@ import { ButtonAddComponentToNoteDialog } from "2-features/components/ButtonAddC
 import { EditableText } from "2-features/components/EditableText/EditableText";
 import { EditableCode } from "2-features/components/EditableCode/EditableCode";
 import { EditableImage } from "2-features/components/EditableImage/EditableImage";
+import { EditableLink } from "2-features/components/EditableLink/EditableLink";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -96,6 +97,9 @@ function Note({ addClassNames = [] }: TNoteProps) {
                           }
                           if (noteComponent.component === "image") {
                               return <EditableImage addClassNames={["note__image", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
+                          }
+                          if (noteComponent.component === "link") {
+                              return <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
                           }
                       })
                     : null}

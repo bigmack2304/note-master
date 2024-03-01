@@ -14,7 +14,7 @@ interface IDataTreeNode {
 }
 
 // типы всех компонентов
-type TAllComponents = "header" | "text" | "code" | "image";
+type TAllComponents = "header" | "text" | "code" | "image" | "link";
 
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
@@ -33,6 +33,16 @@ interface TBodyComponentText extends IDataTreeNode {
     formatting: boolean;
     font: "default" | "code";
     lineBreak: boolean;
+}
+
+// ссылка
+interface TBodyComponentLink extends IDataTreeNode {
+    component: "link";
+    value: string;
+    labelValue: string;
+    isLabel: boolean;
+    background: boolean;
+    target: "web" | "note";
 }
 
 // код
@@ -56,7 +66,7 @@ interface TBodyComponentImage extends IDataTreeNode {
 /**
  * тип поля body в заметке
  */
-type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage;
+type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink;
 
 /**
  * цвета тега
@@ -153,4 +163,5 @@ export type {
     IImage,
     IDataImages,
     TBodyComponentImage,
+    TBodyComponentLink,
 };

@@ -10,6 +10,7 @@ import type {
     TBodyComponentText,
     TBodyComponentHeader,
     TBodyComponentCode,
+    TBodyComponentLink,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
@@ -33,6 +34,8 @@ import {
     updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
     updateNoteComponentImageSettings as componentImageSettings,
+    updateNoteComponentLinkSettings as componentLinkSettings,
+    updateNodeLink,
     updateNodeImage,
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
@@ -43,7 +46,14 @@ import { DataTag } from "0-shared/utils/classes/saveDataTag";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataProject } from "0-shared/utils/classes/saveDataProject";
 import { setAllTempDataDB, saveTempData } from "2-features/utils/appIndexedDB";
-import { EV_NAME_SAVE_DATA_REDUCER_END, EV_NAME_SAVE_DATA_REDUCER_FULFILLED, EV_NAME_SAVE_DATA_REDUCER_REJECT, EV_NAME_SAVE_DATA_REDUCER_START } from "5-app/settings";
+import type { TRadioData } from "2-features/components/NoteSelector/NoteSelector";
+import {
+    EV_NAME_SAVE_DATA_REDUCER_END,
+    EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
+    EV_NAME_SAVE_DATA_REDUCER_REJECT,
+    EV_NAME_SAVE_DATA_REDUCER_START,
+    EV_NAME_LINK_NOTE_REDIRECT,
+} from "5-app/settings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -320,6 +330,136 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
+        // обновляем link в активной заметке и в indexedDB
+        updateNoteComponentLink: create.asyncThunk<
+            { noteId: string; componentId: string; target: TBodyComponentLink["target"]; value: TBodyComponentLink["value"] },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const { targetNote: updatedNode, resultBool } = await updateNodeLink(dataTree, payload.noteId, payload.componentId, payload.target, payload.value);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
+        // переход по компеоненту link в активной заметке и в indexedDB
+        redirectNoteComponentLink: create.asyncThunk<{ url: TRadioData }, { targetNote: TchildrenType | TNoteBody } | undefined>(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const targetNote = getNodeById(dataTree, payload.url.id);
+
+                //const { targetNote: updatedNode, resultBool } = await updateNodeLink(dataTree, payload.noteId, payload.componentId, payload.target, payload.value);
+
+                if (targetNote) {
+                    return { targetNote };
+                } else {
+                    throw new Error();
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.targetNote) return;
+                    let {
+                        payload: { targetNote },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id === targetNote.id || !isDataTreeNote(targetNote)) return;
+
+                    window.dispatchEvent(new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: targetNote.id } }));
+                    state.currentNote = targetNote;
+                },
+            }
+        ),
+        // обновляем настройки link в активной заметке и в indexedDB
+        updateNoteComponentLinkSettings: create.asyncThunk<
+            { noteId: string; componentId: string; isLabel: TBodyComponentLink["isLabel"]; isBg: TBodyComponentLink["background"]; labelVal: TBodyComponentLink["labelValue"] },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const { targetNote: updatedNode, resultBool } = await componentLinkSettings({
+                    rootFolder: dataTree,
+                    componentId: payload.componentId,
+                    noteId: payload.noteId,
+                    isLabel: payload.isLabel,
+                    isBg: payload.isBg,
+                    labelVal: payload.labelVal,
+                });
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
         // обновляем настройки image в активной заметке и в indexedDB
         updateNoteComponentImageSettings: create.asyncThunk<
             { noteId: string; componentId: string; imageDesc: string; isDescHidden: boolean },
@@ -514,7 +654,7 @@ const saveDataInspectSlice = createAppSlice({
                 },
             }
         ),
-        // обновляет настройки компонента кода внутри заметки
+        // скачивание проекта
         exportTempDataSave: create.asyncThunk<{ saveAs: string }>(
             async (payload, thunkApi) => {
                 const allTempData = await getUnitedTempData();
@@ -1018,6 +1158,9 @@ export const {
     exportTempDataSave,
     updateNoteComponentImage,
     updateNoteComponentImageSettings,
+    updateNoteComponentLink,
+    updateNoteComponentLinkSettings,
+    redirectNoteComponentLink,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

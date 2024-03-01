@@ -18,6 +18,8 @@ import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/T
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 import { TreeItemMoveDialog } from "2-features/components/TreeItemMoveDialog/TreeItemMoveDialog";
 import { useDataTree } from "0-shared/hooks/useDataTree";
+import { useEventListener } from "0-shared/hooks/useEventListener";
+import { EV_NAME_LINK_NOTE_REDIRECT } from "5-app/settings";
 
 type TFolderTreeViewerProps = {};
 
@@ -42,6 +44,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState<boolean>(false);
     const [isNewNoteDialogOpen, setIsNewNoteDialogOpen] = useState<boolean>(false);
     const [isMoveDialogOpen, setIsMoveDialogOpen] = useState<boolean>(false);
+    const [treeNodeSelect, setTreeNodeSelect] = useState<string>("");
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -61,6 +64,18 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
             dispatch(setCurrentNote(nodeData));
         }
     };
+
+    const ontreeNodeSelect = (event: React.SyntheticEvent, nodeIds: string) => {
+        setTreeNodeSelect(nodeIds);
+    };
+
+    // при переходе по ссылке на заметку, переключаем тут активную ноду
+    useEventListener({
+        eventName: EV_NAME_LINK_NOTE_REDIRECT,
+        onEvent: (e: CustomEvent) => {
+            if (e.detail.id) setTreeNodeSelect(e.detail.id);
+        },
+    });
 
     // контекстное меню папок и заметок
     const onNodeContext = (nodeData: TchildrenType, e: React.MouseEvent) => {
@@ -160,7 +175,13 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     //TODO: expanded: [] в TreeViewSettings сворачивает всю фаиловую структуру
     return (
         <Box sx={FolderTreeViewerStyle}>
-            <TreeView aria-label="структура заметок" defaultCollapseIcon={<ExpandMoreIcon />} defaultExpandIcon={<ChevronRightIcon />}>
+            <TreeView
+                aria-label="структура заметок"
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+                selected={treeNodeSelect}
+                onNodeSelect={ontreeNodeSelect}
+            >
                 {RenderTreeAsFile({
                     node: dataTree,
                     onClickNodeCallback: onClickNode,
