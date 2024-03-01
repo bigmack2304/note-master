@@ -1,4 +1,6 @@
+import { url } from "inspector";
 import React from "react";
+import grayTransparent from "0-shared/assets/grey_transparent.png";
 
 type TColorBoxProps = {
     addClassNames?: string[];
@@ -11,6 +13,13 @@ const colorBoxStyle = (color: string) => {
         border: "1px black solid",
         width: "25px",
         height: "25px",
+
+        ...(color === "#aaaaaa24"
+            ? {
+                  backgroundImage: `url('${grayTransparent}')`,
+                  backgroundSize: "contain",
+              }
+            : {}),
     };
 
     return style;

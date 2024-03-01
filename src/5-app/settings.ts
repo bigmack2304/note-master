@@ -35,7 +35,7 @@ const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
     gray: "#c7c7c7",
     yellow: "#E1DD20",
     green: "#39C726",
-    transparent: "#ffffff36",
+    transparent: "#aaaaaa24",
 };
 
 export {

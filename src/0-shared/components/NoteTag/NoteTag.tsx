@@ -17,7 +17,12 @@ const noteEditBlockStyles = (color: TTagColors, theme: PaletteMode) => {
     return {
         backgroundColor: TAGS_COLORS_LIGHT[color],
         fontWeight: "600",
-        color: "black",
+
+        ...(color === "transparent"
+            ? {}
+            : {
+                  color: "black",
+              }),
     } as SxProps;
 };
 
