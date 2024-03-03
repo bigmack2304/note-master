@@ -17,13 +17,14 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     return {
         display: "inline-block",
 
-        ...(isChildren
-            ? {}
-            : {
-                  minHeight: "3rem",
-                  backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-                  borderRadius: "3px",
-              }),
+        "&.NoteHead.text_empty": {
+            display: "flex",
+            justifyContent: "center",
+            minHeight: "3rem",
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+            borderRadius: "3px",
+        },
+
         "&.NoteHead--editable:hover": {
             outline: "1px red solid",
         },
@@ -36,6 +37,12 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
         },
         "&.NoteHead--aliginRight": {
             textAlign: "right",
+        },
+
+        "&.NoteHead.text_empty:before": {
+            fontSize: "1rem",
+            content: "'Заголовок'",
+            opacity: "50%",
         },
     } as SxProps;
 };

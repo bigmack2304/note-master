@@ -16,6 +16,20 @@ const noteImageStyle = (isChildren: boolean, theme: PaletteMode) => {
                   borderRadius: "3px",
               }),
 
+        "&.NoteImage.img_empty": {
+            display: "flex",
+            justifyContent: "center",
+            minHeight: "3rem",
+            backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+            borderRadius: "3px",
+        },
+
+        "&.NoteImage.img_empty:before": {
+            fontSize: "1rem",
+            content: "'Изображение'",
+            opacity: "50%",
+        },
+
         "&.NoteImage--editable:hover": {
             outline: "1px red solid",
         },

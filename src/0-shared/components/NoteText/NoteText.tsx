@@ -18,13 +18,19 @@ const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     return {
         display: "inline-block",
 
-        ...(isChildren
-            ? {}
-            : {
-                  minHeight: "3rem",
-                  backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-                  borderRadius: "5px",
-              }),
+        "&.NoteText.text_empty": {
+            display: "flex",
+            justifyContent: "center",
+            minHeight: "3rem",
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+            borderRadius: "5px",
+        },
+
+        "&.NoteText.text_empty:before": {
+            fontSize: "1rem",
+            content: "'Текст'",
+            opacity: "50%",
+        },
 
         "&.NoteText--bg-light": {
             backgroundColor: THEME_LIGHT_GRAY,

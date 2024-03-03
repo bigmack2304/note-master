@@ -6,6 +6,7 @@ import type { PaletteMode } from "@mui/material";
 import { CodeBlock } from "react-code-blocks";
 import { codeCustomThemeLight, codeCustomThemeDark } from "./NoteCodeValues";
 import type { TCodeLanguages, TCodeThemes } from "./NoteCodeTypes";
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 
 type TNoteCodeProps = {
     addClassNames?: string[];
@@ -27,6 +28,22 @@ const codeWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
 
         "&.NoteCode--editable:hover": {
             outline: "1px red solid",
+        },
+
+        "&.NoteCode.text_empty": {
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+            borderRadius: "3px",
+        },
+
+        "&.NoteCode.text_empty:before": {
+            fontSize: "1rem",
+            content: "'Код'",
+            opacity: "50%",
+            minHeight: "3rem",
         },
     } as SxProps;
 };
@@ -82,13 +99,15 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
 
     return (
         <Box className={genClassName} sx={codeWrapperStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
-            <CodeBlock
-                text={children}
-                language={language}
-                showLineNumbers={true}
-                theme={calcCodeTheme(codeTheme, themeMode)}
-                customStyle={codeStyle(isChildren) as Record<string, string>}
-            />
+            {isChildren && (
+                <CodeBlock
+                    text={children}
+                    language={language}
+                    showLineNumbers={true}
+                    theme={calcCodeTheme(codeTheme, themeMode)}
+                    customStyle={codeStyle(isChildren) as Record<string, string>}
+                />
+            )}
         </Box>
     );
 }
