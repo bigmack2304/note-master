@@ -2,7 +2,7 @@ import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
 
 /**
- *  класс для создания новых компонентов заголовка заметки
+ *  класс для создания новых компонентов ссылок заметки
  */
 class saveDataComponentLink extends DataNode implements TBodyComponentLink {
     public component: TBodyComponentLink["component"];

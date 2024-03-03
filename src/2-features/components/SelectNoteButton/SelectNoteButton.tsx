@@ -11,13 +11,14 @@ type TAllTagsEditProps = {
     selectedNote?: string;
 };
 /**
- * выводит окно со списком всех заметок, и возможностью выбрать одну
+ * кнопка, при нажатии выводит окно со списком всех заметок и возможностью выбора одной
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
- * @prop sortName - отображать теки которые включают в себя эту подстроку
+ * @prop onClose - вызывается после закрытия окна с выбором заметок
+ * @prop selectedNote - (id) заметки которая будет выбрана по умолчанию в списке заметок
  */
 function SelectNoteButton({ addClassNames = [], onClose, selectedNote }: TAllTagsEditProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const defaultClassName = "AllTagsEdit";
+    const defaultClassName = "SelectNoteButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
     const [findNote, setFindNote] = useState("");
@@ -52,14 +53,14 @@ function SelectNoteButton({ addClassNames = [], onClose, selectedNote }: TAllTag
 
     return (
         <>
-            <Button className="ClosableImageForm__button_local" color="primary" aria-label="Выбрать заметку" size="small" variant="contained" onClick={onButtonClick}>
+            <Button className={genClassName} color="primary" aria-label="Выбрать заметку" size="small" variant="contained" onClick={onButtonClick}>
                 Выбрать заметку
             </Button>
-            <DialogWindow addClassNames={["NewTag_window"]} headerText="Выбор заметки" isOpen={isDialogOpen} onClose={onDialogClose}>
-                <List className="NewTag_window__list" sx={styles.dialogListStyle(themeValue)}>
+            <DialogWindow addClassNames={["SelectNoteButton__dialog_window"]} headerText="Выбор заметки" isOpen={isDialogOpen} onClose={onDialogClose}>
+                <List className="SelectNoteButton__dialog_list" sx={styles.dialogListStyle(themeValue)}>
                     <ListItem>
                         <TextField
-                            className="NewTag_window__find"
+                            className="SelectNoteButton__note_find_input"
                             value={findNote}
                             label="Поиск заметки"
                             placeholder="Название заметки"

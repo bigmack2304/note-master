@@ -127,8 +127,8 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняется value
- * @param newValue новое значение value
- * @returns
+ * @param target новое значение target
+ * @param value новое значение value
  */
 async function updateNodeLink(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, target: TBodyComponentLink["target"], value: TBodyComponentLink["value"]) {
     let targetNote = getNodeById(rootFolder, noteId);
@@ -157,8 +157,9 @@ async function updateNodeLink(rootFolder: IDataTreeRootFolder, noteId: string, c
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняются данные
- * @param imageDesc новое описание
- * @param isDescHidden нужноли скрыть описание
+ * @param isLabel новое значение isLabel
+ * @param isBg новое значение isBg
+ * @param labelVal новое значение labelVal
  */
 async function updateNoteComponentLinkSettings(data: {
     rootFolder: IDataTreeRootFolder;

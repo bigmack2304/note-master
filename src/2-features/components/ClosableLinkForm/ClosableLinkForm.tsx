@@ -26,7 +26,11 @@ type TClosableLinkFormProps = {
  * форма для ввода цели ссылки
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop onClose - вызывается при нажатии на кнопку закрыть
-
+ * @prop onCloseSave - закрытие с сохранением
+ * @prop urlValue - ссылка (это может быть строка типа url либо JSON преобразуемый в обьект типа TRadioData)
+ * @prop placeholder - дефолтное значение поля ввода url
+ * @prop inputLabel - посути тоже что и placeholder только это типа описание для placeholder
+ * @prop target - "web" | "note", из этого параметра скрипты определят как обрабатывать url, ведь ссылка может быть на web ресурс и на заметку
  */
 function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, placeholder, inputLabel, target }: TClosableLinkFormProps) {
     const defaultClassName = "ClosableLinkForm";

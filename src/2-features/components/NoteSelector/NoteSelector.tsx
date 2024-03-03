@@ -19,9 +19,11 @@ type TRadioData = {
 };
 
 /**
- * список всех тегов с возможностью их редактирования
+ * выводит список всех заметок с radio елементом для выбора какойто одной заметки
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop sortName - отображать теки которые включают в себя эту подстроку
+ * @prop onSelect - вызывается при выборе какойто заметки
+ * @prop defaultValue - выбраннная заметка по дефолту (id)
  */
 function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValue = "" }: TNoteSelectorProps) {
     const defaultClassName = "NoteSelector";

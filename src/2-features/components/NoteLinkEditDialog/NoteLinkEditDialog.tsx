@@ -18,7 +18,6 @@ type TNoteLinkEditDialogProps = {
  * @prop onClose - вызывается при закрытии окна
  * @prop onCloseSave - вызывается при сохранении текста
  * @prop dialogHeader - заголовок окна
- * @prop editId - id сущьности которую редактируем
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управление ссылкой", componentData }: TNoteLinkEditDialogProps) {

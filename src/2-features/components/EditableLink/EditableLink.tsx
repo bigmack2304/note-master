@@ -38,9 +38,7 @@ const genTextDopClasses = (data: { isEdit: boolean; isBg: boolean }) => {
 
 /**
  * Заголовок заметки с поддержкой редактирования
- * @prop defaultText - значение по умолчанию
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
- * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
