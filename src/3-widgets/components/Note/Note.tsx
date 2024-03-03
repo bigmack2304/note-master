@@ -50,6 +50,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);
+    const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
 
     if (!currentNote) return <></>;
 
@@ -58,7 +59,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
             <div className="note__content_wrapper">
                 <ChangeTime createTime_timestamp={currentNote.createTime} lastEditTime_timestamp={currentNote.lastEditTime} />
                 <NoteStatus />
-                <NoteTagList />
+                <NoteTagList isNoteEdit={isNoteEdit} noteTags={currentNote.tags ?? []} />
 
                 {currentNote.body.length > 0
                     ? currentNote.body.map((noteComponent) => {
@@ -70,6 +71,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       key={noteComponent.id}
                                       edit_id={noteComponent.id}
                                       componentData={noteComponent}
+                                      editable={isNoteEdit}
                                   />
                               );
                           }
@@ -81,6 +83,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       key={noteComponent.id}
                                       edit_id={noteComponent.id}
                                       componentData={noteComponent}
+                                      editable={isNoteEdit}
                                   />
                               );
                           }
@@ -92,14 +95,15 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       key={noteComponent.id}
                                       edit_id={noteComponent.id}
                                       componentData={noteComponent}
+                                      editable={isNoteEdit}
                                   />
                               );
                           }
                           if (noteComponent.component === "image") {
-                              return <EditableImage addClassNames={["note__image", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
+                              return <EditableImage addClassNames={["note__image", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />;
                           }
                           if (noteComponent.component === "link") {
-                              return <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
+                              return <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />;
                           }
                       })
                     : null}

@@ -8,6 +8,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { OkButton } from "0-shared/components/OkButton/OkButton";
 import { InputImage } from "../InputImage/InputImage";
 import * as styles from "./ClosableImageFormStyles";
+import "./style.scss";
 import type { SelectChangeEvent } from "@mui/material";
 
 // одностройчный текстовый инпут + кнопки (ок, отмена)
@@ -84,8 +85,9 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
     };
 
     return (
-        <Box className={genClassName} component={"div"} sx={styles.сlosableImageFormStyles(themeValue)}>
-            <Box className="ClosableImageForm__inputs" sx={styles.inputsStyles(themeValue)}>
+        <>
+            <Box className={genClassName} component={"div"} sx={styles.сlosableImageFormStyles(themeValue)}>
+                {/* <Box className="ClosableImageForm__inputs" sx={styles.inputsStyles(themeValue)}>
                 {selectValue === "URL" ? (
                     <TextField
                         className="ClosableImageForm__input_Url"
@@ -145,11 +147,62 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
                     </Select>
                 </FormControl>
                 <InputImage ref={inputImageRef} loadCallback={onLocalLoad} />
+            </Box> */}
+                {selectValue === "URL" ? (
+                    <TextField
+                        className="ClosableImageForm__input_Url"
+                        value={inputUrl}
+                        placeholder="URL"
+                        onChange={onInputUrlChange}
+                        onKeyDown={onKeyDown}
+                        variant="outlined"
+                        label="URL"
+                        autoFocus
+                    />
+                ) : (
+                    <Box className="ClosableImageForm__name_wrapper">
+                        <Typography className="ClosableImageForm__local_name">{imageName}</Typography>
+                    </Box>
+                )}
+                <Box className="ClosableImageForm__controls_wrapper">
+                    {selectValue === "LOCAL" && (
+                        <Button className="ClosableImageForm__button_local" color="primary" aria-label="Выбрать фаил" size="small" variant="contained" onClick={onLoadLocalClick}>
+                            Выбрать фаил
+                        </Button>
+                    )}
+                    <FormControl className="ClosableImageForm__select_wrapper">
+                        <InputLabel id={selectLabelID}>Изображение</InputLabel>
+                        <Select
+                            labelId={selectLabelID}
+                            value={selectValue}
+                            label="Изображение"
+                            onChange={onSelectChange}
+                            input={<OutlinedInput label="Изображение" />}
+                            size="small"
+                            renderValue={(selected) => <Typography variant="body1">{selectValuesNames[selected]}</Typography>}
+                        >
+                            <MenuItem divider value="LOCAL">
+                                <ListItemIcon>
+                                    <DevicesIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>{selectValuesNames["LOCAL"]}</ListItemText>
+                            </MenuItem>
+                            <MenuItem divider value="URL">
+                                <ListItemIcon>
+                                    <AttachFileIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>{selectValuesNames["URL"]}</ListItemText>
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Box className="ClosableImageForm__result_buttons">
+                        <OkButton onClick={onSave} />
+                        <CloseButton onClick={onClose} />
+                    </Box>
+                </Box>
             </Box>
-
-            <OkButton onClick={onSave} sx={styles.buttonStyles(themeValue)} />
-            <CloseButton onClick={onClose} sx={styles.buttonStyles(themeValue)} />
-        </Box>
+            <InputImage ref={inputImageRef} loadCallback={onLocalLoad} />
+        </>
     );
 }
 

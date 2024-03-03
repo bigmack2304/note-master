@@ -44,10 +44,10 @@ function NoteImage({ addClassNames = [], onClick, onContextMenu, onImgClick, ima
     };
 
     return (
-        <Box className={genClassName} sx={styles.noteImageStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
+        <Box component={"div"} className={genClassName} sx={styles.noteImageStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
             <figure className="NoteImage__imgWrapper" style={styles.imageWrapperStyle()}>
                 {isLoading ? (
-                    <CircularProgress sx={styles.imageLoaderStyle()} />
+                    <CircularProgress />
                 ) : (
                     <>
                         <img className="NoteImage__img" style={styles.imageStyle()} src={imageData} alt={imageDesc} loading="lazy" decoding="auto" onClick={onImageClick} />

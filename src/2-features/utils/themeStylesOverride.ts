@@ -88,6 +88,7 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                 styleOverrides: {
                     root: {
                         backgroundColor: !storeTheme.isDark ? theme.palette.background.default : "#434957",
+                        color: fontThemeColor(themeValue),
                     },
                 },
             },
@@ -184,6 +185,20 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     },
                 },
             },
+            MuiCircularProgress: {
+                styleOverrides: {
+                    root: {
+                        display: "block",
+                        margin: "0 auto",
+                    },
+                },
+            },
+            // глобальные стили
+            MuiCssBaseline: {
+                styleOverrides: {
+                    body: {},
+                },
+            },
         },
         palette: {
             primary: theme.palette.augmentColor({
@@ -215,10 +230,8 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
         },
     });
 
-    // console.dir(themeOverrided);
-
     return themeOverrided;
 }
 
-export { themeOverrideStyles, svgThemeColor };
+export { themeOverrideStyles, svgThemeColor, fontThemeColor };
 export type { PaletteMode, TTheme };

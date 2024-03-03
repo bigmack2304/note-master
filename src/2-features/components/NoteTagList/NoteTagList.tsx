@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import type { SxProps } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import Typography from "@mui/material/Typography";
+import { CircularProgress, Typography } from "@mui/material";
 import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
-import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_DARK_COLOR, OUTLINE_LIGHT_COLOR } from "5-app/settings";
 import { useTags } from "0-shared/hooks/useTags";
 import "./NoteTagList.scss";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
 import type { IGlobalTag } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import { noteDelTag } from "5-app/GlobalState/saveDataInspectStore";
+import { noteDelTag, noteAddTag } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteAddTagDialog } from "../NoteAddTagDialog/NoteAddTagDialog";
-import { noteAddTag } from "5-app/GlobalState/saveDataInspectStore";
 
-type TNoteTagListProps = {};
+type TNoteTagListProps = {
+    noteTags: string[];
+    isNoteEdit: boolean;
+};
 
 const noteTagListStyle = (theme: PaletteMode) => {
     return {
@@ -25,14 +25,25 @@ const noteTagListStyle = (theme: PaletteMode) => {
 };
 
 /**
- * содержимое для DialogWindow, (страница с настройками)
+ * компонент отображающий теги заметки, поддерживает добавление и удаление заметок
+ * @ps добавление\удаление тегов происходит в активной заметке
+ * @prop noteTags массив имен тегов для отображения
+ * @prop isNoteEdit флаг, редактируется ли в данный мамент заметка
  */
-function NoteTagList({}: TNoteTagListProps) {
+function NoteTagList({ noteTags, isNoteEdit }: TNoteTagListProps) {
     const [isAddTagDialog, setIsAddTagDialog] = useState<boolean>(false);
+    const [isTagsLoading, setIsTagsLoading] = useState<boolean>(false);
     const themeValue = useTemeMode();
-    const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
-    const noteTags = useAppSelector((state) => state.saveDataInspect.currentNote?.tags);
-    const tags = useTags();
+    // const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
+    // const noteTags = useAppSelector((state) => state.saveDataInspect.currentNote?.tags);
+    const tags = useTags({
+        onStartLoading: () => {
+            setIsTagsLoading(true);
+        },
+        onEndLoading: () => {
+            setIsTagsLoading(false);
+        },
+    });
     const isTags = Boolean(noteTags && tags);
     const dispatch = useAppDispatch();
 
@@ -60,6 +71,7 @@ function NoteTagList({}: TNoteTagListProps) {
                     Теги:
                 </Typography>
                 <div className="NoteTagList__tags">
+                    {isTagsLoading && <CircularProgress />}
                     {isTags &&
                         noteTags!.map((tagName) => {
                             //TODO: при удалении тега с открытой заметкой происходит вылит (если тут имя удаленного тега) если нет этой проверки

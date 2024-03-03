@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { SxProps, PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { fontThemeColor } from "2-features/utils/themeStylesOverride";
 
 const noteImageStyle = (isChildren: boolean, theme: PaletteMode) => {
     return {
@@ -8,17 +9,11 @@ const noteImageStyle = (isChildren: boolean, theme: PaletteMode) => {
         overflow: "hidden",
         fontSize: "1rem",
 
-        ...(isChildren
-            ? {}
-            : {
-                  minHeight: "3rem",
-                  backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-                  borderRadius: "3px",
-              }),
-
         "&.NoteImage.img_empty": {
+            flexDirection: "column",
             display: "flex",
             justifyContent: "center",
+            alignItems: "center",
             minHeight: "3rem",
             backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
             borderRadius: "3px",
@@ -28,6 +23,7 @@ const noteImageStyle = (isChildren: boolean, theme: PaletteMode) => {
             fontSize: "1rem",
             content: "'Изображение'",
             opacity: "50%",
+            color: fontThemeColor(theme),
         },
 
         "&.NoteImage--editable:hover": {

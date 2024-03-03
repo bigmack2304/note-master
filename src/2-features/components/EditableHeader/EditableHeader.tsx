@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ClosableOneLineTextInput } from "2-features/components/ClosableOneLineTextInput/ClosableOneLineTextInput";
 import { NoteHead } from "0-shared/components/NoteHead/NoteHead";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
@@ -84,6 +84,12 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
         textAligin: componentData.textAligin,
         headerSize: componentData.headerSize,
     });
+
+    useEffect(() => {
+        if (!editable) {
+            setIsEdit(false);
+        }
+    }, [editable]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

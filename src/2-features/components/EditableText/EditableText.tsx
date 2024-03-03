@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ClosableMultiLineTextInput } from "2-features/components/ClosableMultiLineTextInput/ClosableMultiLineTextInput";
 import { NoteText } from "0-shared/components/NoteText/NoteText";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
@@ -84,6 +84,12 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
         theme: themeValue,
         isEdit: isNoteEdit,
     });
+
+    useEffect(() => {
+        if (!editable) {
+            setIsEdit(false);
+        }
+    }, [editable]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

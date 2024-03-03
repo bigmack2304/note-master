@@ -55,7 +55,15 @@ function NewTagButton({ addClassNames = [] }: TNewTagButtonProps) {
             <DialogWindow addClassNames={["NewTag_window"]} headerText="Упраление тегами" isOpen={isDialogOpen} onClose={onDialogClose}>
                 <List className="NewTag_window__list" sx={dialogListStyle(themeValue)}>
                     <ListItem>
-                        <TextField className="NewTag_window__find" value={findTag} label="Поиск тега" placeholder="Название тега" variant="filled" onChange={onFindTagChange} />
+                        <TextField
+                            className="NewTag_window__find"
+                            value={findTag}
+                            label="Поиск тега"
+                            placeholder="Название тега"
+                            variant="filled"
+                            onChange={onFindTagChange}
+                            size="small"
+                        />
                     </ListItem>
                     <ListItem>
                         <AddNewTagForm />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ClosableLinkForm } from "../ClosableLinkForm/ClosableLinkForm";
 import { NoteLink } from "0-shared/components/NoteLink/NoteLink";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
@@ -56,6 +56,12 @@ function EditableLink({ editable = false, addClassNames = [], componentData }: T
         isEdit: isNoteEdit,
         isBg: componentData.background,
     });
+
+    useEffect(() => {
+        if (!editable) {
+            setIsEdit(false);
+        }
+    }, [editable]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

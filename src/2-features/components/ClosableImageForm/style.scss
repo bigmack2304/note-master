@@ -1,0 +1,45 @@
+.ClosableImageForm {
+    padding: 3px;
+    font-size: 2rem;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-shadow: 0px 1px 4px -2px black;
+    width: fit-content;
+    column-gap: 3px;
+}
+
+.ClosableImageForm__result_buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.ClosableImageForm__controls_wrapper {
+    padding: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 11px;
+}
+
+.ClosableImageForm__select_wrapper {
+    min-width: 118px;
+}
+
+.ClosableImageForm__name_wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.ClosableImageForm__input_Url {
+    padding-left: 4px;
+    font-size: 1.4rem;
+    width: 100%;
+}
+
+.ClosableImageForm__local_name {
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

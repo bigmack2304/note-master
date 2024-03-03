@@ -9,6 +9,7 @@ import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import type { SelectChangeEvent } from "@mui/material";
 import { SelectNoteButton } from "../SelectNoteButton/SelectNoteButton";
 import type { TRadioData } from "../NoteSelector/NoteSelector";
+import "./style.scss";
 
 // одностройчный текстовый инпут + кнопки (ок, отмена)
 
@@ -69,30 +70,42 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
     };
 
     return (
-        <Box className={genClassName} component={"div"} sx={style.boxStyles(themeValue)}>
+        <Box className={genClassName} component={"div"} sx={style.closableLinkForm(themeValue)}>
             {selectValue === "web" ? (
-                <TextField value={inputURLValue} placeholder={placeholder} onChange={onInputChange} sx={style.inputStyle()} variant="outlined" label={inputLabel} autoFocus />
+                <TextField
+                    className="ClosableLinkForm__url_input"
+                    value={inputURLValue}
+                    placeholder={placeholder}
+                    onChange={onInputChange}
+                    variant="outlined"
+                    label={inputLabel}
+                    autoFocus
+                />
             ) : (
                 <Box sx={{ width: "100%" }}>
-                    <Typography variant="body1" component={"p"} sx={{ width: "100%" }}>
+                    <Typography variant="body1" component={"p"} className="ClosableLinkForm__img_name">
                         {targetNote}
                     </Typography>
-                    <SelectNoteButton onClose={onSelectNoteClose} selectedNote={inputURLValue} />
                 </Box>
             )}
-            <FormControl sx={style.selectStyle()}>
-                <InputLabel id={selectId}>Цель</InputLabel>
-                <Select labelId={selectId} value={selectValue} label="Цель" onChange={onSelectChange} input={<OutlinedInput label="Цель" />} size="small">
-                    <MenuItem divider value="web">
-                        <ListItemText>URL</ListItemText>
-                    </MenuItem>
-                    <MenuItem divider value="note">
-                        <ListItemText>Заметка</ListItemText>
-                    </MenuItem>
-                </Select>
-            </FormControl>
-            <OkButton onClick={onSave} />
-            <CloseButton onClick={onClose} />
+            <Box className="ClosableLinkForm__controls_wrapper">
+                {selectValue === "note" && <SelectNoteButton onClose={onSelectNoteClose} selectedNote={inputURLValue} />}
+                <FormControl className="ClosableLinkForm__select_wrapper">
+                    <InputLabel id={selectId}>Цель</InputLabel>
+                    <Select labelId={selectId} value={selectValue} label="Цель" onChange={onSelectChange} input={<OutlinedInput label="Цель" />} size="small">
+                        <MenuItem divider value="web">
+                            <ListItemText>URL</ListItemText>
+                        </MenuItem>
+                        <MenuItem divider value="note">
+                            <ListItemText>Заметка</ListItemText>
+                        </MenuItem>
+                    </Select>
+                </FormControl>
+                <Box className="ClosableLinkForm__result_buttons">
+                    <OkButton onClick={onSave} />
+                    <CloseButton onClick={onClose} />
+                </Box>
+            </Box>
         </Box>
     );
 }

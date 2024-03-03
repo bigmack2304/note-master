@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ClosableMultiLineTextInput } from "../ClosableMultiLineTextInput/ClosableMultiLineTextInput";
 import { NoteCode } from "0-shared/components/NoteCode/NoteCode";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
@@ -48,6 +48,12 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
 
     // вычесляем дополнительгые классы для заголовка
     let codeDopClasses = genCodeDopClasses(isNoteEdit);
+
+    useEffect(() => {
+        if (!editable) {
+            setIsEdit(false);
+        }
+    }, [editable]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

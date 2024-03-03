@@ -1,0 +1,61 @@
+.MuiList-root.SelectNoteButton__dialog_list {
+    border-radius: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    width: clamp(0px, 1000px, 100%);
+}
+
+.SelectNoteButton__dialog_list > .SelectNoteButton__notes {
+    height: 100%;
+    overflow: hidden;
+    align-items: flex-start;
+}
+
+.SelectNoteButton__noteSelector {
+    border-radius: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.SelectNoteButton__noteSelector .MuiFormControl-root {
+    height: 100%;
+
+    .MuiFormGroup-root {
+        overflow-y: auto;
+        max-height: 100%;
+        flex-wrap: nowrap;
+        flex-direction: column;
+    }
+}
+
+.SelectNoteButton__filter_item:nth-child(n + 2) {
+    margin-top: 15px;
+}
+
+.SelectNoteButton__dialog_list .MuiAccordionSummary-content {
+    align-items: center;
+    gap: 10px;
+}
+
+.SelectNoteButton__dialog_list .SelectNoteButton__tagSelect {
+    width: 100%;
+}
+
+.SelectNoteButton__dialog_window .MuiFormLabel-root {
+    padding-left: 10px;
+}
+
+.SelectNoteButton__dialog_window .MuiRadio-root.Mui-checked .MuiSvgIcon-root {
+    color: #288cef;
+}
+
+.SelectNoteButton__note_find_input {
+    width: 100%;
+}
+
+.SelectNoteButton__tag_find_input {
+    width: 100%;
+}

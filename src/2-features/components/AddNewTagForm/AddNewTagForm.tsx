@@ -13,7 +13,7 @@ type TAddNewTagFormProps = {
 };
 
 /**
- * список всех тегов с возможностью их
+ * компонент с формай для добавления новых тегов в проект
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
 function AddNewTagForm({ addClassNames = [] }: TAddNewTagFormProps) {

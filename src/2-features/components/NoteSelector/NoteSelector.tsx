@@ -1,16 +1,18 @@
 import React, { useState, useId } from "react";
-import { List, ListItem, FormControlLabel, RadioGroup, FormLabel, FormControl, Radio } from "@mui/material";
+import { List, ListItem, FormControlLabel, RadioGroup, FormLabel, FormControl, Radio, Divider } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useNotes } from "0-shared/hooks/useNotes";
 import * as styles from "./NoteSelectorStyles";
 import type { IDataTreeNote } from "0-shared/types/dataSave";
+import { NoteTagList } from "../NoteTagList/NoteTagList";
 
 type TNoteSelectorProps = {
     addClassNames?: string[];
     sortName?: string;
     onSelect?: (value: string) => void;
     defaultValue?: string;
+    sortTags?: string[];
 };
 
 type TRadioData = {
@@ -25,7 +27,7 @@ type TRadioData = {
  * @prop onSelect - вызывается при выборе какойто заметки
  * @prop defaultValue - выбраннная заметка по дефолту (id)
  */
-function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValue = "" }: TNoteSelectorProps) {
+function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValue = "", sortTags = [] }: TNoteSelectorProps) {
     const defaultClassName = "NoteSelector";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();
@@ -46,9 +48,21 @@ function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValu
 
     if (allTags) {
         prepareAllNotes = Object.values(allTags);
+        // сортировка по имяни
         prepareAllNotes = prepareAllNotes.filter((note) => {
+            if (note.id === noteSelect) return true;
             if (note.name.includes(sortName)) return true;
             return false;
+        });
+
+        // сортировка по тегам
+        prepareAllNotes = prepareAllNotes.filter((note) => {
+            if (sortTags.length === 0) return true;
+            if (note.id === noteSelect) return true;
+            for (let sortTag of sortTags) {
+                if (note.tags && !note.tags.includes(sortTag)) return false;
+            }
+            return true;
         });
     }
 
@@ -60,15 +74,17 @@ function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValu
     return (
         <List className={genClassName} sx={styles.dialogInnerListStyle(themeValue)}>
             {isTagsLoading ? (
-                <CircularProgress sx={styles.loaderStyle()} />
+                <CircularProgress />
             ) : (
                 <FormControl>
                     <FormLabel id={formControlId}>Выбор Заметки</FormLabel>
+                    <Divider />
                     <RadioGroup aria-labelledby={formControlId} name="список заметок" onChange={radioChangeEvent} value={noteSelect}>
                         {prepareAllNotes.map((note) => {
                             return (
                                 <ListItem key={note.id} divider className="NoteSelector__Item">
                                     <FormControlLabel value={JSON.stringify({ id: note.id, name: note.name })} control={<Radio />} label={note.name} />
+                                    <NoteTagList noteTags={note.tags ?? []} isNoteEdit={false} />
                                 </ListItem>
                             );
                         })}

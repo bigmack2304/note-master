@@ -71,7 +71,7 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
     return (
         <List className={genClassName} sx={styles.dialogInnerListStyle(themeValue)}>
             {isTagsLoading ? (
-                <CircularProgress sx={styles.loaderStyle()} />
+                <CircularProgress />
             ) : (
                 prepareAllTags.map((tag) => {
                     return (

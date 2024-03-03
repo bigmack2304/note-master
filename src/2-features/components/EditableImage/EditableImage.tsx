@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NoteImageEditDialog } from "../NoteImageEditDialog/NoteImageEditDialog";
 import { NoteImageZoomable } from "../NoteImageZoomable/NoteImageZoomable";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
@@ -47,6 +47,12 @@ function EditableImage({ editable = false, addClassNames = [], componentData }: 
     let textDopClasses = styles.genTextDopClasses({
         isEdit: isNoteEdit,
     });
+
+    useEffect(() => {
+        if (!editable) {
+            setIsEdit(false);
+        }
+    }, [editable]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
