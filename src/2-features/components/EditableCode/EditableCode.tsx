@@ -37,7 +37,7 @@ const genCodeDopClasses = (isEdit: boolean) => {
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function EditableCode({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableCodeProps) {
-    const [isEdit, setIsEdit] = useState(editable);
+    const [isEdit, setIsEdit] = useState(false);
     const [codeValue, setCodeValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();

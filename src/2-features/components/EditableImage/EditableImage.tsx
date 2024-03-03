@@ -25,7 +25,7 @@ type TEditableImageProps = {
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function EditableImage({ editable = false, addClassNames = [], componentData }: TEditableImageProps) {
-    const [isEdit, setIsEdit] = useState(editable);
+    const [isEdit, setIsEdit] = useState(false);
     const [isImageLoadDb, setIsImageLoadDb] = useState(false);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();

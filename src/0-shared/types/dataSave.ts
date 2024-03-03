@@ -14,7 +14,14 @@ interface IDataTreeNode {
 }
 
 // типы всех компонентов
-type TAllComponents = "header" | "text" | "code" | "image" | "link";
+type TAllComponents = "header" | "text" | "code" | "image" | "link" | "video";
+
+// варианты своиств в зависимости от компонента внутри заметки
+// заголовок
+interface TBodyComponentVideo extends IDataTreeNode {
+    component: "video";
+    value: string;
+}
 
 // варианты своиств в зависимости от компонента внутри заметки
 // заголовок
@@ -66,7 +73,7 @@ interface TBodyComponentImage extends IDataTreeNode {
 /**
  * тип поля body в заметке
  */
-type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink;
+type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink | TBodyComponentVideo;
 
 /**
  * цвета тега
@@ -164,4 +171,5 @@ export type {
     IDataImages,
     TBodyComponentImage,
     TBodyComponentLink,
+    TBodyComponentVideo,
 };

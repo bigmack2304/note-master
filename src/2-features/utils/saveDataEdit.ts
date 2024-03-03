@@ -14,6 +14,7 @@ import type {
     TBodyComponentHeader,
     TBodyComponentCode,
     TBodyComponentLink,
+    TBodyComponentVideo,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -23,6 +24,7 @@ import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentT
 import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
 import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
 import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
+import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponentVideo";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -700,6 +702,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
                 break;
             case "link":
                 component = new saveDataComponentLink();
+                break;
+            case "video":
+                component = new saveDataComponentVideo();
                 break;
             default:
                 component = undefined;

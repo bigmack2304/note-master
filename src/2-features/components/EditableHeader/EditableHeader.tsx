@@ -70,7 +70,7 @@ const genTextDopClasses = (data: { isEdit: boolean; textAligin: TBodyComponentHe
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableHeaderProps) {
-    const [isEdit, setIsEdit] = useState(editable);
+    const [isEdit, setIsEdit] = useState(false);
     const [headerValue, setHeaderValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();

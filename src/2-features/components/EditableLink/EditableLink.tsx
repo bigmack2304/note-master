@@ -43,7 +43,7 @@ const genTextDopClasses = (data: { isEdit: boolean; isBg: boolean }) => {
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function EditableLink({ editable = false, addClassNames = [], componentData }: TEditableLinkProps) {
-    const [isEdit, setIsEdit] = useState(editable);
+    const [isEdit, setIsEdit] = useState(false);
     const [linkValue, setLinkValue] = useState(componentData.value);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();

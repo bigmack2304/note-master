@@ -39,7 +39,8 @@
 
 //пользовательский пустрой контент
 .note .note__content[class~="text_empty"],
-.note .note__content[class~="img_empty"] {
+.note .note__content[class~="img_empty"],
+.note .note__content[class~="video_empty"] {
     width: 100%;
 }
 
@@ -78,6 +79,12 @@
 
 // картинки
 .note .note__image {
+    align-self: center;
+    width: 70%;
+}
+
+// видео
+.note .note__video {
     align-self: center;
     width: 70%;
 }

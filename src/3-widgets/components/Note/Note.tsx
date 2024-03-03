@@ -14,6 +14,7 @@ import { EditableText } from "2-features/components/EditableText/EditableText";
 import { EditableCode } from "2-features/components/EditableCode/EditableCode";
 import { EditableImage } from "2-features/components/EditableImage/EditableImage";
 import { EditableLink } from "2-features/components/EditableLink/EditableLink";
+import { EditableVideo } from "2-features/components/EditableVideo/EditableVideo";
 
 type TNoteProps = {
     addClassNames?: string[];
@@ -46,8 +47,8 @@ const noteEditBlockStyles = (theme: PaletteMode) => {
 function Note({ addClassNames = [] }: TNoteProps) {
     const isEdit = useAppSelector((store) => store.noteEditData.isEdit);
     const defaultClassName = "note";
-    isEdit && addClassNames.push("note-edit");
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    isEdit && addClassNames.push("note-edit");
     const themeValue = useTemeMode();
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);
     const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
@@ -104,6 +105,9 @@ function Note({ addClassNames = [] }: TNoteProps) {
                           }
                           if (noteComponent.component === "link") {
                               return <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />;
+                          }
+                          if (noteComponent.component === "video") {
+                              return <EditableVideo addClassNames={["note__video", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />;
                           }
                       })
                     : null}

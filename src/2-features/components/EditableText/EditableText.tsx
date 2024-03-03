@@ -66,7 +66,7 @@ const genTextDopClasses = (data: {
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
 function EditableText({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableTextProps) {
-    const [isEdit, setIsEdit] = useState(editable);
+    const [isEdit, setIsEdit] = useState(false);
     const [textValue, setTextValue] = useState(defaultText);
     const [isTextEditDialog, setIsTextEditDialog] = useState(false);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
