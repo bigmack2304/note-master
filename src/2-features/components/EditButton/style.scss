@@ -1,0 +1,9 @@
+.NoteEditButton {
+    padding: "5px";
+
+    &:not(.Mui-disabled).NoteEditButton--checked .MuiSvgIcon-root {
+        stroke: black;
+        stroke-width: 2%;
+        fill: #ff4d00;
+    }
+}

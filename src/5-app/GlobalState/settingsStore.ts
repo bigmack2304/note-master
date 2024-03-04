@@ -5,11 +5,13 @@ import { get_stprage_data, storage_save_value } from "2-features/utils/appLoacal
 interface ISettingsSlice {
     highlightingTagsInForms: boolean;
     treeViewWidth: number;
+    fsTools: boolean;
 }
 
 const initialState: ISettingsSlice = {
     highlightingTagsInForms: false, // подцветка тегов в формах
     treeViewWidth: 250, // ширина окна с заметками и папками
+    fsTools: false, // дополнительные инструменты для понели фаиловой струткуры
 };
 
 // в начале загружаем значения из localStorage
@@ -17,6 +19,7 @@ init_values();
 function init_values() {
     initialState.highlightingTagsInForms = get_stprage_data().highlightingTagsInForms;
     initialState.treeViewWidth = get_stprage_data().treeViewWidth;
+    initialState.fsTools = get_stprage_data().fsTools;
 }
 
 /**
@@ -34,10 +37,14 @@ const settingsSlice = createSlice({
             state.treeViewWidth = action.payload;
             storage_save_value("treeViewWidth", action.payload);
         },
+        setFsTools: (state, action: PayloadAction<ISettingsSlice["fsTools"]>) => {
+            state.fsTools = action.payload;
+            storage_save_value("fsTools", action.payload);
+        },
     },
 });
 
-export const { setHGLGTagsInForms, setTreeViewWidth } = settingsSlice.actions;
+export const { setHGLGTagsInForms, setTreeViewWidth, setFsTools } = settingsSlice.actions;
 export const { reducer } = settingsSlice;
 export { settingsSlice };
 export type { ISettingsSlice };

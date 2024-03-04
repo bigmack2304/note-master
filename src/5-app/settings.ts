@@ -5,11 +5,12 @@ const MAX_TAG_LENGTH = 10; // максимальная длинна имяни �
 
 // события для асинхронных редьюсеров в saveDataInspectSlice
 // REJECT не обязательно значит что произошла ошибка, возможно не прошла какаято валидация
+const EV_NAME_BUTTON_CLOSE_TREE_FOLDERS = "buttonCloseTreeFolders"; // закрыть все папки в окне с папками и заметками
 const EV_NAME_SAVE_DATA_REDUCER_START = "saveDataInspectReducerSart"; // начало операции
 const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // ошибка
 const EV_NAME_SAVE_DATA_REDUCER_END = "saveDataInspectReducerEnd"; // конец редьюсера, неважно ошибка или успех
 const EV_NAME_SAVE_DATA_REDUCER_FULFILLED = "saveDataInspectReducerFulfield"; // успех
-const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote";
+const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // переход по ссылке на заметку
 
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
@@ -62,4 +63,5 @@ export {
     NOTE_STATUS_COMPLETE,
     NOTE_STATUS_NO_COMPLETE,
     EV_NAME_LINK_NOTE_REDIRECT,
+    EV_NAME_BUTTON_CLOSE_TREE_FOLDERS,
 };

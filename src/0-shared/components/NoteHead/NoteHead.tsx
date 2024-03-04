@@ -16,6 +16,9 @@ type TNoteHeadProps = {
 const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
     return {
         display: "inline-block",
+        whiteSpace: "normal",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
 
         "&.NoteHead.text_empty": {
             display: "flex",

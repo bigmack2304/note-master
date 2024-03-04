@@ -49,7 +49,7 @@ function NewTagButton({ addClassNames = [] }: TNewTagButtonProps) {
 
     return (
         <>
-            <IconButton className={genClassName} aria-label="упраление тегами" title={"упраление тегами"} size="small" onClick={onButtonClick} disabled={!isProjectOpen}>
+            <IconButton className={genClassName} aria-label="упраление тегами" title={"Упраление тегами"} size="small" onClick={onButtonClick} disabled={!isProjectOpen}>
                 <LocalOfferIcon fontSize="small" />
             </IconButton>
             <DialogWindow addClassNames={["NewTag_window"]} headerText="Упраление тегами" isOpen={isDialogOpen} onClose={onDialogClose}>

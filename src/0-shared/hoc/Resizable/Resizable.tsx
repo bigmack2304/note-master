@@ -2,11 +2,12 @@ import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from
 import { GetProps } from "0-shared/utils/typeHelpers";
 import { Box } from "@mui/material";
 import { useEventListener } from "0-shared/hooks/useEventListener";
-import { resizableStyle, resizableControllerStyle, slotStyle } from "./ResizableStyle";
+import { resizableStyle, resizableControllerStyle } from "./ResizableStyle";
 import { stringAddClass, stringRemoveClass } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { firstCallerDelayCallback } from "0-shared/utils/decorators";
 import type { ComponentType } from "react";
+import "./style.scss";
 
 interface IResizableProps<W extends {} = {}> {
     WrappedComponent: ComponentType<W>;
@@ -179,9 +180,7 @@ function Resizable<WrappedProps extends {}>({
 
     return (
         <Box component={"div"} className={genClassName} sx={resizableStyle(minSize)} ref={wrapperRef}>
-            <Box className={"Resizable__contentSlot"} sx={slotStyle()}>
-                {renderWrapped()}
-            </Box>
+            <Box className={"Resizable__contentSlot"}>{renderWrapped()}</Box>
             <Box className={resizableControllerClass} sx={resizableControllerStyle(themeValue)} onPointerDown={onControllerDown}></Box>
             {isContrlollerDown.current && <Box className="Resizable__ghost" ref={ghostRef}></Box>}
         </Box>

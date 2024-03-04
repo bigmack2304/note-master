@@ -19,7 +19,7 @@ import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeA
 import { TreeItemMoveDialog } from "2-features/components/TreeItemMoveDialog/TreeItemMoveDialog";
 import { useDataTree } from "0-shared/hooks/useDataTree";
 import { useEventListener } from "0-shared/hooks/useEventListener";
-import { EV_NAME_LINK_NOTE_REDIRECT } from "5-app/settings";
+import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
 
 type TFolderTreeViewerProps = {};
 
@@ -45,14 +45,16 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [isNewNoteDialogOpen, setIsNewNoteDialogOpen] = useState<boolean>(false);
     const [isMoveDialogOpen, setIsMoveDialogOpen] = useState<boolean>(false);
     const [treeNodeSelect, setTreeNodeSelect] = useState<string>("");
+    const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
+    const fsTools = useAppSelector((state) => state.settingsData.fsTools);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
 
-    // клик по ноде
+    // клик по ноде (для кастомных элементов дерева)
     //TODO: возможно потом стоит переделать это на onNodeSelect
     const onClickNode = (nodeData: TchildrenType) => {
         if (isDataTreeFolder(nodeData)) {
@@ -65,9 +67,24 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         }
     };
 
+    // выбор ноды
     const ontreeNodeSelect = (event: React.SyntheticEvent, nodeIds: string) => {
         setTreeNodeSelect(nodeIds);
     };
+
+    // разворачивание ноды
+    const onNodeExpand = (event: React.SyntheticEvent, nodeIds: string[]) => {
+        //TODO: expanded: [] в TreeViewSettings сворачивает всю фаиловую структуру
+        setExpandedNodes(nodeIds);
+    };
+
+    // при нажатии на кнопку закрыть папки, генерируется событие, реагируем на него
+    useEventListener({
+        eventName: EV_NAME_BUTTON_CLOSE_TREE_FOLDERS,
+        onEvent: (e: CustomEvent) => {
+            setExpandedNodes([]);
+        },
+    });
 
     // при переходе по ссылке на заметку, переключаем тут активную ноду
     useEventListener({
@@ -172,7 +189,6 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         dispatch(moveFolderOrNote({ muvedNodeID: clickedNodeDataRef.current.id, muveToID: objFolder.id }));
     };
 
-    //TODO: expanded: [] в TreeViewSettings сворачивает всю фаиловую структуру
     return (
         <Box sx={FolderTreeViewerStyle}>
             <TreeView
@@ -181,6 +197,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                 defaultExpandIcon={<ChevronRightIcon />}
                 selected={treeNodeSelect}
                 onNodeSelect={ontreeNodeSelect}
+                expanded={expandedNodes}
+                onNodeToggle={onNodeExpand}
             >
                 {RenderTreeAsFile({
                     node: dataTree,

@@ -4,11 +4,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface IEditDataSlice {
     isEdit: boolean;
     isLoading: boolean;
+    isFsHide: boolean;
 }
 
 const initialState: IEditDataSlice = {
-    isEdit: false,
-    isLoading: false,
+    isEdit: false, // включенли режим редактирования заметок
+    isLoading: false, // сохранение удаление, перезапись в db , все кейсы когда нужно показать загрузку
+    isFsHide: false, // скрыть боковцю понель навигации
 };
 
 /**
@@ -24,10 +26,13 @@ const editDataSlice = createSlice({
         setIsLoading: (state, action: PayloadAction<IEditDataSlice["isLoading"]>) => {
             state.isLoading = action.payload;
         },
+        toggleFsHide: (state) => {
+            state.isFsHide = !state.isFsHide;
+        },
     },
 });
 
-export const { toggleIsEdit, setIsLoading } = editDataSlice.actions;
+export const { toggleIsEdit, setIsLoading, toggleFsHide } = editDataSlice.actions;
 export const { reducer } = editDataSlice;
 export { editDataSlice };
 export type { IEditDataSlice };

@@ -124,7 +124,7 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
             <Box onClick={handleExpansionClick} component={"div"} className={props.classes.iconContainer}>
                 {icon}
             </Box>
-            <Box onClick={handleIconClick.bind(null, props.nodeType)}>
+            <Box onClick={handleIconClick.bind(null, props.nodeType)} sx={{ lineHeight: "0" }}>
                 {props.nodeType && props.nodeType === "folder" ? <FolderIcon fontSize="small" sx={IconFolderStyle()} /> : <ContentPasteIcon fontSize="small" />}
             </Box>
             <Typography className={NodeNameClass} onClick={handleSelectionClick} component="span" ref={nameRef}>
