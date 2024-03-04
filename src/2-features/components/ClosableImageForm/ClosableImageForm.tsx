@@ -87,67 +87,6 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
     return (
         <>
             <Box className={genClassName} component={"div"} sx={styles.сlosableImageFormStyles(themeValue)}>
-                {/* <Box className="ClosableImageForm__inputs" sx={styles.inputsStyles(themeValue)}>
-                {selectValue === "URL" ? (
-                    <TextField
-                        className="ClosableImageForm__input_Url"
-                        value={inputUrl}
-                        placeholder="URL"
-                        onChange={onInputUrlChange}
-                        sx={styles.inputUrlStyle()}
-                        onKeyDown={onKeyDown}
-                        variant="outlined"
-                        label="URL"
-                        autoFocus
-                    />
-                ) : (
-                    <Box sx={styles.loadLocalInputsStyles(themeValue)} className="ClosableImageForm__inputs_local">
-                        <Typography className="ClosableImageForm__local_name" sx={styles.fileNameStyles(themeValue)}>
-                            {imageName}
-                        </Typography>
-                    </Box>
-                )}
-                {selectValue === "LOCAL" && (
-                    <Button
-                        className="ClosableImageForm__button_local"
-                        color="primary"
-                        aria-label="Выбрать фаил"
-                        size="small"
-                        variant="contained"
-                        onClick={onLoadLocalClick}
-                        sx={styles.loadButtonStyle()}
-                    >
-                        Выбрать фаил
-                    </Button>
-                )}
-                <FormControl>
-                    <InputLabel id={selectLabelID}>Изображение</InputLabel>
-                    <Select
-                        labelId={selectLabelID}
-                        value={selectValue}
-                        label="Изображение"
-                        onChange={onSelectChange}
-                        input={<OutlinedInput label="Изображение" />}
-                        size="small"
-                        sx={styles.selectStyles(themeValue)}
-                        renderValue={(selected) => <Typography variant="body1">{selectValuesNames[selected]}</Typography>}
-                    >
-                        <MenuItem divider value="LOCAL">
-                            <ListItemIcon>
-                                <DevicesIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>{selectValuesNames["LOCAL"]}</ListItemText>
-                        </MenuItem>
-                        <MenuItem divider value="URL">
-                            <ListItemIcon>
-                                <AttachFileIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>{selectValuesNames["URL"]}</ListItemText>
-                        </MenuItem>
-                    </Select>
-                </FormControl>
-                <InputImage ref={inputImageRef} loadCallback={onLocalLoad} />
-            </Box> */}
                 {selectValue === "URL" ? (
                     <TextField
                         className="ClosableImageForm__input_Url"
@@ -161,7 +100,9 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
                     />
                 ) : (
                     <Box className="ClosableImageForm__name_wrapper">
-                        <Typography className="ClosableImageForm__local_name">{imageName}</Typography>
+                        <Typography className="ClosableImageForm__local_name" title={imageName}>
+                            {imageName}
+                        </Typography>
                     </Box>
                 )}
                 <Box className="ClosableImageForm__controls_wrapper">

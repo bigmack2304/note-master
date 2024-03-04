@@ -3,7 +3,7 @@ import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWin
 import { List, ListItem, ListItemText, TextField } from "@mui/material";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 import type { TBodyComponentLink } from "0-shared/types/dataSave";
-import * as styles from "./NoteLinkEditDialogStyles";
+import "./style.scss";
 
 type TNoteLinkEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -44,7 +44,7 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
 
     return (
         <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <List sx={styles.listStyles()}>
+            <List className="NoteLinkEditDialog__list">
                 <ListItem divider>
                     <ListItemText>Фон</ListItemText>
                     <SwitchCustom onChange={onSwithBg} checked={isBg} />
@@ -55,7 +55,7 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Текст</ListItemText>
-                    <TextField value={labelVal} label="Текст" onChange={onInputChange} multiline maxRows={3} variant="outlined" sx={styles.labelInputStyles()} />
+                    <TextField className="NoteLinkEditDialog__desc_text" value={labelVal} label="Текст" onChange={onInputChange} multiline maxRows={3} variant="outlined" />
                 </ListItem>
             </List>
         </DialogWindowAlt>

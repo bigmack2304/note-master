@@ -1,5 +1,6 @@
 import type { TTagColors } from "0-shared/types/dataSave";
 
+const MIN_FULLSCREEN_W = 400; // минимальная ширина fullscreen блоков
 const MAX_TAG_LENGTH = 10; // максимальная длинна имяни тега
 
 // события для асинхронных редьюсеров в saveDataInspectSlice

@@ -1,0 +1,46 @@
+@import "5-app/settings";
+
+.FullScreenImagePrev {
+    background-color: #000000b3;
+    backdrop-filter: blur(5px);
+    width: 100dvw;
+    min-width: $MIN-FULLSCREEN-W;
+    height: 100dvh;
+    display: flex;
+    z-index: 5555;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.FullScreenImagePrev .MuiPaper-root {
+    background-color: initial;
+    align-items: center;
+    overflow: hidden;
+}
+
+.FullScreenImagePrev__controls {
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px #00000070 solid;
+    width: 100%;
+    padding: 10px;
+}
+
+.FullScreenImagePrev__content {
+    margin: 10px;
+    flex-grow: 1;
+    overflow: auto;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.FullScreenImagePrev__img {
+    object-fit: contain;
+    max-width: fit-content;
+    min-width: 340px;
+    width: 100%;
+    height: auto;
+    max-height: 85dvh;
+}

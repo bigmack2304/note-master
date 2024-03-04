@@ -28,8 +28,17 @@
     justify-content: space-around;
 }
 
-.ClosableLinkForm__img_name {
+.ClosableLinkForm__link_name_wrapper {
+    width: 100%;
+    min-width: 30px;
+    overflow: hidden;
+}
+
+.ClosableLinkForm__link_name {
     text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .ClosableLinkForm__select_wrapper {

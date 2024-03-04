@@ -84,6 +84,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
     const onMenuClear = () => {
         setClickData(null);
         setUrlValue("");
+        setIsPause(false);
 
         if (!componentData || !currentNoteData) return;
         dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));

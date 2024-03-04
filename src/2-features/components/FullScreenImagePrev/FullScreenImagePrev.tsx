@@ -3,6 +3,7 @@ import { Dialog } from "@mui/material";
 import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import * as styles from "./FullScreenImagePrevStyles";
+import "./style.scss";
 
 type TFullScreenImagePrevprops = {
     addClassNames?: string[];
@@ -44,14 +45,15 @@ function FullScreenImagePrev({ addClassNames = [], onClose, imageSrc, imageAlt }
     };
 
     return (
-        <Dialog open onClick={handleClose} className={genClassName} sx={styles.backdropStyle()} fullScreen onContextMenu={onContextMenu}>
+        <Dialog open onClick={handleClose} className={genClassName} fullScreen onContextMenu={onContextMenu}>
             <div className={"FullScreenImagePrev__controls"} onClick={onPanelClick} style={styles.controlsStyle(themeValue)}>
                 <CloseButton onClick={handleClose} />
             </div>
-            <div className={"FullScreenImagePrev__content"} style={styles.contentStyle()} ref={imageWrapperRef}>
+            <div className={"FullScreenImagePrev__content"} ref={imageWrapperRef}>
                 <img
                     src={imageSrc}
                     alt={imageAlt}
+                    className={"FullScreenImagePrev__img"}
                     onClick={onImgClick}
                     style={styles.imgStyle({ isZoom, wrapper: imageWrapperRef.current, img: imageRef.current })}
                     ref={imageRef}

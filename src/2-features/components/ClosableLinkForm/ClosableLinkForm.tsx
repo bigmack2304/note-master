@@ -82,8 +82,8 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
                     autoFocus
                 />
             ) : (
-                <Box sx={{ width: "100%" }}>
-                    <Typography variant="body1" component={"p"} className="ClosableLinkForm__img_name">
+                <Box className="ClosableLinkForm__link_name_wrapper">
+                    <Typography variant="body1" component={"p"} className="ClosableLinkForm__link_name" title={targetNote}>
                         {targetNote}
                     </Typography>
                 </Box>

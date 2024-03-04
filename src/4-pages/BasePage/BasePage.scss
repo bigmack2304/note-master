@@ -1,7 +1,9 @@
+@import "5-app/settings";
+
 .BasePage {
     height: 100dvh;
     width: 100dvw;
-    min-width: 340px;
+    min-width: $MIN-FULLSCREEN-W;
     overflow: hidden;
     display: flex;
     flex-direction: column;
