@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppSelector } from "./useAppSelector";
 import { useAppDispatch } from "./useAppDispatch";
 import { updateNoteComponentsOrder } from "5-app/GlobalState/saveDataInspectStore";
+import { useEventListener } from "./useEventListener";
 
 type TUseNoteComponentDragPatams = {
     ref: React.RefObject<HTMLElement>;
@@ -85,7 +86,75 @@ function useNoteComponentDrag({ ref, dragId }: TUseNoteComponentDragPatams) {
         }
     };
 
-    return { onDragStart, onDragEnd, onDragLeave, onDragDrop, onDragOver };
+    /////////////////////////////////////////////////////////////////////////
+    const isPointerDown = useRef(false);
+    const movedElement = useRef<HTMLElement>(null);
+    const overElement = useRef<HTMLElement>(null);
+
+    const onTouchStart = (e: React.PointerEvent) => {
+        //if (!isNoteEdit) return;
+        // if (!ref.current) return;
+        //ref.current.dispatchEvent(new DragEvent("ragStart", { bubbles: true, dataTransfer: new DataTransfer() }));
+        //console.dir(e);
+        const target = (e.target as HTMLElement).parentElement as HTMLElement;
+
+        (movedElement.current as any) = target;
+        isPointerDown.current = true;
+    };
+
+    useEventListener({
+        eventName: "pointermove",
+        onEvent: (e: PointerEvent) => {
+            //if (!isNoteEdit) return;
+            // if (!ref.current) return;
+            //e.stopPropagation();
+            // e.preventDefault();
+            const target = movedElement.current;
+            if (!isPointerDown.current) return;
+            if (!target) return;
+
+            const overElem = document.elementFromPoint(e.clientX, e.clientY - 8) as HTMLElement | null;
+            if (overElem) {
+                //TODO: тут нужно подумать
+                if (!Object.is(overElem, overElement.current)) {
+                    overElement.current?.classList.remove("dragZoneOk");
+                    (overElement.current as any) = overElem;
+                }
+                overElement.current?.classList.add("dragZoneOk");
+            }
+
+            if (!target.classList.contains("dragging")) {
+                target.classList.add("dragging");
+                target.style.position = "fixed";
+                //target.style.touchAction = "none";
+            }
+
+            target.style.left = `${e.clientX - target.clientWidth / 2}px`;
+            target.style.top = `${e.clientY - target.clientHeight + (target.clientHeight - 5)}px`;
+            console.log(overElement.current);
+        },
+    });
+
+    useEventListener({
+        eventName: "pointerup",
+        onEvent: (e: PointerEvent) => {
+            const target = movedElement.current;
+            if (!target) return;
+
+            if (target.classList.contains("dragging")) target.classList.remove("dragging");
+            target.style.position = "initial";
+            target.style.touchAction = "initial";
+            //console.dir(e);
+            console.log(document.elementFromPoint(e.clientX, e.clientY));
+            (movedElement.current as any) = null;
+            isPointerDown.current = false;
+
+            overElement.current?.classList.remove("dragZoneOk");
+            (overElement.current as any) = null;
+        },
+    });
+
+    return { onDragStart, onDragEnd, onDragLeave, onDragDrop, onDragOver, onTouchStart };
 }
 
 export { useNoteComponentDrag };

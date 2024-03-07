@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
-import Typography from "@mui/material/Typography";
+import { Typography, Box } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import * as styles from "./NoteHeadStyles";
 import "./styles.scss";
+import { is_multiTuch } from "0-shared/utils/getSystemStyle";
 
 type TNoteHeadProps = {
     addClassNames?: string[];
@@ -30,7 +31,7 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
     const ref = useRef<HTMLHeadElement>(null);
-    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
+    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd, onTouchStart } = useNoteComponentDrag({ ref, dragId });
 
     // если children пуст, то добавляем в Typography класс text_empty
     if (!isChildren) {
@@ -40,22 +41,25 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Typography
-            {...typographySettings}
-            className={genClassName}
-            variant={styles.typographyVariant(addClassNames)}
-            onContextMenu={onContextMenu}
-            onClick={onClick}
-            sx={styles.typographyStyle(themeMode)}
-            ref={ref}
-            onDragStart={onDragStart}
-            onDrop={onDragDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDragEnd={onDragEnd}
-        >
-            {children}
-        </Typography>
+        <Box>
+            {true && <div style={{ width: "100%", height: "30px", backgroundColor: "red", touchAction: "none" }} onPointerDown={onTouchStart}></div>}
+            <Typography
+                {...typographySettings}
+                className={genClassName}
+                variant={styles.typographyVariant(addClassNames)}
+                onContextMenu={onContextMenu}
+                onClick={onClick}
+                sx={styles.typographyStyle(themeMode)}
+                ref={ref}
+                onDragStart={onDragStart}
+                onDrop={onDragDrop}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDragEnd={onDragEnd}
+            >
+                {children}
+            </Typography>
+        </Box>
     );
 }
 

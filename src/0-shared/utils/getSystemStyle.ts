@@ -14,4 +14,16 @@ function isLight() {
     return mediaQuery.matches;
 }
 
-export { isDark, isLight };
+/*
+    возврощает true если на устройстве мультитач
+    (для пк в 98% вернет false, тк мало у кого сенсорный экран)
+*/
+function is_multiTuch(): boolean {
+    if (window.navigator.maxTouchPoints > 0) {
+        // > 1
+        return true;
+    }
+    return false;
+}
+
+export { isDark, isLight, is_multiTuch };
