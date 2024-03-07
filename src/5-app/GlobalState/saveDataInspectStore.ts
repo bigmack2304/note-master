@@ -37,6 +37,7 @@ import {
     updateNoteComponentLinkSettings as componentLinkSettings,
     updateNodeLink,
     updateNodeImage,
+    updNoteComponentsOrder,
 } from "2-features/utils/saveDataEdit";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
@@ -283,6 +284,48 @@ const saveDataInspectSlice = createAppSlice({
                         payload: { updatedNode },
                     } = action;
                     if (!state.currentNote || state.currentNote.id !== updatedNode.id || !isDataTreeNote(updatedNode)) return;
+
+                    state.currentNote = updatedNode;
+                },
+            }
+        ),
+        // меняет порядок компонентов в заметке
+        updateNoteComponentsOrder: create.asyncThunk<
+            { noteId: string; componentDragId: string; toComponentDragId: string },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
+            async (payload, thunkApi) => {
+                const dataTree = await getDataTreeDB();
+
+                if (!dataTree) return;
+
+                const { targetNote: updatedNode, resultBool } = await updNoteComponentsOrder(dataTree, payload.noteId, payload.componentDragId, payload.toComponentDragId);
+
+                if (!resultBool) {
+                    throw new Error();
+                }
+
+                if (updatedNode) {
+                    return { updatedNode: updatedNode };
+                }
+            },
+            {
+                pending: (state) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_START));
+                },
+                rejected: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                },
+                fulfilled: (state, action) => {
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
+                    if (!action.payload || !action.payload.updatedNode) return;
+                    let {
+                        payload: { updatedNode },
+                    } = action;
+                    if (!isDataTreeNote(updatedNode)) return;
 
                     state.currentNote = updatedNode;
                 },
@@ -1161,6 +1204,7 @@ export const {
     updateNoteComponentLink,
     updateNoteComponentLinkSettings,
     redirectNoteComponentLink,
+    updateNoteComponentsOrder,
 } = saveDataInspectSlice.actions;
 export const { reducer } = saveDataInspectSlice;
 export { saveDataInspectSlice };

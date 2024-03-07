@@ -12,7 +12,7 @@ import "./style.scss";
 interface IResizableProps<W extends {} = {}> {
     WrappedComponent: ComponentType<W>;
     wrappedProps?: W;
-    children?: GetProps<W> extends { children: infer C } ? C : undefined;
+    children?: W extends { children?: infer C } ? C : undefined;
     minSize?: number;
     startSize?: number;
     disabled?: boolean;

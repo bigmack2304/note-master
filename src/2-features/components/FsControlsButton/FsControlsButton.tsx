@@ -1,7 +1,6 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import type { SxProps } from "@mui/material";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setFsTools } from "5-app/GlobalState/settingsStore";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
@@ -24,7 +23,6 @@ function FsControlsButton({ onClick = () => {}, addClassNames = [], type }: TFsC
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const dispatch = useAppDispatch();
     const fsTools = useAppSelector((state) => state.settingsData.fsTools);
-    const isProjectOpen = useAppSelector((state) => state.saveDataInspect.isProjectOpen);
 
     if (fsTools) {
         genClassName = genClassName.concat(" ", "FsControlsButton--checked");
@@ -36,15 +34,7 @@ function FsControlsButton({ onClick = () => {}, addClassNames = [], type }: TFsC
     };
 
     return (
-        <IconButton
-            className={genClassName}
-            type={type}
-            aria-label="Инструменты навигации"
-            onClick={onButtonClick}
-            title="Инструменты навигации"
-            size="small"
-            disabled={!isProjectOpen}
-        >
+        <IconButton className={genClassName} type={type} aria-label="Инструменты навигации" onClick={onButtonClick} title="Инструменты навигации" size="small">
             <AccountTreeIcon fontSize="small" />
         </IconButton>
     );

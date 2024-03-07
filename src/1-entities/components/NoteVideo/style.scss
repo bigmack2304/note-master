@@ -1,10 +1,10 @@
-.EditableVideo {
+.NoteVideo {
     width: clamp(10px, 100%, 710px);
     padding: 2px;
     aspect-ratio: 16/9;
 }
 
-.EditableVideo.video_empty {
+.NoteVideo.video_empty {
     display: flex;
     justify-content: center;
     min-height: 3rem;
@@ -12,7 +12,7 @@
     aspect-ratio: initial;
 }
 
-.EditableVideo--pause {
+.NoteVideo.EditableVideo--pause {
     position: relative;
 
     &::before {
@@ -26,12 +26,12 @@
     }
 }
 
-.EditableVideo.video_empty:before {
+.NoteVideo.video_empty:before {
     font-size: 1rem;
     content: "Видео";
     opacity: 50%;
 }
 
-.EditableVideo--editable:hover {
+.NoteVideo.EditableVideo--editable:hover {
     outline: 1px red solid;
 }

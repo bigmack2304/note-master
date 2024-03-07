@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Typography, Box } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { SxProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import type { PaletteMode } from "@mui/material";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import * as styles from "./NoteTextStyles";
+import "./style.scss";
+import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 
 type TNoteTextProps = {
     addClassNames?: string[];
@@ -12,72 +12,7 @@ type TNoteTextProps = {
     onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
     children?: React.ReactNode;
     typographySettings?: GetProps<typeof Typography>;
-};
-
-const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
-    return {
-        display: "inline-block",
-
-        "&.NoteText.text_empty": {
-            display: "flex",
-            justifyContent: "center",
-            minHeight: "3rem",
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            borderRadius: "5px",
-        },
-
-        "&.NoteText.text_empty:before": {
-            fontSize: "1rem",
-            content: "'Текст'",
-            opacity: "50%",
-        },
-
-        "&.NoteText--bg-light": {
-            backgroundColor: THEME_LIGHT_GRAY,
-            padding: "5px",
-            borderRadius: "5px",
-        },
-        "&.NoteText--bg-dark": {
-            backgroundColor: THEME_DARK_GRAY,
-            padding: "5px",
-            borderRadius: "5px",
-        },
-        "&.NoteText--noFormat": {
-            whiteSpace: "break-spaces",
-        },
-        "&.NoteText--font-code": {
-            fontFamily: "monospace",
-        },
-        "&.NoteText--overflowXScroll": {
-            whiteSpace: "pre",
-        },
-        "&.NoteText--editable:hover": {
-            outline: "1px red solid",
-        },
-    } as SxProps;
-};
-
-const noteTextWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
-    return {
-        overflow: "hidden",
-        lineHeight: "0px",
-
-        "&:has(> .NoteText[class*='NoteText--bg'])": {
-            borderRadius: "5px",
-        },
-
-        "&:has(> .NoteText[class*='text_empty'])": {
-            borderRadius: "5px",
-        },
-
-        "&:has(> .NoteText--overflowXScroll)": {
-            overflowX: "auto",
-        },
-
-        "&:has(> .NoteText[class*='NoteText--editable']):hover": {
-            outline: "1px red solid",
-        },
-    } as SxProps;
+    dragId: string;
 };
 
 /**
@@ -87,12 +22,15 @@ const noteTextWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
  * @prop children - компонент можно использовать как обертка для других компонентов.
  * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
+ * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
  */
-function NoteText({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteTextProps) {
+function NoteText({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId }: TNoteTextProps) {
     const defaultClassName = "NoteText";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
+    const ref = useRef<HTMLHeadElement>(null);
+    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
 
     // если children пуст, то добавляем в Typography класс text_empty
     if (!isChildren) {
@@ -102,15 +40,17 @@ function NoteText({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Box className={"NoteText_wrapper"} sx={noteTextWrapperStyle(isChildren, themeMode)}>
-            <Typography
-                {...typographySettings}
-                className={genClassName}
-                variant="body1"
-                onContextMenu={onContextMenu}
-                onClick={onClick}
-                sx={typographyStyle(isChildren, themeMode)}
-            >
+        <Box
+            className={"NoteText_wrapper"}
+            ref={ref}
+            onDragStart={onDragStart}
+            onDrop={onDragDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDragEnd={onDragEnd}
+            sx={styles.wrapperStyle(themeMode)}
+        >
+            <Typography {...typographySettings} className={genClassName} variant="body1" onContextMenu={onContextMenu} onClick={onClick} sx={styles.typographyStyle(themeMode)}>
                 {children}
             </Typography>
         </Box>

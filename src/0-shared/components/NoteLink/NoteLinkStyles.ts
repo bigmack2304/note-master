@@ -2,42 +2,31 @@ import type { PaletteMode, SxProps } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { fontThemeColor } from "2-features/utils/themeStylesOverride";
 
-function linkStyle(isChildren: boolean, themeMode: PaletteMode): SxProps {
+function wrapperStyle(themeMode: PaletteMode): SxProps {
     return {
-        display: "inline-block",
-
-        ...(!isChildren && {
-            minHeight: "3rem",
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            borderRadius: "3px",
-        }),
-
-        "&.NoteLink.text_empty": {
-            display: "flex",
-            justifyContent: "center",
-            minHeight: "3rem",
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            borderRadius: "3px",
-            textDecoration: "none",
+        "&.NoteLink_wrapper.dragZoneOk": {
+            outline: `2px ${themeMode === "light" ? "black" : "white"}  dashed`,
         },
-
-        "&.NoteLink.text_empty:before": {
-            fontSize: "1rem",
-            content: "'Ссылка'",
-            opacity: "50%",
-            color: fontThemeColor(themeMode),
-        },
-
-        "&.NoteLink--editable:hover": {
-            outline: "1px red solid",
-        },
-
-        "&.NoteLink--bg": {
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            padding: "5px",
-            borderRadius: "5px",
+        "&.NoteLink_wrapper.dragging": {
+            boxShadow: "0px 6px 9px -2px black",
         },
     };
 }
 
-export { linkStyle };
+function linkStyle(themeMode: PaletteMode): SxProps {
+    return {
+        "&.NoteLink.text_empty": {
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+        },
+
+        "&.NoteLink.text_empty:before": {
+            color: fontThemeColor(themeMode),
+        },
+
+        "&.NoteLink--bg": {
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+        },
+    };
+}
+
+export { linkStyle, wrapperStyle };

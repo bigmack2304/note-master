@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import * as styles from "./NoteImageStyle";
+import "./style.scss";
 
 type TNoteImageProps = {
     addClassNames?: string[];
@@ -13,6 +15,7 @@ type TNoteImageProps = {
     imageDesc?: string;
     isDescHidden?: boolean;
     isLoading?: boolean;
+    dragId: string;
 };
 
 /**
@@ -26,11 +29,13 @@ type TNoteImageProps = {
  * @prop isDescHidden если true то описание не отображается
  * @prop isLoading если true то отображает значок загрузки
  */
-function NoteImage({ addClassNames = [], onClick, onContextMenu, onImgClick, imageData, imageDesc, isLoading = false, isDescHidden }: TNoteImageProps) {
+function NoteImage({ addClassNames = [], onClick, onContextMenu, onImgClick, imageData, imageDesc, isLoading = false, isDescHidden, dragId }: TNoteImageProps) {
     const defaultClassName = "NoteImage";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(!imageData || imageData === "" ? false : true);
+    const ref = useRef<HTMLHeadElement>(null);
+    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
 
     // если children пуст, то добавляем в Box класс img_empty
     if (!isChildren) {
@@ -44,15 +49,27 @@ function NoteImage({ addClassNames = [], onClick, onContextMenu, onImgClick, ima
     };
 
     return (
-        <Box component={"div"} className={genClassName} sx={styles.noteImageStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
-            <figure className="NoteImage__imgWrapper" style={styles.imageWrapperStyle()}>
+        <Box
+            component={"div"}
+            className={genClassName}
+            sx={styles.noteImageStyle(themeMode)}
+            onContextMenu={onContextMenu}
+            onClick={onClick}
+            ref={ref}
+            onDragStart={onDragStart}
+            onDrop={onDragDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDragEnd={onDragEnd}
+        >
+            <figure className="NoteImage__imgWrapper">
                 {isLoading ? (
                     <CircularProgress />
                 ) : (
                     <>
-                        <img className="NoteImage__img" style={styles.imageStyle()} src={imageData} alt={imageDesc} loading="lazy" decoding="auto" onClick={onImageClick} />
+                        <img className="NoteImage__img" src={imageData} alt={imageDesc} loading="lazy" decoding="auto" onClick={onImageClick} />
                         {isDescHidden === true && (
-                            <Typography className="NoteImage__img_name" component={"figcaption"} sx={styles.imageDescStyle()}>
+                            <Typography className="NoteImage__img_name" component={"figcaption"}>
                                 {imageDesc}
                             </Typography>
                         )}

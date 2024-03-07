@@ -1,0 +1,26 @@
+.NoteLink {
+    display: inline-block;
+
+    &.text_empty {
+        display: flex;
+        justify-content: center;
+        min-height: 3rem;
+        border-radius: 3px;
+        text-decoration: none;
+
+        &:before {
+            font-size: 1rem;
+            content: "Ссылка";
+            opacity: 50%;
+        }
+    }
+
+    &--editable:hover {
+        outline: 1px red solid;
+    }
+
+    &--bg {
+        padding: 5px;
+        border-radius: 5px;
+    }
+}

@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { ClosableOneLineTextInput } from "2-features/components/ClosableOneLineTextInput/ClosableOneLineTextInput";
-import ReactPlayer from "react-player";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import { Box } from "@mui/material";
-import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentHeaderSettings } from "5-app/GlobalState/saveDataInspectStore";
+import { updateNoteComponentValue, deleteNoteComponent } from "5-app/GlobalState/saveDataInspectStore";
+import { NoteVideo } from "1-entities/components/NoteVideo/NoteVideo";
 import type { TBodyComponentVideo } from "0-shared/types/dataSave";
-import "./style.scss";
-import * as styles from "./EditableVideoStyle";
 
 type TEditableVideoProps = {
     editable?: boolean;
@@ -28,14 +25,13 @@ type TEditableVideoProps = {
 function EditableVideo({ editable = false, addClassNames = [], componentData }: TEditableVideoProps) {
     const defaultClassName = "EditableVideo";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
-    const [isEdit, setIsEdit] = useState(false);
-    const [isPause, setIsPause] = useState(false);
-    const [urlValue, setUrlValue] = useState(componentData.value);
-    const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
+    const [isEdit, setIsEdit] = useState(false); // true когда открываем форму для редактирования url компонента
+    const [isPause, setIsPause] = useState(false); // на паузе-ли видео
+    const [urlValue, setUrlValue] = useState(componentData.value); // урл адрес на видео
+    const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null); // данные для кастомного контекстного меню
     const dispatch = useAppDispatch();
-    let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
-    let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
-    const themeValue = useTemeMode();
+    let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote); // текущая активная заметка
+    let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit); // находится-ли заметка в режиме редактирования
 
     const addClassess = () => {
         if (urlValue === "") {
@@ -117,7 +113,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
     };
 
     const onWrapperClick = () => {
-        if (isPause) {
+        if (isPause && !editable) {
             setIsPause(false);
         }
     };
@@ -135,11 +131,17 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
                 />
             ) : (
                 <>
-                    <Box onContextMenu={onClickMoreActions} onClick={onWrapperClick} className={genClassName} sx={styles.videoWrapperStyle(themeValue)}>
-                        {urlValue !== "" && (
-                            <ReactPlayer controls light url={urlValue} width={"100%"} height={"100%"} onPause={onVideoPause} onPlay={onVideoPlay} playing={!isPause} />
-                        )}
-                    </Box>
+                    <NoteVideo
+                        dragId={componentData.id}
+                        isPause={isPause}
+                        urlValue={urlValue}
+                        onClick={onWrapperClick}
+                        onContextMenu={onClickMoreActions}
+                        onVideoPause={onVideoPause}
+                        onVideoPlay={onVideoPlay}
+                        addClassNames={[genClassName]}
+                        isNoteEdit={editable}
+                    />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
                         <ContextMenuEditContent

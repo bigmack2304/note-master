@@ -1,0 +1,24 @@
+.NoteCode {
+    overflow: hidden;
+    border-radius: 5px;
+    width: 100%;
+
+    &--editable:hover {
+        outline: 1px red solid;
+    }
+}
+
+.NoteCode.text_empty {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 3px;
+
+    &::before {
+        font-size: 1rem;
+        content: "Код";
+        opacity: 50%;
+        min-height: 3rem;
+    }
+}

@@ -9,63 +9,23 @@ import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentTextS
 import { NoteTextEditDialog } from "../NoteTextEditDialog/NoteTextEditDialog";
 import type { TBodyComponentText } from "0-shared/types/dataSave";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { PaletteMode } from "@mui/material";
+import * as styles from "./EditableTextStyles";
 
 type TEditableTextProps = {
     defaultText?: string;
     editable?: boolean;
-    edit_id?: string;
     addClassNames?: string[];
     componentData: TBodyComponentText;
-};
-
-const genTextDopClasses = (data: {
-    textBackground: boolean;
-    textFormat: boolean;
-    fontType: TBodyComponentText["font"];
-    theme: PaletteMode;
-    lineBreak: boolean;
-    isEdit: boolean;
-}) => {
-    const classes: string[] = [];
-
-    if (data.textBackground) {
-        if (data.theme === "light") {
-            classes.push("NoteText--bg-light");
-        }
-        if (data.theme === "dark") {
-            classes.push("NoteText--bg-dark");
-        }
-    }
-
-    if (data.isEdit) {
-        classes.push("NoteText--editable");
-    }
-
-    if (!data.textFormat) {
-        classes.push("NoteText--noFormat");
-    }
-
-    if (data.fontType === "code") {
-        classes.push("NoteText--font-code");
-    }
-
-    if (!data.lineBreak) {
-        classes.push("NoteText--overflowXScroll");
-    }
-
-    return classes;
 };
 
 /**
  * Текст заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
- * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableText({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableTextProps) {
+function EditableText({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableTextProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [textValue, setTextValue] = useState(defaultText);
     const [isTextEditDialog, setIsTextEditDialog] = useState(false);
@@ -76,7 +36,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
     const themeValue = useTemeMode();
 
     // текст может иметь дополнительные стили в зависимости от настроек поэтому сразу их вычисляем
-    let textDopClasses = genTextDopClasses({
+    let textDopClasses = styles.genTextDopClasses({
         fontType: componentData.font,
         lineBreak: componentData.lineBreak,
         textBackground: componentData.background,
@@ -118,14 +78,14 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
         setClickData(null);
         setTextValue("");
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: "" }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));
     };
 
     const onMenuDelete = () => {
         setClickData(null);
-        if (!edit_id || !currentNoteData) return;
-        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: edit_id }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: componentData.id }));
     };
 
     const onMenuParams = () => {
@@ -142,8 +102,8 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
         setIsEdit(false);
         setTextValue(inputValue);
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: inputValue }));
     };
 
     // форма управления параметрами текста
@@ -154,11 +114,11 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
     const onEditTextDialogCloseSave = (data: { textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean }) => {
         setIsTextEditDialog(false);
 
-        if (!edit_id || !currentNoteData) return;
+        if (!componentData || !currentNoteData) return;
         dispatch(
             updateNoteComponentTextSettings({
                 noteId: currentNoteData.id,
-                componentId: edit_id,
+                componentId: componentData.id,
                 fontValue: data.fontValue,
                 textBackground: data.textBackground,
                 textFormat: data.textFormat,
@@ -181,7 +141,7 @@ function EditableText({ defaultText = "", editable = false, edit_id, addClassNam
                 />
             ) : (
                 <>
-                    <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions}>
+                    <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id}>
                         {textValue}
                     </NoteText>
 

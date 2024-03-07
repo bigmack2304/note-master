@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import Typography from "@mui/material/Typography";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import type { PaletteMode, SxProps } from "@mui/material";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
+import * as styles from "./NoteHeadStyles";
+import "./styles.scss";
 
 type TNoteHeadProps = {
     addClassNames?: string[];
@@ -11,62 +12,7 @@ type TNoteHeadProps = {
     onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
     children?: React.ReactNode;
     typographySettings?: GetProps<typeof Typography>;
-};
-
-const typographyStyle = (isChildren: boolean, themeMode: PaletteMode) => {
-    return {
-        display: "inline-block",
-        whiteSpace: "normal",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-
-        "&.NoteHead.text_empty": {
-            display: "flex",
-            justifyContent: "center",
-            minHeight: "3rem",
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            borderRadius: "3px",
-        },
-
-        "&.NoteHead--editable:hover": {
-            outline: "1px red solid",
-        },
-
-        "&.NoteHead--aliginLeft": {
-            textAlign: "left",
-        },
-        "&.NoteHead--aliginCenter": {
-            textAlign: "center",
-        },
-        "&.NoteHead--aliginRight": {
-            textAlign: "right",
-        },
-
-        "&.NoteHead.text_empty:before": {
-            fontSize: "1rem",
-            content: "'Заголовок'",
-            opacity: "50%",
-        },
-    } as SxProps;
-};
-
-const typographyVariant = (addClassNames: string[]): GetProps<typeof Typography>["variant"] => {
-    if (addClassNames.includes("NoteHead--sizeH2")) {
-        return "h2";
-    }
-    if (addClassNames.includes("NoteHead--sizeH3")) {
-        return "h3";
-    }
-    if (addClassNames.includes("NoteHead--sizeH4")) {
-        return "h4";
-    }
-    if (addClassNames.includes("NoteHead--sizeH5")) {
-        return "h5";
-    }
-    if (addClassNames.includes("NoteHead--sizeH6")) {
-        return "h6";
-    }
-    return "h3";
+    dragId: string;
 };
 
 /**
@@ -76,12 +22,15 @@ const typographyVariant = (addClassNames: string[]): GetProps<typeof Typography>
  * @prop children - компонент можно использовать как обертка для других компонентов.
  * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
+ * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
  */
-function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu }: TNoteHeadProps) {
+function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId }: TNoteHeadProps) {
     const defaultClassName = "NoteHead";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
+    const ref = useRef<HTMLHeadElement>(null);
+    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
 
     // если children пуст, то добавляем в Typography класс text_empty
     if (!isChildren) {
@@ -94,10 +43,16 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
         <Typography
             {...typographySettings}
             className={genClassName}
-            variant={typographyVariant(addClassNames)}
+            variant={styles.typographyVariant(addClassNames)}
             onContextMenu={onContextMenu}
             onClick={onClick}
-            sx={typographyStyle(isChildren, themeMode)}
+            sx={styles.typographyStyle(themeMode)}
+            ref={ref}
+            onDragStart={onDragStart}
+            onDrop={onDragDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDragEnd={onDragEnd}
         >
             {children}
         </Typography>
@@ -105,3 +60,4 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
 }
 
 export { NoteHead };
+export type { TNoteHeadProps };

@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Box } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { SxProps } from "@mui/material";
-import type { PaletteMode } from "@mui/material";
 import { CodeBlock } from "react-code-blocks";
-import { codeCustomThemeLight, codeCustomThemeDark } from "./NoteCodeValues";
 import type { TCodeLanguages, TCodeThemes } from "./NoteCodeTypes";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
+import * as styles from "./NoteCodeStyles";
+import "./style.scss";
 
 type TNoteCodeProps = {
     addClassNames?: string[];
@@ -15,64 +14,7 @@ type TNoteCodeProps = {
     children?: string;
     language?: TCodeLanguages;
     codeTheme?: TCodeThemes;
-};
-
-// стили для контейнера
-const codeWrapperStyle = (isChildren: boolean, themeMode: PaletteMode) => {
-    return {
-        "&.NoteCode": {
-            overflow: "hidden",
-            borderRadius: "5px",
-            width: "100%",
-        },
-
-        "&.NoteCode--editable:hover": {
-            outline: "1px red solid",
-        },
-
-        "&.NoteCode.text_empty": {
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-            borderRadius: "3px",
-        },
-
-        "&.NoteCode.text_empty:before": {
-            fontSize: "1rem",
-            content: "'Код'",
-            opacity: "50%",
-            minHeight: "3rem",
-        },
-    } as SxProps;
-};
-
-// стили для кода
-const codeStyle = (isChildren: boolean) => {
-    return {
-        width: "100%",
-        overflowX: "auto",
-        fontFamily: "monospace",
-        fontSize: "1rem",
-
-        ...(isChildren
-            ? {}
-            : {
-                  minHeight: "3rem",
-              }),
-    } as React.CSSProperties;
-};
-
-// определяет стили тему для кода
-const calcCodeTheme = (codeTheme: TNoteCodeProps["codeTheme"], themeMode: PaletteMode) => {
-    if (codeTheme === "auto") {
-        if (themeMode === "dark") return codeCustomThemeDark;
-        if (themeMode === "light") return codeCustomThemeLight;
-    }
-    if (codeTheme === "dark") return codeCustomThemeDark;
-    if (codeTheme === "light") return codeCustomThemeLight;
-    return codeCustomThemeLight;
+    dragId: string;
 };
 
 /**
@@ -83,12 +25,15 @@ const calcCodeTheme = (codeTheme: TNoteCodeProps["codeTheme"], themeMode: Palett
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
  * @prop language - название языка программирования
  * @prop codeTheme - выбор темы подцветки синтаксиса
+ * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
  */
-function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto" }: TNoteCodeProps) {
+function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto", dragId }: TNoteCodeProps) {
     const defaultClassName = "NoteCode";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
+    const ref = useRef<HTMLHeadElement>(null);
+    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
 
     // если children пуст, то добавляем в Box класс text_empty
     if (!isChildren) {
@@ -98,14 +43,25 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
     }
 
     return (
-        <Box className={genClassName} sx={codeWrapperStyle(isChildren, themeMode)} onContextMenu={onContextMenu} onClick={onClick}>
+        <Box
+            className={genClassName}
+            sx={styles.codeWrapperStyle(themeMode)}
+            onContextMenu={onContextMenu}
+            onClick={onClick}
+            onDragStart={onDragStart}
+            onDrop={onDragDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDragEnd={onDragEnd}
+            ref={ref}
+        >
             {isChildren && (
                 <CodeBlock
                     text={children}
                     language={language}
                     showLineNumbers={true}
-                    theme={calcCodeTheme(codeTheme, themeMode)}
-                    customStyle={codeStyle(isChildren) as Record<string, string>}
+                    theme={styles.calcCodeTheme(codeTheme, themeMode)}
+                    customStyle={styles.codeStyle(isChildren) as Record<string, string>}
                 />
             )}
         </Box>

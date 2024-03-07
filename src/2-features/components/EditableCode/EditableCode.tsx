@@ -13,7 +13,6 @@ import { useClipboardText } from "0-shared/hooks/useClipboardText";
 type TEditableCodeProps = {
     defaultText?: string;
     editable?: boolean;
-    edit_id?: string;
     addClassNames?: string[];
     componentData: TBodyComponentCode;
 };
@@ -32,11 +31,10 @@ const genCodeDopClasses = (isEdit: boolean) => {
  * Код заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
- * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableCode({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableCodeProps) {
+function EditableCode({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableCodeProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [codeValue, setCodeValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -82,13 +80,13 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
         setClickData(null);
         setCodeValue("");
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: "" }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));
     };
 
     const onMenuDelete = () => {
-        if (!edit_id || !currentNoteData) return;
-        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: edit_id }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: componentData.id }));
     };
 
     const onMenuParams = () => {
@@ -110,8 +108,8 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
         setIsEdit(false);
         setCodeValue(inputValue);
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: inputValue }));
     };
 
     // функции окна с вормой настроек заголовка
@@ -122,8 +120,8 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
 
     const onEditHeaderDialogCloseSave = (codeTheme: TBodyComponentCode["codeTheme"], codeLanguage: TBodyComponentCode["language"]) => {
         setIsCodeEditDialog(false);
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentCodeSettings({ noteId: currentNoteData.id, componentId: edit_id, codeLanguage, codeTheme }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentCodeSettings({ noteId: currentNoteData.id, componentId: componentData.id, codeLanguage, codeTheme }));
     };
 
     return (
@@ -144,6 +142,7 @@ function EditableCode({ defaultText = "", editable = false, edit_id, addClassNam
                         onContextMenu={onClickMoreActions}
                         codeTheme={componentData.codeTheme}
                         language={componentData.language}
+                        dragId={componentData.id}
                     >
                         {codeValue}
                     </NoteCode>

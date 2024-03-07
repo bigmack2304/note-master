@@ -47,6 +47,7 @@
 // заголовок
 .note .note__head {
     text-align: center;
+    width: 100%;
 }
 
 .note .note__head.NoteHead--aliginLeft {
@@ -65,16 +66,19 @@
 .note .note__text {
     text-align: left;
     align-self: flex-start;
+    width: 100%;
 }
 
 // код
 .note .note__code {
     align-self: flex-start;
+    width: 100%;
 }
 
 // ссылки
 .note .note__link {
     align-self: flex-start;
+    // width: 100%;
 }
 
 // картинки

@@ -172,6 +172,7 @@ function EditableLink({ editable = false, addClassNames = [], componentData }: T
                         href={componentData.value}
                         label={componentData.labelValue}
                         isLabel={componentData.isLabel}
+                        dragId={componentData.id}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

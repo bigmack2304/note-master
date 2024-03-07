@@ -1,0 +1,56 @@
+.NoteText_wrapper {
+    overflow: hidden;
+    line-height: 0px;
+
+    &:has(> .NoteText[class*="NoteText--bg"]) {
+        border-radius: 5px;
+    }
+
+    &:has(> .NoteText[class*="text_empty"]) {
+        border-radius: 5px;
+    }
+
+    &:has(> .NoteText--overflowXScroll) {
+        overflow-x: auto;
+    }
+
+    &:has(> .NoteText[class*="NoteText--editable"]):hover {
+        outline: 1px red solid;
+    }
+}
+
+.NoteText {
+    display: inline-block;
+
+    &.text_empty {
+        display: flex;
+        justify-content: center;
+        min-height: 3rem;
+        border-radius: 5px;
+    }
+
+    &.NoteText.text_empty:before {
+        font-size: 1rem;
+        content: "Текст";
+        opacity: 50%;
+    }
+
+    &.NoteText--bg-light,
+    &.NoteText--bg-dark {
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    &.NoteText--noFormat {
+        white-space: break-spaces;
+    }
+    &.NoteText--font-code {
+        font-family: monospace;
+    }
+    &.NoteText--overflowXScroll {
+        white-space: pre;
+    }
+    &.NoteText--editable:hover {
+        outline: 1px red solid;
+    }
+}

@@ -12,7 +12,6 @@ import type { TBodyComponentHeader } from "0-shared/types/dataSave";
 type TEditableHeaderProps = {
     defaultText?: string;
     editable?: boolean;
-    edit_id?: string;
     addClassNames?: string[];
     componentData: TBodyComponentHeader;
 };
@@ -65,11 +64,10 @@ const genTextDopClasses = (data: { isEdit: boolean; textAligin: TBodyComponentHe
  * Заголовок заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
  * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
- * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableHeader({ defaultText = "", editable = false, edit_id, addClassNames = [], componentData }: TEditableHeaderProps) {
+function EditableHeader({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableHeaderProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [headerValue, setHeaderValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -118,13 +116,13 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
         setClickData(null);
         setHeaderValue("");
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: "" }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));
     };
 
     const onMenuDelete = () => {
-        if (!edit_id || !currentNoteData) return;
-        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: edit_id }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: componentData.id }));
     };
 
     const onMenuParams = () => {
@@ -141,8 +139,8 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
         setIsEdit(false);
         setHeaderValue(inputValue);
 
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: edit_id, newValue: inputValue }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: inputValue }));
     };
 
     // функции окна с вормой настроек заголовка
@@ -153,8 +151,8 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
 
     const onEditHeaderDialogCloseSave = (data: { textAligin: TBodyComponentHeader["textAligin"]; headerSize: TBodyComponentHeader["headerSize"] }) => {
         setIsHeaderEditDialog(false);
-        if (!edit_id || !currentNoteData) return;
-        dispatch(updateNoteComponentHeaderSettings({ componentId: edit_id, noteId: currentNoteData.id, headerSize: data.headerSize, textAligin: data.textAligin }));
+        if (!componentData || !currentNoteData) return;
+        dispatch(updateNoteComponentHeaderSettings({ componentId: componentData.id, noteId: currentNoteData.id, headerSize: data.headerSize, textAligin: data.textAligin }));
     };
 
     return (
@@ -170,7 +168,10 @@ function EditableHeader({ defaultText = "", editable = false, edit_id, addClassN
                 />
             ) : (
                 <>
-                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions}>
+                    {/* <Draggable wrappedProps={{ addClassNames: [...addClassNames, ...textDopClasses], onContextMenu: onClickMoreActions }} WrappedComponent={NoteHead}>
+                        {headerValue}
+                    </Draggable> */}
+                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id}>
                         {headerValue}
                     </NoteHead>
 

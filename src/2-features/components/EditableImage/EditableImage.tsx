@@ -141,6 +141,7 @@ function EditableImage({ editable = false, addClassNames = [], componentData }: 
                         imageDesc={componentData.desc}
                         isDescHidden={componentData.isDescHidden}
                         imageData={imageSrc}
+                        dragId={componentData.id}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

@@ -70,7 +70,6 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       addClassNames={["note__head", "note__content"]}
                                       defaultText={noteComponent.value}
                                       key={noteComponent.id}
-                                      edit_id={noteComponent.id}
                                       componentData={noteComponent}
                                       editable={isNoteEdit}
                                   />
@@ -82,7 +81,6 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       addClassNames={["note__text", "note__content"]}
                                       defaultText={noteComponent.value}
                                       key={noteComponent.id}
-                                      edit_id={noteComponent.id}
                                       componentData={noteComponent}
                                       editable={isNoteEdit}
                                   />
@@ -94,7 +92,6 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                       addClassNames={["note__code", "note__content"]}
                                       defaultText={noteComponent.value}
                                       key={noteComponent.id}
-                                      edit_id={noteComponent.id}
                                       componentData={noteComponent}
                                       editable={isNoteEdit}
                                   />
