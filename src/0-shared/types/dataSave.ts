@@ -58,6 +58,8 @@ interface TBodyComponentCode extends IDataTreeNode {
     value: string;
     language: TCodeLanguages;
     codeTheme: TCodeThemes;
+    isExpand: boolean;
+    expandDesc: string;
 }
 
 // картинка

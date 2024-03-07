@@ -67,7 +67,7 @@ function NoteImage({ addClassNames = [], onClick, onContextMenu, onImgClick, ima
                     <CircularProgress />
                 ) : (
                     <>
-                        <img className="NoteImage__img" src={imageData} alt={imageDesc} loading="lazy" decoding="auto" onClick={onImageClick} />
+                        <img className="NoteImage__img" src={imageData} alt={imageDesc} loading="eager" decoding="auto" onClick={onImageClick} />
                         {isDescHidden === true && (
                             <Typography className="NoteImage__img_name" component={"figcaption"}>
                                 {imageDesc}

@@ -1,0 +1,17 @@
+.NoteCodeEditDialog__content {
+    & .MuiListItem-root {
+        padding: 10px 0px;
+        column-gap: 20px;
+    }
+    & .MuiSelect-select {
+        min-width: 160px;
+    }
+}
+
+.NoteCodeEditDialog__syntax_find {
+    min-width: 160px;
+}
+
+.NoteCodeEditDialog__expand_desc {
+    flex-grow: 1;
+}

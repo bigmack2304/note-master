@@ -1,9 +1,10 @@
 import React, { useRef } from "react";
-import { Box } from "@mui/material";
+import { Box, Accordion, AccordionActions, AccordionSummary, AccordionDetails } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { CodeBlock } from "react-code-blocks";
 import type { TCodeLanguages, TCodeThemes } from "./NoteCodeTypes";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import * as styles from "./NoteCodeStyles";
 import "./style.scss";
 
@@ -14,6 +15,8 @@ type TNoteCodeProps = {
     children?: string;
     language?: TCodeLanguages;
     codeTheme?: TCodeThemes;
+    isExpand?: boolean;
+    expandDesc?: string;
     dragId: string;
 };
 
@@ -27,7 +30,7 @@ type TNoteCodeProps = {
  * @prop codeTheme - выбор темы подцветки синтаксиса
  * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
  */
-function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto", dragId }: TNoteCodeProps) {
+function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto", dragId, expandDesc, isExpand }: TNoteCodeProps) {
     const defaultClassName = "NoteCode";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
@@ -55,15 +58,29 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
             onDragEnd={onDragEnd}
             ref={ref}
         >
-            {isChildren && (
-                <CodeBlock
-                    text={children}
-                    language={language}
-                    showLineNumbers={true}
-                    theme={styles.calcCodeTheme(codeTheme, themeMode)}
-                    customStyle={styles.codeStyle(isChildren) as Record<string, string>}
-                />
-            )}
+            {isChildren &&
+                (function () {
+                    const codeComponent = (
+                        <CodeBlock
+                            text={children}
+                            language={language}
+                            showLineNumbers={true}
+                            theme={styles.calcCodeTheme(codeTheme, themeMode)}
+                            customStyle={styles.codeStyle(isChildren) as Record<string, string>}
+                        />
+                    );
+
+                    if (!isExpand) {
+                        return codeComponent;
+                    } else {
+                        return (
+                            <Accordion className="NoteCode__accordion" sx={styles.accordionStyle(themeMode)} slotProps={{ transition: { unmountOnExit: true } }}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>{expandDesc}</AccordionSummary>
+                                <AccordionDetails>{codeComponent}</AccordionDetails>
+                            </Accordion>
+                        );
+                    }
+                })()}
         </Box>
     );
 }

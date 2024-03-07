@@ -357,6 +357,8 @@ async function updateNoteComponentCodeSettings(data: {
     componentId: string;
     codeTheme: TBodyComponentCode["codeTheme"];
     codeLanguage: TBodyComponentCode["language"];
+    isExpand: TBodyComponentCode["isExpand"];
+    expandDesc: TBodyComponentCode["expandDesc"];
 }) {
     let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
@@ -367,6 +369,8 @@ async function updateNoteComponentCodeSettings(data: {
             if (component.component === "code") {
                 component.codeTheme = data.codeTheme;
                 component.language = data.codeLanguage;
+                component.isExpand = data.isExpand;
+                component.expandDesc = data.expandDesc;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;

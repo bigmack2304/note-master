@@ -106,11 +106,10 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
                     </Box>
                 )}
                 <Box className="ClosableImageForm__controls_wrapper">
-                    {selectValue === "LOCAL" && (
-                        <Button className="ClosableImageForm__button_local" color="primary" aria-label="Выбрать фаил" size="small" variant="contained" onClick={onLoadLocalClick}>
-                            Выбрать фаил
-                        </Button>
-                    )}
+                    <Box className="ClosableImageForm__result_buttons">
+                        <OkButton onClick={onSave} />
+                        <CloseButton onClick={onClose} />
+                    </Box>
                     <FormControl className="ClosableImageForm__select_wrapper">
                         <InputLabel id={selectLabelID}>Изображение</InputLabel>
                         <Select
@@ -136,10 +135,11 @@ function ClosableImageForm({ addClassNames = [], onClose, onCloseSave, inputUrlD
                             </MenuItem>
                         </Select>
                     </FormControl>
-                    <Box className="ClosableImageForm__result_buttons">
-                        <OkButton onClick={onSave} />
-                        <CloseButton onClick={onClose} />
-                    </Box>
+                    {selectValue === "LOCAL" && (
+                        <Button className="ClosableImageForm__button_local" color="primary" aria-label="Выбрать фаил" size="small" variant="contained" onClick={onLoadLocalClick}>
+                            Выбрать фаил
+                        </Button>
+                    )}
                 </Box>
             </Box>
             <InputImage ref={inputImageRef} loadCallback={onLocalLoad} />

@@ -9,6 +9,8 @@ class saveDataComponentCode extends DataNode implements TBodyComponentCode {
     public value: TBodyComponentCode["value"];
     public language: TBodyComponentCode["language"];
     public codeTheme: TBodyComponentCode["codeTheme"];
+    public isExpand: TBodyComponentCode["isExpand"];
+    public expandDesc: TBodyComponentCode["expandDesc"];
 
     constructor() {
         super("component");
@@ -17,6 +19,8 @@ class saveDataComponentCode extends DataNode implements TBodyComponentCode {
         this.value = "";
         this.language = "text";
         this.codeTheme = "auto";
+        this.isExpand = false;
+        this.expandDesc = "";
 
         Object.setPrototypeOf(this, null);
     }

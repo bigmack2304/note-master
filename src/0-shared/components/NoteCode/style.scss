@@ -22,3 +22,11 @@
         min-height: 3rem;
     }
 }
+
+.NoteCode .NoteCode__accordion {
+    background-image: initial;
+
+    & .MuiAccordionSummary-content {
+        font-weight: bold;
+    }
+}

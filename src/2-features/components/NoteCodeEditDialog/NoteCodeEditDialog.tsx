@@ -1,28 +1,24 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
-import { List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, Typography, Input } from "@mui/material";
+import { List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, Typography, TextField } from "@mui/material";
 import type { SxProps, SelectChangeEvent } from "@mui/material";
 import type { TBodyComponentCode } from "0-shared/types/dataSave";
 import { codeLanguages } from "0-shared/components/NoteCode/NoteCodeValues";
+import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
+import "./style.scss";
+
+type TOnSaveType = {
+    selectCodeTheme: TBodyComponentCode["codeTheme"];
+    selectCodeLanguage: TBodyComponentCode["language"];
+    isExpand: TBodyComponentCode["isExpand"];
+    expandDesc: TBodyComponentCode["expandDesc"];
+};
 
 type TNoteCodeEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (selectCodeTheme: TBodyComponentCode["codeTheme"], selectCodeLanguage: TBodyComponentCode["language"]) => void;
+    onCloseSave?: (data: TOnSaveType) => void;
     dialogHeader?: string;
-    editId?: string;
     componentData: TBodyComponentCode;
-};
-
-const listStyles = () => {
-    return {
-        "& .MuiListItem-root": {
-            padding: "10px 0px",
-            columnGap: "20px",
-        },
-        "& .MuiSelect-select": {
-            minWidth: "160px",
-        },
-    } as SxProps;
 };
 
 const codeThemeNames: Record<TBodyComponentCode["codeTheme"], string> = {
@@ -37,18 +33,19 @@ const codeThemeNames: Record<TBodyComponentCode["codeTheme"], string> = {
  * @prop onClose - вызывается при закрытии окна
  * @prop onCloseSave - вызывается при сохранении текста
  * @prop dialogHeader - заголовок окна
- * @prop editId - id сущьности которую редактируем
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управление кодом", editId, componentData }: TNoteCodeEditDialogProps) {
+function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управление кодом", componentData }: TNoteCodeEditDialogProps) {
     const [selectCodeTheme, setSelectCodeTheme] = useState<TBodyComponentCode["codeTheme"]>(componentData.codeTheme);
     const [selectCodeLanguage, setSelectCodeLanguage] = useState<TBodyComponentCode["language"]>(componentData.language);
+    const [isExpand, setIsEcpand] = useState<TBodyComponentCode["isExpand"]>(componentData.isExpand);
+    const [expandDesc, setExpandDesc] = useState<TBodyComponentCode["expandDesc"]>(componentData.expandDesc);
     const [inputLangValue, setInputLangValue] = useState<string>("");
     const selectThemeLabelID = useId();
     const selectLanguageLabelID = useId();
 
     const onSave = () => {
-        onCloseSave && onCloseSave(selectCodeTheme, selectCodeLanguage);
+        onCloseSave && onCloseSave({ selectCodeTheme, selectCodeLanguage, isExpand, expandDesc });
     };
 
     const onselectCodeThemeChange = (e: SelectChangeEvent) => {
@@ -63,9 +60,17 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
         setInputLangValue(e.target.value);
     };
 
+    const onExpandChange = (e: React.ChangeEvent<Element>, checked: boolean) => {
+        setIsEcpand(checked);
+    };
+
+    const onExpandDescChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setExpandDesc(e.target.value);
+    };
+
     return (
         <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <List sx={listStyles()}>
+            <List className="NoteCodeEditDialog__content">
                 <ListItem divider>
                     <ListItemText>Цветовая тема</ListItemText>
                     <FormControl>
@@ -91,7 +96,7 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 </ListItem>
                 <ListItem>
                     <ListItemText></ListItemText>
-                    <Input placeholder="поиск языка" onChange={onInputLanguageChange} value={inputLangValue} />
+                    <TextField className="NoteCodeEditDialog__syntax_find" placeholder="поиск языка" onChange={onInputLanguageChange} value={inputLangValue} />
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Язык</ListItemText>
@@ -116,9 +121,18 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                         </Select>
                     </FormControl>
                 </ListItem>
+                <ListItem divider>
+                    <ListItemText>Раскрываемый компонент</ListItemText>
+                    <SwitchCustom onChange={onExpandChange} checked={isExpand} />
+                </ListItem>
+                <ListItem divider>
+                    <ListItemText>Описание содержимого</ListItemText>
+                    <TextField value={expandDesc} onChange={onExpandDescChange} className="NoteCodeEditDialog__expand_desc" label="Описание" variant="outlined" />
+                </ListItem>
             </List>
         </DialogWindowAlt>
     );
 }
 
 export { NoteCodeEditDialog };
+export type { TOnSaveType };

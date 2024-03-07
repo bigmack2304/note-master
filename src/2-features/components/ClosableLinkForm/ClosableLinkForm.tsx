@@ -89,7 +89,10 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
                 </Box>
             )}
             <Box className="ClosableLinkForm__controls_wrapper">
-                {selectValue === "note" && <SelectNoteButton onClose={onSelectNoteClose} selectedNote={inputURLValue} />}
+                <Box className="ClosableLinkForm__result_buttons">
+                    <OkButton onClick={onSave} />
+                    <CloseButton onClick={onClose} />
+                </Box>
                 <FormControl className="ClosableLinkForm__select_wrapper">
                     <InputLabel id={selectId}>Цель</InputLabel>
                     <Select labelId={selectId} value={selectValue} label="Цель" onChange={onSelectChange} input={<OutlinedInput label="Цель" />} size="small">
@@ -101,10 +104,7 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
                         </MenuItem>
                     </Select>
                 </FormControl>
-                <Box className="ClosableLinkForm__result_buttons">
-                    <OkButton onClick={onSave} />
-                    <CloseButton onClick={onClose} />
-                </Box>
+                {selectValue === "note" && <SelectNoteButton onClose={onSelectNoteClose} selectedNote={inputURLValue} />}
             </Box>
         </Box>
     );

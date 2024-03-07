@@ -8,6 +8,7 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentCodeSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteCodeEditDialog } from "../NoteCodeEditDialog/NoteCodeEditDialog";
 import type { TBodyComponentCode } from "0-shared/types/dataSave";
+import type { TOnSaveType } from "../NoteCodeEditDialog/NoteCodeEditDialog";
 import { useClipboardText } from "0-shared/hooks/useClipboardText";
 
 type TEditableCodeProps = {
@@ -118,10 +119,19 @@ function EditableCode({ defaultText = "", editable = false, addClassNames = [], 
         setIsCodeEditDialog(false);
     };
 
-    const onEditHeaderDialogCloseSave = (codeTheme: TBodyComponentCode["codeTheme"], codeLanguage: TBodyComponentCode["language"]) => {
+    const onEditHeaderDialogCloseSave = (data: TOnSaveType) => {
         setIsCodeEditDialog(false);
         if (!componentData || !currentNoteData) return;
-        dispatch(updateNoteComponentCodeSettings({ noteId: currentNoteData.id, componentId: componentData.id, codeLanguage, codeTheme }));
+        dispatch(
+            updateNoteComponentCodeSettings({
+                noteId: currentNoteData.id,
+                componentId: componentData.id,
+                codeLanguage: data.selectCodeLanguage,
+                codeTheme: data.selectCodeTheme,
+                isExpand: data.isExpand,
+                expandDesc: data.expandDesc,
+            })
+        );
     };
 
     return (
@@ -142,6 +152,8 @@ function EditableCode({ defaultText = "", editable = false, addClassNames = [], 
                         onContextMenu={onClickMoreActions}
                         codeTheme={componentData.codeTheme}
                         language={componentData.language}
+                        expandDesc={componentData.expandDesc}
+                        isExpand={componentData.isExpand}
                         dragId={componentData.id}
                     >
                         {codeValue}

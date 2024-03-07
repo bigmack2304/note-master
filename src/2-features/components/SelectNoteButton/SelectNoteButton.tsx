@@ -81,7 +81,7 @@ function SelectNoteButton({ addClassNames = [], onClose, selectedNote }: TAllTag
             <Button className={genClassName} color="primary" aria-label="Выбрать заметку" size="small" variant="contained" onClick={onButtonClick}>
                 Выбрать заметку
             </Button>
-            <DialogWindow addClassNames={["SelectNoteButton__dialog_window"]} headerText="Выбор заметки" isOpen={isDialogOpen} onClose={onDialogClose}>
+            <DialogWindow addClassNames={["SelectNoteButton__dialog_window"]} headerText="Ссылка на заметку" isOpen={isDialogOpen} onClose={onDialogClose}>
                 <List className="SelectNoteButton__dialog_list" sx={styles.dialogListStyle(themeValue)}>
                     <ListItem>
                         <Accordion sx={{ width: "100%" }}>

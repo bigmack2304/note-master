@@ -35,7 +35,6 @@ function codeWrapperStyle(themeMode: PaletteMode): SxProps {
 
         "&.NoteCode.dragZoneOk": {
             outline: `2px ${themeMode === "light" ? "black" : "white"}  dashed`,
-            // boxShadow: "0px -6px 0px 0px white",
         },
         "&.NoteCode.dragging": {
             boxShadow: "0px 6px 9px -2px black",
@@ -43,4 +42,12 @@ function codeWrapperStyle(themeMode: PaletteMode): SxProps {
     };
 }
 
-export { calcCodeTheme, codeStyle, codeWrapperStyle };
+function accordionStyle(themeMode: PaletteMode): SxProps {
+    return {
+        "&.NoteCode__accordion": {
+            backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
+        },
+    };
+}
+
+export { calcCodeTheme, codeStyle, codeWrapperStyle, accordionStyle };

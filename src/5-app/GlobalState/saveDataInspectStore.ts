@@ -651,7 +651,14 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляет настройки компонента кода внутри заметки
         updateNoteComponentCodeSettings: create.asyncThunk<
-            { noteId: string; componentId: string; codeTheme: TBodyComponentCode["codeTheme"]; codeLanguage: TBodyComponentCode["language"] },
+            {
+                noteId: string;
+                componentId: string;
+                codeTheme: TBodyComponentCode["codeTheme"];
+                codeLanguage: TBodyComponentCode["language"];
+                isExpand: TBodyComponentCode["isExpand"];
+                expandDesc: TBodyComponentCode["expandDesc"];
+            },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -665,6 +672,8 @@ const saveDataInspectSlice = createAppSlice({
                     componentId: payload.componentId,
                     codeTheme: payload.codeTheme,
                     codeLanguage: payload.codeLanguage,
+                    isExpand: payload.isExpand,
+                    expandDesc: payload.expandDesc,
                 });
 
                 if (!resultBool) {
