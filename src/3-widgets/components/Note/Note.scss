@@ -46,7 +46,7 @@
 
 // заголовок
 .note .note__head {
-    text-align: center;
+    // text-align: center;
     width: 100%;
 }
 
@@ -63,7 +63,8 @@
 }
 
 // текст
-.note .note__text {
+.note .note__text,
+.note .NoteText_wrapper:has(.note__content[class~="text_empty"]) {
     text-align: left;
     align-self: flex-start;
     width: 100%;

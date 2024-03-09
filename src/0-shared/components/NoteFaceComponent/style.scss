@@ -1,0 +1,14 @@
+.NoteFaceComponent {
+    display: flex;
+    justify-content: center;
+    min-height: 3rem;
+    border-radius: 3px;
+    width: 200px;
+    align-items: center;
+    padding: 13px;
+
+    &:before {
+        font-size: 1rem;
+        opacity: 50%;
+    }
+}

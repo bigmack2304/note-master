@@ -17,7 +17,7 @@ type TEditableVideoProps = {
 
 /**
  * компонент видео в заметку
- * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
+ * @prop editable - указывает на то редактируется ли заметка
  * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
@@ -99,6 +99,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
     const onInputSave = (inputValue: string) => {
         setIsEdit(false);
         setUrlValue(inputValue);
+        setIsPause(true);
 
         if (!componentData || !currentNoteData) return;
         dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: inputValue }));

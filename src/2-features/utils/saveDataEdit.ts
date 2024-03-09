@@ -144,6 +144,7 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
 
                 if (newSrc === "") {
                     component.value = "";
+                    component.desc = "";
                 } else {
                     component.value = component.id;
                 }

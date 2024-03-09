@@ -63,7 +63,7 @@ const genTextDopClasses = (data: { isEdit: boolean; textAligin: TBodyComponentHe
 /**
  * Заголовок заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
- * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
+ * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
@@ -171,7 +171,7 @@ function EditableHeader({ defaultText = "", editable = false, addClassNames = []
                     {/* <Draggable wrappedProps={{ addClassNames: [...addClassNames, ...textDopClasses], onContextMenu: onClickMoreActions }} WrappedComponent={NoteHead}>
                         {headerValue}
                     </Draggable> */}
-                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id}>
+                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={editable}>
                         {headerValue}
                     </NoteHead>
 

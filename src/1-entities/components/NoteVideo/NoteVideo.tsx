@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Collapse } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import ReactPlayer from "react-player";
+import { NoteComponentMover } from "0-shared/components/NoteComponentMover/NoteComponentMover";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import * as styles from "./NoteVideoStyle";
-import "./style.scss";
+import "./NoteVideo.scss";
+import { DragDropWrapper } from "0-shared/components/DragDropWrapper/DragDropWrapper";
 
 type TNoteVideoProps = {
     addClassNames?: string[];
@@ -34,9 +36,11 @@ function NoteVideo({ addClassNames = [], onClick, onContextMenu, dragId, urlValu
     const defaultClassName = "NoteVideo";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
-    const ref = useRef<HTMLHeadElement>(null);
     const videoRef = useRef<ReactPlayer>(null);
-    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
+    const componentRef = useRef<HTMLDivElement>(null);
+    const moverRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const innerWrapperClass = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: "NoteVideo_inner_wrapper" });
 
     const onPause = () => {
         onVideoPause && onVideoPause();
@@ -49,22 +53,29 @@ function NoteVideo({ addClassNames = [], onClick, onContextMenu, dragId, urlValu
     }, [isNoteEdit]);
 
     return (
-        <Box
-            onContextMenu={onContextMenu}
-            onClick={onClick}
-            className={genClassName}
-            sx={styles.videoWrapperStyle(themeMode)}
-            ref={ref}
-            onDragStart={onDragStart}
-            onDrop={onDragDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDragEnd={onDragEnd}
-        >
-            {urlValue !== "" && (
-                <ReactPlayer controls light url={urlValue} width={"100%"} height={"100%"} onPause={onPause} onPlay={onVideoPlay} playing={!isPause} stopOnUnmount ref={videoRef} />
-            )}
-        </Box>
+        <DragDropWrapper ref={componentRef}>
+            <Collapse in={isNoteEdit} orientation="vertical">
+                <NoteComponentMover ref={moverRef} />
+            </Collapse>
+            <Box ref={contentRef} className={innerWrapperClass} sx={styles.innerWrapperStyle(themeMode)}>
+                <Box onContextMenu={onContextMenu} onClick={onClick} className={genClassName} sx={styles.videoWrapperStyle(themeMode)}>
+                    {urlValue !== "" && (
+                        <ReactPlayer
+                            controls
+                            light
+                            url={urlValue}
+                            width={"100%"}
+                            height={"100%"}
+                            onPause={onPause}
+                            onPlay={onVideoPlay}
+                            playing={!isPause}
+                            stopOnUnmount
+                            ref={videoRef}
+                        />
+                    )}
+                </Box>
+            </Box>
+        </DragDropWrapper>
     );
 }
 

@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Collapse } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
-import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import * as styles from "./NoteHeadStyles";
-import "./styles.scss";
-import { is_multiTuch } from "0-shared/utils/getSystemStyle";
+import "./NoteHead.scss";
+import { NoteComponentMover } from "../NoteComponentMover/NoteComponentMover";
+import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
+import { DragDropWrapper } from "0-shared/components/DragDropWrapper/DragDropWrapper";
 
 type TNoteHeadProps = {
     addClassNames?: string[];
@@ -14,6 +15,7 @@ type TNoteHeadProps = {
     children?: React.ReactNode;
     typographySettings?: GetProps<typeof Typography>;
     dragId: string;
+    isNoteEdit: boolean;
 };
 
 /**
@@ -24,25 +26,35 @@ type TNoteHeadProps = {
  * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
  * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
+ * @prop isNoteEdit - редактируется ли в данный момент заметка
  */
-function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId }: TNoteHeadProps) {
+
+function NoteHead({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId, isNoteEdit }: TNoteHeadProps) {
     const defaultClassName = "NoteHead";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
-    const ref = useRef<HTMLHeadElement>(null);
-    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd, onTouchStart } = useNoteComponentDrag({ ref, dragId });
+    const componentRef = useRef<HTMLDivElement>(null);
+    const moverRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    genClassName = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: genClassName });
 
-    // если children пуст, то добавляем в Typography класс text_empty
-    if (!isChildren) {
+    const classNameGen = () => {
         let tempClassName = genClassName.split(" ");
-        tempClassName.push("text_empty");
+
+        if (!isChildren) {
+            tempClassName.push("text_empty");
+        }
+
         genClassName = tempClassName.join(" ");
-    }
+    };
+    classNameGen();
 
     return (
-        <Box>
-            {true && <div style={{ width: "100%", height: "30px", backgroundColor: "red", touchAction: "none" }} onPointerDown={onTouchStart}></div>}
+        <DragDropWrapper ref={componentRef}>
+            <Collapse in={isNoteEdit} orientation="vertical">
+                <NoteComponentMover ref={moverRef} />
+            </Collapse>
             <Typography
                 {...typographySettings}
                 className={genClassName}
@@ -50,16 +62,11 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
                 onContextMenu={onContextMenu}
                 onClick={onClick}
                 sx={styles.typographyStyle(themeMode)}
-                ref={ref}
-                onDragStart={onDragStart}
-                onDrop={onDragDrop}
-                onDragOver={onDragOver}
-                onDragLeave={onDragLeave}
-                onDragEnd={onDragEnd}
+                ref={contentRef}
             >
                 {children}
             </Typography>
-        </Box>
+        </DragDropWrapper>
     );
 }
 

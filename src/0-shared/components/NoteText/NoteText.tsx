@@ -1,10 +1,12 @@
 import React, { useRef } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Collapse } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import * as styles from "./NoteTextStyles";
-import "./style.scss";
+import "./NoteText.scss";
+import { NoteComponentMover } from "../NoteComponentMover/NoteComponentMover";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
+import { DragDropWrapper } from "../DragDropWrapper/DragDropWrapper";
 
 type TNoteTextProps = {
     addClassNames?: string[];
@@ -13,6 +15,7 @@ type TNoteTextProps = {
     children?: React.ReactNode;
     typographySettings?: GetProps<typeof Typography>;
     dragId: string;
+    isNoteEdit: boolean;
 };
 
 /**
@@ -23,14 +26,17 @@ type TNoteTextProps = {
  * @prop typographySettings - пропсы для настройки внутреннего компонента m.ui - Typography
  * @prop onContextMenu - вызывается при клике правой кнопкой мыши по тексту
  * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
+ * @prop isNoteEdit - редактируется ли в данный момент заметка
  */
-function NoteText({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId }: TNoteTextProps) {
+function NoteText({ addClassNames = [], onClick, children, typographySettings, onContextMenu, dragId, isNoteEdit }: TNoteTextProps) {
     const defaultClassName = "NoteText";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
-    const ref = useRef<HTMLHeadElement>(null);
-    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
+    const componentRef = useRef<HTMLDivElement>(null);
+    const moverRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const innerWrapperClass = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: "NoteText_outWrapper" });
 
     // если children пуст, то добавляем в Typography класс text_empty
     if (!isChildren) {
@@ -40,20 +46,25 @@ function NoteText({ addClassNames = [], onClick, children, typographySettings, o
     }
 
     return (
-        <Box
-            className={"NoteText_wrapper"}
-            ref={ref}
-            onDragStart={onDragStart}
-            onDrop={onDragDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDragEnd={onDragEnd}
-            sx={styles.wrapperStyle(themeMode)}
-        >
-            <Typography {...typographySettings} className={genClassName} variant="body1" onContextMenu={onContextMenu} onClick={onClick} sx={styles.typographyStyle(themeMode)}>
-                {children}
-            </Typography>
-        </Box>
+        <DragDropWrapper ref={componentRef}>
+            <Collapse in={isNoteEdit} orientation="vertical">
+                <NoteComponentMover ref={moverRef} />
+            </Collapse>
+            <Box className={innerWrapperClass} ref={contentRef} sx={styles.wrapperStyle(themeMode)}>
+                <Box className={"NoteText_wrapper"}>
+                    <Typography
+                        {...typographySettings}
+                        className={genClassName}
+                        variant="body1"
+                        onContextMenu={onContextMenu}
+                        onClick={onClick}
+                        sx={styles.typographyStyle(themeMode)}
+                    >
+                        {children}
+                    </Typography>
+                </Box>
+            </Box>
+        </DragDropWrapper>
     );
 }
 

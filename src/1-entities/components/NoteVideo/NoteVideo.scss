@@ -1,7 +1,9 @@
 .NoteVideo {
     width: clamp(10px, 100%, 710px);
     padding: 2px;
+    margin: 0 auto;
     aspect-ratio: 16/9;
+    line-height: initial;
 }
 
 .NoteVideo.video_empty {
@@ -10,6 +12,7 @@
     min-height: 3rem;
     border-radius: 3px;
     aspect-ratio: initial;
+    line-height: initial;
 }
 
 .NoteVideo.EditableVideo--pause {

@@ -1,6 +1,12 @@
+.NoteText_outWrapper {
+    overflow: hidden;
+    padding: 1px;
+}
+
 .NoteText_wrapper {
     overflow: hidden;
     line-height: 0px;
+    width: fit-content;
 
     &:has(> .NoteText[class*="NoteText--bg"]) {
         border-radius: 5px;

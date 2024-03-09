@@ -14,16 +14,22 @@ function isLight() {
     return mediaQuery.matches;
 }
 
-/*
-    возврощает true если на устройстве мультитач
-    (для пк в 98% вернет false, тк мало у кого сенсорный экран)
-*/
-function is_multiTuch(): boolean {
-    if (window.navigator.maxTouchPoints > 0) {
-        // > 1
-        return true;
-    }
-    return false;
+/**
+ * проверяет наличие устроиств ввода на клиенте а также точность этих устроиств
+ * @ вернет true если точных устроиств ввода нету
+ */
+function inputDevice() {
+    const mediaQuery = window.matchMedia("(any-hover: none)");
+    return mediaQuery.matches;
 }
 
-export { isDark, isLight, is_multiTuch };
+/**
+ * проверяет чтобы устройство ввода было тачскрином
+ * @ вернет true если тачскрин
+ */
+function isTouchDevice() {
+    const Query = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    return Query;
+}
+
+export { isDark, isLight, inputDevice, isTouchDevice };

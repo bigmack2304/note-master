@@ -1,12 +1,14 @@
 import React, { useRef } from "react";
-import { Box, Accordion, AccordionActions, AccordionSummary, AccordionDetails } from "@mui/material";
+import { Box, Accordion, Collapse, AccordionSummary, AccordionDetails } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { CodeBlock } from "react-code-blocks";
 import type { TCodeLanguages, TCodeThemes } from "./NoteCodeTypes";
+import { NoteComponentMover } from "../NoteComponentMover/NoteComponentMover";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import * as styles from "./NoteCodeStyles";
-import "./style.scss";
+import { DragDropWrapper } from "../DragDropWrapper/DragDropWrapper";
+import "./NoteCode.scss";
 
 type TNoteCodeProps = {
     addClassNames?: string[];
@@ -18,6 +20,7 @@ type TNoteCodeProps = {
     isExpand?: boolean;
     expandDesc?: string;
     dragId: string;
+    isNoteEdit: boolean;
 };
 
 /**
@@ -29,14 +32,17 @@ type TNoteCodeProps = {
  * @prop language - название языка программирования
  * @prop codeTheme - выбор темы подцветки синтаксиса
  * @prop dragId - id компонента (в body заметки в indexed db) в котором лежит этот компонент
+ * @prop isNoteEdit - редактируется ли в данный момент заметка
  */
-function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto", dragId, expandDesc, isExpand }: TNoteCodeProps) {
+function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, language = "text", codeTheme = "auto", dragId, expandDesc, isExpand, isNoteEdit }: TNoteCodeProps) {
     const defaultClassName = "NoteCode";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeMode = useTemeMode();
     const isChildren = Boolean(children);
-    const ref = useRef<HTMLHeadElement>(null);
-    const { onDragStart, onDragDrop, onDragOver, onDragLeave, onDragEnd } = useNoteComponentDrag({ ref, dragId });
+    const componentRef = useRef<HTMLDivElement>(null);
+    const moverRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    genClassName = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: genClassName });
 
     // если children пуст, то добавляем в Box класс text_empty
     if (!isChildren) {
@@ -46,42 +52,36 @@ function NoteCode({ addClassNames = [], onClick, children = "", onContextMenu, l
     }
 
     return (
-        <Box
-            className={genClassName}
-            sx={styles.codeWrapperStyle(themeMode)}
-            onContextMenu={onContextMenu}
-            onClick={onClick}
-            onDragStart={onDragStart}
-            onDrop={onDragDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDragEnd={onDragEnd}
-            ref={ref}
-        >
-            {isChildren &&
-                (function () {
-                    const codeComponent = (
-                        <CodeBlock
-                            text={children}
-                            language={language}
-                            showLineNumbers={true}
-                            theme={styles.calcCodeTheme(codeTheme, themeMode)}
-                            customStyle={styles.codeStyle(isChildren) as Record<string, string>}
-                        />
-                    );
-
-                    if (!isExpand) {
-                        return codeComponent;
-                    } else {
-                        return (
-                            <Accordion className="NoteCode__accordion" sx={styles.accordionStyle(themeMode)} slotProps={{ transition: { unmountOnExit: true } }}>
-                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>{expandDesc}</AccordionSummary>
-                                <AccordionDetails>{codeComponent}</AccordionDetails>
-                            </Accordion>
+        <DragDropWrapper ref={componentRef}>
+            <Collapse in={isNoteEdit} orientation="vertical">
+                <NoteComponentMover ref={moverRef} />
+            </Collapse>
+            <Box className={genClassName} sx={styles.codeWrapperStyle(themeMode)} onContextMenu={onContextMenu} onClick={onClick} ref={contentRef}>
+                {isChildren &&
+                    (function () {
+                        const codeComponent = (
+                            <CodeBlock
+                                text={children}
+                                language={language}
+                                showLineNumbers={true}
+                                theme={styles.calcCodeTheme(codeTheme, themeMode)}
+                                customStyle={styles.codeStyle(isChildren) as Record<string, string>}
+                            />
                         );
-                    }
-                })()}
-        </Box>
+
+                        if (!isExpand) {
+                            return codeComponent;
+                        } else {
+                            return (
+                                <Accordion className="NoteCode__accordion" sx={styles.accordionStyle(themeMode)} slotProps={{ transition: { unmountOnExit: true } }}>
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>{expandDesc}</AccordionSummary>
+                                    <AccordionDetails>{codeComponent}</AccordionDetails>
+                                </Accordion>
+                            );
+                        }
+                    })()}
+            </Box>
+        </DragDropWrapper>
     );
 }
 

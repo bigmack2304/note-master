@@ -38,7 +38,7 @@ const genTextDopClasses = (data: { isEdit: boolean; isBg: boolean }) => {
 
 /**
  * Заголовок заметки с поддержкой редактирования
- * @prop editable - true: показать форму редактирования по умолчанию, false: показать сам заголовок
+ * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
@@ -173,6 +173,7 @@ function EditableLink({ editable = false, addClassNames = [], componentData }: T
                         label={componentData.labelValue}
                         isLabel={componentData.isLabel}
                         dragId={componentData.id}
+                        isNoteEdit={editable}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

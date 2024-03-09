@@ -1,5 +1,6 @@
 .NoteLink {
     display: inline-block;
+    line-height: initial;
 
     &.text_empty {
         display: flex;
@@ -7,6 +8,7 @@
         min-height: 3rem;
         border-radius: 3px;
         text-decoration: none;
+        line-height: initial;
 
         &:before {
             font-size: 1rem;
