@@ -324,6 +324,7 @@ async function updateNoteComponentListSettings(data: {
     componentId: string;
     listBg: TBodyComponentList["background"];
     isNumeric: TBodyComponentList["isNumeric"];
+    aligin: TBodyComponentList["textAligin"];
 }) {
     let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
@@ -334,6 +335,7 @@ async function updateNoteComponentListSettings(data: {
             if (component.component === "list") {
                 component.background = data.listBg;
                 component.isNumeric = data.isNumeric;
+                component.textAligin = data.aligin;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;

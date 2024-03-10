@@ -1,7 +1,13 @@
 import type { PaletteMode } from "@mui/material";
 import type { TBodyComponentList } from "0-shared/types/dataSave";
 
-function genListDopClasses(data: { listBg: TBodyComponentList["background"]; listIsNumeric: TBodyComponentList["isNumeric"]; theme: PaletteMode; isEdit: boolean }) {
+function genListDopClasses(data: {
+    listBg: TBodyComponentList["background"];
+    listIsNumeric: TBodyComponentList["isNumeric"];
+    aligin: TBodyComponentList["textAligin"];
+    theme: PaletteMode;
+    isEdit: boolean;
+}) {
     const classes: string[] = [];
 
     if (data.listBg) {
@@ -19,6 +25,18 @@ function genListDopClasses(data: { listBg: TBodyComponentList["background"]; lis
 
     if (data.listIsNumeric) {
         classes.push("NoteList--type-number");
+    }
+
+    if (data.aligin === "center") {
+        classes.push("NoteList--aligin-center");
+    }
+
+    if (data.aligin === "left") {
+        classes.push("NoteList--aligin-left");
+    }
+
+    if (data.aligin === "right") {
+        classes.push("NoteList--aligin-right");
     }
 
     return classes;

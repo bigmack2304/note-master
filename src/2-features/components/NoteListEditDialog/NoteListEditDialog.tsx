@@ -9,7 +9,7 @@ import type { TBodyComponentList } from "0-shared/types/dataSave";
 
 type TNoteListEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (data: { listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"] }) => void;
+    onCloseSave?: (data: { listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"]; aligin: TBodyComponentList["textAligin"] }) => void;
     dialogHeader?: string;
     componentData: TBodyComponentList;
 };
@@ -26,6 +26,12 @@ const listStyles = () => {
     } as SxProps;
 };
 
+const aliginNames: Record<TBodyComponentList["textAligin"], string> = {
+    center: "по центру",
+    left: "лево",
+    right: "право",
+};
+
 /**
  * Диалоговое окно с формой для редактирования списка в заметке
  *
@@ -37,10 +43,12 @@ const listStyles = () => {
  */
 function NoteListEditDialog({ onClose, onCloseSave, dialogHeader = "Управление списком", componentData }: TNoteListEditDialogProps) {
     const [listBackground, setlistBackground] = useState(componentData.background);
+    const [selectAligin, setSelectAligin] = useState<TBodyComponentList["textAligin"]>(componentData.textAligin);
     const [typeNumeric, setTypeNumeric] = useState(componentData.isNumeric);
+    const selectAliginLabelID = useId();
 
     const onSave = () => {
-        onCloseSave && onCloseSave({ listBg: listBackground, isNumeric: typeNumeric });
+        onCloseSave && onCloseSave({ listBg: listBackground, isNumeric: typeNumeric, aligin: selectAligin });
     };
 
     const onBgChange = (e: React.ChangeEvent<Element>, checked: boolean) => {
@@ -49,6 +57,10 @@ function NoteListEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
 
     const onNubericChange = (e: React.ChangeEvent<Element>, checked: boolean) => {
         setTypeNumeric(checked);
+    };
+
+    const onSelectAliginChange = (e: SelectChangeEvent) => {
+        setSelectAligin(e.target.value as TBodyComponentList["textAligin"]);
     };
 
     return (
@@ -61,6 +73,29 @@ function NoteListEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 <ListItem divider>
                     <ListItemText>Нумеруемый список</ListItemText>
                     <SwitchCustom onChange={onNubericChange} checked={typeNumeric} />
+                </ListItem>
+                <ListItem divider>
+                    <ListItemText>Центрирование</ListItemText>
+                    <FormControl>
+                        <InputLabel id={selectAliginLabelID}>Центрирование</InputLabel>
+                        <Select
+                            labelId={selectAliginLabelID}
+                            value={selectAligin}
+                            label="Центрирование"
+                            onChange={onSelectAliginChange}
+                            renderValue={(selected) => <Typography variant="body1">{aliginNames[selected]}</Typography>}
+                        >
+                            <MenuItem divider value="left">
+                                <ListItemText>{aliginNames["left"]}</ListItemText>
+                            </MenuItem>
+                            <MenuItem divider value="center">
+                                <ListItemText>{aliginNames["center"]}</ListItemText>
+                            </MenuItem>
+                            <MenuItem divider value="right">
+                                <ListItemText>{aliginNames["right"]}</ListItemText>
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
                 </ListItem>
             </List>
         </DialogWindowAlt>

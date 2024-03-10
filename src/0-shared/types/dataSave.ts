@@ -79,6 +79,7 @@ interface TBodyComponentList extends IDataTreeNode {
     value: string; // содержимое хранится в виде JSON преобразуемого в обьект такого типа {"li":string[]}
     isNumeric: boolean;
     background: boolean;
+    textAligin: "left" | "center" | "right";
 }
 //////////////////////////////////////////////////////////////////
 

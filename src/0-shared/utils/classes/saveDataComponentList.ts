@@ -9,6 +9,7 @@ class DataComponentList extends DataNode implements TBodyComponentList {
     public value: TBodyComponentList["value"];
     public background: TBodyComponentList["background"];
     public isNumeric: TBodyComponentList["isNumeric"];
+    public textAligin: TBodyComponentList["textAligin"];
 
     constructor() {
         super("component");
@@ -17,6 +18,7 @@ class DataComponentList extends DataNode implements TBodyComponentList {
         this.value = "";
         this.background = false;
         this.isNumeric = false;
+        this.textAligin = "left";
 
         Object.setPrototypeOf(this, null);
     }

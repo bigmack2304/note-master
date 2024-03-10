@@ -605,7 +605,7 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляет настройки компонента списка внутри заметки
         updateNoteComponentListSettings: create.asyncThunk<
-            { noteId: string; componentId: string; listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"] },
+            { noteId: string; componentId: string; listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"]; aligin: TBodyComponentList["textAligin"] },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -619,6 +619,7 @@ const saveDataInspectSlice = createAppSlice({
                     componentId: payload.componentId,
                     listBg: payload.listBg,
                     isNumeric: payload.isNumeric,
+                    aligin: payload.aligin,
                 });
 
                 if (!resultBool) {

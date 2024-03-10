@@ -40,6 +40,7 @@ function EditableList({ defaultValue = "", addClassNames = [], componentData }: 
         listBg: componentData.background,
         theme: themeValue,
         isEdit: isNoteEdit,
+        aligin: componentData.textAligin,
     });
 
     useEffect(() => {
@@ -108,7 +109,11 @@ function EditableList({ defaultValue = "", addClassNames = [], componentData }: 
         setIsListEditDialog(false);
     };
 
-    const onEditListDialogCloseSave = (data: { listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"] }) => {
+    const onEditListDialogCloseSave = (data: {
+        listBg: TBodyComponentList["background"];
+        isNumeric: TBodyComponentList["isNumeric"];
+        aligin: TBodyComponentList["textAligin"];
+    }) => {
         setIsListEditDialog(false);
 
         if (!componentData || !currentNoteData) return;
@@ -118,6 +123,7 @@ function EditableList({ defaultValue = "", addClassNames = [], componentData }: 
                 componentId: componentData.id,
                 listBg: data.listBg,
                 isNumeric: data.isNumeric,
+                aligin: data.aligin,
             })
         );
     };
