@@ -123,7 +123,7 @@ function ListEditWindow({ addClassNames = [], isOpen, listValue, onCloseSave, is
                     </ListItem>
                     <ListItem>
                         <Box className={"ListEditWindow__new_item"}>
-                            <TextField className="ListEditWindow__addNew_input" value={addNewValue} variant="filled" onChange={addNewInputChange} size="small" />
+                            <TextField className="ListEditWindow__addNew_input" value={addNewValue} variant="filled" onChange={addNewInputChange} size="small" autoComplete="off" />
                             <AddButton onClick={onAddNewClick} size="large" />
                         </Box>
                     </ListItem>
