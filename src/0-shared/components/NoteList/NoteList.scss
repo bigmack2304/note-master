@@ -1,0 +1,53 @@
+.NoteList_outWrapper {
+    overflow: hidden;
+    padding: 1px;
+}
+
+.NoteList_wrapper {
+    overflow: hidden;
+    padding: 1px;
+}
+
+.NoteList {
+    display: inline-block;
+    line-height: initial;
+    margin: 0;
+    display: block;
+    width: fit-content;
+
+    &.text_empty {
+        display: flex;
+        justify-content: center;
+        min-height: 3rem;
+        border-radius: 5px;
+        margin: 0;
+        padding: 0;
+
+        &:before {
+            font-size: 1rem;
+            content: "Список";
+            opacity: 50%;
+        }
+    }
+
+    &.NoteList--bg-light,
+    &.NoteList--bg-dark {
+        border-radius: 5px;
+        padding-top: 5px;
+        padding-right: 15px;
+        padding-bottom: 5px;
+    }
+
+    & .NoteList__li {
+        list-style-type: disc;
+        margin: 6px 0px;
+    }
+
+    &.NoteList--type-number .NoteList__li {
+        list-style-type: decimal;
+    }
+
+    &.NoteList--editable:hover {
+        outline: 1px red solid;
+    }
+}

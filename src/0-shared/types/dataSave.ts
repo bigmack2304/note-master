@@ -1,4 +1,8 @@
 import type { TCodeLanguages, TCodeThemes } from "0-shared/components/NoteCode/NoteCodeTypes";
+/**
+ * ДАННЫЙ ФАИЛ СОДЕРЖИТ ТИПИЗАЦИЮ СТРУКТУРЫ В INDEXED DB С КОТОРОЙ МЫ РАБОТАЕМ ПРИ ЛЮБОМ ВЗАИМОДЕЙСТВИИ С ЗАМЕТКАМИ
+ * А ТАКЖЕ ТИПИЗАЦИЮ ВСЕГО ИЗ ЧЕГО МОЖЕТ СОСТОЯТЬ ЗАМЕТКА
+ */
 
 /**
  * все возможные значения type в node
@@ -6,7 +10,7 @@ import type { TCodeLanguages, TCodeThemes } from "0-shared/components/NoteCode/N
 type TNodeType = "component" | "note" | "folder";
 
 /**
- * общие поля компонентов внутри заметки
+ * общие поля для всех нод data_tree
  */
 interface IDataTreeNode {
     id: string; // глобальный id во всем дереве
@@ -14,16 +18,14 @@ interface IDataTreeNode {
 }
 
 // типы всех компонентов
-type TAllComponents = "header" | "text" | "code" | "image" | "link" | "video";
+type TAllComponents = "header" | "text" | "code" | "image" | "link" | "video" | "list";
 
-// варианты своиств в зависимости от компонента внутри заметки
-// заголовок
+// видео
 interface TBodyComponentVideo extends IDataTreeNode {
     component: "video";
     value: string;
 }
 
-// варианты своиств в зависимости от компонента внутри заметки
 // заголовок
 interface TBodyComponentHeader extends IDataTreeNode {
     component: "header";
@@ -70,12 +72,20 @@ interface TBodyComponentImage extends IDataTreeNode {
     desc: string;
     isDescHidden: boolean;
 }
+
+// картинка
+interface TBodyComponentList extends IDataTreeNode {
+    component: "list";
+    value: string; // содержимое хранится в виде JSON преобразуемого в обьект такого типа {"li":string[]}
+    isNumeric: boolean;
+    background: boolean;
+}
 //////////////////////////////////////////////////////////////////
 
 /**
  * тип поля body в заметке
  */
-type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink | TBodyComponentVideo;
+type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink | TBodyComponentVideo | TBodyComponentList;
 
 /**
  * цвета тега
@@ -174,4 +184,5 @@ export type {
     TBodyComponentImage,
     TBodyComponentLink,
     TBodyComponentVideo,
+    TBodyComponentList,
 };

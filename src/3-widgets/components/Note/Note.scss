@@ -104,6 +104,12 @@
     width: 70%;
 }
 
+// список
+.note .note__list {
+    align-self: flex-start;
+    width: fit-content;
+}
+
 .note .note__editBlock {
     display: flex;
     flex-direction: row;

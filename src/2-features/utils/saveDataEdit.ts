@@ -16,6 +16,7 @@ import type {
     TBodyComponentCode,
     TBodyComponentLink,
     TBodyComponentVideo,
+    TBodyComponentList,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -26,6 +27,7 @@ import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentC
 import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
 import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
 import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponentVideo";
+import { DataComponentList } from "0-shared/utils/classes/saveDataComponentList";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -296,6 +298,42 @@ async function updateNoteComponentTextSettings(data: {
                 component.font = data.fontValue;
                 component.formatting = data.textFormat;
                 component.lineBreak = data.lineBreak;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента списка в обьекте заметки
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняется value
+ * @param listBg значение фона для списка
+ * @param isNumeric установить номеруемый тип
+ */
+async function updateNoteComponentListSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    listBg: TBodyComponentList["background"];
+    isNumeric: TBodyComponentList["isNumeric"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "list") {
+                component.background = data.listBg;
+                component.isNumeric = data.isNumeric;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;
@@ -753,6 +791,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "video":
                 component = new saveDataComponentVideo();
                 break;
+            case "list":
+                component = new DataComponentList();
+                break;
             default:
                 component = undefined;
                 break;
@@ -791,4 +832,5 @@ export {
     updateNodeLink,
     updateNoteComponentLinkSettings,
     updNoteComponentsOrder,
+    updateNoteComponentListSettings,
 };

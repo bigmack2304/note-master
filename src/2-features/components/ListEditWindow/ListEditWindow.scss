@@ -1,0 +1,71 @@
+.ListEditWindow .ListEditWindow__list {
+    width: clamp(0px, 1000px, 100%);
+    border-radius: 10px;
+    flex-shrink: 0;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 10px;
+
+    .ListEditWindow__list_first_item {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-content: flex-start;
+        align-items: flex-start;
+        height: 100%;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+.ListEditWindow__li {
+    list-style-type: disc;
+}
+
+.ListEditWindow__li:nth-child(n + 2) {
+    margin-top: 10px;
+}
+
+.ListEditWindow--numeric .ListEditWindow__li {
+    list-style-type: decimal;
+}
+
+.ListEditWindow__li_inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    .ListEditWindow__li_input {
+        flex-grow: 1;
+    }
+}
+
+.ListEditWindow__ul_wrapper {
+    width: 100%;
+}
+
+.ListEditWindow__new_item {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    .ListEditWindow__addNew_input {
+        width: clamp(20px, 100%, 60%);
+
+        input {
+            text-overflow: ellipsis;
+        }
+    }
+}

@@ -15,6 +15,7 @@ import { EditableCode } from "2-features/components/EditableCode/EditableCode";
 import { EditableImage } from "2-features/components/EditableImage/EditableImage";
 import { EditableLink } from "2-features/components/EditableLink/EditableLink";
 import { EditableVideo } from "2-features/components/EditableVideo/EditableVideo";
+import { EditableList } from "2-features/components/EditableList/EditableList";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -127,6 +128,9 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                   return (
                                       <EditableVideo addClassNames={["note__video", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />
                                   );
+                              }
+                              if (noteComponent.component === "list") {
+                                  return <EditableList addClassNames={["note__list", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
                               }
                           })
                         : null}
