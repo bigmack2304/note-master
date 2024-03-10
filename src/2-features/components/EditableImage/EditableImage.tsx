@@ -13,18 +13,16 @@ import { ClosableImageForm } from "../ClosableImageForm/ClosableImageForm";
 import * as styles from "./EditableImageStyle";
 
 type TEditableImageProps = {
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentImage;
 };
 
 /**
  * Заголовок заметки с поддержкой редактирования
- * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableImage({ editable = false, addClassNames = [], componentData }: TEditableImageProps) {
+function EditableImage({ addClassNames = [], componentData }: TEditableImageProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [isImageLoadDb, setIsImageLoadDb] = useState(false);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -49,10 +47,10 @@ function EditableImage({ editable = false, addClassNames = [], componentData }: 
     });
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -142,7 +140,7 @@ function EditableImage({ editable = false, addClassNames = [], componentData }: 
                         isDescHidden={componentData.isDescHidden}
                         imageData={imageSrc}
                         dragId={componentData.id}
-                        isNoteEdit={editable}
+                        isNoteEdit={isNoteEdit}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

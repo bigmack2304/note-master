@@ -13,7 +13,6 @@ import * as styles from "./EditableTextStyles";
 
 type TEditableTextProps = {
     defaultText?: string;
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentText;
 };
@@ -21,11 +20,10 @@ type TEditableTextProps = {
 /**
  * Текст заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
- * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableText({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableTextProps) {
+function EditableText({ defaultText = "", addClassNames = [], componentData }: TEditableTextProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [textValue, setTextValue] = useState(defaultText);
     const [isTextEditDialog, setIsTextEditDialog] = useState(false);
@@ -46,10 +44,10 @@ function EditableText({ defaultText = "", editable = false, addClassNames = [], 
     });
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -141,7 +139,7 @@ function EditableText({ defaultText = "", editable = false, addClassNames = [], 
                 />
             ) : (
                 <>
-                    <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={editable}>
+                    <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={isNoteEdit}>
                         {textValue}
                     </NoteText>
 

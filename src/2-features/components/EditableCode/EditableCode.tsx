@@ -13,7 +13,6 @@ import { useClipboardText } from "0-shared/hooks/useClipboardText";
 
 type TEditableCodeProps = {
     defaultText?: string;
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentCode;
 };
@@ -35,7 +34,7 @@ const genCodeDopClasses = (isEdit: boolean) => {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableCode({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableCodeProps) {
+function EditableCode({ defaultText = "", addClassNames = [], componentData }: TEditableCodeProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [codeValue, setCodeValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -49,10 +48,10 @@ function EditableCode({ defaultText = "", editable = false, addClassNames = [], 
     let codeDopClasses = genCodeDopClasses(isNoteEdit);
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -155,7 +154,7 @@ function EditableCode({ defaultText = "", editable = false, addClassNames = [], 
                         expandDesc={componentData.expandDesc}
                         isExpand={componentData.isExpand}
                         dragId={componentData.id}
-                        isNoteEdit={editable}
+                        isNoteEdit={isNoteEdit}
                     >
                         {codeValue}
                     </NoteCode>

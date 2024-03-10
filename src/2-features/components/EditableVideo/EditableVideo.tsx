@@ -10,19 +10,17 @@ import { NoteVideo } from "1-entities/components/NoteVideo/NoteVideo";
 import type { TBodyComponentVideo } from "0-shared/types/dataSave";
 
 type TEditableVideoProps = {
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentVideo;
 };
 
 /**
  * компонент видео в заметку
- * @prop editable - указывает на то редактируется ли заметка
  * @prop edit_id - id обьекта внутри body заметки, (из TempData в indexed db), с которым будет взаимодействовать этот компонент
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableVideo({ editable = false, addClassNames = [], componentData }: TEditableVideoProps) {
+function EditableVideo({ addClassNames = [], componentData }: TEditableVideoProps) {
     const defaultClassName = "EditableVideo";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const [isEdit, setIsEdit] = useState(false); // true когда открываем форму для редактирования url компонента
@@ -38,7 +36,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
             genClassName = genClassName.concat(" ", "video_empty");
         }
 
-        if (editable) {
+        if (isNoteEdit) {
             genClassName = genClassName.concat(" ", "EditableVideo--editable");
         }
 
@@ -49,10 +47,10 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
     addClassess();
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -114,7 +112,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
     };
 
     const onWrapperClick = () => {
-        if (isPause && !editable) {
+        if (isPause && !isNoteEdit) {
             setIsPause(false);
         }
     };
@@ -141,7 +139,7 @@ function EditableVideo({ editable = false, addClassNames = [], componentData }: 
                         onVideoPause={onVideoPause}
                         onVideoPlay={onVideoPlay}
                         addClassNames={[genClassName]}
-                        isNoteEdit={editable}
+                        isNoteEdit={isNoteEdit}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

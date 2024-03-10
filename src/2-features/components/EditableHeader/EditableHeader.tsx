@@ -11,7 +11,6 @@ import type { TBodyComponentHeader } from "0-shared/types/dataSave";
 
 type TEditableHeaderProps = {
     defaultText?: string;
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentHeader;
 };
@@ -63,11 +62,10 @@ const genTextDopClasses = (data: { isEdit: boolean; textAligin: TBodyComponentHe
 /**
  * Заголовок заметки с поддержкой редактирования
  * @prop defaultText - значение по умолчанию
- * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableHeader({ defaultText = "", editable = false, addClassNames = [], componentData }: TEditableHeaderProps) {
+function EditableHeader({ defaultText = "", addClassNames = [], componentData }: TEditableHeaderProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [headerValue, setHeaderValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -84,10 +82,10 @@ function EditableHeader({ defaultText = "", editable = false, addClassNames = []
     });
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -171,7 +169,7 @@ function EditableHeader({ defaultText = "", editable = false, addClassNames = []
                     {/* <Draggable wrappedProps={{ addClassNames: [...addClassNames, ...textDopClasses], onContextMenu: onClickMoreActions }} WrappedComponent={NoteHead}>
                         {headerValue}
                     </Draggable> */}
-                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={editable}>
+                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={isNoteEdit}>
                         {headerValue}
                     </NoteHead>
 

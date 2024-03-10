@@ -17,7 +17,6 @@ import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import type { TRadioData } from "../NoteSelector/NoteSelector";
 
 type TEditableLinkProps = {
-    editable?: boolean;
     addClassNames?: string[];
     componentData: TBodyComponentLink;
 };
@@ -38,11 +37,10 @@ const genTextDopClasses = (data: { isEdit: boolean; isBg: boolean }) => {
 
 /**
  * Заголовок заметки с поддержкой редактирования
- * @prop editable - указывает на то редактируется ли заметка
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableLink({ editable = false, addClassNames = [], componentData }: TEditableLinkProps) {
+function EditableLink({ addClassNames = [], componentData }: TEditableLinkProps) {
     const [isEdit, setIsEdit] = useState(false);
     const [linkValue, setLinkValue] = useState(componentData.value);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
@@ -58,10 +56,10 @@ function EditableLink({ editable = false, addClassNames = [], componentData }: T
     });
 
     useEffect(() => {
-        if (!editable) {
+        if (!isNoteEdit) {
             setIsEdit(false);
         }
-    }, [editable]);
+    }, [isNoteEdit]);
 
     const onClickMoreActions = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -173,7 +171,7 @@ function EditableLink({ editable = false, addClassNames = [], componentData }: T
                         label={componentData.labelValue}
                         isLabel={componentData.isLabel}
                         dragId={componentData.id}
-                        isNoteEdit={editable}
+                        isNoteEdit={isNoteEdit}
                     />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>

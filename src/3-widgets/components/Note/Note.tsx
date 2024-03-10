@@ -88,7 +88,6 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                           defaultText={noteComponent.value}
                                           key={noteComponent.id}
                                           componentData={noteComponent}
-                                          editable={isNoteEdit}
                                       />
                                   );
                               }
@@ -99,7 +98,6 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                           defaultText={noteComponent.value}
                                           key={noteComponent.id}
                                           componentData={noteComponent}
-                                          editable={isNoteEdit}
                                       />
                                   );
                               }
@@ -110,24 +108,17 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                           defaultText={noteComponent.value}
                                           key={noteComponent.id}
                                           componentData={noteComponent}
-                                          editable={isNoteEdit}
                                       />
                                   );
                               }
                               if (noteComponent.component === "image") {
-                                  return (
-                                      <EditableImage addClassNames={["note__image", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />
-                                  );
+                                  return <EditableImage addClassNames={["note__image", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
                               }
                               if (noteComponent.component === "link") {
-                                  return (
-                                      <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />
-                                  );
+                                  return <EditableLink addClassNames={["note__link", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
                               }
                               if (noteComponent.component === "video") {
-                                  return (
-                                      <EditableVideo addClassNames={["note__video", "note__content"]} key={noteComponent.id} componentData={noteComponent} editable={isNoteEdit} />
-                                  );
+                                  return <EditableVideo addClassNames={["note__video", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
                               }
                               if (noteComponent.component === "list") {
                                   return <EditableList addClassNames={["note__list", "note__content"]} key={noteComponent.id} componentData={noteComponent} />;
