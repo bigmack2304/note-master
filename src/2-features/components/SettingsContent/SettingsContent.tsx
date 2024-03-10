@@ -8,15 +8,15 @@ import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
 import type { PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import ViewStreamIcon from "@mui/icons-material/ViewStream";
+import MarginIcon from "@mui/icons-material/Margin";
 import { TagColoringInForms } from "2-features/components/TagColoringInForms/TagColoringInForms";
+import { NotePaddingColapseButton } from "../NotePaddingColapseButton/NotePaddingColapseButton";
 
 type TSettingsContentProps = {};
 
 const dialogListStyle = (theme: PaletteMode) => {
     return {
-        width: "clamp(0px, 1000px, 100%)",
         outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
-        borderRadius: "10px",
     } as SxProps;
 };
 
@@ -28,20 +28,27 @@ function SettingsContent({}: TSettingsContentProps) {
 
     return (
         <>
-            <List sx={dialogListStyle(themeValue)}>
-                <ListItem>
+            <List sx={dialogListStyle(themeValue)} className="SettingsContent">
+                <ListItem className="SettingsContent__listItem">
                     <ListItemIcon>
                         <ColorLensIcon />
                     </ListItemIcon>
-                    <ListItemText>Цветовая тема</ListItemText>
+                    <ListItemText className="SettingsContent__listItemText">Цветовая тема</ListItemText>
                     <ToggleThemeButton />
                 </ListItem>
-                <ListItem>
+                <ListItem className="SettingsContent__listItem">
                     <ListItemIcon>
                         <ViewStreamIcon />
                     </ListItemIcon>
-                    <ListItemText>Подцветка тегов в формах</ListItemText>
+                    <ListItemText className="SettingsContent__listItemText">Подцветка тегов в формах</ListItemText>
                     <TagColoringInForms />
+                </ListItem>
+                <ListItem className="SettingsContent__listItem">
+                    <ListItemIcon>
+                        <MarginIcon />
+                    </ListItemIcon>
+                    <ListItemText className="SettingsContent__listItemText">Уменьшенные отступы в заметках</ListItemText>
+                    <NotePaddingColapseButton />
                 </ListItem>
             </List>
         </>

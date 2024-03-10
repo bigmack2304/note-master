@@ -51,11 +51,23 @@ const noteEditBlockStyles = (theme: PaletteMode) => {
 function Note({ addClassNames = [] }: TNoteProps) {
     const isEdit = useAppSelector((store) => store.noteEditData.isEdit);
     const defaultClassName = "note";
-    const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    let genClassName = "";
     isEdit && addClassNames.push("note-edit");
     const themeValue = useTemeMode();
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);
     const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
+    const marginCollapse = useAppSelector((state) => state.settingsData.noteMarginCollapse);
+
+    const calcClassName = () => {
+        let tempClassName = defaultClassName.split(" ");
+        tempClassName = tempClassName.concat(addClassNames);
+        isEdit && tempClassName.push("note--edit");
+        marginCollapse && tempClassName.push("note--margin-collapse");
+
+        genClassName = tempClassName.join(" ");
+    };
+    calcClassName();
+
     if (!currentNote) return <></>;
     return (
         <Box className={genClassName} component={"div"} sx={noteStyles(themeValue, isEdit)}>

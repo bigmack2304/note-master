@@ -1,7 +1,8 @@
 .SettingsContent {
-    &__actionsInner {
-        width: clamp(0px, 1000px, 100%);
-        display: flex;
-        justify-content: flex-end;
-    }
+    width: clamp(0px, 1000px, 100%);
+    border-radius: "10px";
+}
+
+.SettingsContent__listItem .SettingsContent__listItemText {
+    padding: 0 5px;
 }
