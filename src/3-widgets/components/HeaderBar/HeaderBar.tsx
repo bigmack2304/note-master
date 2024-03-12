@@ -10,7 +10,9 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { LoadDialog } from "2-features/components/LoadDialog/LoadDialog";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import { addNote } from "5-app/GlobalState/saveDataInspectStore";
 import { ExportProjectDialog } from "2-features/components/ExportProjectDialog/ExportProjectDialog";
+import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 
 type THeaderBarProps = {};
 
@@ -22,9 +24,11 @@ function HeaderBar({}: THeaderBarProps) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false); // меню настроек открыта
     const [isInfoOpen, setIsInfoOpen] = useState(false); // открыто окно о приложении
     const [isExportOpen, setIsExportOpen] = useState(false); // открыта форма экспорта
+    const [isNewNoteOpen, setIsNewNoteOpen] = useState(false); // открыта форма для новой заметки
     const [isLoadDialog, setIsLoadDialog] = useState(false); // открыта форма загрузить
     const inputFileRef = useRef<HTMLInputElement>(null); // ссылка на dom елемент загрузчика фаила с системы
     const isProject = useAppSelector((state) => state.saveDataInspect.isProjectOpen); // открыт ли какой либо проект
+
     const dispatch = useAppDispatch();
 
     // функции кнопок меню
@@ -46,6 +50,10 @@ function HeaderBar({}: THeaderBarProps) {
 
     const onMenuExport = () => {
         setIsExportOpen(true);
+    };
+
+    const onNewNote = () => {
+        setIsNewNoteOpen(true);
     };
 
     // загрузка
@@ -94,6 +102,21 @@ function HeaderBar({}: THeaderBarProps) {
         dispatch(exportTempDataSave({ saveAs: val }));
     };
 
+    // форма для новой заметки
+
+    const onNewNoteClose = () => {
+        setIsNewNoteOpen(false);
+    };
+
+    const onNewNoteCloseSave = (noteName: string, NoteTags: string | string[], targetFolderID?: string | undefined) => {
+        setIsNewNoteOpen(false);
+        dispatch(setIsOpen({ isOpen: false }));
+
+        if (targetFolderID) {
+            dispatch(addNote({ insertToId: targetFolderID, nodeName: noteName, tags: NoteTags }));
+        }
+    };
+
     return (
         <AppBar>
             <ToggleMenuButton
@@ -104,8 +127,10 @@ function HeaderBar({}: THeaderBarProps) {
                     onNewProjectClick: onCreateNewProject,
                     onSaveClick: onsaveClick,
                     onExportClick: onMenuExport,
+                    onNewNoteClick: onNewNote,
                     isSaveDisabled: !isProject,
                     isExportDisabled: !isProject,
+                    isNewNoteDisabled: !isProject,
                 }}
             />
             <ToggleToolBarButton />
@@ -115,6 +140,7 @@ function HeaderBar({}: THeaderBarProps) {
             <DialogWindow headerText="О приложении" isOpen={isInfoOpen} onClose={onInfoClose}></DialogWindow>
             <LoadDialog isOpen={isLoadDialog} onClose={onloadDialogClose} onCloseSave={onloadDialogCloseSave} />
             <ExportProjectDialog isOpen={isExportOpen} onClose={onExportDialogClose} onCloseSave={onExportDialogCloseSave} />
+            {isNewNoteOpen && <TreeAddNoteDialog isTargetDefined={false} onClose={onNewNoteClose} onCloseSave={onNewNoteCloseSave} />}
             <InputFile ref={inputFileRef}></InputFile>
         </AppBar>
     );

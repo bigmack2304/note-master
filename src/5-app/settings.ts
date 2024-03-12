@@ -10,7 +10,7 @@ const EV_NAME_SAVE_DATA_REDUCER_START = "saveDataInspectReducerSart"; // нач�
 const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // ошибка
 const EV_NAME_SAVE_DATA_REDUCER_END = "saveDataInspectReducerEnd"; // конец редьюсера, неважно ошибка или успех
 const EV_NAME_SAVE_DATA_REDUCER_FULFILLED = "saveDataInspectReducerFulfield"; // успех
-const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // переход по ссылке на заметку
+const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // переход по ссылке на заметку, также можно применить для выбора заметки в окне навигации
 
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение

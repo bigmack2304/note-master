@@ -6,6 +6,7 @@ import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import InfoIcon from "@mui/icons-material/Info";
+import WorkIcon from "@mui/icons-material/Work";
 
 import type { SxProps } from "@mui/material";
 
@@ -15,9 +16,11 @@ type TMenuContentProps = {
     onSaveClick?: (e: React.MouseEvent) => void;
     onLoadClick?: (e: React.MouseEvent) => void;
     onInfoClick?: (e: React.MouseEvent) => void;
+    onNewNoteClick?: (e: React.MouseEvent) => void;
     onExportClick?: (e: React.MouseEvent) => void;
     isSaveDisabled?: boolean;
     isExportDisabled?: boolean;
+    isNewNoteDisabled?: boolean;
 };
 
 const listStyle: SxProps = {
@@ -32,10 +35,14 @@ const ListSubheaderStyle: SxProps = {
  * содержимое для бокового меню приложения
  * @prop onSettingsClick - вызывается при клике на "Настройки"
  * @prop onNewProjectClick - вызывается при клике на "новый проект"
+ * @prop onNewNoteClick - вызывается при клике на "создать новую заметку"
  * @prop onSaveClick - вызывается при клике на "Сохранить"
  * @prop onLoadClick - вызывается при клике на "Загрузить"
  * @prop onInfoClick - вызывается при клике на "О приложении"
- * @returns
+ * @prop onExportClick - вызывается при клике на "Экспорт"
+ * @prop isSaveDisabled - отключение кнопки "Сохранить"
+ * @prop isExportDisabled - отключение кнопки "Экспорт"
+ * @prop isNewNoteDisabled - отключение кнопки "создать новую заметку"
  */
 function MenuContent({
     onSettingsClick,
@@ -44,7 +51,9 @@ function MenuContent({
     onLoadClick,
     onInfoClick,
     onExportClick,
+    onNewNoteClick,
     isSaveDisabled = false,
+    isNewNoteDisabled = false,
     isExportDisabled = false,
 }: TMenuContentProps) {
     return (
@@ -55,9 +64,15 @@ function MenuContent({
             <Divider />
             <ListItemButton onClick={onNewProjectClick} aria-label="создать новый проект">
                 <ListItemIcon>
-                    <EditNoteIcon />
+                    <WorkIcon />
                 </ListItemIcon>
                 <ListItemText>Новый проект</ListItemText>
+            </ListItemButton>
+            <ListItemButton onClick={onNewNoteClick} aria-label="создать новую заметку" disabled={isNewNoteDisabled}>
+                <ListItemIcon>
+                    <EditNoteIcon />
+                </ListItemIcon>
+                <ListItemText>Новая заметка</ListItemText>
             </ListItemButton>
             <ListItemButton onClick={onSaveClick} aria-label="сохранить проект" disabled={isSaveDisabled}>
                 <ListItemIcon>

@@ -940,6 +940,7 @@ const saveDataInspectSlice = createAppSlice({
 
                     if (isDataTreeNote(addedNode)) {
                         state.currentNote = addedNode;
+                        window.dispatchEvent(new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: addedNode.id } })); // делает эту заметку активной в блоке навигации
                         let nodeParent = getParentNode(dataTree, addedNode.id);
 
                         if (isDataTreeFolder(nodeParent)) {
