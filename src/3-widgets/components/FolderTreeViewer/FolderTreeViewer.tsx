@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TreeView } from "@mui/x-tree-view";
@@ -18,6 +18,7 @@ import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/T
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 import { TreeItemMoveDialog } from "2-features/components/TreeItemMoveDialog/TreeItemMoveDialog";
 import { useDataTree } from "0-shared/hooks/useDataTree";
+import { getParentFolder } from "2-features/utils/saveDataParse";
 import { useEventListener } from "0-shared/hooks/useEventListener";
 import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
 
@@ -48,7 +49,6 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
-    const fsTools = useAppSelector((state) => state.settingsData.fsTools);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
@@ -70,6 +70,28 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     // выбор ноды
     const ontreeNodeSelect = (event: React.SyntheticEvent, nodeIds: string) => {
         setTreeNodeSelect(nodeIds);
+
+        // получаем родительскую папку для этой ноды, делаем ее активной, раскрываем все вышестоящие папки до этой ноды
+        if (dataTree) {
+            const parentFolder = getParentFolder(dataTree, nodeIds);
+            if (parentFolder) {
+                if (isDataTreeFolder(parentFolder)) {
+                    dispatch(setCurrentFolder(parentFolder));
+
+                    let expNodes = [...expandedNodes];
+                    const openParent = (itemID: string) => {
+                        if (!expNodes.includes(itemID)) {
+                            expNodes.push(itemID);
+
+                            let parent = getParentFolder(dataTree, parentFolder.id);
+                            if (parent) openParent(parent.id);
+                        }
+                    };
+                    openParent(parentFolder.id);
+                    setExpandedNodes(expNodes);
+                }
+            }
+        }
     };
 
     // разворачивание ноды
@@ -91,6 +113,30 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         eventName: EV_NAME_LINK_NOTE_REDIRECT,
         onEvent: (e: CustomEvent) => {
             if (e.detail.id) setTreeNodeSelect(e.detail.id);
+
+            // получаем родительскую папку для этой ноды, делаем ее активной, раскрываем все вышестоящие папки до этой ноды
+            if (dataTree) {
+                const parentFolder = getParentFolder(dataTree, e.detail.id);
+                if (parentFolder) {
+                    if (isDataTreeFolder(parentFolder)) {
+                        // useEventListener в данном случае отрабатывает вместе с редьюсерами, поэтому dispatch помещаю в стек макро-задачь чтоб redux не выдал ошибку
+                        setTimeout(() => {
+                            dispatch(setCurrentFolder(parentFolder));
+                        });
+                        let expNodes = [...expandedNodes];
+                        const openParent = (itemID: string) => {
+                            if (!expNodes.includes(itemID)) {
+                                expNodes.push(itemID);
+                            }
+                            let parent = getParentFolder(dataTree, itemID);
+
+                            if (parent) openParent(parent.id);
+                        };
+                        openParent(parentFolder.id);
+                        setExpandedNodes(expNodes);
+                    }
+                }
+            }
         },
     });
 
