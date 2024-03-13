@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { useHandleUpdate } from "./useHandleUpdate";
 
 type TuseEventListenerProps<E extends Event> = {
@@ -20,8 +20,16 @@ type TuseEventListenerProps<E extends Event> = {
 function useEventListener<E extends Event>({ updateOnReset, onEvent, eventName, eventTarget = window }: TuseEventListenerProps<E>) {
     const [handleupdate] = useHandleUpdate();
 
+    // это нужно для того чтобы не мемоизировать onEvent вместе с onEvt, это приведет к тому что при описании onEvent в компонентах, все данные ссылающиеся state внутри этой функции будут устаревшими и логика выполнения будет нарушена
+    // с useRef onEvent сможет обновлятся, при этом onEvt будет оставатся неизменным.
+    const refOnEvent = useRef(onEvent);
+
+    useEffect(() => {
+        refOnEvent.current = onEvent;
+    }, [onEvent]);
+
     const onEvt = useCallback((e: E) => {
-        onEvent && onEvent(e);
+        refOnEvent.current && refOnEvent.current(e);
 
         if (updateOnReset) {
             handleupdate();
