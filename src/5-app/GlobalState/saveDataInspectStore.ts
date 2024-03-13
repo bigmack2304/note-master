@@ -84,8 +84,12 @@ const saveDataInspectSlice = createAppSlice({
     initialState,
     reducers: (create) => ({
         // задаем активную папку
-        setCurrentFolder: create.reducer<ISaveDataInspectStore["currentFolder"]>((state, action) => {
-            state.currentFolder = action.payload;
+        setCurrentFolder: create.reducer<IDataTreeFolder | undefined>((state, action) => {
+            let prepareFolder = action.payload;
+            if (prepareFolder && "children" in prepareFolder) {
+                prepareFolder = nodeWithoutChildren(prepareFolder as IDataTreeFolder) as IDataTreeFolder;
+            }
+            state.currentFolder = prepareFolder;
         }),
         // задаем активную заметку
         setCurrentNote: create.reducer<ISaveDataInspectStore["currentNote"]>((state, action) => {
