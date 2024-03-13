@@ -21,6 +21,9 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "0-shared/utils/getSystemStyle";
 
+import { Table } from "1-entities/components/Table/Table";
+import { tableStructure } from "1-entities/components/Table/test";
+
 type TNoteProps = {
     addClassNames?: string[];
 };
@@ -79,6 +82,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
                 {/* DndProvider нужеен для работы react-dnd для драг-дропа, ...Backend"ы служат для корректной работы на устройствах с мышкой и тачскринах */}
                 {/* выбор backend работает 1 раз, если во время работы тип isTouchDevice изменится то в интерфейсе ничего не изменится, как isTouchDevice странно себя ведет так и backend не хочет работать при переключении*/}
                 <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend} options={{ enableMouseEvents: true }}>
+                    <Table tableRenderData={tableStructure} />
                     {currentNote.body.length > 0
                         ? currentNote.body.map((noteComponent) => {
                               if (noteComponent.component === "header") {
