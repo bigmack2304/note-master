@@ -57,7 +57,7 @@ function NoteList({ addClassNames = [], onClick, children, onContextMenu, dragId
                     <Box component={"ul"} className={genClassName} onContextMenu={onContextMenu} onClick={onClick} sx={styles.ListStyle(themeMode)}>
                         {processedСontent.map((value, index) => {
                             return (
-                                <li key={generateHashCode(value) + index} className="NoteList__li">
+                                <li key={generateHashCode(value, index)} className="NoteList__li">
                                     {value}
                                 </li>
                             );

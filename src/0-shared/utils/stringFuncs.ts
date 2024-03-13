@@ -35,9 +35,10 @@ function stringRemoveClass(classList: string, delClass: string) {
 
 /**
  * генерирует хеш номер для строки
+ * @ подойдет также для генерации ключей при рендере через map (generateHashCode(stringValue, index))
  *
  * @param str строка
- * @param seed сид
+ * @param seed сид (любое число)
  */
 function generateHashCode(str: string, seed: number = 0): string {
     let h1 = 0xdeadbeef ^ seed;

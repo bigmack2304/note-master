@@ -102,7 +102,7 @@ function ListEditWindow({ addClassNames = [], isOpen, listValue, onCloseSave, is
                                     };
 
                                     return (
-                                        <li className="ListEditWindow__li" key={generateHashCode(value) + index}>
+                                        <li className="ListEditWindow__li" key={generateHashCode(value, index)}>
                                             <Box className="ListEditWindow__li_inner">
                                                 <TextField
                                                     className="ListEditWindow__li_input"

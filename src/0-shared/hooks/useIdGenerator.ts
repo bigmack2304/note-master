@@ -8,6 +8,7 @@ type TIdGeneratorParams = {
 
 /**
  * возвращает экземпляр класса IdGenerator
+ * @ должен использоватся ИСКЛЮЧИТЕЛЬНО для взаимодейсмтвия appIndexedDB.ts
  * @prop isUpdOnNewInstance - boolean, будетли происходить ререндер
  */
 function useIdGenerator({ isUpdOnNewInstance = false }: TIdGeneratorParams = {}) {
