@@ -8,19 +8,11 @@
         flex-wrap: wrap;
         justify-content: center;
         flex-direction: column;
-
-        // .Table__header_text_input {
-        //     width: 100%;
-        //     border-color: white;
-        // }
     }
-
-    // .Table__body_inner_container {
-    //     width: fit-content;
-    // }
 }
 
 .Table__table {
+    margin-top: 5px;
     border-collapse: collapse;
     table-layout: auto;
 }
@@ -39,4 +31,18 @@
 .Table__header_inner_container,
 .Table__body_inner_container {
     line-height: 0;
+}
+
+.Table__view_controls {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.Table__header_sort_button {
+    font-size: 1.2rem;
 }

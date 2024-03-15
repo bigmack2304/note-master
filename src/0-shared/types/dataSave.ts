@@ -204,4 +204,5 @@ export type {
     TBodyComponentList,
     TBodyComponentTable,
     TTableValue,
+    TTableRow,
 };

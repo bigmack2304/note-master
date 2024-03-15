@@ -1,0 +1,41 @@
+.TableFilterButton__contextMenu > .MuiPaper-root {
+    padding: 5px;
+    min-width: 150px;
+}
+
+.TableFilterButton__controls_container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+
+    .MuiDivider-root {
+        width: 100%;
+    }
+}
+
+.TableFilterButton__controls_container > .TableFilterButton__formControl {
+    width: 100%;
+}
+
+.TableFilterButton__select .MuiSelect-select {
+    text-align: center;
+}
+
+.TableFilterButton__valueField .MuiInputBase-input {
+    text-align: center;
+}
+
+.TableFilterButton__dopControls {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.TableFilterButton__reset {
+    font-size: 0.8rem;
+}

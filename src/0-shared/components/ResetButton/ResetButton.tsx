@@ -11,6 +11,7 @@ type TResetButtonProps = {
     isStopPropagation?: boolean;
     sx?: SxProps;
     title?: string;
+    size?: "inherit" | "small" | "medium" | "large";
 };
 
 const ButtonStyle: SxProps = {
@@ -24,8 +25,9 @@ const ButtonStyle: SxProps = {
  * @prop buttonSettings - настройки для m.ui button
  * @prop title - всплывающее описание
  * @prop isStopPropagation - если true то при клике, всплытие события будет остановлено
+ * @prop size - размер кнопки
  */
-function ResetButton({ onClick = () => {}, addClassNames = [], buttonSettings = {}, sx: addSx = {}, title, isStopPropagation = false }: TResetButtonProps) {
+function ResetButton({ onClick = () => {}, addClassNames = [], buttonSettings = {}, sx: addSx = {}, title, isStopPropagation = false, size = "inherit" }: TResetButtonProps) {
     const defaultClassName = "ResetButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
@@ -35,16 +37,8 @@ function ResetButton({ onClick = () => {}, addClassNames = [], buttonSettings = 
     };
 
     return (
-        <IconButton
-            {...buttonSettings}
-            className={genClassName}
-            aria-label="закрыть"
-            size="large"
-            sx={{ ...ButtonStyle, ...addSx } as SxProps}
-            onClick={onButtonClick}
-            title={title}
-        >
-            <RestartAltIcon fontSize="large" />
+        <IconButton className={genClassName} aria-label="закрыть" sx={{ ...ButtonStyle, ...addSx } as SxProps} onClick={onButtonClick} title={title} {...buttonSettings}>
+            <RestartAltIcon fontSize={size} />
         </IconButton>
     );
 }

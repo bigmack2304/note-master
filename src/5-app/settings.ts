@@ -15,6 +15,14 @@ const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // перех�
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
 
+// цвета при наведении
+const HOVER_DARK = "#ffffff2b";
+const HOVER_LIGHT = "#0000001f";
+
+// ЦВЕТ для всяких кнопок
+const CONTROLS_PRIMARY_LIGHT = "#288CEF";
+const CONTROLS_PRIMARY_DARK = "#52D522";
+
 const THEME_LIGHT_GRAY = "#0000000d"; // затемнение для backround при светлой теме
 const THEME_DARK_GRAY = "#00000029"; // затемнение для backround при темной теме
 const OUTLINE_LIGHT_COLOR = "#00000024";
@@ -64,4 +72,8 @@ export {
     NOTE_STATUS_NO_COMPLETE,
     EV_NAME_LINK_NOTE_REDIRECT,
     EV_NAME_BUTTON_CLOSE_TREE_FOLDERS,
+    CONTROLS_PRIMARY_LIGHT,
+    CONTROLS_PRIMARY_DARK,
+    HOVER_DARK,
+    HOVER_LIGHT,
 };

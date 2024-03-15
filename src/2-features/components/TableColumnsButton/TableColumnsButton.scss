@@ -1,0 +1,33 @@
+.TableColumnsButton__textField {
+    width: 100%;
+}
+
+.TableColumnsButton__contextMenu > .MuiPaper-root {
+    padding: 5px;
+    min-width: 150px;
+}
+
+.TableColumnsButton__checkboxes > .TableColumnsButton__checkboxLabel {
+    margin-left: 0;
+}
+
+.TableColumnsButton__contextMenu .TableColumnsButton__checkboxes {
+    max-height: 300px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.TableColumnsButton__checkboxLabel > .TableColumnsButton__checkbox {
+}
+
+.TableColumnsButton__dopControls {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.TableColumnsButton__showAll {
+    font-size: 0.8rem;
+}
