@@ -58,13 +58,13 @@ function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, exclud
 
     // изменения в фильтруемой колонке
     const onSelectColumnIndex = (e: SelectChangeEvent<typeof selectedColumnIndex>) => {
-        if (selectedOperator !== "" && selectedColumnIndex !== "") isChange.current = true;
+        if (selectedOperator !== "" && e.target.value !== "") isChange.current = true;
         setSelectedColumnIndex(Number(e.target.value));
     };
 
     // изменение оператора
     const onSelectOperatorIndex = (e: SelectChangeEvent<typeof selectedOperator>) => {
-        if (selectedOperator !== "" && selectedColumnIndex !== "") isChange.current = true;
+        if (e.target.value !== "" && selectedColumnIndex !== "") isChange.current = true;
         setSelectedOperator(e.target.value as TOperators);
     };
 
