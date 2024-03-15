@@ -65,6 +65,7 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
     };
 
     const onSelectNoteClose = (selectNoteId: string) => {
+        if (selectNoteId == "#" || selectNoteId == "") return;
         setTargetNote((JSON.parse(selectNoteId) as TRadioData).name);
         setInputURLValue(selectNoteId);
     };
