@@ -33,7 +33,8 @@ type TTableProps = {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
 function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onCellsDelete, onAdd, onCellsClear, onSave }: TTableProps) {
-    const [sortedRenderData, setSortedRenderData] = useState({ headers: [...tableRenderData.headers], rows: [...tableRenderData.rows] });
+    const [savedRenderData, setSavedRenderData] = useState(structuredClone(tableRenderData));
+    const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(tableRenderData));
     const [excludeColumns, setExcludeColumns] = useState<Set<number>>(new Set()); // индексы колонок которые не нужно показывать
     const [sortHeaderIndex, setSortHeaderIndex] = useState<string>(""); // индекс колонки в которой была нажата стрелочка
     const [sortHeaderType, setSortHeaderType] = useState<"top" | "bottom">("top"); // тип сортировки колонки в которой нажимали по стрелочке
@@ -60,9 +61,10 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         genClassName = tempClassname.join(" ");
     };
 
-    //сортировка по калонкам
-    const sortTableData = (sortIndex: number, sortType: "top" | "bottom", noSave = false) => {
-        let temp = { ...sortedRenderData };
+    // сортировка по калонкам
+    const sortTableData = (sortedFiltredRenderData: TTableValue, sortIndex: number, sortType: "top" | "bottom") => {
+        if (isNaN(sortIndex)) return sortedFiltredRenderData;
+        let temp = structuredClone(sortedFiltredRenderData);
         let arr = [...temp.rows];
         arr = arr.sort((a, b) => {
             let prepareA = isNaN(Number(a[sortIndex])) ? a[sortIndex] : Number(a[sortIndex]);
@@ -73,12 +75,42 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             return sortType === "top" ? -1 : 1;
         });
         temp.rows = arr;
+        return temp;
+        //setSortedFiltredRenderData(temp);
+    };
 
-        if (!noSave) {
-            setSortedRenderData(temp);
-            return;
-        }
+    // фильтрация таблицы
+    const filterTableData = (sortedFiltredRenderData: TTableValue, filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string) => {
+        const isFilterActive = filterOperator !== "" && filterColumnIndex !== "";
+        if (!isFilterActive) return sortedFiltredRenderData;
+        let temp = structuredClone(sortedFiltredRenderData);
+        temp.rows = temp.rows.filter((row) => {
+            if (!checkFilter(isFilterActive, row, filterColumnIndex, filterValue, filterOperator)) return false;
+            return true;
+        });
+        //setSortedFiltredRenderData(temp);
 
+        return temp;
+    };
+
+    // скрытие ненужных ячеек
+    const excludedColumnsTable = (sortedFiltredRenderData: TTableValue, excludeColumns: Set<number>) => {
+        if (excludeColumns.size === 0) return sortedFiltredRenderData;
+        let temp = structuredClone(sortedFiltredRenderData);
+
+        temp.rows = temp.rows.map((row) => {
+            // if (excludeColumns.has(index)) return false;
+            // return true;
+            return row.filter((cell, cellIndex) => {
+                if (excludeColumns.has(cellIndex)) return false;
+                return true;
+            });
+        });
+        temp.headers = temp.headers.filter((cilumn, index) => {
+            if (excludeColumns.has(index)) return false;
+            return true;
+        });
+        //setSortedFiltredRenderData(temp);
         return temp;
     };
 
@@ -90,16 +122,16 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         if (!index || !iconType) return;
         setSortHeaderIndex(index);
         setSortHeaderType(iconType === "top" ? "bottom" : "top");
-        sortTableData(Number(index), iconType);
+        //sortTableData(Number(index), iconType);
     };
 
     // закритие меню показа колонок
     const onTableColumnsButtonClose = (excColumns: Set<number>, isChange: boolean) => {
         if (!isChange) return;
         // if (sortHeaderIndex !== "") setPrepareRenderData(tableRenderData);
-        // setFilterColumnIndex("");
-        // setFilterOperator("");
-        // setFilterValue("");
+        setFilterColumnIndex("");
+        setFilterOperator("");
+        setFilterValue("");
         // setSortHeaderIndex("");
         // setSortHeaderType("top");
         setEditSelectColumnIndex([]);
@@ -121,8 +153,8 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         setFilterColumnIndex("");
         setFilterOperator("");
         setFilterValue("");
-        // setSortHeaderIndex("");
-        // setSortHeaderType("top");
+        setSortHeaderIndex("");
+        setSortHeaderType("top");
         setEditSelectColumnIndex([]);
         setEditSelectRowIndex([]);
         setExcludeColumns(new Set());
@@ -190,10 +222,20 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         let value = e.target.value;
     };
 
+    // useEffect(() => {
+    //     setSortedFiltredRenderData(tableRenderData);
+    //     onResetClick();
+    //     //if (sortHeaderIndex !== "") sortTableData(Number(sortHeaderIndex), sortHeaderType);
+    // }, [tableRenderData]);
+
     useEffect(() => {
-        setSortedRenderData(tableRenderData);
-        if (sortHeaderIndex !== "") sortTableData(Number(sortHeaderIndex), sortHeaderType);
-    }, [tableRenderData]);
+        setSortedFiltredRenderData((state) => {
+            let exclude = excludedColumnsTable(tableRenderData, excludeColumns);
+            let filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+            let sort = sortTableData(filter, Number(sortHeaderIndex), sortHeaderType);
+            return sort;
+        });
+    }, [sortHeaderIndex, sortHeaderType, filterValue, filterOperator, filterColumnIndex, excludeColumns, tableRenderData]);
 
     calcClassName();
 
@@ -210,7 +252,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             <div className="Table__view_controls">
                 <TableColumnsButton
                     size="small"
-                    allColumns={tableRenderData.headers}
+                    allColumns={savedRenderData.headers}
                     excludeColumns={excludeColumns}
                     onCloseSave={onTableColumnsButtonClose}
                     isActive={isTableColumnsButtonActive}
@@ -218,7 +260,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 />
                 <TableFilterButton
                     size="small"
-                    allColumns={tableRenderData.headers}
+                    allColumns={savedRenderData.headers}
                     excludeColumns={excludeColumns}
                     onCloseSave={onTableFilterButtonClose}
                     filterColumnIndex={filterColumnIndex}
@@ -232,12 +274,12 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             <table className="Table__table">
                 <caption className="Table__desc">{tableDesc}</caption>
                 <thead className="Table__headers">
-                    {sortedRenderData.headers.length > 0 && (
+                    {sortedFiltredRenderData.headers.length > 0 && (
                         <tr>
                             {/* селекторы колонок в режиме редактирования */}
                             {editMode && <th className="Table__header--edit"></th>}
-                            {sortedRenderData.headers.map((hValue, index) => {
-                                if (excludeColumns.has(index)) return;
+                            {sortedFiltredRenderData.headers.map((hValue, index) => {
+                                //if (excludeColumns.has(index)) return;
                                 let cellClass = "Table__header";
                                 if (editMode) {
                                     if (editSelectColumnIndex.includes(index)) {
@@ -288,11 +330,11 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                     )}
                 </thead>
                 <tbody>
-                    {sortedRenderData.rows.length > 0 &&
-                        sortedRenderData.rows.map((row, rowIndex) => {
+                    {sortedFiltredRenderData.rows.length > 0 &&
+                        sortedFiltredRenderData.rows.map((row, rowIndex) => {
                             // рендер всей строки
 
-                            if (!checkFilter(isFilterActive, row, filterColumnIndex, filterValue, filterOperator)) return; // применение фильтров
+                            //if (!checkFilter(isFilterActive, row, filterColumnIndex, filterValue, filterOperator)) return; // применение фильтров
                             return (
                                 <Box component={"tr"} key={generateHashCode(`rowIndex${rowIndex}`, rowIndex)} className="Table__row_body" sx={style.rowBody(temeValue)}>
                                     {/* селекторы строк в режиме редактирования */}
@@ -312,7 +354,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                     )}
                                     {/* рендер отденльной клеточки строки */}
                                     {row.map((itemValue, columnIndex) => {
-                                        if (excludeColumns.has(columnIndex)) return; // показываем выбранные колонки
+                                        //if (excludeColumns.has(columnIndex)) return; // показываем выбранные колонки
                                         let cellClass = "Table__body";
                                         if (editMode) {
                                             if (editSelectColumnIndex.includes(columnIndex) || editSelectRowIndex.includes(rowIndex)) {

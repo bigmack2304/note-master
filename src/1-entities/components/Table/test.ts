@@ -1,4 +1,6 @@
-const tableStructure = {
+import type { TTableValue } from "0-shared/types/dataSave";
+
+const tableStructure: TTableValue = {
     headers: ["значения", "числа", "числа 2", "имена из южного парка"],
     rows: [
         ["значение 1", "1", "23", "кени"],
