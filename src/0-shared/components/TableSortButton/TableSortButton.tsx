@@ -27,6 +27,7 @@ const ButtonStyle: SxProps = {
  * @prop title - текст описания при наведении
  * @prop icon - тип иконки для отображения
  * @prop isActive - если false то иконка будет полупрозрачной
+ * @prop dataSet - data атрибуты
  */
 function TableSortButton({ onClick = () => {}, addClassNames = [], title, size = "inherit", icon = "top", isActive = false, dataSet }: TTableSortButtonProps) {
     const defaultClassName = "TableSortButton";

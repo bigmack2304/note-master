@@ -23,6 +23,10 @@ const HOVER_LIGHT = "#0000001f";
 const CONTROLS_PRIMARY_LIGHT = "#288CEF";
 const CONTROLS_PRIMARY_DARK = "#52D522";
 
+// цвета выбора колонок в таблице
+const CELL_SELECT_LIGHT = "#288BEF25";
+const CELL_SELECT_DARK = "#52D52228";
+
 const THEME_LIGHT_GRAY = "#0000000d"; // затемнение для backround при светлой теме
 const THEME_DARK_GRAY = "#00000029"; // затемнение для backround при темной теме
 const OUTLINE_LIGHT_COLOR = "#00000024";
@@ -76,4 +80,6 @@ export {
     CONTROLS_PRIMARY_DARK,
     HOVER_DARK,
     HOVER_LIGHT,
+    CELL_SELECT_LIGHT,
+    CELL_SELECT_DARK,
 };

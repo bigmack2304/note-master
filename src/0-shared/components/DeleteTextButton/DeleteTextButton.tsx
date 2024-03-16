@@ -1,9 +1,9 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import type { SxProps } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import FontDownloadOffIcon from "@mui/icons-material/FontDownloadOff";
 
-type TDeleteButtonProps = {
+type TDeleteTextButtonProps = {
     onClick?: (e: React.MouseEvent, customData: any) => void;
     addClassNames?: string[];
     size?: "inherit" | "small" | "medium" | "large";
@@ -17,7 +17,7 @@ const ButtonStyle: SxProps = {
 };
 
 /**
- * круглая кнопка с со значком удалить
+ * круглая кнопка с со значком удалить текст
  * @prop onClick - вызывается при клике на кнопку
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop size - размер
@@ -25,8 +25,8 @@ const ButtonStyle: SxProps = {
  * @prop customData - какието данные кеоторые будут возвращены в вызове onClick
  * @prop disabled - неактивная кнопка
  */
-function DeleteButton({ onClick, addClassNames = [], title, size = "inherit", customData, disabled = false }: TDeleteButtonProps) {
-    const defaultClassName = "DeleteButton";
+function DeleteTextButton({ onClick, addClassNames = [], title, size = "inherit", customData, disabled = false }: TDeleteTextButtonProps) {
+    const defaultClassName = "DeleteTextButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     const clickCallback = (e: React.MouseEvent) => {
@@ -35,9 +35,9 @@ function DeleteButton({ onClick, addClassNames = [], title, size = "inherit", cu
 
     return (
         <IconButton className={genClassName} aria-label="закрыть" sx={ButtonStyle} onClick={clickCallback} title={title} disabled={disabled}>
-            <DeleteIcon fontSize={size} />
+            <FontDownloadOffIcon fontSize={size} />
         </IconButton>
     );
 }
 
-export { DeleteButton };
+export { DeleteTextButton };

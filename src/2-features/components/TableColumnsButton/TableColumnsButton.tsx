@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { ColumnsButton } from "0-shared/components/ColumnsButton/ColumnsButton";
-import { TextField, Divider, Box, FormGroup, FormControlLabel, Checkbox, Button, MenuItem } from "@mui/material";
+import { TextField, Divider, Box, FormGroup, Button } from "@mui/material";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { TTableValue } from "0-shared/types/dataSave";
-import * as style from "./TableColumnsButtonStyle";
+import { Checkbox } from "0-shared/components/Checkbox/Checkbox";
 import "./TableColumnsButton.scss";
 
 interface TTableColumnsButtonProps extends GetProps<typeof ColumnsButton> {
@@ -105,20 +105,13 @@ function TableColumnsButton({ addClassNames = [], allColumns, onCloseSave, exclu
                         };
 
                         return (
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        size="small"
-                                        checked={isChecked}
-                                        onChange={onChange}
-                                        className="TableColumnsButton__checkbox"
-                                        color="primary"
-                                        sx={style.checkboxLabel(themeValue)}
-                                    />
-                                }
-                                label={column}
-                                className="TableColumnsButton__checkboxLabel"
+                            <Checkbox
                                 key={generateHashCode(column, index)}
+                                label={column}
+                                checked={isChecked}
+                                onChange={onChange}
+                                addClassNames={["TableColumnsButton__checkbox"]}
+                                size="small"
                             />
                         );
                     })}

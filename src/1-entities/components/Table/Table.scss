@@ -2,12 +2,23 @@
     overflow: auto;
 }
 
+.Table .Table__control_button {
+    padding: 8px;
+}
+
 // таблица в режиме редактирования
 .Table--editMode {
+    padding: 5px;
+    border-radius: 5px;
+
     .Table__header_inner_container {
         flex-wrap: wrap;
         justify-content: center;
         flex-direction: column;
+        width: 150px;
+    }
+    .Table__body_inner_container {
+        width: 150px;
     }
 }
 
@@ -33,7 +44,8 @@
     line-height: 0;
 }
 
-.Table__view_controls {
+.Table__view_controls,
+.Table__edit_controls {
     margin-top: 5px;
     display: flex;
     flex-direction: row;
@@ -45,4 +57,28 @@
 
 .Table__header_sort_button {
     font-size: 1.2rem;
+}
+
+.Table__header_text_input,
+.Table__body_text_input {
+    width: 100%;
+
+    .MuiInputBase-input {
+        text-overflow: ellipsis;
+    }
+}
+
+.Table__body--edit .Table__editable_select_row,
+.Table__header_inner_container .Table__editable_select_column {
+    margin: 0;
+}
+
+.Table--editMode .Table__header_controls_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
 }

@@ -7,7 +7,7 @@
     min-width: 150px;
 }
 
-.TableColumnsButton__checkboxes > .TableColumnsButton__checkboxLabel {
+.TableColumnsButton__checkboxes > .TableColumnsButton__checkbox {
     margin-left: 0;
 }
 
@@ -15,9 +15,6 @@
     max-height: 300px;
     overflow: hidden;
     overflow-y: auto;
-}
-
-.TableColumnsButton__checkboxLabel > .TableColumnsButton__checkbox {
 }
 
 .TableColumnsButton__dopControls {
