@@ -228,10 +228,43 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
     // изменение значения в клеточке
     const onCellValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const bodyctRow = Number(e.target.dataset.row_index);
+        const bodyRow = Number(e.target.dataset.row_index);
         const bodyColumn = Number(e.target.dataset.column_index);
         const headerColumn = Number(e.target.dataset.header_index);
-        let value = e.target.value;
+        let inputValue = e.target.value;
+        let isChange = false;
+
+        if (!isNaN(bodyRow) && !isNaN(bodyColumn)) {
+            outer: for (let row of savedRenderData.current.rows) {
+                for (let col of row.value) {
+                    if (bodyRow === row.rowIndex && bodyColumn === col.colIndex) {
+                        col.value = inputValue;
+                        isChange = true;
+                        break outer;
+                    }
+                }
+            }
+        }
+
+        if (!isNaN(headerColumn)) {
+            for (let col of savedRenderData.current.headers) {
+                if (col.colIndex === headerColumn) {
+                    col.value = inputValue;
+                    isChange = true;
+                    break;
+                }
+            }
+        }
+
+        if (isChange) {
+            setSortedFiltredRenderData((state) => {
+                const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+                const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+                const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+                const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
+                return filter;
+            });
+        }
     };
 
     // useEffect(() => {
