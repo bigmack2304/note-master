@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Typography, Box, Input } from "@mui/material";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { TableSortButton } from "0-shared/components/TableSortButton/TableSortButton";
@@ -9,7 +9,7 @@ import { TableFilterButton } from "2-features/components/TableFilterButton/Table
 import type { TTableValue } from "0-shared/types/dataSave";
 import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
 import { Checkbox } from "0-shared/components/Checkbox/Checkbox";
-import { checkFilter } from "./TableFilter";
+import { excludedColumnsTable, filterTableData, sortTableData } from "./TableFunc";
 import { TableAddButton } from "2-features/components/TableAddButton/TableAddButton";
 import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
 import { DeleteTextButton } from "0-shared/components/DeleteTextButton/DeleteTextButton";
@@ -33,8 +33,8 @@ type TTableProps = {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
 function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onCellsDelete, onAdd, onCellsClear, onSave }: TTableProps) {
-    const [savedRenderData, setSavedRenderData] = useState(structuredClone(tableRenderData));
-    const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(tableRenderData));
+    const savedRenderData = useRef(structuredClone(tableRenderData));
+    const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(savedRenderData.current));
     const [excludeColumns, setExcludeColumns] = useState<Set<number>>(new Set()); // индексы колонок которые не нужно показывать
     const [sortHeaderIndex, setSortHeaderIndex] = useState<string>(""); // индекс колонки в которой была нажата стрелочка
     const [sortHeaderType, setSortHeaderType] = useState<"top" | "bottom">("top"); // тип сортировки колонки в которой нажимали по стрелочке
@@ -61,59 +61,6 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         genClassName = tempClassname.join(" ");
     };
 
-    // сортировка по калонкам
-    const sortTableData = (sortedFiltredRenderData: TTableValue, sortIndex: number, sortType: "top" | "bottom") => {
-        if (isNaN(sortIndex)) return sortedFiltredRenderData;
-        let temp = structuredClone(sortedFiltredRenderData);
-        let arr = [...temp.rows];
-        arr = arr.sort((a, b) => {
-            let prepareA = isNaN(Number(a[sortIndex])) ? a[sortIndex] : Number(a[sortIndex]);
-            let prepareB = isNaN(Number(b[sortIndex])) ? b[sortIndex] : Number(b[sortIndex]);
-
-            if (prepareA === prepareB) return 0;
-            if (prepareA > prepareB) return sortType === "top" ? 1 : -1;
-            return sortType === "top" ? -1 : 1;
-        });
-        temp.rows = arr;
-        return temp;
-        //setSortedFiltredRenderData(temp);
-    };
-
-    // фильтрация таблицы
-    const filterTableData = (sortedFiltredRenderData: TTableValue, filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string) => {
-        const isFilterActive = filterOperator !== "" && filterColumnIndex !== "";
-        if (!isFilterActive) return sortedFiltredRenderData;
-        let temp = structuredClone(sortedFiltredRenderData);
-        temp.rows = temp.rows.filter((row) => {
-            if (!checkFilter(isFilterActive, row, filterColumnIndex, filterValue, filterOperator)) return false;
-            return true;
-        });
-        //setSortedFiltredRenderData(temp);
-
-        return temp;
-    };
-
-    // скрытие ненужных ячеек
-    const excludedColumnsTable = (sortedFiltredRenderData: TTableValue, excludeColumns: Set<number>) => {
-        if (excludeColumns.size === 0) return sortedFiltredRenderData;
-        let temp = structuredClone(sortedFiltredRenderData);
-
-        temp.rows = temp.rows.map((row) => {
-            // if (excludeColumns.has(index)) return false;
-            // return true;
-            return row.filter((cell, cellIndex) => {
-                if (excludeColumns.has(cellIndex)) return false;
-                return true;
-            });
-        });
-        temp.headers = temp.headers.filter((cilumn, index) => {
-            if (excludeColumns.has(index)) return false;
-            return true;
-        });
-        //setSortedFiltredRenderData(temp);
-        return temp;
-    };
-
     // нажатие на какуюто кнопку сортировки в колонках
     const onTableSortButton = (e: React.MouseEvent<HTMLButtonElement>) => {
         const index = (e.currentTarget as HTMLButtonElement).dataset.header_index;
@@ -129,13 +76,16 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     const onTableColumnsButtonClose = (excColumns: Set<number>, isChange: boolean) => {
         if (!isChange) return;
         // if (sortHeaderIndex !== "") setPrepareRenderData(tableRenderData);
-        setFilterColumnIndex("");
-        setFilterOperator("");
-        setFilterValue("");
+        if (isFilterActive && [...excColumns.values()].includes(filterColumnIndex)) {
+            setFilterColumnIndex("");
+            setFilterOperator("");
+            setFilterValue("");
+        }
+
         // setSortHeaderIndex("");
         // setSortHeaderType("top");
-        setEditSelectColumnIndex([]);
-        setEditSelectRowIndex([]);
+        setEditSelectColumnIndex([]); // можно удалять только если там есть колонка которую скрываем
+
         setExcludeColumns(excColumns);
     };
 
@@ -145,6 +95,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         setFilterColumnIndex(filterColumnIndex);
         setFilterOperator(filterOperator);
         setFilterValue(filterValue);
+        setEditSelectRowIndex([]);
     };
 
     // кнопка сброса фильтров
@@ -164,6 +115,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     const onEditSelectTable = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         const selectRow = Number(event.currentTarget.dataset.row_index);
         const selectColumn = Number(event.currentTarget.dataset.header_index);
+
         if (!isNaN(selectRow)) {
             if (checked) {
                 setEditSelectRowIndex((state) => {
@@ -178,6 +130,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 });
             }
         }
+
         if (!isNaN(selectColumn)) {
             if (checked) {
                 setEditSelectColumnIndex((state) => {
@@ -206,7 +159,66 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
     // нажатие на кнопку отчистить
     const onTableDelText = () => {
-        onCellsClear && onCellsClear(editSelectRowIndex, editSelectColumnIndex);
+        //onCellsClear && onCellsClear(editSelectRowIndex, editSelectColumnIndex);
+        let isChange = false;
+
+        if (editSelectRowIndex.length > 0 || editSelectColumnIndex.length > 0) {
+            // чистить мы можем с привязкой к показынным ячейкам или с привязкой к выбранной строке/колонке
+            let cellsId: string[] = [];
+
+            const calcCellsId = () => {
+                for (let row of sortedFiltredRenderData.rows) {
+                    // if (editSelectRowIndex.includes(row.rowIndex)) {
+                    for (let col of row.value) {
+                        if (editSelectColumnIndex.includes(col.colIndex)) {
+                            cellsId.push(JSON.stringify({ row: row.rowIndex, col: col.colIndex }));
+                            continue;
+                        }
+                        if (editSelectRowIndex.includes(row.rowIndex)) {
+                            cellsId.push(JSON.stringify({ row: row.rowIndex, col: col.colIndex }));
+                        }
+                    }
+                    // }
+                }
+            };
+            calcCellsId();
+
+            savedRenderData.current.rows = savedRenderData.current.rows.map((row) => {
+                return {
+                    rowIndex: row.rowIndex,
+                    value: row.value.map((column) => {
+                        let value = column.value;
+
+                        // if (editSelectRowIndex.includes(row.rowIndex)) {
+                        //     isChange = true;
+                        //     value = "";
+                        // }
+
+                        // if (editSelectColumnIndex.includes(column.colIndex)) {
+                        //     isChange = true;
+                        //     value = "";
+                        // }
+
+                        if (cellsId.includes(JSON.stringify({ row: row.rowIndex, col: column.colIndex }))) {
+                            isChange = true;
+                            value = "";
+                        }
+
+                        return { value: value, colIndex: column.colIndex };
+                    }),
+                };
+            });
+        }
+
+        if (isChange) {
+            setSortedFiltredRenderData((state) => {
+                const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+                const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+                const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+                const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
+                return sort;
+            });
+        }
     };
 
     // нажатие на кнопку сохранить
@@ -229,13 +241,15 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     // }, [tableRenderData]);
 
     useEffect(() => {
+        //savedRenderData.current = structuredClone(tableRenderData);
         setSortedFiltredRenderData((state) => {
-            let exclude = excludedColumnsTable(tableRenderData, excludeColumns);
-            let filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
-            let sort = sortTableData(filter, Number(sortHeaderIndex), sortHeaderType);
+            const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+            const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+            const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+            const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
             return sort;
         });
-    }, [sortHeaderIndex, sortHeaderType, filterValue, filterOperator, filterColumnIndex, excludeColumns, tableRenderData]);
+    }, [sortHeaderIndex, sortHeaderType, filterValue, filterOperator, filterColumnIndex, excludeColumns]);
 
     calcClassName();
 
@@ -252,7 +266,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             <div className="Table__view_controls">
                 <TableColumnsButton
                     size="small"
-                    allColumns={savedRenderData.headers}
+                    allColumns={savedRenderData.current.headers}
                     excludeColumns={excludeColumns}
                     onCloseSave={onTableColumnsButtonClose}
                     isActive={isTableColumnsButtonActive}
@@ -260,8 +274,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 />
                 <TableFilterButton
                     size="small"
-                    allColumns={savedRenderData.headers}
-                    excludeColumns={excludeColumns}
+                    allColumns={sortedFiltredRenderData.headers}
                     onCloseSave={onTableFilterButtonClose}
                     filterColumnIndex={filterColumnIndex}
                     filterOperator={filterOperator}
@@ -278,47 +291,47 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                         <tr>
                             {/* селекторы колонок в режиме редактирования */}
                             {editMode && <th className="Table__header--edit"></th>}
-                            {sortedFiltredRenderData.headers.map((hValue, index) => {
+                            {sortedFiltredRenderData.headers.map((hValue) => {
                                 //if (excludeColumns.has(index)) return;
                                 let cellClass = "Table__header";
                                 if (editMode) {
-                                    if (editSelectColumnIndex.includes(index)) {
+                                    if (editSelectColumnIndex.includes(hValue.colIndex)) {
                                         cellClass = cellClass + " Table__cell_select";
                                     }
                                 }
                                 return (
-                                    <Box component="th" key={generateHashCode(hValue, index)} className={cellClass} sx={style.cell(temeValue)}>
+                                    <Box component="th" key={generateHashCode(hValue.value, hValue.colIndex)} className={cellClass} sx={style.cell(temeValue)}>
                                         <div className="Table__header_inner_container">
                                             {editMode ? (
                                                 <>
                                                     <Input
                                                         type="text"
-                                                        defaultValue={hValue}
+                                                        defaultValue={hValue.value}
                                                         autoComplete="off"
                                                         className="Table__header_text_input"
-                                                        key={generateHashCode(hValue, index)}
-                                                        inputProps={{ "data-header_index": index }}
+                                                        key={generateHashCode(hValue.value, hValue.colIndex)}
+                                                        inputProps={{ "data-header_index": hValue.colIndex }}
                                                         onChange={onCellValueUpdate}
                                                     />
                                                 </>
                                             ) : (
-                                                <Typography className="Table__header_text">{hValue}</Typography>
+                                                <Typography className="Table__header_text">{hValue.value}</Typography>
                                             )}
                                             <div className="Table__header_controls_container">
                                                 {editMode && (
                                                     <Checkbox
                                                         size="small"
                                                         addClassNames={["Table__editable_select_column"]}
-                                                        dataSet={[{ name: "header_index", value: String(index) }]}
+                                                        dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
                                                         onChange={onEditSelectTable}
-                                                        checked={editSelectColumnIndex.includes(index)}
+                                                        checked={editSelectColumnIndex.includes(hValue.colIndex)}
                                                     />
                                                 )}
                                                 <TableSortButton
                                                     addClassNames={["Table__header_sort_button"]}
-                                                    dataSet={[{ name: "header_index", value: String(index) }]}
-                                                    isActive={sortHeaderIndex === String(index)}
-                                                    icon={sortHeaderIndex === String(index) ? sortHeaderType : "top"}
+                                                    dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
+                                                    isActive={sortHeaderIndex === String(hValue.colIndex)}
+                                                    icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
                                                     onClick={onTableSortButton}
                                                 />
                                             </div>
@@ -331,12 +344,12 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 </thead>
                 <tbody>
                     {sortedFiltredRenderData.rows.length > 0 &&
-                        sortedFiltredRenderData.rows.map((row, rowIndex) => {
+                        sortedFiltredRenderData.rows.map((row) => {
                             // рендер всей строки
 
                             //if (!checkFilter(isFilterActive, row, filterColumnIndex, filterValue, filterOperator)) return; // применение фильтров
                             return (
-                                <Box component={"tr"} key={generateHashCode(`rowIndex${rowIndex}`, rowIndex)} className="Table__row_body" sx={style.rowBody(temeValue)}>
+                                <Box component={"tr"} key={generateHashCode(`rowIndex${row.rowIndex}`, row.rowIndex)} className="Table__row_body" sx={style.rowBody(temeValue)}>
                                     {/* селекторы строк в режиме редактирования */}
                                     {editMode && (
                                         <td className="Table__body--edit">
@@ -344,28 +357,28 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                 size="small"
                                                 addClassNames={["Table__editable_select_row"]}
                                                 dataSet={[
-                                                    { name: "row_index", value: String(rowIndex) },
+                                                    { name: "row_index", value: String(row.rowIndex) },
                                                     // { name: "to_value", value: tableRenderData.rows[rowIndex][0] },
                                                 ]}
                                                 onChange={onEditSelectTable}
-                                                checked={editSelectRowIndex.includes(rowIndex)}
+                                                checked={editSelectRowIndex.includes(row.rowIndex)}
                                             />
                                         </td>
                                     )}
                                     {/* рендер отденльной клеточки строки */}
-                                    {row.map((itemValue, columnIndex) => {
+                                    {row.value.map((itemValue) => {
                                         //if (excludeColumns.has(columnIndex)) return; // показываем выбранные колонки
                                         let cellClass = "Table__body";
                                         if (editMode) {
-                                            if (editSelectColumnIndex.includes(columnIndex) || editSelectRowIndex.includes(rowIndex)) {
+                                            if (editSelectColumnIndex.includes(itemValue.colIndex) || editSelectRowIndex.includes(row.rowIndex)) {
                                                 cellClass = cellClass + " Table__cell_select";
                                             }
                                         }
                                         return (
                                             <Box
-                                                key={generateHashCode(String(rowIndex), columnIndex)}
-                                                data-row_index={rowIndex}
-                                                data-column_index={columnIndex}
+                                                key={generateHashCode(String(row.rowIndex), itemValue.colIndex)}
+                                                data-row_index={row.rowIndex}
+                                                data-column_index={itemValue.colIndex}
                                                 className={cellClass}
                                                 component="td"
                                                 sx={style.cell(temeValue)}
@@ -374,15 +387,15 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                     {editMode ? (
                                                         <Input
                                                             type="text"
-                                                            defaultValue={itemValue}
+                                                            defaultValue={itemValue.value}
                                                             autoComplete="off"
                                                             className="Table__body_text_input"
-                                                            inputProps={{ "data-column_index": columnIndex, "data-row_index": rowIndex }}
-                                                            key={generateHashCode(itemValue, rowIndex + columnIndex)}
+                                                            inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
+                                                            key={generateHashCode(itemValue.value, row.rowIndex + itemValue.colIndex)}
                                                             onChange={onCellValueUpdate}
                                                         />
                                                     ) : (
-                                                        <Typography className="Table__body_text">{itemValue}</Typography>
+                                                        <Typography className="Table__body_text">{itemValue.value}</Typography>
                                                     )}
                                                 </div>
                                             </Box>

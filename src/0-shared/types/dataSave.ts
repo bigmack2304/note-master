@@ -84,16 +84,24 @@ interface TBodyComponentList extends IDataTreeNode {
 
 // таблица
 interface TBodyComponentTable extends IDataTreeNode {
-    component: "text";
+    component: "table";
     value: TTableValue;
 }
 
 /// дополнительные типы для таблиц ///////////////////////////////////////////////////////////////
 
-type TTableRow = string[];
+type TTableRowColumnItem = {
+    value: string;
+    colIndex: number;
+};
+
+type TTableRow = {
+    value: TTableRowColumnItem[];
+    rowIndex: number;
+};
 
 type TTableValue = {
-    headers: string[];
+    headers: TTableRowColumnItem[];
     rows: TTableRow[];
 };
 
@@ -205,4 +213,5 @@ export type {
     TBodyComponentTable,
     TTableValue,
     TTableRow,
+    TTableRowColumnItem,
 };

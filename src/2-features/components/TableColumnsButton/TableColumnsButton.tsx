@@ -82,7 +82,7 @@ function TableColumnsButton({ addClassNames = [], allColumns, onCloseSave, exclu
                 />
                 <FormGroup className="TableColumnsButton__checkboxes">
                     {allColumns.map((column, index) => {
-                        if (!column.includes(textInputValue)) return;
+                        if (!column.value.includes(textInputValue)) return;
 
                         const isChecked = !exColumns.has(index);
 
@@ -106,8 +106,8 @@ function TableColumnsButton({ addClassNames = [], allColumns, onCloseSave, exclu
 
                         return (
                             <Checkbox
-                                key={generateHashCode(column, index)}
-                                label={column}
+                                key={generateHashCode(column.value, index)}
+                                label={column.value}
                                 checked={isChecked}
                                 onChange={onChange}
                                 addClassNames={["TableColumnsButton__checkbox"]}
