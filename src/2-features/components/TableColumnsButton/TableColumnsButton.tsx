@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { ColumnsButton } from "0-shared/components/ColumnsButton/ColumnsButton";
 import { TextField, Divider, Box, FormGroup, Button } from "@mui/material";
@@ -6,7 +6,8 @@ import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { TTableValue } from "0-shared/types/dataSave";
-import { Checkbox } from "0-shared/components/Checkbox/Checkbox";
+import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import "./TableColumnsButton.scss";
 
 interface TTableColumnsButtonProps extends GetProps<typeof ColumnsButton> {
@@ -105,7 +106,7 @@ function TableColumnsButton({ addClassNames = [], allColumns, onCloseSave, exclu
                         };
 
                         return (
-                            <Checkbox
+                            <Checkbox_memo_is_equal
                                 key={generateHashCode(column.value, index)}
                                 label={column.value}
                                 checked={isChecked}
@@ -127,4 +128,6 @@ function TableColumnsButton({ addClassNames = [], allColumns, onCloseSave, exclu
     );
 }
 
-export { TableColumnsButton };
+const TableColumnsButton_memo = React.memo(TableColumnsButton);
+const TableColumnsButton_memo_is_equal = React.memo(TableColumnsButton, deep_object_is_equal);
+export { TableColumnsButton, TableColumnsButton_memo, TableColumnsButton_memo_is_equal };

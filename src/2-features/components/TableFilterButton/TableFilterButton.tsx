@@ -7,6 +7,7 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { TTableValue } from "0-shared/types/dataSave";
 import type { SelectChangeEvent } from "@mui/material/Select";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import * as style from "./TableFilterButtonStyle";
 import "./TableFilterButton.scss";
 
@@ -184,5 +185,7 @@ function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, filter
     );
 }
 
-export { TableFilterButton };
+const TableFilterButton_memo = React.memo(TableFilterButton);
+const TableFilterButton_memo_is_equal = React.memo(TableFilterButton, deep_object_is_equal);
+export { TableFilterButton, TableFilterButton_memo, TableFilterButton_memo_is_equal };
 export type { TOperators };

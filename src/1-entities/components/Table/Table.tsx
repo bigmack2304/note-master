@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Typography, Box, Input } from "@mui/material";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
-import { TableSortButton } from "0-shared/components/TableSortButton/TableSortButton";
+import { TableSortButton_is_equal } from "0-shared/components/TableSortButton/TableSortButton";
 import { ResetButton } from "0-shared/components/ResetButton/ResetButton";
-import { TableColumnsButton } from "2-features/components/TableColumnsButton/TableColumnsButton";
+import { TableColumnsButton_memo_is_equal } from "2-features/components/TableColumnsButton/TableColumnsButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import { TableFilterButton } from "2-features/components/TableFilterButton/TableFilterButton";
+import { TableFilterButton_memo_is_equal } from "2-features/components/TableFilterButton/TableFilterButton";
 import type { TTableValue, TTableRow } from "0-shared/types/dataSave";
 import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
-import { Checkbox } from "0-shared/components/Checkbox/Checkbox";
+import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
 import { excludedColumnsTable, filterTableData, sortTableData } from "./TableFunc";
-import { TableAddButton } from "2-features/components/TableAddButton/TableAddButton";
+import { TableAddButton_memo_is_equal } from "2-features/components/TableAddButton/TableAddButton";
 import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
 import { DeleteTextButton } from "0-shared/components/DeleteTextButton/DeleteTextButton";
-import { SaveButton } from "0-shared/components/SaveButton/SaveButton";
+import { SaveButton_memo_is_equal } from "0-shared/components/SaveButton/SaveButton";
+import { TableInput_memo_is_equal } from "0-shared/components/TableInput/TableInput";
 import * as style from "./TableStyle";
 import "./Table.scss";
 
@@ -60,7 +61,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     };
 
     // нажатие на какуюто кнопку сортировки в колонках
-    const onTableSortButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onTableSortButton = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         const index = (e.currentTarget as HTMLButtonElement).dataset.header_index;
         const iconType = (e.currentTarget as HTMLButtonElement).dataset.icon as "top" | "bottom";
 
@@ -68,10 +69,10 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         setSortHeaderIndex(index);
         setSortHeaderType(iconType === "top" ? "bottom" : "top");
         //sortTableData(Number(index), iconType);
-    };
+    }, []);
 
     // закритие меню показа колонок
-    const onTableColumnsButtonClose = (excColumns: Set<number>, isChange: boolean) => {
+    const onTableColumnsButtonClose = useCallback((excColumns: Set<number>, isChange: boolean) => {
         if (!isChange) return;
         if (isFilterActive && [...excColumns.values()].includes(filterColumnIndex)) {
             setFilterColumnIndex("");
@@ -81,16 +82,16 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
         setEditSelectColumnIndex([]); // можно удалять только если там есть колонка которую скрываем
         setExcludeColumns(excColumns);
-    };
+    }, []);
 
     // закрытие меню фильтра
-    const onTableFilterButtonClose = (filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string, isChange: boolean) => {
+    const onTableFilterButtonClose = useCallback((filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string, isChange: boolean) => {
         if (!isChange) return;
         setFilterColumnIndex(filterColumnIndex);
         setFilterOperator(filterOperator);
         setFilterValue(filterValue);
         setEditSelectRowIndex([]);
-    };
+    }, []);
 
     // кнопка сброса фильтров
     const onResetClick = () => {
@@ -106,7 +107,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     };
 
     // выбор сктрок или колонок в режиме редактирования
-    const onEditSelectTable = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    const onEditSelectTable = useCallback((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         const selectRow = Number(event.currentTarget.dataset.row_index);
         const selectColumn = Number(event.currentTarget.dataset.header_index);
 
@@ -139,7 +140,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 });
             }
         }
-    };
+    }, []);
 
     // нажатие на кнопку удалить выбранное
     const onDeleteSelected = () => {
@@ -218,7 +219,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     };
 
     // нажатие на кнопку добавления строки или колонки
-    const onTableAdd = (type: "row" | "column", amount: number) => {
+    const onTableAdd = useCallback((type: "row" | "column", amount: number) => {
         //onAdd && onAdd(type, amount);
         if (type == "column") {
             const savedMaxColIndex = savedRenderData.current.headers.length === 0 ? 0 : savedRenderData.current.headers.length;
@@ -260,7 +261,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
             return sort;
         });
-    };
+    }, []);
 
     // нажатие на кнопку отчистить
     const onTableDelText = () => {
@@ -327,12 +328,12 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     };
 
     // нажатие на кнопку сохранить
-    const onTableSave = () => {
+    const onTableSave = useCallback(() => {
         onSave && onSave();
-    };
+    }, []);
 
     // изменение значения в клеточке
-    const onCellValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onCellValueUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const bodyRow = Number(e.target.dataset.row_index);
         const bodyColumn = Number(e.target.dataset.column_index);
         const headerColumn = Number(e.target.dataset.header_index);
@@ -372,9 +373,9 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         //         return filter;
         //     });
         // }
-    };
+    }, []);
 
-    const onCellValueBlur = () => {
+    const onCellValueBlur = useCallback(() => {
         if (isCellValueUpdate.current) {
             isCellValueUpdate.current = false;
 
@@ -386,7 +387,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 return sort;
             });
         }
-    };
+    }, []);
 
     useEffect(() => {
         savedRenderData.current = structuredClone(tableRenderData);
@@ -412,14 +413,14 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         <div className={genClassName}>
             {editMode && (
                 <div className="Table__edit_controls">
-                    <SaveButton size="small" addClassNames={["Table__control_button"]} title="Сохранить" onClick={onTableSave} />
-                    <TableAddButton addClassNames={["Table__control_button"]} onCloseSave={onTableAdd} />
+                    <SaveButton_memo_is_equal size="small" addClassNames={["Table__control_button"]} title="Сохранить" onClick={onTableSave} />
+                    <TableAddButton_memo_is_equal addClassNames={["Table__control_button"]} onCloseSave={onTableAdd} />
                     <DeleteTextButton size="small" title="Отчистить выбранное" addClassNames={["Table__control_button"]} onClick={onTableDelText} disabled={!isCellsSelect} />
                     <DeleteButton size="small" title="Удалить выбранное" addClassNames={["Table__control_button"]} onClick={onDeleteSelected} disabled={!isCellsSelect} />
                 </div>
             )}
             <div className="Table__view_controls">
-                <TableColumnsButton
+                <TableColumnsButton_memo_is_equal
                     size="small"
                     allColumns={savedRenderData.current.headers}
                     excludeColumns={excludeColumns}
@@ -427,7 +428,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                     isActive={isTableColumnsButtonActive}
                     addClassNames={["Table__control_button"]}
                 />
-                <TableFilterButton
+                <TableFilterButton_memo_is_equal
                     size="small"
                     allColumns={sortedFiltredRenderData.headers}
                     onCloseSave={onTableFilterButtonClose}
@@ -458,7 +459,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                         <div className="Table__header_inner_container">
                                             {editMode ? (
                                                 <>
-                                                    <Input
+                                                    {/* <Input
                                                         type="text"
                                                         defaultValue={hValue.value}
                                                         autoComplete="off"
@@ -467,6 +468,15 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                         inputProps={{ "data-header_index": hValue.colIndex }}
                                                         onChange={onCellValueUpdate}
                                                         onBlur={onCellValueBlur}
+                                                    /> */}
+
+                                                    <TableInput_memo_is_equal
+                                                        hValue={hValue}
+                                                        onBlur={onCellValueBlur}
+                                                        onChange={onCellValueUpdate}
+                                                        className="Table__header_text_input"
+                                                        inputProps={{ "data-header_index": hValue.colIndex }}
+                                                        key={generateHashCode(`${hValue.value}-${hValue.colIndex}`)}
                                                     />
                                                 </>
                                             ) : (
@@ -474,7 +484,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                             )}
                                             <div className="Table__header_controls_container">
                                                 {editMode && (
-                                                    <Checkbox
+                                                    <Checkbox_memo_is_equal
                                                         size="small"
                                                         addClassNames={["Table__editable_select_column"]}
                                                         dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
@@ -482,7 +492,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                         checked={editSelectColumnIndex.includes(hValue.colIndex)}
                                                     />
                                                 )}
-                                                <TableSortButton
+                                                <TableSortButton_is_equal
                                                     addClassNames={["Table__header_sort_button"]}
                                                     dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
                                                     isActive={sortHeaderIndex === String(hValue.colIndex)}
@@ -508,7 +518,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                     {/* селекторы строк в режиме редактирования */}
                                     {editMode && (
                                         <td className="Table__body--edit">
-                                            <Checkbox
+                                            <Checkbox_memo_is_equal
                                                 size="small"
                                                 addClassNames={["Table__editable_select_row"]}
                                                 dataSet={[{ name: "row_index", value: String(row.rowIndex) }]}
@@ -536,15 +546,24 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                             >
                                                 <div className="Table__body_inner_container">
                                                     {editMode ? (
-                                                        <Input
-                                                            type="text"
-                                                            defaultValue={itemValue.value}
-                                                            autoComplete="off"
+                                                        // <Input
+                                                        //     type="text"
+                                                        //     defaultValue={itemValue.value}
+                                                        //     autoComplete="off"
+                                                        //     className="Table__body_text_input"
+                                                        //     inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
+                                                        //     key={generateHashCode(itemValue.value, row.rowIndex + itemValue.colIndex)}
+                                                        //     onChange={onCellValueUpdate}
+                                                        //     onBlur={onCellValueBlur}
+                                                        // />
+
+                                                        <TableInput_memo_is_equal
+                                                            hValue={itemValue}
+                                                            onBlur={onCellValueBlur}
+                                                            onChange={onCellValueUpdate}
                                                             className="Table__body_text_input"
                                                             inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
-                                                            key={generateHashCode(itemValue.value, row.rowIndex + itemValue.colIndex)}
-                                                            onChange={onCellValueUpdate}
-                                                            onBlur={onCellValueBlur}
+                                                            key={generateHashCode(`${itemValue.value}-${itemValue.colIndex}-${row.rowIndex}`)}
                                                         />
                                                     ) : (
                                                         <Typography className="Table__body_text">{itemValue.value}</Typography>

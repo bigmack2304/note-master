@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import type { SxProps } from "@mui/material";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import "./TableSortButton.scss";
 
 type TTableSortButtonProps = {
@@ -65,4 +66,6 @@ function TableSortButton({ onClick = () => {}, addClassNames = [], title, size =
     );
 }
 
-export { TableSortButton };
+const TableSortButton_memo = React.memo(TableSortButton);
+const TableSortButton_is_equal = React.memo(TableSortButton, deep_object_is_equal);
+export { TableSortButton, TableSortButton_memo, TableSortButton_is_equal };

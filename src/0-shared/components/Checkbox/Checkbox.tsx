@@ -3,6 +3,7 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { FormControlLabel, Checkbox as MCheckbox } from "@mui/material";
 import type { CheckboxProps } from "@mui/material";
 import * as style from "./CheckboxStyle";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 
 interface TCheckboxProps {
     label?: string;
@@ -60,4 +61,5 @@ function Checkbox({ label, checked, onChange, addClassNames = [], size, dataSet 
     );
 }
 
-export { Checkbox };
+const Checkbox_memo_is_equal = React.memo(Checkbox, deep_object_is_equal);
+export { Checkbox, Checkbox_memo_is_equal };

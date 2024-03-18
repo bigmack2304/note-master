@@ -1,5 +1,6 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import type { SxProps } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -31,4 +32,6 @@ function SaveButton({ onClick = () => {}, addClassNames = [], title, size = "inh
     );
 }
 
-export { SaveButton };
+const SaveButton_memo = React.memo(SaveButton);
+const SaveButton_memo_is_equal = React.memo(SaveButton);
+export { SaveButton, SaveButton_memo, SaveButton_memo_is_equal };
