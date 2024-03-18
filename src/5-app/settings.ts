@@ -16,8 +16,12 @@ const TRANSITION_DURATION = 150; // длительность анимаций п
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
 
 // цвета при наведении
-const HOVER_DARK = "#ffffff2b";
-const HOVER_LIGHT = "#0000001f";
+const HOVER_DARK = "#FFFFFF24";
+const HOVER_LIGHT = "#00000017";
+
+// цвета акнивного элемента (для ячеек таблицы)
+const ACTIVE_CELL_DARK = "#4b86d070";
+const ACTIVE_CELL_LIGHT = "#75ccff70";
 
 // ЦВЕТ для всяких кнопок
 const CONTROLS_PRIMARY_LIGHT = "#288CEF";
@@ -82,4 +86,6 @@ export {
     HOVER_LIGHT,
     CELL_SELECT_LIGHT,
     CELL_SELECT_DARK,
+    ACTIVE_CELL_DARK,
+    ACTIVE_CELL_LIGHT,
 };

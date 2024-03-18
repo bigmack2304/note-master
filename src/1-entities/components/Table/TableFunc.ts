@@ -59,9 +59,27 @@ function sortTableData(sortedFiltredRenderData: TTableValue, sortIndex: number, 
     if (isNaN(sortIndex)) return sortedFiltredRenderData;
     let temp = structuredClone(sortedFiltredRenderData);
     let arr = [...temp.rows];
+
+    let currentSortIndex: number | undefined = undefined; // этот кейс нужно прощитывать, так как sortIndex задается из col.colIndex ячейки, поэтому чтобы начать сортировку, нужно узнать в каком столбце sortedFiltredRenderData лежит элемент с col.colIndex = sortIndex
+
+    const calcCurrentSortIndex = () => {
+        if (arr.length === 0) return undefined;
+        let result = undefined;
+        arr[0]?.value.forEach((col, index) => {
+            if (col.colIndex === sortIndex) {
+                result = index;
+                return;
+            }
+        });
+        return result;
+    };
+    currentSortIndex = calcCurrentSortIndex();
+
+    if (currentSortIndex === undefined) return sortedFiltredRenderData;
+
     arr = arr.sort((a, b) => {
-        let prepareA = isNaN(Number(a.value[sortIndex].value)) ? a.value[sortIndex].value : Number(a.value[sortIndex].value);
-        let prepareB = isNaN(Number(b.value[sortIndex].value)) ? b.value[sortIndex].value : Number(b.value[sortIndex].value);
+        let prepareA = isNaN(Number(a.value[currentSortIndex!].value)) ? a.value[currentSortIndex!].value : Number(a.value[currentSortIndex!].value);
+        let prepareB = isNaN(Number(b.value[currentSortIndex!].value)) ? b.value[currentSortIndex!].value : Number(b.value[currentSortIndex!].value);
 
         if (typeof prepareA === "string" || typeof prepareB === "string") {
             prepareA = typeof prepareA !== "string" ? String(prepareA) : prepareA;

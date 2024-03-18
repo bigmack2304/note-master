@@ -6,7 +6,7 @@ import { ResetButton } from "0-shared/components/ResetButton/ResetButton";
 import { TableColumnsButton } from "2-features/components/TableColumnsButton/TableColumnsButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { TableFilterButton } from "2-features/components/TableFilterButton/TableFilterButton";
-import type { TTableValue } from "0-shared/types/dataSave";
+import type { TTableValue, TTableRow } from "0-shared/types/dataSave";
 import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
 import { Checkbox } from "0-shared/components/Checkbox/Checkbox";
 import { excludedColumnsTable, filterTableData, sortTableData } from "./TableFunc";
@@ -22,9 +22,6 @@ type TTableProps = {
     tableRenderData: TTableValue;
     editMode?: boolean;
     tableDesc?: string;
-    onCellsDelete?: (rows: number[], columns: number[]) => void;
-    onCellsClear?: (rows: number[], columns: number[]) => void;
-    onAdd?: (type: "row" | "column", amount: number) => void;
     onSave?: () => void;
 };
 
@@ -32,8 +29,9 @@ type TTableProps = {
  *
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onCellsDelete, onAdd, onCellsClear, onSave }: TTableProps) {
+function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onSave }: TTableProps) {
     const savedRenderData = useRef(structuredClone(tableRenderData));
+    const isCellValueUpdate = useRef(false);
     const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(savedRenderData.current));
     const [excludeColumns, setExcludeColumns] = useState<Set<number>>(new Set()); // индексы колонок которые не нужно показывать
     const [sortHeaderIndex, setSortHeaderIndex] = useState<string>(""); // индекс колонки в которой была нажата стрелочка
@@ -75,17 +73,13 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     // закритие меню показа колонок
     const onTableColumnsButtonClose = (excColumns: Set<number>, isChange: boolean) => {
         if (!isChange) return;
-        // if (sortHeaderIndex !== "") setPrepareRenderData(tableRenderData);
         if (isFilterActive && [...excColumns.values()].includes(filterColumnIndex)) {
             setFilterColumnIndex("");
             setFilterOperator("");
             setFilterValue("");
         }
 
-        // setSortHeaderIndex("");
-        // setSortHeaderType("top");
         setEditSelectColumnIndex([]); // можно удалять только если там есть колонка которую скрываем
-
         setExcludeColumns(excColumns);
     };
 
@@ -149,12 +143,123 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
     // нажатие на кнопку удалить выбранное
     const onDeleteSelected = () => {
-        onCellsDelete && onCellsDelete(editSelectRowIndex, editSelectColumnIndex);
+        //onCellsDelete && onCellsDelete(editSelectRowIndex, editSelectColumnIndex);
+        let isChange = false;
+
+        if (editSelectColumnIndex.length !== 0) {
+            isChange = true;
+            for (let selectColumnIndex of editSelectColumnIndex) {
+                savedRenderData.current.headers = savedRenderData.current.headers.filter((column) => {
+                    if (column.colIndex === selectColumnIndex) return false;
+                    return true;
+                });
+                for (let row of savedRenderData.current.rows) {
+                    row.value = row.value.filter((column) => {
+                        if (column.colIndex === selectColumnIndex) return false;
+                        return true;
+                    });
+                }
+                setEditSelectColumnIndex((state) => {
+                    return [...state].filter((value) => {
+                        if (selectColumnIndex !== value) return true;
+                        return false;
+                    });
+                });
+
+                if (filterColumnIndex !== "" && selectColumnIndex === Number(filterColumnIndex)) {
+                    setFilterColumnIndex("");
+                    setFilterOperator("");
+                    setFilterValue("");
+                }
+
+                if (sortHeaderIndex !== "" && selectColumnIndex === Number(sortHeaderIndex)) {
+                    setSortHeaderIndex("");
+                    setSortHeaderType("top");
+                }
+            }
+        }
+
+        if (editSelectRowIndex.length !== 0) {
+            isChange = true;
+            for (let selectRowIndex of editSelectRowIndex) {
+                savedRenderData.current.rows = savedRenderData.current.rows.filter((row) => {
+                    if (row.rowIndex === selectRowIndex) return false;
+                    return true;
+                });
+
+                setEditSelectRowIndex((state) => {
+                    return [...state].filter((value) => {
+                        if (selectRowIndex !== value) return true;
+                        return false;
+                    });
+                });
+            }
+        }
+
+        if (isChange) {
+            /// приводит индексы в порядок
+            savedRenderData.current.headers = savedRenderData.current.headers.map((column, index) => {
+                return { colIndex: index, value: column.value };
+            });
+            for (let row of savedRenderData.current.rows) {
+                row.value = row.value.map((column, index) => {
+                    return { colIndex: index, value: column.value };
+                });
+            }
+
+            setSortedFiltredRenderData((state) => {
+                const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+                const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+                const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+                const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
+                return sort;
+            });
+        }
     };
 
     // нажатие на кнопку добавления строки или колонки
     const onTableAdd = (type: "row" | "column", amount: number) => {
-        onAdd && onAdd(type, amount);
+        //onAdd && onAdd(type, amount);
+        if (type == "column") {
+            const savedMaxColIndex = savedRenderData.current.headers.length === 0 ? 0 : savedRenderData.current.headers.length;
+            let maxColIndex = savedMaxColIndex;
+            for (let i = 0; i < amount; i++) {
+                savedRenderData.current.headers.push({ value: "", colIndex: maxColIndex++ });
+            }
+
+            maxColIndex = savedMaxColIndex;
+
+            for (let row of savedRenderData.current.rows) {
+                for (let i = 0; i < amount; i++) {
+                    row.value.push({ value: "", colIndex: maxColIndex++ });
+                }
+                maxColIndex = savedMaxColIndex;
+            }
+        }
+
+        if (type == "row") {
+            const savedMaxColIndex = savedRenderData.current.headers.length === 0 ? 0 : savedRenderData.current.headers.length;
+            const savedMaxRowIndex = savedRenderData.current.rows.length === 0 ? 0 : savedRenderData.current.rows.length;
+            let maxRowIndex = savedMaxRowIndex;
+            let prepareRow: TTableRow = { rowIndex: 0, value: [] };
+
+            for (let i = 0; i < amount; i++) {
+                prepareRow.rowIndex = maxRowIndex++;
+                for (let k = 0; k < savedMaxColIndex; k++) {
+                    prepareRow.value.push({ value: "", colIndex: k });
+                }
+                savedRenderData.current.rows.push(prepareRow);
+                prepareRow = { rowIndex: 0, value: [] };
+            }
+        }
+
+        setSortedFiltredRenderData((state) => {
+            const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+            const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+            const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+            const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
+            return sort;
+        });
     };
 
     // нажатие на кнопку отчистить
@@ -232,14 +337,15 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         const bodyColumn = Number(e.target.dataset.column_index);
         const headerColumn = Number(e.target.dataset.header_index);
         let inputValue = e.target.value;
-        let isChange = false;
+        //let isChange = false;
 
         if (!isNaN(bodyRow) && !isNaN(bodyColumn)) {
             outer: for (let row of savedRenderData.current.rows) {
                 for (let col of row.value) {
                     if (bodyRow === row.rowIndex && bodyColumn === col.colIndex) {
                         col.value = inputValue;
-                        isChange = true;
+                        //isChange = true;
+                        isCellValueUpdate.current = true;
                         break outer;
                     }
                 }
@@ -250,31 +356,47 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
             for (let col of savedRenderData.current.headers) {
                 if (col.colIndex === headerColumn) {
                     col.value = inputValue;
-                    isChange = true;
+                    //isChange = true;
+                    isCellValueUpdate.current = true;
                     break;
                 }
             }
         }
 
-        if (isChange) {
+        // if (isChange) {
+        //     setSortedFiltredRenderData((state) => {
+        //         const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
+        //         const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
+        //         const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
+        //         const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
+        //         return filter;
+        //     });
+        // }
+    };
+
+    const onCellValueBlur = () => {
+        if (isCellValueUpdate.current) {
+            isCellValueUpdate.current = false;
+
             setSortedFiltredRenderData((state) => {
                 const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
                 const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
                 const sortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex;
                 const sort = sortTableData(filter, Number(sortColIndex), sortHeaderType);
-                return filter;
+                return sort;
             });
         }
     };
 
-    // useEffect(() => {
-    //     setSortedFiltredRenderData(tableRenderData);
-    //     onResetClick();
-    //     //if (sortHeaderIndex !== "") sortTableData(Number(sortHeaderIndex), sortHeaderType);
-    // }, [tableRenderData]);
+    useEffect(() => {
+        savedRenderData.current = structuredClone(tableRenderData);
+        setSortedFiltredRenderData(structuredClone(savedRenderData.current));
+        onResetClick();
+    }, [tableRenderData]);
 
     useEffect(() => {
         //savedRenderData.current = structuredClone(tableRenderData);
+
         setSortedFiltredRenderData((state) => {
             const exclude = excludedColumnsTable(structuredClone(savedRenderData.current), excludeColumns);
             const filter = filterTableData(exclude, filterColumnIndex, filterOperator, filterValue);
@@ -325,7 +447,6 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                             {/* селекторы колонок в режиме редактирования */}
                             {editMode && <th className="Table__header--edit"></th>}
                             {sortedFiltredRenderData.headers.map((hValue) => {
-                                //if (excludeColumns.has(index)) return;
                                 let cellClass = "Table__header";
                                 if (editMode) {
                                     if (editSelectColumnIndex.includes(hValue.colIndex)) {
@@ -345,6 +466,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                         key={generateHashCode(hValue.value, hValue.colIndex)}
                                                         inputProps={{ "data-header_index": hValue.colIndex }}
                                                         onChange={onCellValueUpdate}
+                                                        onBlur={onCellValueBlur}
                                                     />
                                                 </>
                                             ) : (
@@ -389,10 +511,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                             <Checkbox
                                                 size="small"
                                                 addClassNames={["Table__editable_select_row"]}
-                                                dataSet={[
-                                                    { name: "row_index", value: String(row.rowIndex) },
-                                                    // { name: "to_value", value: tableRenderData.rows[rowIndex][0] },
-                                                ]}
+                                                dataSet={[{ name: "row_index", value: String(row.rowIndex) }]}
                                                 onChange={onEditSelectTable}
                                                 checked={editSelectRowIndex.includes(row.rowIndex)}
                                             />
@@ -400,7 +519,6 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                     )}
                                     {/* рендер отденльной клеточки строки */}
                                     {row.value.map((itemValue) => {
-                                        //if (excludeColumns.has(columnIndex)) return; // показываем выбранные колонки
                                         let cellClass = "Table__body";
                                         if (editMode) {
                                             if (editSelectColumnIndex.includes(itemValue.colIndex) || editSelectRowIndex.includes(row.rowIndex)) {
@@ -426,6 +544,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                                                             inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
                                                             key={generateHashCode(itemValue.value, row.rowIndex + itemValue.colIndex)}
                                                             onChange={onCellValueUpdate}
+                                                            onBlur={onCellValueBlur}
                                                         />
                                                     ) : (
                                                         <Typography className="Table__body_text">{itemValue.value}</Typography>

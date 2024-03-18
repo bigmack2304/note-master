@@ -31,6 +31,12 @@
 .Table__body,
 .Table__header {
     border: 1px solid rgb(0, 0, 0);
+    transition: box-shadow linear 0.1s;
+
+    // &:has(.Mui-focused) {
+    //     box-shadow: 0px 0px 17px 2px black;
+    //     background-color: white;
+    // }
 }
 
 .Table__header_inner_container {
