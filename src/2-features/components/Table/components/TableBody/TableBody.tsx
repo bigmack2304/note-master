@@ -4,21 +4,26 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { TableInput_memo_is_equal } from "0-shared/components/TableInput/TableInput";
 import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
 import { Box, Typography } from "@mui/material";
-import * as style from "./TableStyle";
+import * as style from "./../../TableStyle";
 import type { TTableValue } from "0-shared/types/dataSave";
 
 type TTableBodyProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
-    editSelectColumnIndex: number[];
     onCellValueBlur: () => void;
     onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-    editSelectRowIndex: number[];
+    getStateSelect: () => {
+        editSelectColumnIndex: number[];
+        editSelectRowIndex: number[];
+        setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
+        setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
+    };
 };
 
-function TableBody({ sortedFiltredRenderData, editMode, editSelectColumnIndex, onCellValueBlur, onCellValueUpdate, onEditSelectTable, editSelectRowIndex }: TTableBodyProps) {
+function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellValueUpdate, onEditSelectTable, getStateSelect }: TTableBodyProps) {
     const temeValue = useTemeMode();
+    const { editSelectRowIndex, editSelectColumnIndex } = getStateSelect();
 
     return (
         <>

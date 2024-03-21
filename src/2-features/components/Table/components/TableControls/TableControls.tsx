@@ -1,22 +1,24 @@
 import React, { useCallback } from "react";
-import { tableAdd, tableDelText, deleteSelected } from "./TableFunc";
+import { tableAdd, tableDelText, deleteSelected } from "../../utils/TableFunc";
 import { SaveButton_memo_is_equal } from "0-shared/components/SaveButton/SaveButton";
-import { TableAddButton_memo_is_equal } from "2-features/components/TableAddButton/TableAddButton";
+import { TableAddButton_memo_is_equal } from "../TableAddButton/TableAddButton";
 import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
 import { DeleteTextButton } from "0-shared/components/DeleteTextButton/DeleteTextButton";
-import { TableColumnsButton_memo_is_equal } from "2-features/components/TableColumnsButton/TableColumnsButton";
-import { TableFilterButton_memo_is_equal } from "2-features/components/TableFilterButton/TableFilterButton";
+import { TableColumnsButton_memo_is_equal } from "../TableColumnsButton/TableColumnsButton";
+import { TableFilterButton_memo_is_equal } from "../TableFilterButton/TableFilterButton";
 import { ResetButton } from "0-shared/components/ResetButton/ResetButton";
 import type { TTableValue } from "0-shared/types/dataSave";
-import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
+import type { TOperators } from "../TableFilterButton/TableFilterButton";
 
 type TTableControlsProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
-    onTableSave: () => void;
+    onSave?: () => void;
     savedRenderData: React.MutableRefObject<TTableValue>;
-    excludeColumns: Set<number>;
-    setExcludeColumns: React.Dispatch<React.SetStateAction<Set<number>>>;
+    getStateExcludeColumns: () => {
+        excludeColumns: Set<number>;
+        setExcludeColumns: React.Dispatch<React.SetStateAction<Set<number>>>;
+    };
     getStateFilter: () => {
         filterColumnIndex: number | "";
         filterOperator: TOperators;
@@ -46,23 +48,28 @@ type TTableControlsProps = {
 function TableControls({
     sortedFiltredRenderData,
     editMode,
-    onTableSave,
-    excludeColumns,
+    getStateExcludeColumns,
     savedRenderData,
-    setExcludeColumns,
     getStateFilter,
     getStateSelect,
     updateView,
     resetSort,
     onResetClick,
     getStateSort,
+    onSave,
 }: TTableControlsProps) {
+    const { excludeColumns, setExcludeColumns } = getStateExcludeColumns();
     const isTableColumnsButtonActive = excludeColumns.size > 0; // активна-ли опция скрытия колонок
     const { filterColumnIndex, filterOperator, filterValue, resetFilter, setFilterColumnIndex, setFilterOperator, setFilterValue } = getStateFilter();
     const { editSelectColumnIndex, editSelectRowIndex, setEditSelectColumnIndex, setEditSelectRowIndex } = getStateSelect();
     const { sortHeaderIndex } = getStateSort();
     const isFilterActive = filterOperator !== "" && filterColumnIndex !== ""; // активен-ли фильтр
     const isCellsSelect = editSelectColumnIndex.length > 0 || editSelectRowIndex.length > 0; // выбраны-ли какието клеточки в режиме редактирования
+
+    // нажатие на кнопку сохранить
+    const onTableSave = useCallback(() => {
+        onSave && onSave();
+    }, []);
 
     // нажатие на кнопку добавления строки или колонки
     const onTableAdd = useCallback((type: "row" | "column", amount: number) => {

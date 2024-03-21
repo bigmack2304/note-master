@@ -1,44 +1,38 @@
-import React, {useCallback} from "react";
+import React, { useCallback } from "react";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { TableInput_memo_is_equal } from "0-shared/components/TableInput/TableInput";
 import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
 import { TableSortButton_is_equal } from "0-shared/components/TableSortButton/TableSortButton";
 import { Box, Typography } from "@mui/material";
-import * as style from "./TableStyle";
+import { UnselectButton } from "0-shared/components/Unselect/UnselectButton";
+import * as style from "./../../TableStyle";
 import type { TTableValue } from "0-shared/types/dataSave";
 
 type TTableHeadProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
-    editSelectColumnIndex: number[];
+    getStateSelect: () => {
+        editSelectColumnIndex: number[];
+        editSelectRowIndex: number[];
+        setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
+        setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
+    };
     onCellValueBlur: () => void;
     onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-    sortHeaderIndex: string;
     getStateSort: () => {
         sortHeaderIndex: string;
         sortHeaderType: "top" | "bottom";
         setSortHeaderType: React.Dispatch<React.SetStateAction<"top" | "bottom">>;
         setSortHeaderIndex: React.Dispatch<React.SetStateAction<string>>;
     };
-    sortHeaderType: "top" | "bottom";
 };
 
-function TableHead({
-    sortedFiltredRenderData,
-    editMode,
-    editSelectColumnIndex,
-    onCellValueBlur,
-    onCellValueUpdate,
-    onEditSelectTable,
-    sortHeaderIndex,
-    getStateSort,
-    sortHeaderType,
-}: TTableHeadProps) {
+function TableHead({ sortedFiltredRenderData, editMode, getStateSelect, onCellValueBlur, onCellValueUpdate, onEditSelectTable, getStateSort }: TTableHeadProps) {
     const temeValue = useTemeMode();
-    const {setSortHeaderIndex, setSortHeaderType} = getStateSort();
-
+    const { setSortHeaderIndex, setSortHeaderType, sortHeaderIndex, sortHeaderType } = getStateSort();
+    const { editSelectColumnIndex, editSelectRowIndex, setEditSelectColumnIndex, setEditSelectRowIndex } = getStateSelect();
 
     // нажатие на какуюто кнопку сортировки в колонках
     const onTableSortButton = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,12 +44,26 @@ function TableHead({
         setSortHeaderType(iconType === "top" ? "bottom" : "top");
     }, []);
 
+    const onUnselectButtonClick = () => {
+        setEditSelectColumnIndex([]);
+        setEditSelectRowIndex([]);
+    };
+
     return (
         <>
             {sortedFiltredRenderData.headers.length > 0 && (
                 <tr>
                     {/* селекторы колонок в режиме редактирования */}
-                    {editMode && <th className="Table__header--edit"></th>}
+                    {editMode && (
+                        <th className="Table__header--edit">
+                            <UnselectButton
+                                size="small"
+                                disabled={editSelectRowIndex.length === 0 && editSelectColumnIndex.length === 0}
+                                title="Отменить выделение"
+                                onClick={onUnselectButtonClick}
+                            />
+                        </th>
+                    )}
                     {sortedFiltredRenderData.headers.map((hValue) => {
                         let cellClass = "Table__header";
                         if (editMode && editSelectColumnIndex.includes(hValue.colIndex)) {

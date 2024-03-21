@@ -1,5 +1,5 @@
 import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
-import type { TTableValue, TTableRow, TTableRowColumnItem } from "0-shared/types/dataSave";
+import type { TTableValue, TTableRow } from "0-shared/types/dataSave";
 
 // вспомогательные функции для Table.tsx, работает в связке с ним. Поэтому все имена функций и других параметров стоит воспринемать как одно и тоже сдесь и в Table.tsx
 

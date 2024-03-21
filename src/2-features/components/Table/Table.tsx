@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { excludedColumnsTable, filterTableData, sortTableData, cellValueUpdate } from "./TableFunc";
-import { TableHead } from "./TableHead";
-import { TableBody } from "./TableBody";
-import { TableControls } from "./TableControls";
+import { excludedColumnsTable, filterTableData, sortTableData, cellValueUpdate } from "./utils/TableFunc";
+import { TableHead } from "./components/TableHead/TableHead";
+import { TableBody } from "./components/TableBody/TableBody";
+import { TableControls } from "./components/TableControls/TableControls";
 import type { TTableValue } from "0-shared/types/dataSave";
-import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
+import type { TOperators } from "./components/TableFilterButton/TableFilterButton";
 import "./Table.scss";
 
 type TTableProps = {
@@ -89,6 +89,13 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         };
     };
 
+    const getStateExcludeColumns = () => {
+        return {
+            excludeColumns,
+            setExcludeColumns,
+        };
+    };
+
     // кнопка сброса фильтров
     const onResetClick = () => {
         resetFilter();
@@ -144,11 +151,6 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         }
     }, []);
 
-    // нажатие на кнопку сохранить
-    const onTableSave = useCallback(() => {
-        onSave && onSave();
-    }, []);
-
     // изменение значения в клеточке
     const onCellValueUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         cellValueUpdate({ e, isCellValueUpdate, savedRenderData });
@@ -176,43 +178,39 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     return (
         <div className={genClassName}>
             <TableControls
+                sortedFiltredRenderData={sortedFiltredRenderData}
+                savedRenderData={savedRenderData}
                 editMode={editMode}
-                excludeColumns={excludeColumns}
-                setExcludeColumns={setExcludeColumns}
+                updateView={updateView}
+                resetSort={resetSort}
+                getStateExcludeColumns={getStateExcludeColumns}
                 getStateFilter={getStateFilter}
                 getStateSelect={getStateSelect}
                 getStateSort={getStateSort}
                 onResetClick={onResetClick}
-                onTableSave={onTableSave}
-                resetSort={resetSort}
-                savedRenderData={savedRenderData}
-                sortedFiltredRenderData={sortedFiltredRenderData}
-                updateView={updateView}
+                onSave={onSave}
             />
             <table className="Table__table">
                 <caption className="Table__desc">{tableDesc}</caption>
                 <thead className="Table__headers">
                     <TableHead
+                        sortedFiltredRenderData={sortedFiltredRenderData}
                         editMode={editMode}
-                        editSelectColumnIndex={editSelectColumnIndex}
                         onCellValueBlur={onCellValueBlur}
                         onCellValueUpdate={onCellValueUpdate}
                         onEditSelectTable={onEditSelectTable}
                         getStateSort={getStateSort}
-                        sortHeaderIndex={sortHeaderIndex}
-                        sortHeaderType={sortHeaderType}
-                        sortedFiltredRenderData={sortedFiltredRenderData}
+                        getStateSelect={getStateSelect}
                     />
                 </thead>
                 <tbody>
                     <TableBody
+                        sortedFiltredRenderData={sortedFiltredRenderData}
                         editMode={editMode}
-                        editSelectColumnIndex={editSelectColumnIndex}
-                        editSelectRowIndex={editSelectRowIndex}
+                        getStateSelect={getStateSelect}
                         onCellValueBlur={onCellValueBlur}
                         onCellValueUpdate={onCellValueUpdate}
                         onEditSelectTable={onEditSelectTable}
-                        sortedFiltredRenderData={sortedFiltredRenderData}
                     />
                 </tbody>
             </table>

@@ -59,11 +59,13 @@ function TableAddButton({ addClassNames = [], onCloseSave, ...props }: TTableAdd
     const onInputColChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         setInputColValue(Number(e.target.value));
+        setInputRowValue(1);
     };
 
     const onInputRowChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         setInputRowValue(Number(e.target.value));
+        setInputColValue(1);
     };
 
     return (
