@@ -1,5 +1,7 @@
-import type { TOperators } from "2-features/components/TableFilterButton/TableFilterButton";
+import type { TOperators } from "../components/TableFilterButton/TableFilterButton";
 import type { TTableValue, TTableRow } from "0-shared/types/dataSave";
+import type { TActiveCellData } from "../commonTypes/types";
+import { debug } from "console";
 
 // вспомогательные функции для Table.tsx, работает в связке с ним. Поэтому все имена функций и других параметров стоит воспринемать как одно и тоже сдесь и в Table.tsx
 
@@ -34,9 +36,8 @@ type TTableDelTextParams = {
 };
 
 type TCellValueUpdateParams = {
-    e: React.ChangeEvent<HTMLInputElement>;
     savedRenderData: React.MutableRefObject<TTableValue>;
-    isCellValueUpdate: React.MutableRefObject<boolean>;
+    focusCellData: React.MutableRefObject<TActiveCellData>;
 };
 
 /**
@@ -359,29 +360,30 @@ function tableDelText({ editSelectRowIndex, editSelectColumnIndex, sortedFiltred
 /**
  * обновление данных в таблице (изменение )
  */
-function cellValueUpdate({ e, savedRenderData, isCellValueUpdate }: TCellValueUpdateParams) {
-    const bodyRow = Number(e.target.dataset.row_index);
-    const bodyColumn = Number(e.target.dataset.column_index);
-    const headerColumn = Number(e.target.dataset.header_index);
-    let inputValue = e.target.value;
+function cellValueUpdate({ focusCellData, savedRenderData }: TCellValueUpdateParams) {
+    const activeCellData = focusCellData.current;
+    const cellValue = activeCellData.targetActiveCell.current?.value;
 
-    if (!isNaN(bodyRow) && !isNaN(bodyColumn)) {
+    if (cellValue === undefined) return;
+
+    if (!isNaN(activeCellData.bodyRow) && !isNaN(activeCellData.bodyColumn)) {
         outer: for (let row of savedRenderData.current.rows) {
+            if (activeCellData.bodyRow !== row.rowIndex) continue;
             for (let col of row.value) {
-                if (bodyRow === row.rowIndex && bodyColumn === col.colIndex) {
-                    col.value = inputValue;
-                    isCellValueUpdate.current = true;
-                    break outer;
-                }
+                if (activeCellData.bodyColumn !== col.colIndex) continue;
+
+                col.value = cellValue;
+                if (activeCellData.inputDubleCellValue.current) activeCellData.inputDubleCellValue.current.value = cellValue; // обновить value в дублирующем инпуте
+                break outer;
             }
         }
     }
 
-    if (!isNaN(headerColumn)) {
+    if (!isNaN(activeCellData.headerColumn)) {
         for (let col of savedRenderData.current.headers) {
-            if (col.colIndex === headerColumn) {
-                col.value = inputValue;
-                isCellValueUpdate.current = true;
+            if (col.colIndex === activeCellData.headerColumn) {
+                col.value = cellValue;
+                if (activeCellData.inputDubleCellValue.current) activeCellData.inputDubleCellValue.current.value = cellValue; // обновить value в дублирующем инпуте
                 break;
             }
         }

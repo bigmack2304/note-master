@@ -1,5 +1,5 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
-import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB, delImageDB, setImageDB } from "./appIndexedDB";
+import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB, delImageDB, setImageDB, setTableDB, delTableDB } from "./appIndexedDB";
 import { moveElement } from "0-shared/utils/arrayFunctions";
 import type {
     TchildrenType,
@@ -17,6 +17,8 @@ import type {
     TBodyComponentLink,
     TBodyComponentVideo,
     TBodyComponentList,
+    TBodyComponentTable,
+    TTableValue,
 } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
 import { savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -27,6 +29,7 @@ import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentC
 import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
 import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
 import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponentVideo";
+import { saveDataComponentTable } from "0-shared/utils/classes/saveDataComponentTable";
 import { DataComponentList } from "0-shared/utils/classes/saveDataComponentList";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
@@ -164,6 +167,90 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
         await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет компонент таблицы в заметке
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняется value
+ * @param newValue новое значение TTableValue
+ * @returns
+ */
+async function updateNodeTable(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: TTableValue | "") {
+    let targetNote = getNodeById(rootFolder, noteId);
+    let resultBool = false;
+
+    // TODO: потом нужно это оптимизировать
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== componentId) continue;
+            if (component.component === "table") {
+                if (newValue === "") {
+                    component.value = "";
+                    delTableDB({ key: componentId });
+                } else {
+                    component.value = componentId;
+                    setTableDB({
+                        value: {
+                            id: componentId,
+                            value: newValue,
+                        },
+                        key: componentId,
+                    });
+                }
+            }
+            break;
+        }
+
+        targetNote.lastEditTime = Date.now();
+        resultBool = true;
+        await setDataTreeDB({ value: rootFolder });
+    }
+
+    return { targetNote, resultBool };
+}
+
+/**
+ * изменяет настройки компонента таблицы в заметке
+ * @param rootFolder обьект IDataTreeRootFolder
+ * @param noteId id заметки в которой редактируем компонент
+ * @param componentId id компонента в котором меняется value
+ * @param backlight подцветка строк
+ * @param desc описание таблицы
+ * @param viewButtons элементы управления в режиме просмотра
+ * @returns
+ */
+async function updateNodeTableSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    backlight: TBodyComponentTable["backlight"];
+    desc: TBodyComponentTable["desc"];
+    viewButtons: TBodyComponentTable["viewButtons"];
+    aligin: TBodyComponentTable["aligin"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
+    let resultBool = false;
+
+    if (targetNote && isDataTreeNote(targetNote)) {
+        for (let component of targetNote.body) {
+            if (component.id !== data.componentId) continue;
+            if (component.component === "table") {
+                component.backlight = data.backlight;
+                component.desc = data.desc;
+                component.viewButtons = data.viewButtons;
+                component.aligin = data.aligin;
+
+                targetNote.lastEditTime = Date.now();
+                resultBool = true;
+                await setDataTreeDB({ value: data.rootFolder });
+                break;
+            }
+        }
     }
 
     return { targetNote, resultBool };
@@ -465,6 +552,10 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
                 insIdGenerator.deleteId(componentID);
                 if (item.component == "image") {
                     delImageDB({ key: item.id });
+                    item.value = "";
+                }
+                if (item.component == "table") {
+                    delTableDB({ key: item.id });
                     item.value = "";
                 }
                 return false;
@@ -796,6 +887,9 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
             case "list":
                 component = new DataComponentList();
                 break;
+            case "table":
+                component = new saveDataComponentTable();
+                break;
             default:
                 component = undefined;
                 break;
@@ -835,4 +929,6 @@ export {
     updateNoteComponentLinkSettings,
     updNoteComponentsOrder,
     updateNoteComponentListSettings,
+    updateNodeTable,
+    updateNodeTableSettings,
 };

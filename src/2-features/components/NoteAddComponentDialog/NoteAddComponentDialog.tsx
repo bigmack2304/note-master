@@ -8,6 +8,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import LinkIcon from "@mui/icons-material/Link";
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ListIcon from "@mui/icons-material/List";
+import { TableIcon } from "0-shared/components/TableIcon/TableIcon";
 import type { SelectChangeEvent } from "@mui/material";
 import type { TAllComponents } from "0-shared/types/dataSave";
 
@@ -25,6 +26,7 @@ const selectValuesNames: Record<TAllComponents, string> = {
     link: "Ссылка",
     video: "Видео",
     list: "Список",
+    table: "Таблица",
 };
 
 /**
@@ -100,6 +102,12 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                             <ListIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText>Список</ListItemText>
+                    </MenuItem>
+                    <MenuItem divider value="table">
+                        <ListItemIcon>
+                            <TableIcon svgIconSettings={{ fontSize: "small" }} />
+                        </ListItemIcon>
+                        <ListItemText>Таблица</ListItemText>
                     </MenuItem>
                 </Select>
             </FormControl>

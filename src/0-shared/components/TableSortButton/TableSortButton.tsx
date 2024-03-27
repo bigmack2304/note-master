@@ -67,5 +67,5 @@ function TableSortButton({ onClick = () => {}, addClassNames = [], title, size =
 }
 
 const TableSortButton_memo = React.memo(TableSortButton);
-const TableSortButton_is_equal = React.memo(TableSortButton, deep_object_is_equal);
-export { TableSortButton, TableSortButton_memo, TableSortButton_is_equal };
+const TableSortButton_memo_is_equal = React.memo(TableSortButton, deep_object_is_equal);
+export { TableSortButton, TableSortButton_memo, TableSortButton_memo_is_equal };

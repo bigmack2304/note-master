@@ -8,6 +8,7 @@ class DataProject implements IDataSave {
     public global_tags: IDataSave["global_tags"];
     public data_tree: IDataSave["data_tree"];
     public data_images: IDataSave["data_images"];
+    public data_tables: IDataSave["data_tables"];
 
     constructor() {
         this.db_type = "note_Master";
@@ -20,6 +21,7 @@ class DataProject implements IDataSave {
             children: [],
         };
         this.data_images = {};
+        this.data_tables = {};
 
         Object.setPrototypeOf(this, null);
     }

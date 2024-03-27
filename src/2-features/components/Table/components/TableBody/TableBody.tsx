@@ -1,7 +1,7 @@
 import React from "react";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import { TableInput_memo_is_equal } from "0-shared/components/TableInput/TableInput";
+import { TableInput_memo_is_equal } from "../TableInput/TableInput";
 import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
 import { Box, Typography } from "@mui/material";
 import * as style from "./../../TableStyle";
@@ -10,7 +10,7 @@ import type { TTableValue } from "0-shared/types/dataSave";
 type TTableBodyProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
-    onCellValueBlur: () => void;
+    onCellValueBlur: (e: React.FocusEvent) => void;
     onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     getStateSelect: () => {
@@ -19,9 +19,13 @@ type TTableBodyProps = {
         setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
         setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
     };
+    onCellValueFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
-function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellValueUpdate, onEditSelectTable, getStateSelect }: TTableBodyProps) {
+/**
+ * блок с содержимым таблицы, невключая неголовки
+ */
+function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellValueUpdate, onEditSelectTable, getStateSelect, onCellValueFocus }: TTableBodyProps) {
     const temeValue = useTemeMode();
     const { editSelectRowIndex, editSelectColumnIndex } = getStateSelect();
 
@@ -30,8 +34,10 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
             {sortedFiltredRenderData.rows.length > 0 &&
                 sortedFiltredRenderData.rows.map((row) => {
                     // рендер всей строки
+                    //generateHashCode(String(row.rowIndex))
+                    //generateHashCode(`${row.rowIndex}-${itemValue.colIndex}-${itemValue.value}`)
                     return (
-                        <Box component={"tr"} key={generateHashCode(`rowIndex${row.rowIndex}`, row.rowIndex)} className="Table__row_body" sx={style.rowBody(temeValue)}>
+                        <Box component={"tr"} className="Table__row_body" key={generateHashCode(String(row.rowIndex))} sx={style.rowBody(temeValue)}>
                             {/* селекторы строк в режиме редактирования */}
                             {editMode && (
                                 <td className="Table__body--edit">
@@ -52,9 +58,10 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
                                         cellClass = cellClass + " Table__cell_select";
                                     }
                                 }
+
                                 return (
                                     <Box
-                                        key={generateHashCode(String(row.rowIndex), itemValue.colIndex)}
+                                        key={generateHashCode(`${row.rowIndex}-${itemValue.colIndex}-${itemValue.value}`)}
                                         data-row_index={row.rowIndex}
                                         data-column_index={itemValue.colIndex}
                                         className={cellClass}
@@ -67,9 +74,10 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
                                                     hValue={itemValue}
                                                     onBlur={onCellValueBlur}
                                                     onChange={onCellValueUpdate}
+                                                    onFocus={onCellValueFocus}
                                                     className="Table__body_text_input"
                                                     inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
-                                                    key={generateHashCode(`${itemValue.value}-${itemValue.colIndex}-${row.rowIndex}`)}
+                                                    //key={generateHashCode(`${itemValue.colIndex}-${row.rowIndex}`)}
                                                 />
                                             ) : (
                                                 <Typography className="Table__body_text">{itemValue.value}</Typography>

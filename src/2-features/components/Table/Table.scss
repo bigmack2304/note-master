@@ -19,7 +19,33 @@
     }
     .Table__body_inner_container {
         width: 150px;
+        max-height: 200px;
+        overflow: auto;
     }
+}
+
+.Table__controls {
+    position: sticky;
+    z-index: 2;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 0px);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    padding: 5px 10px 5px 5px;
+    gap: 5px;
+}
+
+.Table__view_controls,
+.Table__edit_controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
 }
 
 .Table__table {
@@ -28,37 +54,34 @@
     table-layout: auto;
 }
 
+.Table__desc {
+    line-height: initial;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
 .Table__body,
 .Table__header {
     border: 1px solid rgb(0, 0, 0);
     transition: box-shadow linear 0.1s;
+}
 
-    // &:has(.Mui-focused) {
-    //     box-shadow: 0px 0px 17px 2px black;
-    //     background-color: white;
-    // }
+.Table__header .MuiTypography-root,
+.Table__header .Table__header_text_input {
+    font-weight: bold;
 }
 
 .Table__header_inner_container {
     display: flex;
     gap: 5px;
     align-items: center;
+    justify-content: center;
 }
 
 .Table__header_inner_container,
 .Table__body_inner_container {
     line-height: 0;
-}
-
-.Table__view_controls,
-.Table__edit_controls {
-    margin-top: 5px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 5px;
 }
 
 .Table__header_sort_button {
@@ -68,6 +91,7 @@
 .Table__header_text_input,
 .Table__body_text_input {
     width: 100%;
+    white-space: break-spaces;
 
     .MuiInputBase-input {
         text-overflow: ellipsis;
@@ -87,4 +111,13 @@
     align-items: center;
     width: 100%;
     gap: 5px;
+}
+
+.Table__header_text,
+.Table__body_text {
+    padding: 4px;
+}
+
+.Table__inputDoubleValue {
+    width: 100%;
 }

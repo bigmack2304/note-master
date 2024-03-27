@@ -3,25 +3,36 @@ import { excludedColumnsTable, filterTableData, sortTableData, cellValueUpdate }
 import { TableHead } from "./components/TableHead/TableHead";
 import { TableBody } from "./components/TableBody/TableBody";
 import { TableControls } from "./components/TableControls/TableControls";
-import type { TTableValue } from "0-shared/types/dataSave";
+import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
+import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { TOperators } from "./components/TableFilterButton/TableFilterButton";
+import type { TActiveCellData } from "./commonTypes/types";
+import { Box } from "@mui/material";
 import "./Table.scss";
+import * as style from "./TableStyle";
+
+// DESC: ОХ ЗРЯ ТЫ СЮДА ПОЛЕЗ...
 
 type TTableProps = {
     addClassNames?: string[];
     tableRenderData: TTableValue;
     editMode?: boolean;
-    tableDesc?: string;
-    onSave?: () => void;
+    tableDesc?: TBodyComponentTable["desc"];
+    tableViewControls?: TBodyComponentTable["viewButtons"];
+    backLight?: TBodyComponentTable["backlight"];
+    onSave?: (newValue: TTableValue) => void;
 };
 
 /**
- *
+ * таблица
+ * TODO: возможно в будующем стоит удалить это и воспользовотся како-нибудь библиотекой
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onSave }: TTableProps) {
+function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onSave, tableViewControls = true, backLight = true }: TTableProps) {
     const savedRenderData = useRef(structuredClone(tableRenderData)); // копия tableRenderData, изменяется при редактировании таблицы
-    const isCellValueUpdate = useRef(false); // флаг что юзер изменил данные в клеточке в режиме редактирования
+    const inputDubleCellValue = useRef<HTMLInputElement>(); // ссылка на инпут дублирующий инпут клеточки
+    const targetActiveCell = useRef<HTMLInputElement>(); // ссылка на ячейку которая в последний раз была в фокусе
+    const focusCellData = useRef<TActiveCellData>({ bodyRow: NaN, bodyColumn: NaN, headerColumn: NaN, inputDubleCellValue, targetActiveCell }); // обьект с данными который содержит индексы редактируемых клеточек а также ссылки на активную клеточку и инпут дублирующий ее значение
     const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(savedRenderData.current)); // копия savedRenderData, используется чисто для визуализации табличных данных
     const [excludeColumns, setExcludeColumns] = useState<Set<number>>(new Set()); // индексы колонок которые не нужно показывать (индексы привязаны к savedRenderData)
     const [sortHeaderIndex, setSortHeaderIndex] = useState<string>(""); // индекс колонки в которой была нажата стрелочка (индексы привязаны к savedRenderData)
@@ -32,6 +43,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     const [editSelectColumnIndex, setEditSelectColumnIndex] = useState<number[]>([]); // выбранные колонки в режиме редактирования (индексы привязаны к savedRenderData)
     const [editSelectRowIndex, setEditSelectRowIndex] = useState<number[]>([]); // выбранные строки в режиме редактирования (индексы привязаны к savedRenderData)
     const isSortColIndex = sortHeaderIndex === "" ? undefined : sortHeaderIndex; // активнали сортировка TODO: sortHeaderIndex много где преобразуется в число а Number("") преобразуется в 0, поэтому проверяем так
+    const themeValue = useTemeMode();
 
     const defaultClassName = "Table";
     let genClassName = "";
@@ -59,6 +71,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         setSortHeaderType("top");
     };
 
+    // возвращает стейты (геттеры и сеттеры) для фильтров
     const getStateFilter = () => {
         return {
             filterColumnIndex,
@@ -71,6 +84,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         };
     };
 
+    // возвращает стейты (геттеры и сеттеры) для выборов колонок и строк
     const getStateSelect = () => {
         return {
             editSelectColumnIndex,
@@ -80,6 +94,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         };
     };
 
+    // возвращает стейты (геттеры и сеттеры) для сортировок
     const getStateSort = () => {
         return {
             sortHeaderIndex,
@@ -89,10 +104,19 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         };
     };
 
+    // возвращает стейты (геттеры и сеттеры) для ячеек которые нужно скрыть
     const getStateExcludeColumns = () => {
         return {
             excludeColumns,
             setExcludeColumns,
+        };
+    };
+
+    // возвращает рефы на инпут дублирующий инпут клеточки и на обьект focusCellData
+    const getRefsInputDubleCellValue = () => {
+        return {
+            inputDubleCellValue,
+            focusCellData,
         };
     };
 
@@ -153,13 +177,31 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
     // изменение значения в клеточке
     const onCellValueUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        cellValueUpdate({ e, isCellValueUpdate, savedRenderData });
+        cellValueUpdate({ focusCellData, savedRenderData });
     }, []);
 
-    const onCellValueBlur = useCallback(() => {
-        if (isCellValueUpdate.current) {
-            isCellValueUpdate.current = false;
-            updateView();
+    // фокус на клеточке
+    const onCellValueFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+        focusCellData.current.bodyRow = Number(e.target.dataset.row_index);
+        focusCellData.current.bodyColumn = Number(e.target.dataset.column_index);
+        focusCellData.current.headerColumn = Number(e.target.dataset.header_index);
+        targetActiveCell.current = e.currentTarget;
+        if (inputDubleCellValue.current) inputDubleCellValue.current.value = e.target.value; // обновить value в дублирующем инпуте
+
+        const dubleInput = focusCellData.current.inputDubleCellValue.current;
+        if (dubleInput) dubleInput.disabled = false;
+    }, []);
+
+    // фокус уходит с клеточки
+    const onCellValueBlur = useCallback((e: React.FocusEvent) => {
+        const dubleInput = focusCellData.current.inputDubleCellValue.current;
+        if (!e.relatedTarget?.className.includes("MuiInputBase-input")) {
+            if (dubleInput) {
+                dubleInput.disabled = true;
+                dubleInput.value = "";
+            }
+        } else {
+            if (dubleInput) dubleInput.disabled = false;
         }
     }, []);
 
@@ -173,20 +215,29 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
         updateView();
     }, [sortHeaderIndex, sortHeaderType, filterValue, filterOperator, filterColumnIndex, excludeColumns]);
 
+    useEffect(() => {
+        if (!editMode) {
+            targetActiveCell.current = undefined;
+            focusCellData.current = { bodyColumn: NaN, bodyRow: NaN, headerColumn: NaN, inputDubleCellValue: inputDubleCellValue, targetActiveCell: targetActiveCell };
+        }
+    }, [editMode]);
+
     calcClassName();
 
     return (
-        <div className={genClassName}>
+        <Box component="div" className={genClassName} sx={style.tableStyle(themeValue)}>
             <TableControls
                 sortedFiltredRenderData={sortedFiltredRenderData}
                 savedRenderData={savedRenderData}
                 editMode={editMode}
+                tableViewControls={tableViewControls}
                 updateView={updateView}
                 resetSort={resetSort}
                 getStateExcludeColumns={getStateExcludeColumns}
                 getStateFilter={getStateFilter}
                 getStateSelect={getStateSelect}
                 getStateSort={getStateSort}
+                getRefsInputDubleCellValue={getRefsInputDubleCellValue}
                 onResetClick={onResetClick}
                 onSave={onSave}
             />
@@ -194,16 +245,18 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                 <caption className="Table__desc">{tableDesc}</caption>
                 <thead className="Table__headers">
                     <TableHead
+                        tableViewControls={tableViewControls}
                         sortedFiltredRenderData={sortedFiltredRenderData}
                         editMode={editMode}
                         onCellValueBlur={onCellValueBlur}
                         onCellValueUpdate={onCellValueUpdate}
                         onEditSelectTable={onEditSelectTable}
+                        onCellValueFocus={onCellValueFocus}
                         getStateSort={getStateSort}
                         getStateSelect={getStateSelect}
                     />
                 </thead>
-                <tbody>
+                <Box component="tbody" sx={style.tableBody(themeValue, backLight)}>
                     <TableBody
                         sortedFiltredRenderData={sortedFiltredRenderData}
                         editMode={editMode}
@@ -211,10 +264,11 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
                         onCellValueBlur={onCellValueBlur}
                         onCellValueUpdate={onCellValueUpdate}
                         onEditSelectTable={onEditSelectTable}
+                        onCellValueFocus={onCellValueFocus}
                     />
-                </tbody>
+                </Box>
             </table>
-        </div>
+        </Box>
     );
 }
 

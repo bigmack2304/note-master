@@ -110,6 +110,12 @@
     width: fit-content;
 }
 
+// таблица
+.note .note__table {
+    align-self: flex-start;
+    // width: fit-content;
+}
+
 .note .note__editBlock {
     display: flex;
     flex-direction: row;

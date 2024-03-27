@@ -24,8 +24,6 @@ type TOperators = "" | ">" | "<" | ">=" | "<=" | "=" | "'т'.." | "..'т'.." | "
 /**
  * кнопка для фильтрации колонок таблицы
  * @ дублирует пропсы ColumnsButton
- * @prop allColumns - массив всех колонок таблицы
- * @prop onCloseSave - вызывается при закрытии всплывающего окна, возвращает сет из индексов колонок которые нужно скрыть
  */
 function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, filterColumnIndex, filterOperator, filterValue, ...props }: TTableFilterButtonProps) {
     const defaultClassName = "TableFilterButton";

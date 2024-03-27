@@ -5,21 +5,36 @@ import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/Dop
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentHeaderSettings } from "5-app/GlobalState/saveDataInspectStore";
-import { NoteHeaderEditDialog } from "../NoteHeaderEditDialog/NoteHeaderEditDialog";
-import type { TBodyComponentHeader } from "0-shared/types/dataSave";
+import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentTableDbSettings, updateNoteComponentTableDbData } from "5-app/GlobalState/saveDataInspectStore";
+import { TableEditWindow } from "../TableEditWindow/TableEditWindow";
+import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
+import { useTableValue } from "0-shared/hooks/useTableValue";
+import { NoteTable } from "../NoteTable/NoteTable";
+import { NoteTableEditDialog } from "../NoteTableEditDialog/NoteTableEditDialog";
+import "./EditableTable.scss";
 
 type TEditableTableProps = {
-    defaultText?: string;
     addClassNames?: string[];
-    componentData: TBodyComponentHeader;
+    componentData: TBodyComponentTable;
 };
 
-const genTextDopClasses = (data: { isEdit: boolean }) => {
+const genTextDopClasses = (data: { isEdit: boolean; aligin: TBodyComponentTable["aligin"] }) => {
     const classes: string[] = [];
 
     if (data.isEdit) {
         classes.push("NoteTable--editable");
+    }
+
+    if (data.aligin === "left") {
+        classes.push("NoteTable--aligin_left");
+    }
+
+    if (data.aligin === "right") {
+        classes.push("NoteTable--aligin_right");
+    }
+
+    if (data.aligin === "center") {
+        classes.push("NoteTable--aligin_center");
     }
 
     return classes;
@@ -31,18 +46,19 @@ const genTextDopClasses = (data: { isEdit: boolean }) => {
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function EditableTable({ defaultText = "", addClassNames = [], componentData }: TEditableTableProps) {
+function EditableTable({ addClassNames = [], componentData }: TEditableTableProps) {
     const [isEdit, setIsEdit] = useState(false);
-    const [headerValue, setHeaderValue] = useState(defaultText);
     const [clickData, setClickData] = React.useState<{ x: number; y: number } | null>(null);
     const dispatch = useAppDispatch();
-    const [isHeaderEditDialog, setIsHeaderEditDialog] = useState(false);
+    const [isTableEditDialog, setIsTableEditDialog] = useState(false);
     let currentNoteData = useAppSelector((state) => state.saveDataInspect.currentNote);
     let isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
+    const tableValue = useTableValue({ componentTableID: componentData.id });
 
-    // вычесляем дополнительгые классы для заголовка
+    // вычесляем дополнительгые классы для таблицы в режиме просмотра
     let textDopClasses = genTextDopClasses({
         isEdit: isNoteEdit,
+        aligin: componentData.aligin,
     });
 
     useEffect(() => {
@@ -76,63 +92,81 @@ function EditableTable({ defaultText = "", addClassNames = [], componentData }: 
 
     const onMenuClear = () => {
         setClickData(null);
-        setHeaderValue("");
 
         if (!componentData || !currentNoteData) return;
-        dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));
+        dispatch(updateNoteComponentTableDbData({ noteId: currentNoteData.id, componentId: componentData.id, newValue: "" }));
+        dispatch(
+            updateNoteComponentTableDbSettings({
+                noteId: currentNoteData.id,
+                componentId: componentData.id,
+                desc: "",
+                backlight: componentData.backlight,
+                viewButtons: componentData.viewButtons,
+                aligin: componentData.aligin,
+            })
+        );
     };
 
     const onMenuDelete = () => {
         if (!componentData || !currentNoteData) return;
-        // dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: componentData.id }));
+        dispatch(deleteNoteComponent({ noteId: currentNoteData.id, componentId: componentData.id }));
     };
 
     const onMenuParams = () => {
         setClickData(null);
-        setIsHeaderEditDialog(true);
+        setIsTableEditDialog(true);
     };
 
     // клики в форме редактирования
-    const onInputExit = () => {
+    const onEditExit = (isChange: boolean, tableValue: TTableValue) => {
         setIsEdit(false);
-    };
 
-    const onInputSave = (inputValue: string) => {
-        setIsEdit(false);
-        setHeaderValue(inputValue);
-
-        if (!componentData || !currentNoteData) return;
-        // dispatch(updateNoteComponentValue({ noteId: currentNoteData.id, componentId: componentData.id, newValue: inputValue }));
+        if (!componentData || !currentNoteData || !isChange) return;
+        dispatch(updateNoteComponentTableDbData({ noteId: currentNoteData.id, componentId: componentData.id, newValue: tableValue }));
     };
 
     // функции окна с вормой настроек заголовка
 
     const onEditHeaderDialogClose = () => {
-        setIsHeaderEditDialog(false);
+        setIsTableEditDialog(false);
     };
 
-    const onEditHeaderDialogCloseSave = (data: { textAligin: TBodyComponentHeader["textAligin"]; headerSize: TBodyComponentHeader["headerSize"] }) => {
-        setIsHeaderEditDialog(false);
+    const onEditHeaderDialogCloseSave = (data: {
+        backlight: TBodyComponentTable["backlight"];
+        descValue: TBodyComponentTable["desc"];
+        viewButtons: TBodyComponentTable["viewButtons"];
+        aligin: TBodyComponentTable["aligin"];
+    }) => {
+        setIsTableEditDialog(false);
         if (!componentData || !currentNoteData) return;
-        // dispatch(updateNoteComponentHeaderSettings({ componentId: componentData.id, noteId: currentNoteData.id, headerSize: data.headerSize, textAligin: data.textAligin }));
+        dispatch(
+            updateNoteComponentTableDbSettings({
+                componentId: componentData.id,
+                noteId: currentNoteData.id,
+                backlight: data.backlight,
+                desc: data.descValue,
+                viewButtons: data.viewButtons,
+                aligin: data.aligin,
+            })
+        );
     };
 
     return (
         <>
             {isEdit ? (
-                <ClosableOneLineTextInput
-                    addClassNames={[...addClassNames, "editable"]}
-                    inputDefValue={headerValue}
-                    placeholder="заголовок"
-                    inputLabel="заголовок"
-                    onClose={onInputExit}
-                    onCloseSave={onInputSave}
-                />
+                <TableEditWindow isOpen={true} onClose={onEditExit} tableData={tableValue} addClassNames={["EditableTable__editMod"]} backLight={componentData.backlight} />
             ) : (
                 <>
-                    <NoteHead addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={isNoteEdit}>
-                        {headerValue}
-                    </NoteHead>
+                    <NoteTable
+                        addClassNames={[...addClassNames, ...textDopClasses]}
+                        onContextMenu={onClickMoreActions}
+                        dragId={componentData.id}
+                        isNoteEdit={isNoteEdit}
+                        tableData={tableValue}
+                        tableDesc={componentData.desc}
+                        backLight={componentData.backlight}
+                        tableViewControls={componentData.viewButtons}
+                    />
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
                         <ContextMenuEditContent
@@ -140,11 +174,11 @@ function EditableTable({ defaultText = "", addClassNames = [], componentData }: 
                             onClearClick={onMenuClear}
                             onDeleteClick={onMenuDelete}
                             onParamsClick={onMenuParams}
-                            isClearDisabled={headerValue.length > 0 ? false : true}
+                            isClearDisabled={tableValue !== null ? false : true}
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isHeaderEditDialog && <NoteHeaderEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
+                    {isTableEditDialog && <NoteTableEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
                 </>
             )}
         </>

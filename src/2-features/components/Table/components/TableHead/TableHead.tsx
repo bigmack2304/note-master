@@ -1,24 +1,26 @@
 import React, { useCallback } from "react";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import { TableInput_memo_is_equal } from "0-shared/components/TableInput/TableInput";
+import { TableInput_memo_is_equal } from "../TableInput/TableInput";
 import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
-import { TableSortButton_is_equal } from "0-shared/components/TableSortButton/TableSortButton";
+import { TableSortButton_memo_is_equal } from "0-shared/components/TableSortButton/TableSortButton";
 import { Box, Typography } from "@mui/material";
 import { UnselectButton } from "0-shared/components/Unselect/UnselectButton";
 import * as style from "./../../TableStyle";
-import type { TTableValue } from "0-shared/types/dataSave";
+import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
 
 type TTableHeadProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
+    tableViewControls?: TBodyComponentTable["viewButtons"];
     getStateSelect: () => {
         editSelectColumnIndex: number[];
         editSelectRowIndex: number[];
         setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
         setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
     };
-    onCellValueBlur: () => void;
+    onCellValueFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onCellValueBlur: (e: React.FocusEvent) => void;
     onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     getStateSort: () => {
@@ -29,7 +31,20 @@ type TTableHeadProps = {
     };
 };
 
-function TableHead({ sortedFiltredRenderData, editMode, getStateSelect, onCellValueBlur, onCellValueUpdate, onEditSelectTable, getStateSort }: TTableHeadProps) {
+/**
+ * блок с заголовками таблицы
+ */
+function TableHead({
+    sortedFiltredRenderData,
+    editMode,
+    getStateSelect,
+    onCellValueBlur,
+    onCellValueUpdate,
+    onEditSelectTable,
+    getStateSort,
+    onCellValueFocus,
+    tableViewControls,
+}: TTableHeadProps) {
     const temeValue = useTemeMode();
     const { setSortHeaderIndex, setSortHeaderType, sortHeaderIndex, sortHeaderType } = getStateSort();
     const { editSelectColumnIndex, editSelectRowIndex, setEditSelectColumnIndex, setEditSelectRowIndex } = getStateSelect();
@@ -70,16 +85,18 @@ function TableHead({ sortedFiltredRenderData, editMode, getStateSelect, onCellVa
                             cellClass = cellClass + " Table__cell_select";
                         }
                         return (
-                            <Box component="th" key={generateHashCode(hValue.value, hValue.colIndex)} className={cellClass} sx={style.cell(temeValue)}>
+                            <Box component="th" key={generateHashCode(String(hValue.colIndex))} className={cellClass} sx={style.cell(temeValue)}>
                                 <div className="Table__header_inner_container">
                                     {editMode ? (
                                         <TableInput_memo_is_equal
                                             hValue={hValue}
                                             onBlur={onCellValueBlur}
+                                            onFocus={onCellValueFocus}
                                             onChange={onCellValueUpdate}
                                             className="Table__header_text_input"
                                             inputProps={{ "data-header_index": hValue.colIndex }}
-                                            key={generateHashCode(`${hValue.value}-${hValue.colIndex}`)}
+                                            key={generateHashCode(String(hValue.colIndex))}
+                                            multiline={false}
                                         />
                                     ) : (
                                         <Typography className="Table__header_text">{hValue.value}</Typography>
@@ -94,13 +111,15 @@ function TableHead({ sortedFiltredRenderData, editMode, getStateSelect, onCellVa
                                                 checked={editSelectColumnIndex.includes(hValue.colIndex)}
                                             />
                                         )}
-                                        <TableSortButton_is_equal
-                                            addClassNames={["Table__header_sort_button"]}
-                                            dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
-                                            isActive={sortHeaderIndex === String(hValue.colIndex)}
-                                            icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
-                                            onClick={onTableSortButton}
-                                        />
+                                        {!editMode && tableViewControls && (
+                                            <TableSortButton_memo_is_equal
+                                                addClassNames={["Table__header_sort_button"]}
+                                                dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
+                                                isActive={sortHeaderIndex === String(hValue.colIndex)}
+                                                icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
+                                                onClick={onTableSortButton}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </Box>
