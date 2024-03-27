@@ -34,8 +34,6 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
             {sortedFiltredRenderData.rows.length > 0 &&
                 sortedFiltredRenderData.rows.map((row) => {
                     // рендер всей строки
-                    //generateHashCode(String(row.rowIndex))
-                    //generateHashCode(`${row.rowIndex}-${itemValue.colIndex}-${itemValue.value}`)
                     return (
                         <Box component={"tr"} className="Table__row_body" key={generateHashCode(String(row.rowIndex))} sx={style.rowBody(temeValue)}>
                             {/* селекторы строк в режиме редактирования */}
@@ -77,7 +75,6 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
                                                     onFocus={onCellValueFocus}
                                                     className="Table__body_text_input"
                                                     inputProps={{ "data-column_index": itemValue.colIndex, "data-row_index": row.rowIndex }}
-                                                    //key={generateHashCode(`${itemValue.colIndex}-${row.rowIndex}`)}
                                                 />
                                             ) : (
                                                 <Typography className="Table__body_text">{itemValue.value}</Typography>

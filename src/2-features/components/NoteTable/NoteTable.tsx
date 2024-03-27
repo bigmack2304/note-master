@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Box, Typography, Collapse } from "@mui/material";
+import { Box, Collapse } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { NoteComponentMover } from "0-shared/components/NoteComponentMover/NoteComponentMover";

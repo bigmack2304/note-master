@@ -24,9 +24,15 @@ type TTableProps = {
 };
 
 /**
- * таблица
+ * таблица, поддерживает как отображение так и редактирование, сортировку и фильтрацию содержимого
  * TODO: возможно в будующем стоит удалить это и воспользовотся како-нибудь библиотекой
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
+ * @prop tableRenderData - структура данных TTableValue, которая будет отображатся
+ * @prop editMode если true то активен режим редактирования, появляются дополнительные кнопки а в ячейках вместо текста появляются инпуты с этим текстом
+ * @prop tableDesc описание таблицы которое будет отображатся
+ * @prop tableViewControls если false то все элементы управления связанные с фильтрами, сортировками итд, будут скрыты, в режиме просмотра
+ * @prop backLight нужнали статическая подцветка строк
+ * @prop onSave вызывается при сохранении изменений в таблице
  */
 function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onSave, tableViewControls = true, backLight = true }: TTableProps) {
     const savedRenderData = useRef(structuredClone(tableRenderData)); // копия tableRenderData, изменяется при редактировании таблицы

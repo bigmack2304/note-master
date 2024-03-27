@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ClosableOneLineTextInput } from "2-features/components/ClosableOneLineTextInput/ClosableOneLineTextInput";
-import { NoteHead } from "0-shared/components/NoteHead/NoteHead";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentTableDbSettings, updateNoteComponentTableDbData } from "5-app/GlobalState/saveDataInspectStore";
+import { deleteNoteComponent, updateNoteComponentTableDbSettings, updateNoteComponentTableDbData } from "5-app/GlobalState/saveDataInspectStore";
 import { TableEditWindow } from "../TableEditWindow/TableEditWindow";
+import { genTextDopClasses } from "./EditableTableStyle";
 import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 import { useTableValue } from "0-shared/hooks/useTableValue";
 import { NoteTable } from "../NoteTable/NoteTable";
@@ -18,31 +17,8 @@ type TEditableTableProps = {
     componentData: TBodyComponentTable;
 };
 
-const genTextDopClasses = (data: { isEdit: boolean; aligin: TBodyComponentTable["aligin"] }) => {
-    const classes: string[] = [];
-
-    if (data.isEdit) {
-        classes.push("NoteTable--editable");
-    }
-
-    if (data.aligin === "left") {
-        classes.push("NoteTable--aligin_left");
-    }
-
-    if (data.aligin === "right") {
-        classes.push("NoteTable--aligin_right");
-    }
-
-    if (data.aligin === "center") {
-        classes.push("NoteTable--aligin_center");
-    }
-
-    return classes;
-};
-
 /**
- * Заголовок заметки с поддержкой редактирования
- * @prop defaultText - значение по умолчанию
+ * таблица заметки
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop componentData - компонент внутри заметки который мы редактируем
  */

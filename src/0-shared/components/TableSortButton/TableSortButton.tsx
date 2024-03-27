@@ -16,10 +16,6 @@ type TTableSortButtonProps = {
     dataSet?: { name: string; value: string }[];
 };
 
-const ButtonStyle: SxProps = {
-    padding: "5px",
-};
-
 /**
  * кнопка для сортировки элементов в таблице (стрелка, вверх или в низ)
  * @prop onClick - вызывается при клике на кнопку
@@ -60,7 +56,7 @@ function TableSortButton({ onClick = () => {}, addClassNames = [], title, size =
     const prepareDataSet = calcDataset();
 
     return (
-        <IconButton className={genClassName} aria-label={``} sx={ButtonStyle} onClick={onClick} title={title} {...prepareDataSet} data-icon={icon}>
+        <IconButton className={genClassName} onClick={onClick} title={title} {...prepareDataSet} data-icon={icon}>
             {icon === "top" ? <ArrowUpwardIcon fontSize={size} /> : <ArrowDownwardIcon fontSize={size} />}
         </IconButton>
     );

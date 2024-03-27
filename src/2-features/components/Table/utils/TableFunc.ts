@@ -321,12 +321,10 @@ function tableDelText({ editSelectRowIndex, editSelectColumnIndex, sortedFiltred
             for (let row of sortedFiltredRenderData.rows) {
                 for (let col of row.value) {
                     if (editSelectColumnIndex.includes(col.colIndex)) {
-                        //cellsId.push(JSON.stringify({ row: row.rowIndex, col: col.colIndex }));
                         cellsId.push(`row:${row.rowIndex}-col:${col.colIndex}`);
                         continue;
                     }
                     if (editSelectRowIndex.includes(row.rowIndex)) {
-                        //cellsId.push(JSON.stringify({ row: row.rowIndex, col: col.colIndex }));
                         cellsId.push(`row:${row.rowIndex}-col:${col.colIndex}`);
                     }
                 }
