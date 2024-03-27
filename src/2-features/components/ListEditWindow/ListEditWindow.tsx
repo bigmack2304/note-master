@@ -1,13 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import React, { useState } from "react";
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import { List, ListItem, TextField, Box } from "@mui/material";
-import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
+import * as styles from "./ListEditWindowStyle";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { prepareChildren } from "0-shared/components/NoteList/NoteListFuncs";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import "./ListEditWindow.scss";
-import type { PaletteMode, SxProps } from "@mui/material";
 import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
 
@@ -17,12 +15,6 @@ type TListEditWindowProps = {
     listValue?: string;
     isNimeric?: boolean;
     isOpen: boolean;
-};
-
-const dialogListStyle = (theme: PaletteMode) => {
-    return {
-        outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
-    } as SxProps;
 };
 
 /**
@@ -85,7 +77,7 @@ function ListEditWindow({ addClassNames = [], isOpen, listValue, onCloseSave, is
     return (
         <>
             <DialogWindow addClassNames={[genClassName]} headerText="Редактирование списка" isOpen={isOpen} onClose={onDialogClose}>
-                <List className="ListEditWindow__list" sx={dialogListStyle(themeValue)}>
+                <List className="ListEditWindow__list" sx={styles.dialogListStyle(themeValue)}>
                     <ListItem className="ListEditWindow__list_first_item" divider>
                         <Box className={"ListEditWindow__ul_wrapper"}>
                             <Box component={"ul"}>

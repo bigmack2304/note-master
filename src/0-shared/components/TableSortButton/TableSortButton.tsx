@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import type { SxProps } from "@mui/material";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import "./TableSortButton.scss";
 
 type TTableSortButtonProps = {
@@ -13,10 +14,6 @@ type TTableSortButtonProps = {
     icon?: "top" | "bottom";
     isActive?: boolean;
     dataSet?: { name: string; value: string }[];
-};
-
-const ButtonStyle: SxProps = {
-    padding: "5px",
 };
 
 /**
@@ -59,10 +56,12 @@ function TableSortButton({ onClick = () => {}, addClassNames = [], title, size =
     const prepareDataSet = calcDataset();
 
     return (
-        <IconButton className={genClassName} aria-label={``} sx={ButtonStyle} onClick={onClick} title={title} {...prepareDataSet} data-icon={icon}>
+        <IconButton className={genClassName} onClick={onClick} title={title} {...prepareDataSet} data-icon={icon}>
             {icon === "top" ? <ArrowUpwardIcon fontSize={size} /> : <ArrowDownwardIcon fontSize={size} />}
         </IconButton>
     );
 }
 
-export { TableSortButton };
+const TableSortButton_memo = React.memo(TableSortButton);
+const TableSortButton_memo_is_equal = React.memo(TableSortButton, deep_object_is_equal);
+export { TableSortButton, TableSortButton_memo, TableSortButton_memo_is_equal };

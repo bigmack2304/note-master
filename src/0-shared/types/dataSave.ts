@@ -18,7 +18,7 @@ interface IDataTreeNode {
 }
 
 // типы всех компонентов
-type TAllComponents = "header" | "text" | "code" | "image" | "link" | "video" | "list";
+type TAllComponents = "header" | "text" | "code" | "image" | "link" | "video" | "list" | "table";
 
 // видео
 interface TBodyComponentVideo extends IDataTreeNode {
@@ -84,16 +84,28 @@ interface TBodyComponentList extends IDataTreeNode {
 
 // таблица
 interface TBodyComponentTable extends IDataTreeNode {
-    component: "text";
-    value: TTableValue;
+    component: "table";
+    desc: string;
+    viewButtons: boolean;
+    backlight: boolean;
+    aligin: "left" | "center" | "right";
+    value: string;
 }
 
 /// дополнительные типы для таблиц ///////////////////////////////////////////////////////////////
 
-type TTableRow = string[];
+type TTableRowColumnItem = {
+    value: string;
+    colIndex: number;
+};
+
+type TTableRow = {
+    value: TTableRowColumnItem[];
+    rowIndex: number;
+};
 
 type TTableValue = {
-    headers: string[];
+    headers: TTableRowColumnItem[];
     rows: TTableRow[];
 };
 
@@ -102,7 +114,15 @@ type TTableValue = {
 /**
  * тип поля body в заметке
  */
-type TNoteBody = TBodyComponentHeader | TBodyComponentText | TBodyComponentCode | TBodyComponentImage | TBodyComponentLink | TBodyComponentVideo | TBodyComponentList;
+type TNoteBody =
+    | TBodyComponentHeader
+    | TBodyComponentText
+    | TBodyComponentCode
+    | TBodyComponentImage
+    | TBodyComponentLink
+    | TBodyComponentVideo
+    | TBodyComponentList
+    | TBodyComponentTable;
 
 /**
  * цвета тега
@@ -118,12 +138,20 @@ interface IGlobalTag {
 }
 
 /**
- * типизация картинки заметок
+ * типизация картинки (в db)
  */
 interface IImage {
     id: string;
     src: string;
     desc: string;
+}
+
+/**
+ * типизация таблицы (в db)
+ */
+interface ITable {
+    id: string;
+    value: TTableValue;
 }
 
 // все теги
@@ -134,6 +162,11 @@ interface IAllTags {
 // хранилеще картинок
 interface IDataImages {
     [IMG_ID: string]: IImage;
+}
+
+// хранилеще таблиц
+interface IDataTables {
+    [TABLE_ID: string]: ITable;
 }
 
 /**
@@ -178,6 +211,7 @@ interface IDataSave {
     global_tags: IAllTags;
     data_tree: IDataTreeRootFolder;
     data_images: IDataImages;
+    data_tables: IDataTables;
 }
 
 export type {
@@ -205,4 +239,5 @@ export type {
     TBodyComponentTable,
     TTableValue,
     TTableRow,
+    TTableRowColumnItem,
 };

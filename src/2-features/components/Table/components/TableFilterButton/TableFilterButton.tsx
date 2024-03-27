@@ -7,12 +7,12 @@ import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { TTableValue } from "0-shared/types/dataSave";
 import type { SelectChangeEvent } from "@mui/material/Select";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import * as style from "./TableFilterButtonStyle";
 import "./TableFilterButton.scss";
 
 interface TTableFilterButtonProps extends GetProps<typeof FilterButton> {
     allColumns: TTableValue["headers"];
-    excludeColumns: Set<number>;
     filterColumnIndex: number | "";
     filterOperator: TOperators;
     filterValue: string;
@@ -24,11 +24,8 @@ type TOperators = "" | ">" | "<" | ">=" | "<=" | "=" | "'т'.." | "..'т'.." | "
 /**
  * кнопка для фильтрации колонок таблицы
  * @ дублирует пропсы ColumnsButton
- * @prop allColumns - массив всех колонок таблицы
- * @prop excludeColumns - индексы колонок которые скрыты
- * @prop onCloseSave - вызывается при закрытии всплывающего окна, возвращает сет из индексов колонок которые нужно скрыть
  */
-function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, excludeColumns, filterColumnIndex, filterOperator, filterValue, ...props }: TTableFilterButtonProps) {
+function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, filterColumnIndex, filterOperator, filterValue, ...props }: TTableFilterButtonProps) {
     const defaultClassName = "TableFilterButton";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -117,14 +114,11 @@ function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, exclud
                             size="small"
                         >
                             {allColumns.map((column, index) => {
-                                if (!excludeColumns.has(index)) {
-                                    return (
-                                        <MenuItem key={generateHashCode(column, index)} value={index}>
-                                            {column}
-                                        </MenuItem>
-                                    );
-                                }
-                                return;
+                                return (
+                                    <MenuItem key={generateHashCode(column.value, index)} value={column.colIndex}>
+                                        {column.value}
+                                    </MenuItem>
+                                );
                             })}
                         </Select>
                     </FormControl>
@@ -189,5 +183,7 @@ function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, exclud
     );
 }
 
-export { TableFilterButton };
+const TableFilterButton_memo = React.memo(TableFilterButton);
+const TableFilterButton_memo_is_equal = React.memo(TableFilterButton, deep_object_is_equal);
+export { TableFilterButton, TableFilterButton_memo, TableFilterButton_memo_is_equal };
 export type { TOperators };

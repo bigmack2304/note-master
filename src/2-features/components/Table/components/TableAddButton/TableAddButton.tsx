@@ -4,6 +4,7 @@ import { MenuItem, ListItemText, Input } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
 import "./TableAddButton.scss";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
 
 interface TTableAddButtonProps extends GetProps<typeof AddButton> {
     onCloseSave?: (type: "row" | "column", amount: number) => void;
@@ -58,11 +59,13 @@ function TableAddButton({ addClassNames = [], onCloseSave, ...props }: TTableAdd
     const onInputColChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         setInputColValue(Number(e.target.value));
+        setInputRowValue(1);
     };
 
     const onInputRowChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         setInputRowValue(Number(e.target.value));
+        setInputColValue(1);
     };
 
     return (
@@ -100,4 +103,6 @@ function TableAddButton({ addClassNames = [], onCloseSave, ...props }: TTableAdd
     );
 }
 
-export { TableAddButton };
+const TableAddButton_memo = React.memo(TableAddButton);
+const TableAddButton_memo_is_equal = React.memo(TableAddButton, deep_object_is_equal);
+export { TableAddButton, TableAddButton_memo, TableAddButton_memo_is_equal };

@@ -16,18 +16,20 @@ body {
     box-sizing: inherit;
 }
 
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
+@media (any-hover: hover) {
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
 
-::-webkit-scrollbar-track {
-    background-color: #ffffffe4;
-}
+    ::-webkit-scrollbar-track {
+        background-color: #ffffffe4;
+    }
 
-::-webkit-scrollbar-thumb {
-    background-color: #333333b6;
-    border-radius: 10px;
+    ::-webkit-scrollbar-thumb {
+        background-color: #333333b6;
+        border-radius: 10px;
+    }
 }
 
 code {

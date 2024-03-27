@@ -15,24 +15,11 @@ import {
 import { NoteLinkEditDialog } from "../NoteLinkEditDialog/NoteLinkEditDialog";
 import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import type { TRadioData } from "../NoteSelector/NoteSelector";
+import { genTextDopClasses } from "./EditableLinkStyle";
 
 type TEditableLinkProps = {
     addClassNames?: string[];
     componentData: TBodyComponentLink;
-};
-
-const genTextDopClasses = (data: { isEdit: boolean; isBg: boolean }) => {
-    const classes: string[] = [];
-
-    if (data.isEdit) {
-        classes.push("NoteLink--editable");
-    }
-
-    if (data.isBg) {
-        classes.push("NoteLink--bg");
-    }
-
-    return classes;
 };
 
 /**

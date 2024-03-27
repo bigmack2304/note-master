@@ -30,8 +30,8 @@
         }
     }
 
-    &.NoteList--bg-light,
-    &.NoteList--bg-dark {
+    &.NoteList--bg-light:not(.text_empty),
+    &.NoteList--bg-dark:not(.text_empty) {
         border-radius: 5px;
         padding-top: 5px;
         padding-right: 15px;

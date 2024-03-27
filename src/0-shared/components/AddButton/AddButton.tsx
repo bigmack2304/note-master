@@ -30,4 +30,6 @@ function AddButton({ onClick = () => {}, addClassNames = [], title, size = "larg
     );
 }
 
-export { AddButton };
+const AddButton_memp = React.memo(AddButton);
+
+export { AddButton, AddButton_memp };
