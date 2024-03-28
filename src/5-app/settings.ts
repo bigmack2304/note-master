@@ -1,6 +1,11 @@
 import type { TTagColors } from "0-shared/types/dataSave";
 
-const MIN_FULLSCREEN_W = 400; // минимальная ширина fullscreen блоков
+const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
+
+const MOBILE_SCREEN_MIN = 0; // митимальный размер окна для мобил
+const TABLET_SCREEN_MIN = 400; // митимальный размер окна для плашетов
+const DESCTOP_SCREEN_MIN = 1200; // митимальный размер окна для мониторов
+
 const MAX_TAG_LENGTH = 10; // максимальная длинна имяни тега
 
 // события для асинхронных редьюсеров в saveDataInspectSlice
@@ -93,4 +98,8 @@ export {
     ACTIVE_CELL_LIGHT,
     TABLE_CONTROLS_BG_DARK,
     TABLE_CONTROLS_BORDER_DARK,
+    MIN_FULLSCREEN_W,
+    MOBILE_SCREEN_MIN,
+    TABLET_SCREEN_MIN,
+    DESCTOP_SCREEN_MIN,
 };

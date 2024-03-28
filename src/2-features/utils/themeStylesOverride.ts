@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { MOBILE_SCREEN_MIN, TABLET_SCREEN_MIN, DESCTOP_SCREEN_MIN } from "5-app/settings";
 import type { IThemeState } from "5-app/GlobalState/themeStore";
 import type { PaletteMode } from "@mui/material";
 
@@ -6,6 +7,19 @@ import type { PaletteMode } from "@mui/material";
 // выставляет стили в зависимости от текущей темы
 
 type TTheme = ReturnType<typeof createTheme>;
+
+declare module "@mui/material/styles" {
+    interface BreakpointOverrides {
+        xs: true;
+        sm: true;
+        md: true;
+        lg: true;
+        xl: true;
+        mobile: true; // adds the breakpoint
+        tablet: true; // adds the breakpoint
+        desktop: true; // adds the breakpoint
+    }
+}
 
 /**
  * цвет палитры primary (кнопки переключалки)
@@ -226,6 +240,18 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                 focusOpacity: 0.04,
                 disabledOpacity: 0.5,
                 activatedOpacity: 0.02,
+            },
+        },
+        breakpoints: {
+            values: {
+                xs: 0,
+                sm: 600,
+                md: 900,
+                lg: 1200,
+                xl: 1536,
+                mobile: MOBILE_SCREEN_MIN, // (0 - (MIN_FULLSCREEN_W - 1))
+                tablet: TABLET_SCREEN_MIN, // (MIN_FULLSCREEN_W - 1199)
+                desktop: DESCTOP_SCREEN_MIN, // 1200 - ∞
             },
         },
     });

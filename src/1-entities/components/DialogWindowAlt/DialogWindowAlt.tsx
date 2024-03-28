@@ -5,10 +5,11 @@ import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { SxProps, DialogProps, PaletteMode } from "@mui/material";
+import type { DialogProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
+import * as styles from "./DialogWindowAltStyle";
+import "./DialogWindowAlt.scss";
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 
@@ -22,40 +23,6 @@ type DialogWindowAltPropos = {
     actionButtonName?: string;
     actionButton?: boolean;
     addClassNames?: string[];
-};
-
-const dialogStyle: SxProps = {
-    "&.DialogWindowAlt .MuiPaper-root": {
-        width: "clamp(306px, 60%, 600px)",
-    },
-};
-
-const dialogTitleStyle = (theme: PaletteMode) => {
-    return {
-        backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "nowrap",
-        alignItems: "center",
-        padding: "5px",
-        columnGap: "5px",
-        justifyContent: "space-between",
-    } as SxProps;
-};
-
-const dialogContentStyle: SxProps = {
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    overflowY: "auto",
-    alignItems: "stretch",
-    rowGap: "25px",
-};
-
-const dialogActionsStyle = (theme: PaletteMode) => {
-    return {
-        backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-    } as SxProps;
 };
 
 /**
@@ -100,16 +67,16 @@ function DialogWindowAlt({
     const themeValue = useTemeMode();
 
     return (
-        <Dialog {...dialogSettings} open={isOpen} sx={dialogStyle} onClose={onClose} className={genClassName}>
+        <Dialog {...dialogSettings} open={isOpen} onClose={onClose} className={genClassName}>
             <form onSubmit={handleCloseSaveDialog} autoComplete="off">
-                <div style={dialogTitleStyle(themeValue) as React.CSSProperties}>
+                <div style={styles.dialogTitleStyle(themeValue) as React.CSSProperties} className="DialogWindowAlt__title">
                     <DialogTitle>{headerText}</DialogTitle>
                     <CloseButton onClick={handleCloseDialog}></CloseButton>
                 </div>
-                <DialogContent dividers sx={dialogContentStyle}>
+                <DialogContent dividers className="DialogWindowAlt__content">
                     {children}
                 </DialogContent>
-                <DialogActions sx={dialogActionsStyle(themeValue)}>
+                <DialogActions sx={styles.dialogActionsStyle(themeValue)}>
                     {actionButton ? (
                         <Button variant="contained" type="submit">
                             {actionButtonName}

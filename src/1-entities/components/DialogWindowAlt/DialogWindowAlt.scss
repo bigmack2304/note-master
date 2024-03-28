@@ -1,0 +1,22 @@
+.DialogWindowAlt .MuiPaper-root {
+    width: clamp(280px, 60%, 600px);
+}
+
+.DialogWindowAlt .DialogWindowAlt__title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 5px;
+    column-gap: 5px;
+    justify-content: space-between;
+}
+
+.DialogWindowAlt .DialogWindowAlt__content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-y: auto;
+    align-items: stretch;
+    row-gap: 25px;
+}
