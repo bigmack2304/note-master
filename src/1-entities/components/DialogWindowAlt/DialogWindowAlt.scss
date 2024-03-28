@@ -24,7 +24,7 @@
 }
 
 .DialogWindowAlt .MuiDialog-paper {
-    @include is-screen(mobile) {
+    @include is-screen(min_dialogWindow) {
         margin: 0;
         width: 100%;
         height: 100%;

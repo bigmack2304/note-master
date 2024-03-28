@@ -33,6 +33,7 @@ const CustomTreeItemContentStyle = (theme: PaletteMode) => {
             minWidth: "60px",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            userSelect: "none",
         },
 
         "&.CustomTreeItemContent .CustomTreeItemContent__noteStatus--complete": {

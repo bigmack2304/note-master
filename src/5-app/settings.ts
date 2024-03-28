@@ -2,6 +2,7 @@ import type { TTagColors } from "0-shared/types/dataSave";
 
 // следующие параметры дублируют свои аналоги в settings.scss
 const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
+const MIN_DIALOG_WINDOW_W = 460; // минимальная ширина для dialogWindow.tsx
 const MOBILE_SCREEN_MIN = 0; // митимальный размер окна для мобил
 const TABLET_SCREEN_MIN = 400; // митимальный размер окна для плашетов
 const DESCTOP_SCREEN_MIN = 1200; // митимальный размер окна для мониторов
@@ -102,4 +103,5 @@ export {
     MOBILE_SCREEN_MIN,
     TABLET_SCREEN_MIN,
     DESCTOP_SCREEN_MIN,
+    MIN_DIALOG_WINDOW_W,
 };
