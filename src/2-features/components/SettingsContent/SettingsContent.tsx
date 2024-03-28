@@ -11,14 +11,9 @@ import ViewStreamIcon from "@mui/icons-material/ViewStream";
 import MarginIcon from "@mui/icons-material/Margin";
 import { TagColoringInForms } from "2-features/components/TagColoringInForms/TagColoringInForms";
 import { NotePaddingColapseButton } from "../NotePaddingColapseButton/NotePaddingColapseButton";
+import * as styles from "./SettingsContentStyle";
 
 type TSettingsContentProps = {};
-
-const dialogListStyle = (theme: PaletteMode) => {
-    return {
-        outline: `1px ${theme == "light" ? OUTLINE_LIGHT_COLOR : OUTLINE_DARK_COLOR} solid`,
-    } as SxProps;
-};
 
 /**
  * содержимое для DialogWindow, (страница с настройками)
@@ -28,7 +23,7 @@ function SettingsContent({}: TSettingsContentProps) {
 
     return (
         <>
-            <List sx={dialogListStyle(themeValue)} className="SettingsContent">
+            <List sx={styles.dialogListStyle(themeValue)} className="SettingsContent">
                 <ListItem className="SettingsContent__listItem">
                     <ListItemIcon>
                         <ColorLensIcon />

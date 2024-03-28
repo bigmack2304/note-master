@@ -24,12 +24,16 @@ function cell(theme: PaletteMode): SxProps {
     };
 }
 
-function rowBody(theme: PaletteMode): SxProps {
+function rowBody(theme: PaletteMode, hoverStyle: boolean): SxProps {
     return {
-        "&.Table__row_body.MuiBox-root:hover": {
-            // .MuiBox-root нужно полднять спецыфичность селектора
-            backgroundColor: theme === "light" ? HOVER_LIGHT : HOVER_DARK,
-        },
+        ...(hoverStyle
+            ? {
+                  "&.Table__row_body.MuiBox-root:hover": {
+                      // .MuiBox-root нужно полднять спецыфичность селектора
+                      backgroundColor: theme === "light" ? HOVER_LIGHT : HOVER_DARK,
+                  },
+              }
+            : {}),
     };
 }
 
@@ -40,6 +44,7 @@ function tableStyle(theme: PaletteMode): SxProps {
         "& > .Table__controls": {
             backgroundColor: theme === "light" ? "white" : TABLE_CONTROLS_BG_DARK,
             border: theme === "light" ? "initial" : `1px ${TABLE_CONTROLS_BORDER_DARK} solid`,
+            boxShadow: `8px -5px 0 4px  ${theme === "light" ? "white" : TABLE_CONTROLS_BG_DARK}`, // чтобы клеточки справа не просвечивались, если колонки выходят за предел окна. Размером этого элемента фиксить это не вариант
         },
     };
 }

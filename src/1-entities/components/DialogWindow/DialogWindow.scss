@@ -1,0 +1,29 @@
+@import "5-app/settings";
+
+.DialogWindow {
+}
+
+.DialogWindow__actions {
+    justify-content: center;
+}
+
+.DialogWindow__actions_inner {
+    width: clamp(0px, 1000px, 100%);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.DialogWindow__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: auto;
+
+    @include is-screen(mobile) {
+        // необходимо поднть спецыфичность
+        &.MuiDialogContent-root {
+            padding: 5px 2px;
+        }
+    }
+}

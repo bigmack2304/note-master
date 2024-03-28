@@ -8,6 +8,8 @@ import type { PaletteMode } from "@mui/material";
 
 type TTheme = ReturnType<typeof createTheme>;
 
+// это фигню можно импортировать из material
+// переопределение стандартных breakpoint
 declare module "@mui/material/styles" {
     interface BreakpointOverrides {
         xs: true;

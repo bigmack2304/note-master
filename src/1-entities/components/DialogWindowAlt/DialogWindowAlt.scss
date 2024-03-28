@@ -1,3 +1,5 @@
+@import "5-app/settings";
+
 .DialogWindowAlt .MuiPaper-root {
     width: clamp(280px, 60%, 600px);
 }
@@ -19,4 +21,24 @@
     overflow-y: auto;
     align-items: stretch;
     row-gap: 25px;
+}
+
+.DialogWindowAlt .MuiDialog-paper {
+    @include is-screen(mobile) {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+
+        form {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .DialogWindowAlt__content {
+            flex-grow: 1;
+        }
+    }
 }

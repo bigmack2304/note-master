@@ -8,6 +8,8 @@ import type { PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { Box } from "@mui/material";
+import * as styles from "./DialogWindowStyle";
+import "./DialogWindow.scss";
 
 // диалоговое окно на весь экран с возможностью закрытия
 
@@ -20,37 +22,6 @@ type TDialogWindowProps = {
     children?: React.ReactNode;
     headerText?: string;
     addClassNames?: string[];
-};
-
-const dialogStyle: SxProps = {};
-
-const dialogTitleStyle = (theme: PaletteMode) => {
-    return {
-        backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-    } as SxProps;
-};
-
-const dialogContentStyle: SxProps = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    overflow: "hidden",
-    overflowY: "auto",
-};
-
-const dialogActionsStyle = (theme: PaletteMode) => {
-    return {
-        justifyContent: "center",
-        backgroundColor: theme === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
-    } as SxProps;
-};
-
-const dialogActionsInnerStyle = (theme: PaletteMode) => {
-    return {
-        width: "clamp(0px, 1000px, 100%)",
-        display: "flex",
-        justifyContent: "flex-end",
-    } as SxProps;
 };
 
 /**
@@ -77,7 +48,6 @@ function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, he
     return (
         <Dialog
             open={isOpen}
-            sx={dialogStyle}
             {...dialogSettings}
             onClose={onClose}
             fullScreen={true}
@@ -85,12 +55,12 @@ function DialogWindow({ dialogSettings, isOpen, onClose = () => {}, children, he
             TransitionComponent={TransitionSlideRightForvardRef}
             transitionDuration={TRANSITION_DURATION}
         >
-            <DialogTitle sx={dialogTitleStyle(themeValue)}>{headerText}</DialogTitle>
-            <DialogContent dividers sx={dialogContentStyle}>
+            <DialogTitle sx={styles.dialogTitleStyle(themeValue)}>{headerText}</DialogTitle>
+            <DialogContent dividers className="DialogWindow__content">
                 {children}
             </DialogContent>
-            <DialogActions sx={dialogActionsStyle(themeValue)}>
-                <Box sx={dialogActionsInnerStyle(themeValue)}>
+            <DialogActions sx={styles.dialogActionsStyle(themeValue)} className="DialogWindow__actions">
+                <Box className="DialogWindow__actions_inner">
                     <Button variant="contained" onClick={handleCloseDialog}>
                         выход
                     </Button>

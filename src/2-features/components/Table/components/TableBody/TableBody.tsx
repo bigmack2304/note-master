@@ -48,7 +48,7 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
                 sortedFiltredRenderData.rows.map((row) => {
                     // рендер всей строки
                     return (
-                        <Box component={"tr"} className="Table__row_body" key={generateHashCode(String(row.rowIndex))} sx={style.rowBody(temeValue)}>
+                        <Box component={"tr"} className="Table__row_body" key={generateHashCode(String(row.rowIndex))} sx={style.rowBody(temeValue, Boolean(editMode))}>
                             {/* селекторы строк в режиме редактирования */}
                             {editMode && (
                                 <td className="Table__body--edit">
