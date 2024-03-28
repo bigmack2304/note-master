@@ -201,7 +201,7 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     // фокус уходит с клеточки
     const onCellValueBlur = useCallback((e: React.FocusEvent) => {
         const dubleInput = focusCellData.current.inputDubleCellValue.current;
-        if (!e.relatedTarget?.className.includes("MuiInputBase-input")) {
+        if (!e.relatedTarget?.className.includes("Table_inputValueDubleCell")) {
             if (dubleInput) {
                 dubleInput.disabled = true;
                 dubleInput.value = "";
@@ -230,25 +230,29 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
 
     calcClassName();
 
+    const RenderControls = (
+        <TableControls
+            sortedFiltredRenderData={sortedFiltredRenderData}
+            savedRenderData={savedRenderData}
+            editMode={editMode}
+            tableViewControls={tableViewControls}
+            updateView={updateView}
+            resetSort={resetSort}
+            getStateExcludeColumns={getStateExcludeColumns}
+            getStateFilter={getStateFilter}
+            getStateSelect={getStateSelect}
+            getStateSort={getStateSort}
+            getRefsInputDubleCellValue={getRefsInputDubleCellValue}
+            onResetClick={onResetClick}
+            onSave={onSave}
+        />
+    );
+
     return (
         <Box component="div" className={genClassName} sx={style.tableStyle(themeValue)}>
-            <TableControls
-                sortedFiltredRenderData={sortedFiltredRenderData}
-                savedRenderData={savedRenderData}
-                editMode={editMode}
-                tableViewControls={tableViewControls}
-                updateView={updateView}
-                resetSort={resetSort}
-                getStateExcludeColumns={getStateExcludeColumns}
-                getStateFilter={getStateFilter}
-                getStateSelect={getStateSelect}
-                getStateSort={getStateSort}
-                getRefsInputDubleCellValue={getRefsInputDubleCellValue}
-                onResetClick={onResetClick}
-                onSave={onSave}
-            />
+            {!editMode ? tableViewControls ? RenderControls : <></> : RenderControls}
             <table className="Table__table">
-                <caption className="Table__desc">{tableDesc}</caption>
+                {tableDesc !== "" && <caption className="Table__desc">{tableDesc}</caption>}
                 <thead className="Table__headers">
                     <TableHead
                         tableViewControls={tableViewControls}

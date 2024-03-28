@@ -1,0 +1,12 @@
+.TableInput {
+    resize: none;
+    font-size: 1rem;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+
+    &:focus-visible {
+        outline: none;
+    }
+}

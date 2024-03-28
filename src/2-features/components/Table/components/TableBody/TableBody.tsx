@@ -29,6 +29,19 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
     const temeValue = useTemeMode();
     const { editSelectRowIndex, editSelectColumnIndex } = getStateSelect();
 
+    // при клике на клеточку, фокусируемся на ее TableInput, так как он может быть меньше самой клеточки, адекватно решить это через css не удалось
+    const cellOnClick = (e: React.MouseEvent<HTMLTableCellElement>) => {
+        e.stopPropagation();
+        const target = e.target as HTMLTableCellElement;
+        const cellInput = target.querySelector<HTMLTextAreaElement>(".TableInput");
+        if (cellInput) {
+            cellInput.focus();
+            // при фокусе курсор ставится в начало инпута, вручную ставим его в конец текста
+            cellInput.selectionStart = cellInput.value.length;
+            cellInput.selectionEnd = cellInput.value.length;
+        }
+    };
+
     return (
         <>
             {sortedFiltredRenderData.rows.length > 0 &&
@@ -65,6 +78,7 @@ function TableBody({ sortedFiltredRenderData, editMode, onCellValueBlur, onCellV
                                         className={cellClass}
                                         component="td"
                                         sx={style.cell(temeValue)}
+                                        onClick={cellOnClick}
                                     >
                                         <div className="Table__body_inner_container">
                                             {editMode ? (

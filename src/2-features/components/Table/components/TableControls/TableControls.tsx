@@ -134,7 +134,11 @@ function TableControls({
         if (!e.relatedTarget?.className.includes("MuiInputBase-input")) {
             e.target.value = "";
             const dubleInput = focusCellData.current.inputDubleCellValue.current;
+            const activeCell = focusCellData.current.targetActiveCell.current;
             if (dubleInput) dubleInput.disabled = true;
+            if (activeCell) {
+                activeCell.classList.remove("Mui-focused");
+            }
         }
     };
 
@@ -147,35 +151,13 @@ function TableControls({
 
         if (activeCell) {
             activeCell.value = value;
+            activeCell.style.height = ``; //TODO: сброс делать обязательно, иначе высота не сможет уменьшатся
+            activeCell.style.height = `${activeCell.scrollHeight}px`;
             cellValueUpdate({ focusCellData, savedRenderData });
         } else {
             e.target.value = "";
         }
     };
-
-    const renderControls = (
-        <div className="Table__view_controls">
-            <TableColumnsButton_memo_is_equal
-                size="small"
-                allColumns={savedRenderData.current.headers}
-                excludeColumns={excludeColumns}
-                onCloseSave={onTableColumnsButtonClose}
-                isActive={isTableColumnsButtonActive}
-                addClassNames={["Table__control_button"]}
-            />
-            <TableFilterButton_memo_is_equal
-                size="small"
-                allColumns={sortedFiltredRenderData.headers}
-                onCloseSave={onTableFilterButtonClose}
-                filterColumnIndex={filterColumnIndex}
-                filterOperator={filterOperator}
-                filterValue={filterValue}
-                isActive={isFilterActive}
-                addClassNames={["Table__control_button"]}
-            />
-            <ResetButton onClick={onResetClick} title="Сброс фильтров" />
-        </div>
-    );
 
     useEffect(() => {
         if (inputDubleCellValue.current) inputDubleCellValue.current.disabled = true;
@@ -190,7 +172,7 @@ function TableControls({
                             variant="outlined"
                             size="small"
                             multiline
-                            rows={4}
+                            rows={5}
                             inputProps={{ ref: inputDubleCellValue, className: "Table_inputValueDubleCell" }}
                             onBlur={onInputBlur}
                             onChange={onInputChange}
@@ -210,7 +192,27 @@ function TableControls({
                         </div>
                     </>
                 )}
-                {!editMode ? tableViewControls ? renderControls : <></> : renderControls}
+                <div className="Table__view_controls">
+                    <TableColumnsButton_memo_is_equal
+                        size="small"
+                        allColumns={savedRenderData.current.headers}
+                        excludeColumns={excludeColumns}
+                        onCloseSave={onTableColumnsButtonClose}
+                        isActive={isTableColumnsButtonActive}
+                        addClassNames={["Table__control_button"]}
+                    />
+                    <TableFilterButton_memo_is_equal
+                        size="small"
+                        allColumns={sortedFiltredRenderData.headers}
+                        onCloseSave={onTableFilterButtonClose}
+                        filterColumnIndex={filterColumnIndex}
+                        filterOperator={filterOperator}
+                        filterValue={filterValue}
+                        isActive={isFilterActive}
+                        addClassNames={["Table__control_button"]}
+                    />
+                    <ResetButton onClick={onResetClick} title="Сброс фильтров" />
+                </div>
             </div>
         </>
     );

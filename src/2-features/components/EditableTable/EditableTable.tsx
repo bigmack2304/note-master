@@ -10,6 +10,7 @@ import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 import { useTableValue } from "0-shared/hooks/useTableValue";
 import { NoteTable } from "../NoteTable/NoteTable";
 import { NoteTableEditDialog } from "../NoteTableEditDialog/NoteTableEditDialog";
+import { ErrorCacher } from "0-shared/hoc/ErrorCacher/ErrorCacher";
 import "./EditableTable.scss";
 
 type TEditableTableProps = {
@@ -130,19 +131,23 @@ function EditableTable({ addClassNames = [], componentData }: TEditableTableProp
     return (
         <>
             {isEdit ? (
-                <TableEditWindow isOpen={true} onClose={onEditExit} tableData={tableValue} addClassNames={["EditableTable__editMod"]} backLight={componentData.backlight} />
+                <ErrorCacher errDialog={false}>
+                    <TableEditWindow isOpen={true} onClose={onEditExit} tableData={tableValue} addClassNames={["EditableTable__editMod"]} backLight={componentData.backlight} />
+                </ErrorCacher>
             ) : (
                 <>
-                    <NoteTable
-                        addClassNames={[...addClassNames, ...textDopClasses]}
-                        onContextMenu={onClickMoreActions}
-                        dragId={componentData.id}
-                        isNoteEdit={isNoteEdit}
-                        tableData={tableValue}
-                        tableDesc={componentData.desc}
-                        backLight={componentData.backlight}
-                        tableViewControls={componentData.viewButtons}
-                    />
+                    <ErrorCacher errDialog={false}>
+                        <NoteTable
+                            addClassNames={[...addClassNames, ...textDopClasses]}
+                            onContextMenu={onClickMoreActions}
+                            dragId={componentData.id}
+                            isNoteEdit={isNoteEdit}
+                            tableData={tableValue}
+                            tableDesc={componentData.desc}
+                            backLight={componentData.backlight}
+                            tableViewControls={componentData.viewButtons}
+                        />
+                    </ErrorCacher>
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
                         <ContextMenuEditContent

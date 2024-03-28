@@ -7,6 +7,7 @@ import {
     ACTIVE_CELL_DARK,
     TABLE_CONTROLS_BG_DARK,
     TABLE_CONTROLS_BORDER_DARK,
+    THEME_DARK_GRAY,
 } from "5-app/settings";
 import type { SxProps, PaletteMode } from "@mui/material";
 import type { TBodyComponentTable } from "0-shared/types/dataSave";
@@ -34,6 +35,8 @@ function rowBody(theme: PaletteMode): SxProps {
 
 function tableStyle(theme: PaletteMode): SxProps {
     return {
+        backgroundColor: theme === "light" ? "transparent" : THEME_DARK_GRAY,
+
         "& > .Table__controls": {
             backgroundColor: theme === "light" ? "white" : TABLE_CONTROLS_BG_DARK,
             border: theme === "light" ? "initial" : `1px ${TABLE_CONTROLS_BORDER_DARK} solid`,

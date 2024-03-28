@@ -7,7 +7,7 @@ import { TableSortButton_memo_is_equal } from "0-shared/components/TableSortButt
 import { Box, Typography } from "@mui/material";
 import { UnselectButton } from "0-shared/components/Unselect/UnselectButton";
 import * as style from "./../../TableStyle";
-import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
+import type { TTableValue, TBodyComponentTable, TTableRowColumnItem } from "0-shared/types/dataSave";
 
 type TTableHeadProps = {
     sortedFiltredRenderData: TTableValue;
@@ -64,6 +64,18 @@ function TableHead({
         setEditSelectRowIndex([]);
     };
 
+    const renderSortButton = useCallback((hValue: TTableRowColumnItem) => {
+        return (
+            <TableSortButton_memo_is_equal
+                addClassNames={["Table__header_sort_button"]}
+                dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
+                isActive={sortHeaderIndex === String(hValue.colIndex)}
+                icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
+                onClick={onTableSortButton}
+            />
+        );
+    }, []);
+
     return (
         <>
             {sortedFiltredRenderData.headers.length > 0 && (
@@ -96,7 +108,6 @@ function TableHead({
                                             className="Table__header_text_input"
                                             inputProps={{ "data-header_index": hValue.colIndex }}
                                             key={generateHashCode(String(hValue.colIndex))}
-                                            multiline={false}
                                         />
                                     ) : (
                                         <Typography className="Table__header_text">{hValue.value}</Typography>
@@ -111,7 +122,7 @@ function TableHead({
                                                 checked={editSelectColumnIndex.includes(hValue.colIndex)}
                                             />
                                         )}
-                                        {!editMode && tableViewControls && (
+                                        {/* {!editMode && tableViewControls && (
                                             <TableSortButton_memo_is_equal
                                                 addClassNames={["Table__header_sort_button"]}
                                                 dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
@@ -119,7 +130,8 @@ function TableHead({
                                                 icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
                                                 onClick={onTableSortButton}
                                             />
-                                        )}
+                                        )} */}
+                                        {!editMode ? tableViewControls ? renderSortButton(hValue) : <></> : renderSortButton(hValue)}
                                     </div>
                                 </div>
                             </Box>

@@ -17,10 +17,16 @@
         flex-direction: column;
         width: 150px;
     }
+
+    .Table__body {
+        padding: 2px;
+    }
+
     .Table__body_inner_container {
-        width: 150px;
+        width: 230px;
         max-height: 200px;
         overflow: auto;
+        height: fit-content;
     }
 }
 
@@ -31,11 +37,16 @@
     left: -5px;
     width: calc(100% + 0px);
     display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-start;
     padding: 5px 10px 5px 5px;
     gap: 5px;
+    margin-bottom: 10px;
+
+    &:not(:has(.Table__view_controls)) {
+        display: none;
+    }
 }
 
 .Table__view_controls,
@@ -49,16 +60,14 @@
 }
 
 .Table__table {
-    margin-top: 5px;
     border-collapse: collapse;
     table-layout: auto;
 }
 
 .Table__desc {
     line-height: initial;
-    font-size: 0.9rem;
     font-style: italic;
-    margin-bottom: 5px;
+    padding: 8px;
 }
 
 .Table__body,
@@ -116,6 +125,7 @@
 .Table__header_text,
 .Table__body_text {
     padding: 4px;
+    white-space: break-spaces;
 }
 
 .Table__inputDoubleValue {
