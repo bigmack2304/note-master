@@ -64,7 +64,7 @@ function TableHead({
         setEditSelectRowIndex([]);
     };
 
-    const renderSortButton = useCallback((hValue: TTableRowColumnItem) => {
+    const renderSortButton = (hValue: TTableRowColumnItem) => {
         return (
             <TableSortButton_memo_is_equal
                 addClassNames={["Table__header_sort_button"]}
@@ -74,7 +74,7 @@ function TableHead({
                 onClick={onTableSortButton}
             />
         );
-    }, []);
+    };
 
     return (
         <>
@@ -122,15 +122,6 @@ function TableHead({
                                                 checked={editSelectColumnIndex.includes(hValue.colIndex)}
                                             />
                                         )}
-                                        {/* {!editMode && tableViewControls && (
-                                            <TableSortButton_memo_is_equal
-                                                addClassNames={["Table__header_sort_button"]}
-                                                dataSet={[{ name: "header_index", value: String(hValue.colIndex) }]}
-                                                isActive={sortHeaderIndex === String(hValue.colIndex)}
-                                                icon={sortHeaderIndex === String(hValue.colIndex) ? sortHeaderType : "top"}
-                                                onClick={onTableSortButton}
-                                            />
-                                        )} */}
                                         {!editMode ? tableViewControls ? renderSortButton(hValue) : <></> : renderSortButton(hValue)}
                                     </div>
                                 </div>
