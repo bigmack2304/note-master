@@ -29,7 +29,7 @@ function TableInput({ hValue, onChange, onBlur, className, inputProps, onFocus }
         if (!e.target) return;
         const target = e.target as HTMLTextAreaElement;
         target.style.height = ""; //TODO: сброс делать обязательно, иначе высота не сможет уменьшатся
-        target.style.height = `${target.scrollHeight}px`;
+        target.style.height = `${Math.ceil(target.scrollHeight + 1)}px`;
         onChange && onChange(e);
     };
 
@@ -53,7 +53,7 @@ function TableInput({ hValue, onChange, onBlur, className, inputProps, onFocus }
 
     useLayoutEffect(() => {
         if (refTextArea.current !== null) {
-            refTextArea.current.style.height = `${refTextArea.current.scrollHeight}px`;
+            refTextArea.current.style.height = `${Math.ceil(refTextArea.current.scrollHeight + 1)}px`;
         }
     }, []);
 
