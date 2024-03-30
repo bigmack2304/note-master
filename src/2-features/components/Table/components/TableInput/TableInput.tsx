@@ -9,9 +9,9 @@ import "./TableInput.scss";
 
 type TTableInputProps = {
     hValue: TTableRowColumnItem;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     onBlur?: (e: React.FocusEvent) => void;
-    onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
     inputProps?: GetProps<typeof Input>["inputProps"];
     className?: string;
 };
@@ -25,18 +25,18 @@ function TableInput({ hValue, onChange, onBlur, className, inputProps, onFocus }
     const refTextArea = useRef<HTMLTextAreaElement>(null);
     const themeValue = useTemeMode();
 
-    const onTextareaChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const onTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (!e.target) return;
         const target = e.target as HTMLTextAreaElement;
         target.style.height = ""; //TODO: сброс делать обязательно, иначе высота не сможет уменьшатся
         target.style.height = `${target.scrollHeight}px`;
-        onChange && onChange(e as any);
+        onChange && onChange(e);
     };
 
     const onTextareaFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
         const target = e.target as HTMLTextAreaElement;
         target.classList.add("Mui-focused");
-        onFocus && onFocus(e as any);
+        onFocus && onFocus(e);
     };
 
     const onTextareaBlur = (e: React.FocusEvent) => {
@@ -44,7 +44,7 @@ function TableInput({ hValue, onChange, onBlur, className, inputProps, onFocus }
         if (!e.relatedTarget?.className.includes("Table_inputValueDubleCell")) {
             target.classList.remove("Mui-focused");
         }
-        onBlur && onBlur(e as any);
+        onBlur && onBlur(e);
     };
 
     const onTextareaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {

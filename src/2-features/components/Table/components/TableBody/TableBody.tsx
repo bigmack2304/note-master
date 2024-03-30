@@ -11,7 +11,7 @@ type TTableBodyProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
     onCellValueBlur: (e: React.FocusEvent) => void;
-    onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onCellValueUpdate: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     getStateSelect: () => {
         editSelectColumnIndex: number[];
@@ -19,7 +19,7 @@ type TTableBodyProps = {
         setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
         setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
     };
-    onCellValueFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onCellValueFocus: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
 };
 
 /**

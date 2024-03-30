@@ -37,7 +37,7 @@ type TTableProps = {
 function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", onSave, tableViewControls = true, backLight = true }: TTableProps) {
     const savedRenderData = useRef(structuredClone(tableRenderData)); // копия tableRenderData, изменяется при редактировании таблицы
     const inputDubleCellValue = useRef<HTMLInputElement>(); // ссылка на инпут дублирующий инпут клеточки
-    const targetActiveCell = useRef<HTMLInputElement>(); // ссылка на ячейку которая в последний раз была в фокусе
+    const targetActiveCell = useRef<HTMLTextAreaElement>(); // ссылка на ячейку которая в последний раз была в фокусе
     const focusCellData = useRef<TActiveCellData>({ bodyRow: NaN, bodyColumn: NaN, headerColumn: NaN, inputDubleCellValue, targetActiveCell }); // обьект с данными который содержит индексы редактируемых клеточек а также ссылки на активную клеточку и инпут дублирующий ее значение
     const [sortedFiltredRenderData, setSortedFiltredRenderData] = useState(structuredClone(savedRenderData.current)); // копия savedRenderData, используется чисто для визуализации табличных данных
     const [excludeColumns, setExcludeColumns] = useState<Set<number>>(new Set()); // индексы колонок которые не нужно показывать (индексы привязаны к savedRenderData)
@@ -182,12 +182,12 @@ function Table({ addClassNames = [], tableRenderData, editMode, tableDesc = "", 
     }, []);
 
     // изменение значения в клеточке
-    const onCellValueUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const onCellValueUpdate = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
         cellValueUpdate({ focusCellData, savedRenderData });
     }, []);
 
     // фокус на клеточке
-    const onCellValueFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    const onCellValueFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
         focusCellData.current.bodyRow = Number(e.target.dataset.row_index);
         focusCellData.current.bodyColumn = Number(e.target.dataset.column_index);
         focusCellData.current.headerColumn = Number(e.target.dataset.header_index);

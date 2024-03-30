@@ -19,9 +19,9 @@ type TTableHeadProps = {
         setEditSelectColumnIndex: React.Dispatch<React.SetStateAction<number[]>>;
         setEditSelectRowIndex: React.Dispatch<React.SetStateAction<number[]>>;
     };
-    onCellValueFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onCellValueFocus: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
     onCellValueBlur: (e: React.FocusEvent) => void;
-    onCellValueUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onCellValueUpdate: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     onEditSelectTable: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     getStateSort: () => {
         sortHeaderIndex: string;
