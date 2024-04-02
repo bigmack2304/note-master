@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, TextField } from "@mui/material";
+import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 import * as styles from "./NoteImageEditDialogStyle";
+import "./NoteImageEditDialog.scss";
 import type { TBodyComponentImage } from "0-shared/types/dataSave";
 
 type TNoteImageEditDialogProps = {
@@ -28,7 +30,7 @@ function NoteImageEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
         onCloseSave && onCloseSave({ imageDesc: inputValue, isDescHidden: descHidden });
     };
 
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value as TBodyComponentImage["desc"]);
     };
 
@@ -38,14 +40,21 @@ function NoteImageEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
 
     return (
         <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <List sx={styles.listStyles()}>
+            <List className="NoteImageEditDialog__list">
                 <ListItem divider>
                     <ListItemText>Показать описание</ListItemText>
                     <SwitchCustom onChange={onDescHidden} checked={descHidden} />
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Описание</ListItemText>
-                    <TextField value={inputValue} label="Описание" onChange={onInputChange} multiline maxRows={3} variant="outlined" sx={styles.inputStyles()} />
+                    {/* <TextField value={inputValue} label="Описание" onChange={onInputChange} multiline maxRows={3} variant="outlined" sx={styles.inputStyles()} /> */}
+                    <MiuMultiInputCustom
+                        value={inputValue}
+                        onChange={onInputChange}
+                        maxRow={3}
+                        addClassNames={["NoteImageEditDialog__descInput"]}
+                        inputProps={{ label: "Описание" }}
+                    />
                 </ListItem>
             </List>
         </DialogWindowAlt>

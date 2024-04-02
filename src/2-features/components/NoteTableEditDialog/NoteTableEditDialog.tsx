@@ -1,10 +1,12 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, TextField, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
+import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 import * as styles from "./NoteTableEditDialogStyle";
 import type { TBodyComponentTable } from "0-shared/types/dataSave";
 import type { SelectChangeEvent } from "@mui/material";
+import "./NoteTableEditDialog.scss";
 
 type TNoteTableEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -38,7 +40,7 @@ function NoteTableEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
         onCloseSave && onCloseSave({ descValue, viewButtons, backlight, aligin: selectAligin });
     };
 
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDescValue(e.target.value as TBodyComponentTable["desc"]);
     };
 
@@ -56,7 +58,7 @@ function NoteTableEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
 
     return (
         <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <List sx={styles.listStyles()}>
+            <List className="NoteTableEditDialog__list">
                 <ListItem divider>
                     <ListItemText>Подцветка строк</ListItemText>
                     <SwitchCustom onChange={onBacklight} checked={backlight} />
@@ -67,7 +69,8 @@ function NoteTableEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Описание</ListItemText>
-                    <TextField value={descValue} onChange={onInputChange} multiline maxRows={3} variant="outlined" sx={styles.inputStyles()} />
+                    {/* <TextField value={descValue} onChange={onInputChange} multiline maxRows={3} variant="outlined" sx={styles.inputStyles()} /> */}
+                    <MiuMultiInputCustom value={descValue} onChange={onInputChange} maxRow={3} addClassNames={["NoteTableEditDialog__descInput"]} />
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Центрирование</ListItemText>
