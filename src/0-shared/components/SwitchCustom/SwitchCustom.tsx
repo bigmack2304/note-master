@@ -1,7 +1,10 @@
 import React from "react";
 import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
+import * as style from "./SwitchCustomStyle";
 import Typography from "@mui/material/Typography";
+import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import "./SwitchCustom.scss";
 import type { SwitchProps } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
@@ -26,6 +29,7 @@ type TSwitchCustomProps = {
 function SwitchCustom({ onChange, addClassNames = [], switchSettings = {}, containerSettings = {}, size = "medium", checked = false }: TSwitchCustomProps) {
     const defaultClassName = "SwitchCustom";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
+    const themeValue = useTemeMode();
 
     const onSwitchChange = (e: React.ChangeEvent, checked: boolean) => {
         onChange && onChange(e, checked);
@@ -33,10 +37,14 @@ function SwitchCustom({ onChange, addClassNames = [], switchSettings = {}, conta
 
     return (
         <>
-            <Stack {...containerSettings} direction="row" spacing={1} alignItems="center" className={genClassName}>
-                <Typography variant="caption">OFF</Typography>
+            <Stack {...containerSettings} sx={style.switchStyle(themeValue)} direction="row" spacing={1} alignItems="center" className={genClassName}>
+                <Typography variant="caption" className="SwitchCustom__valName">
+                    OFF
+                </Typography>
                 <Switch {...switchSettings} size={size} checked={checked} onChange={onSwitchChange} />
-                <Typography variant="caption">ON</Typography>
+                <Typography variant="caption" className="SwitchCustom__valName">
+                    ON
+                </Typography>
             </Stack>
         </>
     );

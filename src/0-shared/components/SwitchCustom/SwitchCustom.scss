@@ -1,0 +1,18 @@
+.SwitchCustom {
+}
+
+.SwitchCustom__valName {
+    opacity: 60%;
+}
+
+.SwitchCustom:has(.MuiButtonBase-root.Mui-checked) {
+    & .SwitchCustom__valName:last-child {
+        opacity: 100%;
+    }
+}
+
+.SwitchCustom:not(:has(.MuiButtonBase-root.Mui-checked)) {
+    & .SwitchCustom__valName:first-child {
+        opacity: 100%;
+    }
+}

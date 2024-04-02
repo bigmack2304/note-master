@@ -23,6 +23,11 @@
     row-gap: 25px;
 }
 
+.DialogWindowAlt .MuiListItemText-root .MuiTypography-root {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .DialogWindowAlt .MuiDialog-paper {
     @include is-screen(min_dialogWindow) {
         margin: 0;
