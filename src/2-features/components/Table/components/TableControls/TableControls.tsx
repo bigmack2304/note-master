@@ -12,6 +12,7 @@ import { cellValueUpdate } from "../../utils/TableFunc";
 import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TOperators } from "../TableFilterButton/TableFilterButton";
 import type { TActiveCellData } from "../../commonTypes/types";
+import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 
 type TTableControlsProps = {
     sortedFiltredRenderData: TTableValue;
@@ -130,7 +131,7 @@ function TableControls({
         setEditSelectRowIndex([]);
     }, []);
 
-    const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const onInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
         if (!e.relatedTarget?.className.includes("MuiInputBase-input")) {
             e.target.value = "";
             const dubleInput = focusCellData.current.inputDubleCellValue.current;
@@ -142,7 +143,7 @@ function TableControls({
         }
     };
 
-    const onInputChange = (e: React.FocusEvent<HTMLInputElement>) => {
+    const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -168,7 +169,7 @@ function TableControls({
             <div className="Table__controls">
                 {editMode && (
                     <>
-                        <TextField
+                        {/* <TextField
                             variant="outlined"
                             size="small"
                             multiline
@@ -177,7 +178,16 @@ function TableControls({
                             onBlur={onInputBlur}
                             onChange={onInputChange}
                             className="Table__inputDoubleValue"
+                        /> */}
+                        <MiuMultiInputCustom
+                            rows={6}
+                            onBlur={onInputBlur}
+                            onChange={onInputChange}
+                            addClassNames={["Table__inputDoubleValue"]}
+                            addInputClassNames={["Table_inputValueDubleCell"]}
+                            inputProps={{ ref: inputDubleCellValue }}
                         />
+
                         <div className="Table__edit_controls">
                             <SaveButton_memo_is_equal size="small" addClassNames={["Table__control_button"]} title="Сохранить" onClick={onTableSave} />
                             <TableAddButton_memo_is_equal addClassNames={["Table__control_button"]} onCloseSave={onTableAdd} />

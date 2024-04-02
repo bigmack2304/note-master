@@ -12,7 +12,7 @@ type TMiuMultiInputCustomProps = {
     defaultValue?: string;
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
-    onBlur?: (e: React.FocusEvent) => void;
+    onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
     disabled?: boolean;
     maxRow?: number;
     minRow?: number;
@@ -67,7 +67,7 @@ function MiuMultiInputCustom({
         onFocus && onFocus(e);
     };
 
-    const onTextareaBlur = (e: React.FocusEvent) => {
+    const onTextareaBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
         const target = e.target as HTMLTextAreaElement;
         target.classList.remove("Mui-focused");
         onBlur && onBlur(e);

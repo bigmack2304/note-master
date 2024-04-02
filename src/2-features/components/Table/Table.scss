@@ -101,6 +101,7 @@
 .Table__body_text_input {
     width: 100%;
     white-space: break-spaces;
+    overflow: hidden;
 
     .MuiInputBase-input {
         text-overflow: ellipsis;

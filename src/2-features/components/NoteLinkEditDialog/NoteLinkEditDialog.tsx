@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, TextField } from "@mui/material";
+import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import "./style.scss";
+import { Label } from "@mui/icons-material";
 
 type TNoteLinkEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -38,7 +40,7 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
         setIsBg(checked);
     };
 
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setLabelVal(e.target.value as TBodyComponentLink["labelValue"]);
     };
 
@@ -55,7 +57,8 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Текст</ListItemText>
-                    <TextField className="NoteLinkEditDialog__desc_text" value={labelVal} label="Текст" onChange={onInputChange} multiline maxRows={3} variant="outlined" />
+                    {/* <TextField className="NoteLinkEditDialog__desc_text" value={labelVal} label="Текст" onChange={onInputChange} multiline maxRows={3} variant="outlined" /> */}
+                    <MiuMultiInputCustom addClassNames={["NoteLinkEditDialog__desc_text"]} value={labelVal} inputProps={{ label: "Текст" }} onChange={onInputChange} maxRow={3} />
                 </ListItem>
             </List>
         </DialogWindowAlt>
