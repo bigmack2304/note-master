@@ -83,7 +83,12 @@ function NoteSelector({ addClassNames = [], sortName = "", onSelect, defaultValu
                         {prepareAllNotes.map((note) => {
                             return (
                                 <ListItem key={note.id} divider className="NoteSelector__Item">
-                                    <FormControlLabel value={JSON.stringify({ id: note.id, name: note.name })} control={<Radio />} label={note.name} />
+                                    <FormControlLabel
+                                        value={JSON.stringify({ id: note.id, name: note.name })}
+                                        control={<Radio />}
+                                        label={note.name}
+                                        sx={styles.radioFormControlStyle(themeValue)}
+                                    />
                                     <NoteTagList noteTags={note.tags ?? []} isNoteEdit={false} />
                                 </ListItem>
                             );

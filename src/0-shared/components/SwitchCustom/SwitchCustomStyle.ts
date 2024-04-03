@@ -1,14 +1,15 @@
 import type { PaletteMode, SxProps } from "@mui/material";
+import { CONTROLS_PRIMARY_DARK } from "5-app/settings";
 
 function switchStyle(theme: PaletteMode): SxProps {
     return {
         ...(theme === "dark"
             ? {
                   "& .MuiSwitch-switchBase.MuiButtonBase-root.Mui-checked .MuiSwitch-thumb": {
-                      backgroundColor: "#71ca3e",
+                      backgroundColor: CONTROLS_PRIMARY_DARK,
                   },
                   "& .MuiSwitch-switchBase.MuiButtonBase-root.Mui-checked + .MuiSwitch-track": {
-                      backgroundColor: "#71ca3e",
+                      backgroundColor: CONTROLS_PRIMARY_DARK,
                   },
               }
             : {}),
