@@ -24,7 +24,7 @@ const inputStyle: SxProps = {
  * @prop dialogHeader - заголовок окна
  */
 function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDialogProps) {
-    const [selectValue, setSelectValue] = useState<string[] | string>([]);
+    const [selectValue, setSelectValue] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState("");
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

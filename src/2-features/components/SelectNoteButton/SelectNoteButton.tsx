@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, List, ListItem, TextField, Accordion, AccordionSummary, AccordionDetails, Box } from "@mui/material";
+import { Button, List, ListItem, TextField, Accordion, AccordionSummary, AccordionDetails, Box, Divider } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import * as styles from "./SelectNoteButtonStyles";
@@ -112,6 +112,7 @@ function SelectNoteButton({ addClassNames = [], onClose, selectedNote }: TAllTag
                                         updateOnEvent={"SelectNoteButton_selectReset"}
                                     />
                                 </Box>
+                                <Divider />
                                 <Box className="SelectNoteButton__filter_item">
                                     <TextField
                                         className="SelectNoteButton__note_find_input"

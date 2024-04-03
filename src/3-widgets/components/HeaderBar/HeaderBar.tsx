@@ -6,6 +6,7 @@ import { DialogWindow } from "1-entities/components/DialogWindow/DialogWindow";
 import { InputFile } from "2-features/components/InputFile/InputFile";
 import { ToggleToolBarButton } from "2-features/components/ToggleToolBarButton/ToggleToolBarButton";
 import { createNewProject, saveProjectInDb, loadProjectInDb, exportTempDataSave } from "5-app/GlobalState/saveDataInspectStore";
+import { resetFindNodeTree } from "5-app/GlobalState/toolBarStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { LoadDialog } from "2-features/components/LoadDialog/LoadDialog";
@@ -65,6 +66,7 @@ function HeaderBar({}: THeaderBarProps) {
     const onCreateNewProject = (e: React.MouseEvent<Element, MouseEvent>) => {
         dispatch(createNewProject());
         dispatch(setIsOpen({ isOpen: false }));
+        dispatch(resetFindNodeTree());
     };
 
     // сохранение

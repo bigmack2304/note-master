@@ -2,6 +2,7 @@ import React from "react";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
 import type { TchildrenType } from "0-shared/types/dataSave";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { CustomTreeItem } from "1-entities/components/CustomTreeItem/CustomTreeItem";
 
@@ -10,6 +11,7 @@ type TRenderTreeAsFileProps = {
     //onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
     onClickNodeCallback?: (nodeData: TchildrenType) => void;
     onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
+    findParams?: IFindNodeParametres;
 };
 
 /**
@@ -20,7 +22,7 @@ type TRenderTreeAsFileProps = {
  * @returns
  */
 
-function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }: TRenderTreeAsFileProps) {
+function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, findParams }: TRenderTreeAsFileProps) {
     if (!node) return <></>;
 
     const nodeData = nodeWithoutChildren(node);
@@ -45,7 +47,25 @@ function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }: 
             customProps={{ nodeType: node.type, noteComplete: noteComplete, onSelectCallback: onSelect }}
             props={{ nodeId: node.id, label: node.name, onContextMenu: onContextMenu }}
         >
-            {isDataTreeFolder(node) && node.children && node.children.map((node) => RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback }))}
+            {isDataTreeFolder(node) &&
+                node.children &&
+                node.children.map((node) => {
+                    // поиск заметок
+                    // if (findParams) {
+                    //     // папки в поиске не учавствуют
+                    //     if (isDataTreeNote(node)) {
+                    //         // поиск по имяни
+                    //         if (node.name.includes(findParams.name)) {
+                    //             return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
+                    //         }
+                    //     } else {
+                    //         return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
+                    //     }
+                    // } else {
+                    //     return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
+                    // }
+                    return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
+                })}
         </CustomTreeItem>
     );
 }

@@ -1,9 +1,9 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import "./FilterButton.scss";
+import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
+import "./FindNoteButton.scss";
 
-type TFilterButtonProps = {
+type TFindNoteButtonProps = {
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     addClassNames?: string[];
     size?: "inherit" | "small" | "medium" | "large";
@@ -13,7 +13,7 @@ type TFilterButtonProps = {
 };
 
 /**
- * кнопка filter, (для таблиц)
+ * кнопка поиска заметки
  * @prop onClick - вызывается при клике на кнопку
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  * @prop size - размер иконки
@@ -21,15 +21,15 @@ type TFilterButtonProps = {
  * @prop isActive - если true то иконка будет выделена цветом
  * @prop disabled
  */
-function FilterButton({ onClick = () => {}, addClassNames = [], title, size = "inherit", isActive = false, disabled = false }: TFilterButtonProps) {
-    const defaultClassName = "FilterButton";
+function FindNoteButton({ onClick = () => {}, addClassNames = [], title, size = "inherit", isActive = false, disabled = false }: TFindNoteButtonProps) {
+    const defaultClassName = "FindNoteButton";
     let genClassName = "";
 
     const calcClassName = () => {
         let tempClassname = defaultClassName.split(" ").concat(addClassNames);
 
         if (isActive) {
-            tempClassname.push("FilterButton--active");
+            tempClassname.push("FindNoteButton--active");
         }
 
         genClassName = tempClassname.join(" ");
@@ -39,9 +39,9 @@ function FilterButton({ onClick = () => {}, addClassNames = [], title, size = "i
 
     return (
         <IconButton className={genClassName} aria-label={``} onClick={onClick} title={title} disabled={disabled}>
-            <FilterListIcon fontSize={size} />
+            <ContentPasteSearchIcon fontSize={size} />
         </IconButton>
     );
 }
 
-export { FilterButton };
+export { FindNoteButton };

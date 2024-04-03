@@ -1,0 +1,14 @@
+.FindNoteButton {
+    padding: 5px;
+
+    &--active:not([disabled]) {
+        stroke: black;
+        stroke-width: 2%;
+        fill: #ff4d00;
+        color: #ff4d00;
+
+        .MuiSvgIcon-root {
+            color: inherit;
+        }
+    }
+}

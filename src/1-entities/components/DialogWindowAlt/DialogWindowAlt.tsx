@@ -23,6 +23,7 @@ type DialogWindowAltPropos = {
     actionButtonName?: string;
     actionButton?: boolean;
     addClassNames?: string[];
+    dopActionButton?: React.ReactNode;
 };
 
 /**
@@ -47,6 +48,7 @@ function DialogWindowAlt({
     actionButtonName = "",
     actionButton,
     addClassNames = [],
+    dopActionButton,
 }: DialogWindowAltPropos) {
     const defaultClassName = "DialogWindowAlt";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
@@ -78,9 +80,12 @@ function DialogWindowAlt({
                 </DialogContent>
                 <DialogActions sx={styles.dialogActionsStyle(themeValue)}>
                     {actionButton ? (
-                        <Button variant="contained" type="submit">
-                            {actionButtonName}
-                        </Button>
+                        <>
+                            <Button variant="contained" type="submit">
+                                {actionButtonName}
+                            </Button>
+                            {dopActionButton}
+                        </>
                     ) : null}
                 </DialogActions>
             </form>

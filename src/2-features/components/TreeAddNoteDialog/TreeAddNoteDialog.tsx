@@ -30,7 +30,7 @@ const inputStyle: SxProps = {
  */
 function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader = "Новая заметка", isTargetDefined = true }: TTreeAddNoteDialogProps) {
     const [inputValue, setInputValue] = useState("");
-    const [selectValue, setSelectValue] = useState<string[] | string>([]);
+    const [selectValue, setSelectValue] = useState<string[]>([]);
     const [searchFolderValue, setSearchFolderValue] = useState("");
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder); // текущая активная папка
     const selectCurrentNoteData = currentFolder ? { id: currentFolder.id, name: currentFolder.name } : undefined;

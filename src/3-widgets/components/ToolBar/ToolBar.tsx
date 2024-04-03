@@ -7,6 +7,7 @@ import { FsControlsButton } from "2-features/components/FsControlsButton/FsContr
 import { NewTagButton } from "2-features/components/NewTagButton/NewTagButton";
 import { NoteEditButton } from "2-features/components/EditButton/EditButton";
 import { CloseAllFoldersTreeViewButton } from "2-features/components/CloseAllFoldersTreeViewButton/CloseAllFoldersTreeViewButton";
+import { FindNoteTreeViewButton } from "2-features/components/FindNoteTreeViewButton/FindNoteTreeViewButton";
 import { HideFsButton } from "2-features/components/HideFsButton/HideFsButton";
 import "./style.scss";
 import * as styles from "./ToolBarStyle";
@@ -33,6 +34,7 @@ function ToolBar({ addClassNames = [] }: TToolBarprops) {
                 <Collapse in={isFsControls} orientation="horizontal" className="ToolBar__fs_constiols_wrapper" unmountOnExit>
                     <Box className={"ToolBar__fs_constiols"}>
                         <CloseAllFoldersTreeViewButton />
+                        <FindNoteTreeViewButton />
                     </Box>
                 </Collapse>
                 <Box className={"ToolBar__main_constiols"}>

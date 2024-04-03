@@ -11,7 +11,7 @@ import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/Render
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import type { SxProps } from "@mui/material";
-import type { TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
+import type { TchildrenType, IDataTreeFolder, IDataTreeRootFolder, IDataTreeNote } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -49,10 +49,51 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const currentFolder = useAppSelector((state) => state.saveDataInspect.currentFolder);
+    const findParams = useAppSelector((state) => state.toolBar.findNodeTree);
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
+
+    //TODO: нужно реализовать функцию клонирования обьекта с учетом поиска
+    // const prepareDatatree = (function () {
+    //     if (findParams !== undefined) {
+    //         let parent:any = null
+
+    //         const clone = (node:TchildrenType) => {
+    //             if (isDataTreeFolder(node)) {
+    //                 if (node.children) {
+    //                     node.children = node.children.filter((value) => {
+    //                         if(isDataTreeNote(value)) {
+    //                             if (value.name === findParams.name) return true;
+    //                             return false;
+    //                         }
+    //                         return true
+    //                     })
+    //                 } else {
+    //                     parent
+    //                 }
+    //             }
+
+    //             if (isDataTreeNote(node)) {
+    //                 if ()
+    //             }
+    //         }
+
+    //         if (dataTree) {
+    //         let cloned = structuredClone(dataTree)
+    //         parent = cloned;
+    //         cloned = clone(cloned)
+    //         }
+
+    //         if (dataTree) return //cycle(dataTree);
+    //         return undefined;
+    //     } else {
+    //         return dataTree;
+    //     }
+    // })();
+
+    // debugger;
 
     // клик по ноде (для кастомных элементов дерева)
     //TODO: возможно потом стоит переделать это на onNodeSelect
@@ -250,6 +291,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                     node: dataTree,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
+                    // findParams: findParams,
                 })}
             </TreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>

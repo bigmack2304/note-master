@@ -10,13 +10,15 @@ import { useEventListener } from "0-shared/hooks/useEventListener";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TAddTagSelectProps = {
-    onChange?: (tagNames: string | string[]) => void;
+    onChange?: (tagNames: string[]) => void;
     sortName?: string;
     viewAll?: boolean;
     addClassNames?: string[];
     updateOnEvent?: string | string[];
     resetOnEvent?: boolean;
     size?: GetProps<typeof Select>["size"];
+    selectLabel?: string;
+    defaultValue?: string[];
 };
 
 const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMode) => {
@@ -41,11 +43,21 @@ const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMo
  * @prop updateOnEvent любое имя события на которое нужно подписатся (подписка идет через useEventListener соответстыенно вызов такого события возможен через useEventDispatch)
  * @prop resetOnEvent сброс селекта до пустого значения, при появлении события указанного в updateOnEvent
  */
-function AddTagSelect({ onChange, sortName = "", viewAll = false, addClassNames = [], updateOnEvent, resetOnEvent, size = "medium" }: TAddTagSelectProps) {
+function AddTagSelect({
+    onChange,
+    sortName = "",
+    viewAll = false,
+    addClassNames = [],
+    updateOnEvent,
+    resetOnEvent,
+    size = "medium",
+    selectLabel = "Теги",
+    defaultValue,
+}: TAddTagSelectProps) {
     const defaultClassName = "AddTagSelect";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const selectLabelID = useId();
-    const [selectValue, setSelectValue] = useState<string[]>([]);
+    const [selectValue, setSelectValue] = useState<string[]>(defaultValue ? defaultValue : []);
     const currentNote = useAppSelector((state) => state.saveDataInspect.currentNote);
     const tagColored = useAppSelector((state) => state.settingsData.highlightingTagsInForms);
     const [isTagsLoading, setIsTagsLoading] = useState(false);
@@ -95,24 +107,25 @@ function AddTagSelect({ onChange, sortName = "", viewAll = false, addClassNames 
     const onSelectChange = (event: SelectChangeEvent<typeof selectValue>) => {
         const value = event.target.value;
         setSelectValue(typeof value === "string" ? value.split(",") : value);
-        onChange && onChange(value);
+        onChange && onChange(typeof value === "string" ? value.split(",") : value);
     };
 
     return (
         <FormControl className={genClassName}>
-            <InputLabel id={selectLabelID}>Теги</InputLabel>
+            <InputLabel id={selectLabelID}>{selectLabel}</InputLabel>
             <Select
                 size={size}
                 labelId={selectLabelID}
                 value={selectValue}
-                label="Теги"
+                label={selectLabel}
                 onChange={onSelectChange}
                 multiple
-                input={<OutlinedInput label="Теги." />}
+                input={<OutlinedInput label={selectLabel} />}
                 renderValue={(selected) => (
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                         {selected.map((tagName) => {
-                            return <NoteTag isEdit={false} tagObj={allTags![tagName]} key={tagName} />;
+                            if (!allTags) return;
+                            return <NoteTag isEdit={false} tagObj={allTags[tagName]} key={tagName} />;
                         })}
                     </Box>
                 )}

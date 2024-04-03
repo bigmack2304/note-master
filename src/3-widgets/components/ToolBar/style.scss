@@ -29,10 +29,11 @@
     height: 100%;
     line-height: 0;
     display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    flex-wrap: wrap;
     padding: 0 10px;
     box-shadow: 1px 0px black;
 }
