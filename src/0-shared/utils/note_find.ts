@@ -1,6 +1,7 @@
 import type { IDataTreeRootFolder, TchildrenType, IDataTreeFolder, IDataTreeNote, TBodyComponentLink } from "0-shared/types/dataSave";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import { getTableDB } from "2-features/utils/appIndexedDB";
 
 /**
  *  функционал для поиска заметок
@@ -10,24 +11,24 @@ import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
  * @param filtres обьект с параметрами поиска
  * @returns [клонированный обьект, Set всех id папок которые есть в клон.обьекте]
  */
-function cloneFiltredTree(orig_obj: IDataTreeRootFolder, filtres: IFindNodeParametres | undefined): [clonedObj: IDataTreeFolder, internalFoldersId: Set<string>] {
+async function cloneFiltredTree(orig_obj: IDataTreeRootFolder, filtres: IFindNodeParametres | undefined): Promise<[clonedObj: IDataTreeFolder, internalFoldersId: Set<string>]> {
     let clonedObj = { ...orig_obj, children: [] } as IDataTreeFolder;
     let internalFoldersId: Set<string> = new Set<string>();
 
     if (!filtres) return [orig_obj, internalFoldersId];
 
-    clonedObj = deepClone(orig_obj, clonedObj, filtres, internalFoldersId) ?? orig_obj;
+    clonedObj = (await deepClone(orig_obj, clonedObj, filtres, internalFoldersId)) ?? orig_obj;
     return [clonedObj, internalFoldersId];
 }
 
 /**
  * непосредственно функция клонирования
  */
-function deepClone(origNode: IDataTreeFolder, clonedObj: IDataTreeFolder, filtres: IFindNodeParametres, internalFoldersId: Set<string>) {
+async function deepClone(origNode: IDataTreeFolder, clonedObj: IDataTreeFolder, filtres: IFindNodeParametres, internalFoldersId: Set<string>) {
     if (clonedObj.id === "root") !internalFoldersId.has(clonedObj.id) && internalFoldersId.add(clonedObj.id);
 
     for (let child of (origNode as IDataTreeFolder)["children"]!) {
-        if (isDataTreeNote(child) && checkFilter(child, filtres)) {
+        if (isDataTreeNote(child) && (await checkFilter(child, filtres))) {
             !internalFoldersId.has(origNode.id) && internalFoldersId.add(origNode.id);
             const cloneNote = structuredClone(child);
             clonedObj["children"]!.push(cloneNote);
@@ -37,7 +38,7 @@ function deepClone(origNode: IDataTreeFolder, clonedObj: IDataTreeFolder, filtre
         if (isDataTreeFolder(child)) {
             if (child.children && child.children.length > 0) {
                 const copyChildNode = { ...child, children: [] } as IDataTreeFolder;
-                let innderFolder = deepClone(child, copyChildNode, filtres, internalFoldersId);
+                let innderFolder = await deepClone(child, copyChildNode, filtres, internalFoldersId);
                 if (innderFolder.children && innderFolder.children.length > 0) {
                     clonedObj["children"]!.push(innderFolder);
                     !internalFoldersId.has(innderFolder.id) && internalFoldersId.add(innderFolder.id);
@@ -52,7 +53,7 @@ function deepClone(origNode: IDataTreeFolder, clonedObj: IDataTreeFolder, filtre
 /**
  * ф.ция проверяет соответствует-ли заметка требуемым параметрам поиска
  */
-function checkFilter(note: IDataTreeNote, filtres: IFindNodeParametres) {
+async function checkFilter(note: IDataTreeNote, filtres: IFindNodeParametres) {
     let resultName = false;
     let resultTags = false;
     let resultContent = false;
@@ -93,8 +94,17 @@ function checkFilter(note: IDataTreeNote, filtres: IFindNodeParametres) {
             }
 
             // TODO: для поиска по содержимому таблицы придется реальзовать всю логику через промисы, поэтому пока отложим
-            // if(component.component == "table") {
-            // }
+            if (component.component == "table") {
+                if (component.desc && component.desc.includes(filtres.content)) return true;
+
+                if (component.value !== "") {
+                    const tableData = await getTableDB({ key: component.value });
+                    if (tableData && tableData.value) {
+                        const JSONTableData = JSON.stringify(tableData.value);
+                        return JSONTableData.includes(filtres.content);
+                    }
+                }
+            }
         }
     } else {
         resultContent = true;

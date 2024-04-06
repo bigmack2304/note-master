@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TreeView } from "@mui/x-tree-view";
@@ -6,11 +6,12 @@ import Box from "@mui/material/Box";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import CircularProgress from "@mui/material/CircularProgress";
 import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import type { TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
+import type { TchildrenType, IDataTreeFolder, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -45,32 +46,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const dispatch = useAppDispatch();
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
-
-    // если юзер выполняет поиск заметки, то отрабатывает эта функция
-    const prepareDatatree = () => {
-        if (dataTree) {
-            const [cloned, folders] = cloneFiltredTree(dataTree, findParams);
-            let tempExpandedNodes = [...expandedNodes];
-            let isUpd = false;
-
-            for (let folder of folders) {
-                if (!expandedNodes.includes(folder)) {
-                    tempExpandedNodes.push(folder);
-                    isUpd = true;
-                }
-            }
-
-            if (isUpd) {
-                setExpandedNodes(tempExpandedNodes);
-            }
-
-            return cloned;
-        }
-
-        return undefined;
-    };
-
-    let prepDataTree = useMemo(() => (findParams === undefined ? dataTree : prepareDatatree()), [findParams, dataTree]); //TODO: нужно для того чтобы не вызывать prepareDatatree при каждом рендере, иначе нельзщя будет закрыть папки
+    const [isLoading, setIsLoading] = useState(false);
+    const [prepDataTree, setprepDataTree] = useState(dataTree);
 
     // клик по ноде (для кастомных элементов дерева)
     //TODO: возможно потом стоит переделать это на onNodeSelect
@@ -253,44 +230,82 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
         dispatch(moveFolderOrNote({ muvedNodeID: clickedNodeDataRef.current.id, muveToID: objFolder.id }));
     };
 
+    useEffect(() => {
+        if (!findParams) {
+            setprepDataTree(dataTree);
+        } else {
+            if (dataTree) {
+                setIsLoading(true);
+                const awaitData = async () => {
+                    const [cloned, folders] = await cloneFiltredTree(dataTree, findParams);
+                    let tempExpandedNodes = [...expandedNodes];
+                    let isUpd = false;
+
+                    for (let folder of folders) {
+                        if (!expandedNodes.includes(folder)) {
+                            tempExpandedNodes.push(folder);
+                            isUpd = true;
+                        }
+                    }
+
+                    if (isUpd) {
+                        setExpandedNodes(tempExpandedNodes);
+                    }
+
+                    setIsLoading(false);
+                    setprepDataTree(cloned as any as IDataTreeRootFolder);
+                };
+                awaitData();
+            } else {
+                setprepDataTree(dataTree);
+            }
+        }
+    }, [findParams, dataTree]);
+
     return (
         <Box className="FolderTreeViewer">
-            <TreeView
-                aria-label="структура заметок"
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
-                selected={treeNodeSelect}
-                onNodeSelect={ontreeNodeSelect}
-                expanded={expandedNodes}
-                onNodeToggle={onNodeExpand}
-            >
-                {RenderTreeAsFile({
-                    node: prepDataTree,
-                    onClickNodeCallback: onClickNode,
-                    onNodeContextCallback: onNodeContext,
-                })}
-            </TreeView>
-            <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
-                {clickedNodeDataRef.current && isDataTreeFolder(clickedNodeDataRef.current) ? (
-                    <ContextMenuTreeFolderContent
-                        onDeleteClick={onDeleteClick}
-                        onRenameClick={onRenameClick}
-                        onNewFolderClick={onNewFolderClick}
-                        onNewNoteClick={onNewNoteClick}
-                        onMoveClick={onMoveClick}
-                        isDelDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
-                        isRenDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
-                        isMowDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
-                    />
-                ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
-                    <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} onMoveClick={onMoveClick} />
-                ) : null}
-            </DopContextMenu>
+            {isLoading ? (
+                <CircularProgress />
+            ) : (
+                <>
+                    <TreeView
+                        aria-label="структура заметок"
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                        selected={treeNodeSelect}
+                        onNodeSelect={ontreeNodeSelect}
+                        expanded={expandedNodes}
+                        onNodeToggle={onNodeExpand}
+                    >
+                        {RenderTreeAsFile({
+                            node: prepDataTree,
+                            onClickNodeCallback: onClickNode,
+                            onNodeContextCallback: onNodeContext,
+                        })}
+                    </TreeView>
+                    <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>
+                        {clickedNodeDataRef.current && isDataTreeFolder(clickedNodeDataRef.current) ? (
+                            <ContextMenuTreeFolderContent
+                                onDeleteClick={onDeleteClick}
+                                onRenameClick={onRenameClick}
+                                onNewFolderClick={onNewFolderClick}
+                                onNewNoteClick={onNewNoteClick}
+                                onMoveClick={onMoveClick}
+                                isDelDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
+                                isRenDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
+                                isMowDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
+                            />
+                        ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
+                            <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} onMoveClick={onMoveClick} />
+                        ) : null}
+                    </DopContextMenu>
 
-            {isRenameDialogOpen && <TreeItemRenameDialog inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
-            {isNewFolderDialogOpen && <TreeAddFolderDialog onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
-            {isNewNoteDialogOpen && <TreeAddNoteDialog onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
-            {isMoveDialogOpen && <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />}
+                    {isRenameDialogOpen && <TreeItemRenameDialog inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
+                    {isNewFolderDialogOpen && <TreeAddFolderDialog onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
+                    {isNewNoteDialogOpen && <TreeAddNoteDialog onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
+                    {isMoveDialogOpen && <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />}
+                </>
+            )}
         </Box>
     );
 }
