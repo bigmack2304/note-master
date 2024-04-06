@@ -8,7 +8,6 @@ import { CustomTreeItem } from "1-entities/components/CustomTreeItem/CustomTreeI
 
 type TRenderTreeAsFileProps = {
     node: TchildrenType | undefined;
-    //onClickNodeCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
     onClickNodeCallback?: (nodeData: TchildrenType) => void;
     onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
     findParams?: IFindNodeParametres;
@@ -50,20 +49,6 @@ function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, fi
             {isDataTreeFolder(node) &&
                 node.children &&
                 node.children.map((node) => {
-                    // поиск заметок
-                    // if (findParams) {
-                    //     // папки в поиске не учавствуют
-                    //     if (isDataTreeNote(node)) {
-                    //         // поиск по имяни
-                    //         if (node.name.includes(findParams.name)) {
-                    //             return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
-                    //         }
-                    //     } else {
-                    //         return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
-                    //     }
-                    // } else {
-                    //     return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
-                    // }
                     return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
                 })}
         </CustomTreeItem>

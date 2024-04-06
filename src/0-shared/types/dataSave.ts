@@ -73,7 +73,7 @@ interface TBodyComponentImage extends IDataTreeNode {
     isDescHidden: boolean;
 }
 
-// картинка
+// cсписок
 interface TBodyComponentList extends IDataTreeNode {
     component: "list";
     value: string; // содержимое хранится в виде JSON преобразуемого в обьект такого типа {"li":string[]}

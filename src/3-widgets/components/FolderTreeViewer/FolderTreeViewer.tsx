@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TreeView } from "@mui/x-tree-view";
@@ -10,8 +10,7 @@ import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, a
 import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import type { SxProps } from "@mui/material";
-import type { TchildrenType, IDataTreeFolder, IDataTreeRootFolder, IDataTreeNote } from "0-shared/types/dataSave";
+import type { TchildrenType, IDataTreeFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -21,18 +20,10 @@ import { useDataTree } from "0-shared/hooks/useDataTree";
 import { getParentFolder } from "2-features/utils/saveDataParse";
 import { useEventListener } from "0-shared/hooks/useEventListener";
 import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
+import { cloneFiltredTree } from "0-shared/utils/note_find";
+import "./FolderfTreeViewer.scss";
 
 type TFolderTreeViewerProps = {};
-
-const FolderTreeViewerStyle: SxProps = {
-    borderRight: "1px #0000005c solid",
-    backgroundColor: "#1a1c5017",
-    whiteSpace: "nowrap",
-    overflow: "auto",
-    padding: "10px 0 0 5px",
-    height: "100%",
-    width: "100%",
-};
 
 /**
  * рендерит содержимое tempData из indexed db, в виде папок и фаилов
@@ -55,45 +46,31 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const isContextMenuOpen = Boolean(contextMenuAnchorEl);
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
 
-    //TODO: нужно реализовать функцию клонирования обьекта с учетом поиска
-    // const prepareDatatree = (function () {
-    //     if (findParams !== undefined) {
-    //         let parent:any = null
+    // если юзер выполняет поиск заметки, то отрабатывает эта функция
+    const prepareDatatree = () => {
+        if (dataTree) {
+            const [cloned, folders] = cloneFiltredTree(dataTree, findParams);
+            let tempExpandedNodes = [...expandedNodes];
+            let isUpd = false;
 
-    //         const clone = (node:TchildrenType) => {
-    //             if (isDataTreeFolder(node)) {
-    //                 if (node.children) {
-    //                     node.children = node.children.filter((value) => {
-    //                         if(isDataTreeNote(value)) {
-    //                             if (value.name === findParams.name) return true;
-    //                             return false;
-    //                         }
-    //                         return true
-    //                     })
-    //                 } else {
-    //                     parent
-    //                 }
-    //             }
+            for (let folder of folders) {
+                if (!expandedNodes.includes(folder)) {
+                    tempExpandedNodes.push(folder);
+                    isUpd = true;
+                }
+            }
 
-    //             if (isDataTreeNote(node)) {
-    //                 if ()
-    //             }
-    //         }
+            if (isUpd) {
+                setExpandedNodes(tempExpandedNodes);
+            }
 
-    //         if (dataTree) {
-    //         let cloned = structuredClone(dataTree)
-    //         parent = cloned;
-    //         cloned = clone(cloned)
-    //         }
+            return cloned;
+        }
 
-    //         if (dataTree) return //cycle(dataTree);
-    //         return undefined;
-    //     } else {
-    //         return dataTree;
-    //     }
-    // })();
+        return undefined;
+    };
 
-    // debugger;
+    let prepDataTree = useMemo(() => (findParams === undefined ? dataTree : prepareDatatree()), [findParams, dataTree]); //TODO: нужно для того чтобы не вызывать prepareDatatree при каждом рендере, иначе нельзщя будет закрыть папки
 
     // клик по ноде (для кастомных элементов дерева)
     //TODO: возможно потом стоит переделать это на onNodeSelect
@@ -277,7 +254,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     };
 
     return (
-        <Box sx={FolderTreeViewerStyle}>
+        <Box className="FolderTreeViewer">
             <TreeView
                 aria-label="структура заметок"
                 defaultCollapseIcon={<ExpandMoreIcon />}
@@ -288,10 +265,9 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                 onNodeToggle={onNodeExpand}
             >
                 {RenderTreeAsFile({
-                    node: dataTree,
+                    node: prepDataTree,
                     onClickNodeCallback: onClickNode,
                     onNodeContextCallback: onNodeContext,
-                    // findParams: findParams,
                 })}
             </TreeView>
             <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>

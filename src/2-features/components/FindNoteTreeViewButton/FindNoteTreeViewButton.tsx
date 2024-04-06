@@ -64,7 +64,7 @@ function FindNoteTreeViewButton({ addClassNames = [], type }: TFindNoteTreeViewB
             <FindNoteButton addClassNames={[genClassName]} disabled={!isProjectOpen} onClick={onButtonClick} size="small" title="Поиск заметки" isActive={Boolean(findData)} />
             {isDialogOpen && (
                 <FindNoteDialog
-                    dialogHeader="Поиск"
+                    dialogHeader="Поиск заметки"
                     onClose={onDialogClose}
                     onCloseSave={onDialogCloseSave}
                     onReset={onDialogReset}
