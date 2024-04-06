@@ -28,7 +28,7 @@
 
     // остальное
     "editor.accessibilitySupport": "off",
-    "workbench.activityBar.location": "side",
+    "workbench.activityBar.location": "default",
 
     // стандартное окно подсказки в VS CODE
     "editor.quickSuggestions": {
