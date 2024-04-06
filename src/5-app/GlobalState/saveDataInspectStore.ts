@@ -1,24 +1,3 @@
-import type {
-    IDataTreeNote,
-    IDataTreeFolder,
-    TchildrenType,
-    TNoteBody,
-    IDataTreeRootFolder,
-    IGlobalTag,
-    TTagColors,
-    TAllComponents,
-    TBodyComponentText,
-    TBodyComponentHeader,
-    TBodyComponentCode,
-    TBodyComponentLink,
-    TBodyComponentList,
-    TBodyComponentTable,
-    TTableValue,
-} from "0-shared/types/dataSave";
-import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
-import type { RootState } from "5-app/GlobalState/store";
-import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
 import {
     updateNodeValue,
     deleteById,
@@ -45,6 +24,17 @@ import {
     updateNodeTable,
     updateNodeTableSettings,
 } from "2-features/utils/saveDataEdit";
+import {
+    EV_NAME_SAVE_DATA_REDUCER_END,
+    EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
+    EV_NAME_SAVE_DATA_REDUCER_REJECT,
+    EV_NAME_SAVE_DATA_REDUCER_START,
+    EV_NAME_LINK_NOTE_REDIRECT,
+} from "5-app/settings";
+import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
+import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
+import { log } from "0-shared/utils/reducer_log";
+import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/classes/saveDataFolder";
@@ -53,14 +43,25 @@ import { DataTag } from "0-shared/utils/classes/saveDataTag";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
 import { DataProject } from "0-shared/utils/classes/saveDataProject";
 import { setAllTempDataDB, saveTempData } from "2-features/utils/appIndexedDB";
+import type {
+    IDataTreeNote,
+    IDataTreeFolder,
+    TchildrenType,
+    TNoteBody,
+    IDataTreeRootFolder,
+    IGlobalTag,
+    TTagColors,
+    TAllComponents,
+    TBodyComponentText,
+    TBodyComponentHeader,
+    TBodyComponentCode,
+    TBodyComponentLink,
+    TBodyComponentList,
+    TBodyComponentTable,
+    TTableValue,
+} from "0-shared/types/dataSave";
 import type { TRadioData } from "2-features/components/NoteSelector/NoteSelector";
-import {
-    EV_NAME_SAVE_DATA_REDUCER_END,
-    EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
-    EV_NAME_SAVE_DATA_REDUCER_REJECT,
-    EV_NAME_SAVE_DATA_REDUCER_START,
-    EV_NAME_LINK_NOTE_REDIRECT,
-} from "5-app/settings";
+import type { RootState } from "5-app/GlobalState/store";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -130,6 +131,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -163,6 +165,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -195,6 +198,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -245,6 +249,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -284,6 +289,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -326,6 +332,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -368,6 +375,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -410,6 +418,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -467,6 +476,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -509,6 +519,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -533,8 +544,6 @@ const saveDataInspectSlice = createAppSlice({
 
                 const targetNote = getNodeById(dataTree, payload.url.id);
 
-                //const { targetNote: updatedNode, resultBool } = await updateNodeLink(dataTree, payload.noteId, payload.componentId, payload.target, payload.value);
-
                 if (targetNote) {
                     return { targetNote };
                 } else {
@@ -548,9 +557,10 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    // window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     // если id изменяемой ноды совпадает с id текущей заметки, то обновляем данные и в сторе
                     if (!action.payload || !action.payload.targetNote) return;
@@ -598,6 +608,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -645,6 +656,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -695,6 +707,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -744,6 +757,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -792,6 +806,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -849,6 +864,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -879,6 +895,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -910,6 +927,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -950,6 +968,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -997,6 +1016,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1036,6 +1056,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1082,6 +1103,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1116,6 +1138,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1155,6 +1178,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1195,6 +1219,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1235,6 +1260,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1285,6 +1311,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
@@ -1324,6 +1351,7 @@ const saveDataInspectSlice = createAppSlice({
                 rejected: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_REJECT));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                    log(action);
                 },
                 fulfilled: (state, action) => {
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
