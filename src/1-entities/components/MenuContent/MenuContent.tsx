@@ -4,7 +4,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SaveIcon from "@mui/icons-material/Save";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import InfoIcon from "@mui/icons-material/Info";
 import WorkIcon from "@mui/icons-material/Work";
 
@@ -82,7 +82,7 @@ function MenuContent({
             </ListItemButton>
             <ListItemButton onClick={onExportClick} aria-label="экспортировать на устройство" disabled={isExportDisabled}>
                 <ListItemIcon>
-                    <FileDownloadIcon />
+                    <FileUploadIcon />
                 </ListItemIcon>
                 <ListItemText>Экспортировать</ListItemText>
             </ListItemButton>
