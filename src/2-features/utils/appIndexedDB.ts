@@ -6,7 +6,7 @@ import { openDB, DBSchema } from "idb";
 import type { IDataSave, IDataTreeRootFolder, IAllTags, TTableValue } from "0-shared/types/dataSave";
 
 const DB_NAME = "app_note_master_db_data";
-const DB_VERSION = 1;
+const DB_VERSION = 3;
 const TEMP_DATA_KEY = "0";
 
 const tempStoreData = ["db_type", "data_tree", "global_tags", "data_images", "data_tables"] as const;
@@ -78,19 +78,45 @@ function def_onComplete(e: Event) {
 async function openIndexedDB() {
     const db = await openDB<MyDB>(DB_NAME, DB_VERSION, {
         upgrade(db, oldVersion, newVersion, transaction, event) {
-            const savedDataDB = db.createObjectStore("savedData");
-            ////////////////////////////////
-            const other = db.createObjectStore("db_type");
-            const data_tree = db.createObjectStore("data_tree");
-            const global_tags = db.createObjectStore("global_tags");
-
-            const data_images = db.createObjectStore("data_images", {
-                keyPath: "id",
-            });
-
-            const data_tables = db.createObjectStore("data_tables", {
-                keyPath: "id",
-            });
+            if (oldVersion === newVersion) {
+                const savedDataDB = db.createObjectStore("savedData");
+                const dbType = db.createObjectStore("db_type");
+                const data_tree = db.createObjectStore("data_tree");
+                const global_tags = db.createObjectStore("global_tags");
+                const data_images = db.createObjectStore("data_images", {
+                    keyPath: "id",
+                });
+                const data_tables = db.createObjectStore("data_tables", {
+                    keyPath: "id",
+                });
+            } else {
+                //TODO: при изменении схемы бд, нужно менять версию бд, после чего нежно тут реализовать обновление схемы бд, для новой версии.
+                let currentVersion = oldVersion;
+                debugger;
+                do {
+                    switch (currentVersion + 1) {
+                        case 1:
+                            const savedDataDB = db.createObjectStore("savedData");
+                            const dbType = db.createObjectStore("db_type");
+                            const data_tree = db.createObjectStore("data_tree");
+                            const global_tags = db.createObjectStore("global_tags");
+                            break;
+                        case 2:
+                            const data_images = db.createObjectStore("data_images", {
+                                keyPath: "id",
+                            });
+                            break;
+                        case 3:
+                            const data_tables = db.createObjectStore("data_tables", {
+                                keyPath: "id",
+                            });
+                            break;
+                        default:
+                            throw new Error("A new version of the database has been detected, but the logic for updating the schema has not been implemented.");
+                    }
+                    currentVersion++;
+                } while (currentVersion < (newVersion ?? 1));
+            }
         },
         blocked(currentVersion, blockedVersion, event) {},
         blocking(currentVersion, blockedVersion, event) {},
@@ -283,8 +309,6 @@ async function delImageDB({ onComplete = def_onComplete, onError = def_onError, 
     return true;
 }
 
-///////////////////////////////////////////////
-
 /**
  * Записывает новое значение в хранилище data_table в indexed db
  * @property onComplete: определение колбека db.transaction,
@@ -356,8 +380,6 @@ async function delTableDB({ onComplete = def_onComplete, onError = def_onError, 
     dispatchEventIndexedDBTableUpdate();
     return true;
 }
-
-///////////////////////////////////////////////
 
 /**
  * Записывает загржунный фаил IDataSave в indexed db, распределяяя его по блокам
