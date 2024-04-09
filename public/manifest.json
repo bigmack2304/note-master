@@ -1,25 +1,43 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    "theme_color": "#6296ac",
+    "background_color": "#68cef3",
+    "icons": [
+        { "purpose": "maskable", "sizes": "512x512", "src": "icon512_maskable.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "512x512", "src": "icon512_rounded.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "310x310", "src": "ms-icon-310x310.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "192x192", "src": "icon192_rounded.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "180x180", "src": "apple-icon-180x180.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "152x152", "src": "apple-icon-152x152.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "144x144", "src": "android-icon-144x144.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "114x114", "src": "apple-icon-114x114.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "96x96", "src": "android-icon-96x96.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "72x72", "src": "apple-icon-72x72.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "60x60", "src": "apple-icon-60x60.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "57x57", "src": "apple-icon-57x57.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "48x48", "src": "android-icon-48x48.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "36x36", "src": "android-icon-36x36.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "32x32", "src": "favicon-32x32.png", "type": "image/png" },
+        { "purpose": "any", "sizes": "16x16", "src": "favicon-16x16.png", "type": "image/png" }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot-min.png",
+            "sizes": "1026x1286",
+            "type": "image/webp",
+            "form_factor": "wide"
+        },
+        {
+            "src": "screenshot-min.png",
+            "sizes": "1026x1286",
+            "type": "image/webp"
+        }
+    ],
+    "orientation": "any",
+    "display": "fullscreen",
+    "dir": "left",
+    "lang": "ru",
+    "name": "NoteMaster",
+    "short_name": "NoteMaster",
+    "scope": ".",
+    "start_url": "https://bigmack2304.github.io/note-master/build/dev/index.html"
 }
