@@ -1,5 +1,5 @@
 {
-    "editor.fontSize": 14,
+    "editor.fontSize": 16,
     "window.openFilesInNewWindow": "off",
 
     // standart wrapping (nowrap)
