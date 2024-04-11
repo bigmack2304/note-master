@@ -7,6 +7,7 @@ import { useUiTeme } from "0-shared/hooks/useUiTeme";
 import { ThemeProvider, Container, CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { useAppUiInfo } from "0-shared/hooks/useAppUiInfo";
+import "0-shared/workers/startServiceWorker";
 
 /**
  * базовый кормпонент, инициализация приложения

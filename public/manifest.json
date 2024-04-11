@@ -38,6 +38,6 @@
     "lang": "ru",
     "name": "NoteMaster",
     "short_name": "NoteMaster",
-    "scope": ".",
-    "start_url": "https://bigmack2304.github.io/note-master/build/dev/index.html"
+    "description": "A one-page application for creating and structuring notes.",
+    "start_url": "."
 }
