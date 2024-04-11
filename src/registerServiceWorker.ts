@@ -1,8 +1,9 @@
 export function register() {
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
+            const buildMode = process.env.NODE_ENV;
             navigator.serviceWorker
-                .register("/service-worker.js")
+                .register(buildMode === "development" ? "./service-worker.js" : "./note-master/build/dev/service-worker.js")
                 .then((registration) => {
                     console.log("SW registered: ", registration);
                 })
