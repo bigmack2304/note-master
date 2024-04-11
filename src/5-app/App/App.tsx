@@ -7,7 +7,7 @@ import { useUiTeme } from "0-shared/hooks/useUiTeme";
 import { ThemeProvider, Container, CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { useAppUiInfo } from "0-shared/hooks/useAppUiInfo";
-import "0-shared/workers/startServiceWorker";
+import { register, unregister } from "registerServiceWorker";
 
 /**
  * базовый кормпонент, инициализация приложения
@@ -27,5 +27,7 @@ function App() {
         </ThemeProvider>
     );
 }
+
+register();
 
 export default App;
