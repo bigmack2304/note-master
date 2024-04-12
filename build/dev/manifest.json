@@ -45,5 +45,5 @@
   "name": "NoteMaster",
   "short_name": "NoteMaster",
   "description": "A one-page application for creating and structuring notes.",
-  "start_url": "/note-master/build/undefined/"
+  "start_url": "/note-master/build/dev/"
 }
