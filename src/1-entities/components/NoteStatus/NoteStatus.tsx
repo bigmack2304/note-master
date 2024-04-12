@@ -1,14 +1,38 @@
 import React from "react";
 import { Stepper, Step, StepLabel, Typography } from "@mui/material";
+import type { SxProps, PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteCompleted } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
-import * as style from "./NoteStatusStyle";
-import "./NoteStatus.scss";
+import { NOTE_STATUS_COMPLETE, NOTE_STATUS_NO_COMPLETE } from "5-app/settings";
 
 type TNoteStatusProps = {
     addClassNames?: string[];
+};
+
+const noteStatusStyles = (theme: PaletteMode, isEdit: boolean) => {
+    return {
+        "& .MuiSvgIcon-root.Mui-completed": {
+            color: NOTE_STATUS_COMPLETE,
+        },
+        "& .MuiSvgIcon-root.Mui-active": {
+            color: NOTE_STATUS_NO_COMPLETE,
+        },
+        "& .MuiStepLabel-iconContainer.Mui-active + .MuiStepLabel-labelContainer .MuiTypography-root": {
+            color: theme === "light" ? "#00000061" : "#f9f9f961",
+        },
+        "& .MuiSvgIcon-root .MuiStepIcon-text": {
+            fill: theme === "light" ? "#000000de" : "#f9f9f9de",
+        },
+        "& .MuiSvgIcon-root": {
+            cursor: isEdit ? "pointer" : "initial",
+            transition: "transform ease-in 0.1s",
+        },
+        "& .MuiSvgIcon-root:hover": {
+            transform: isEdit ? "scale(1.22)" : "scale(1.0)",
+        },
+    } as SxProps;
 };
 
 const noteStatusSteps = ["В процессе написания", "Завершено"];
@@ -40,12 +64,7 @@ function NoteStatus({ addClassNames = [] }: TNoteStatusProps) {
 
     return (
         <div className={genClassName}>
-            <Stepper
-                className="NoteStatus__stepper"
-                sx={style.noteStatusStyles(themeValue, isEdit)}
-                activeStep={activeStep}
-                orientation="horizontal"
-            >
+            <Stepper className="NoteStatus__stepper" sx={noteStatusStyles(themeValue, isEdit)} activeStep={activeStep} orientation="horizontal">
                 {noteStatusSteps.map((value, index) => {
                     const isComplete = isStepComleted(index) ? true : false;
 
