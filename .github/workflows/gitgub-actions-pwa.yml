@@ -3,7 +3,7 @@ name: GitHub Actions dev
 run-name: Dev updated
 on:
   push:
-    branches: [dev]
+    branches: [pwa]
 env:
   GIT_BRANCH_DIR: dev
 jobs:
