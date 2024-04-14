@@ -6,17 +6,13 @@ import { FolderSelect } from "../FolderSelect/FolderSelect";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { nameValidator } from "0-shared/utils/validators";
+import "./TreeAddNoteDialog.scss";
 
 type TTreeAddNoteDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (noteName: string, NoteTags: string[] | string, targetFolderID?: string) => void;
     dialogHeader?: string;
     isTargetDefined?: boolean;
-};
-
-const inputStyle: SxProps = {
-    paddingLeft: "4px",
-    fontSize: "1.4rem",
 };
 
 /**
@@ -62,14 +58,27 @@ function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader = "Новая з
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} sx={inputStyle} required />
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+            addClassNames={["TreeAddNoteDialog"]}
+        >
+            <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} required className="TreeAddNoteDialog__input" />
             <AddTagSelect onChange={onSelectChange} />
 
             {!isTargetDefined && (
                 <>
                     <Divider />
-                    <Input value={searchFolderValue} placeholder="поиск папки" onChange={onsearchFolderChange} sx={inputStyle} />
+                    <Input
+                        value={searchFolderValue}
+                        placeholder="поиск папки"
+                        onChange={onsearchFolderChange}
+                        className="TreeAddNoteDialog__input"
+                    />
                     <FolderSelect sortName={searchFolderValue} onChange={onSelectFolderChange} defaultValue={selectCurrentNoteData} />
                 </>
             )}

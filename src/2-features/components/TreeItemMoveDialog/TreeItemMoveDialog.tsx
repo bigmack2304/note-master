@@ -1,7 +1,6 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
@@ -9,16 +8,12 @@ import MenuItem from "@mui/material/MenuItem";
 import type { SelectChangeEvent } from "@mui/material";
 import { getAllFolders } from "2-features/utils/saveDataParse";
 import { useDataTree } from "0-shared/hooks/useDataTree";
+import "./TreeItemMoveDialog.scss";
 
 type TTreeItemMoveDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (inputValue: string, selectFolderJSON: string) => void;
     muvedFileName?: string;
-};
-
-const inputStyle: SxProps = {
-    paddingLeft: "4px",
-    fontSize: "1.4rem",
 };
 
 /**
@@ -50,8 +45,16 @@ function TreeItemMoveDialog({ onClose, onCloseSave, muvedFileName }: TTreeItemMo
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={TreeEditDialigHeader} actionButtonName="Сохранить" actionButton>
-            <Input value={inputValue} placeholder="Поиск папки" onChange={onInputChange} sx={inputStyle} />
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={TreeEditDialigHeader}
+            actionButtonName="Сохранить"
+            actionButton
+            addClassNames={["TreeItemMoveDialog"]}
+        >
+            <Input value={inputValue} placeholder="Поиск папки" onChange={onInputChange} className="TreeItemMoveDialog__input" />
             <FormControl>
                 <InputLabel id={selectLabelID}>Переместить в</InputLabel>
                 <Select labelId={selectLabelID} value={selectValue} label="Переместить в" onChange={onSelectChange} required>

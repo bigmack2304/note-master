@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import { nameValidator } from "0-shared/utils/validators";
+import "./TreeItemRenameDialog.scss";
 
 type TTreeItemRenameDialogProps = {
     inputDefValue?: string;
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (inputValue: string) => void;
     dialogHeader?: string;
-};
-
-const inputStyle: SxProps = {
-    paddingLeft: "4px",
-    fontSize: "1.4rem",
 };
 
 /**
@@ -39,8 +34,16 @@ function TreeItemRenameDialog({ inputDefValue, onClose, onCloseSave, dialogHeade
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <Input value={inputValue} placeholder="имя" onChange={onInputChange} sx={inputStyle} required />
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+            addClassNames={["TreeItemRenameDialog"]}
+        >
+            <Input value={inputValue} placeholder="имя" onChange={onInputChange} required className="TreeItemRenameDialog__input" />
         </DialogWindowAlt>
     );
 }

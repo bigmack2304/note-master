@@ -70,7 +70,7 @@ function DialogWindowAlt({
 
     return (
         <Dialog {...dialogSettings} open={isOpen} onClose={onClose} className={genClassName}>
-            <form onSubmit={handleCloseSaveDialog} autoComplete="off">
+            <form onSubmit={handleCloseSaveDialog} autoComplete="off" className="DialogWindowAlt__form">
                 <div style={styles.dialogTitleStyle(themeValue) as React.CSSProperties} className="DialogWindowAlt__title">
                     <DialogTitle>{headerText}</DialogTitle>
                     <CloseButton onClick={handleCloseDialog}></CloseButton>

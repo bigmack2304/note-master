@@ -3,16 +3,12 @@ import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWin
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { Input } from "@mui/material";
 import type { SxProps } from "@mui/material";
+import "./NoteAddTagDialog.scss";
 
 type TNoteAddTagDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
     onCloseSave?: (selectValue: string[] | string) => void;
     dialogHeader?: string;
-};
-
-const inputStyle: SxProps = {
-    paddingLeft: "4px",
-    fontSize: "1.4rem",
 };
 
 /**
@@ -40,8 +36,16 @@ function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDia
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} sx={inputStyle} />
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+            addClassNames={["NoteAddTagDialog"]}
+        >
+            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} className="NoteAddTagDialog__input" />
             <AddTagSelect onChange={onSelectChange} sortName={inputValue} />
         </DialogWindowAlt>
     );

@@ -1,19 +1,13 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import { nameValidator } from "0-shared/utils/validators";
+import "./TreeAddFolderDialog.scss";
 
 type TTreeAddFolderDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    //onCloseSave?: (inputValue: string, selectValue: string) => void;
     onCloseSave?: (inputValue: string) => void;
     dialogHeader?: string;
-};
-
-const inputStyle: SxProps = {
-    paddingLeft: "4px",
-    fontSize: "1.4rem",
 };
 
 /**
@@ -45,8 +39,16 @@ function TreeAddFolderDialog({ onClose, onCloseSave, dialogHeader = "Новая 
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
-            <Input value={inputValue} placeholder="имя папки" onChange={onInputChange} sx={inputStyle} required />
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+            addClassNames={["TreeAddFolderDialog"]}
+        >
+            <Input value={inputValue} placeholder="имя папки" onChange={onInputChange} className="TreeAddFolderDialog__input" required />
             {/* <FormControl>
                 <InputLabel id={selectLabelID}>Цвет</InputLabel>
                 <Select defaultValue={"#00000000"} labelId={selectLabelID} value={selectValue} label="Цвет" onChange={onSelectChange}>

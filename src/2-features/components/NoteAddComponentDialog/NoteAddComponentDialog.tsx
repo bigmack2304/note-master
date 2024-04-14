@@ -11,6 +11,7 @@ import ListIcon from "@mui/icons-material/List";
 import { TableIcon } from "0-shared/components/TableIcon/TableIcon";
 import type { SelectChangeEvent } from "@mui/material";
 import type { TAllComponents } from "0-shared/types/dataSave";
+import "./NoteAddComponentDialog.scss";
 
 type TNoteAddComponentDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -50,7 +51,15 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Добавить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Добавить"
+            actionButton
+            addClassNames={["NoteAddComponentDialog"]}
+        >
             <FormControl>
                 <InputLabel id={selectLabelID}>Компонент</InputLabel>
                 <Select
