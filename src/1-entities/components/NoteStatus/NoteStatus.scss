@@ -1,0 +1,9 @@
+.NoteStatus__stepper .MuiStep-root {
+    padding: 5px 8px;
+    overflow: hidden;
+
+    .MuiStepLabel-labelContainer {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
