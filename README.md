@@ -11,6 +11,7 @@
 -   react-code-blocks (визуализация кода)
 -   idb для более удобной работы с indexed db
 -   ReactPlayer для видео
+-   react-photo-view просмотр картинок
 
 ## архитектура
 

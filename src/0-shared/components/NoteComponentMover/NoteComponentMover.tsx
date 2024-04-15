@@ -5,9 +5,6 @@ import "./style.scss";
 
 type TNoteComponentMoverProps = {};
 
-/**
- * элемент за который можно прицепится при drag-drope компонентов
- */
 function NoteComponentMoverComponent({}: TNoteComponentMoverProps, ref: Ref<HTMLDivElement | null>) {
     const divElement = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => divElement.current!, [divElement.current]);
@@ -19,6 +16,9 @@ function NoteComponentMoverComponent({}: TNoteComponentMoverProps, ref: Ref<HTML
     );
 }
 
+/**
+ * элемент за который можно прицепится при drag-drope компонентов
+ */
 const NoteComponentMover = React.forwardRef(NoteComponentMoverComponent);
 
 export { NoteComponentMover };

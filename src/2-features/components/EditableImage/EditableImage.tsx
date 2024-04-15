@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NoteImageEditDialog } from "../NoteImageEditDialog/NoteImageEditDialog";
-import { NoteImageZoomable } from "../NoteImageZoomable/NoteImageZoomable";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
@@ -11,6 +10,8 @@ import type { TBodyComponentImage } from "0-shared/types/dataSave";
 import { useImageSrc } from "0-shared/hooks/useImageSrc";
 import { ClosableImageForm } from "../ClosableImageForm/ClosableImageForm";
 import * as styles from "./EditableImageStyle";
+import "react-photo-view/dist/react-photo-view.css";
+import { NotePhotoView } from "0-shared/components/NotePhotoView/NotePhotoView";
 
 type TEditableImageProps = {
     addClassNames?: string[];
@@ -117,7 +118,14 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
     const onEditImageDialogCloseSave = (data: { imageDesc: string; isDescHidden: boolean }) => {
         setIsImageEditDialog(false);
         if (!componentData || !currentNoteData) return;
-        dispatch(updateNoteComponentImageSettings({ componentId: componentData.id, noteId: currentNoteData.id, imageDesc: data.imageDesc, isDescHidden: data.isDescHidden }));
+        dispatch(
+            updateNoteComponentImageSettings({
+                componentId: componentData.id,
+                noteId: currentNoteData.id,
+                imageDesc: data.imageDesc,
+                isDescHidden: data.isDescHidden,
+            })
+        );
     };
 
     return (
@@ -132,7 +140,7 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
                 />
             ) : (
                 <>
-                    <NoteImageZoomable
+                    <NotePhotoView
                         addClassNames={[...addClassNames, ...textDopClasses]}
                         isLoading={isImageLoadDb}
                         onContextMenu={onClickMoreActions}
@@ -141,7 +149,7 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
                         imageData={imageSrc}
                         dragId={componentData.id}
                         isNoteEdit={isNoteEdit}
-                    />
+                    ></NotePhotoView>
 
                     <DopContextMenuFree onClose={onMenuClose} mousePos={clickData}>
                         <ContextMenuEditContent
@@ -153,7 +161,13 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isImageEditDialog && <NoteImageEditDialog onClose={onEditImageDialogClose} onCloseSave={onEditImageDialogCloseSave} componentData={componentData} />}
+                    {isImageEditDialog && (
+                        <NoteImageEditDialog
+                            onClose={onEditImageDialogClose}
+                            onCloseSave={onEditImageDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

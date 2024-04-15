@@ -1,8 +1,8 @@
-.NoteImage__imgWrapper {
+.NotePhotoView__imgWrapper {
     margin: 5px;
 }
 
-.NoteImage {
+.NotePhotoView {
     width: 100%;
     overflow: hidden;
     font-size: 1rem;
@@ -29,13 +29,13 @@
     }
 }
 
-.NoteImage__img {
+.NotePhotoView__img {
     width: 100%;
     max-height: 400px;
     object-fit: contain;
 }
 
-.NoteImage__img_name {
+.NotePhotoView__img_name {
     text-align: center;
     font-style: italic;
 }
