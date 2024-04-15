@@ -10,7 +10,7 @@ type TRefWorker = {
 /**
  *  обьект для хранения ссылки на воркера
  */
-const workekrRef: TRefWorker = {
+const workerRef: TRefWorker = {
     DWorker: null,
 };
 
@@ -18,7 +18,7 @@ const workekrRef: TRefWorker = {
  * устанавлевает новое значение для workekrRef.DWorker
  */
 function setWorkerRef(newValue: TRefWorker["DWorker"]) {
-    (workekrRef as RemoveReadonly<TRefWorker>).DWorker = newValue;
+    (workerRef as RemoveReadonly<TRefWorker>).DWorker = newValue;
 }
 
 /**
@@ -33,7 +33,7 @@ function workerRegister(autoUnregister: boolean = false) {
                     name: "Dedicated Worker",
                 })
             );
-            console.log("DW registered: ", workekrRef.DWorker);
+            console.log("DW registered: ", workerRef.DWorker);
         } catch (e) {
             console.log("DW registration failed: ", e);
         }
@@ -54,10 +54,10 @@ function workerRegister(autoUnregister: boolean = false) {
  * снятие воркера
  */
 function workerUnregister() {
-    if (workekrRef.DWorker !== null) {
-        workekrRef.DWorker.terminate();
+    if (workerRef.DWorker !== null) {
+        workerRef.DWorker.terminate();
         setWorkerRef(null);
-        console.log("DW unregistered: ", workekrRef.DWorker);
+        console.log("DW unregistered: ", workerRef.DWorker);
     }
 }
 
@@ -65,7 +65,23 @@ function workerUnregister() {
  * запускает функцию с указанными параметрами в воркере
  */
 function runFuncOnWorker<T extends (...args: any[]) => any>(workerObj: Worker, func: T, ...args_for_func: Parameters<T>) {
-    workerObj.postMessage({ ...func_convertTo_string(func, ...args_for_func), type: "function executor" });
+    return new Promise<ReturnType<typeof func>>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "Function executor finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "Function executor error") {
+                reject("Function executor error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+
+        workerObj.postMessage({ ...func_convertTo_string(func, ...args_for_func), type: "function executor" });
+    });
 }
 
 /**
@@ -120,4 +136,4 @@ function func_convertTo_string(func: Function, ...args: any[]) {
     return obj_function;
 }
 
-export { workerRegister, workerUnregister, workekrRef, runFuncOnWorker };
+export { workerRegister, workerUnregister, workerRef, runFuncOnWorker };
