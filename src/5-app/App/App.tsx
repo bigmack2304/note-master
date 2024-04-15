@@ -7,7 +7,8 @@ import { useUiTeme } from "0-shared/hooks/useUiTeme";
 import { ThemeProvider, Container, CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { useAppUiInfo } from "0-shared/hooks/useAppUiInfo";
-import { register, unregister } from "registerServiceWorker";
+import { register } from "registerServiceWorker";
+import { workerRegister, workekrRef, runFuncOnWorker } from "0-shared/dedicatedWorker/workerInit";
 
 /**
  * базовый кормпонент, инициализация приложения
@@ -28,6 +29,7 @@ function App() {
     );
 }
 
-register();
+register(); // регистрация сервис воркера
+workerRegister(true); // регистрация dedicated воркера
 
 export default App;

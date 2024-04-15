@@ -1,5 +1,13 @@
 import { ForwardRefRenderFunction } from "react";
 import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
+import type { TMessageDataType } from "0-shared/dedicatedWorker/workerTypes";
+
+/**
+ *  убирает своиство readonly у полей массива или обьекта
+ */
+type RemoveReadonly<T> = {
+    -readonly [P in keyof T]: T[P];
+};
 
 /**
  * вычисляет пропсы компонента
@@ -59,5 +67,19 @@ function isDataSave(node: any): node is IDataSave {
     return true;
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave };
-export type { GetProps, Ref };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageDataType dedicated воркера
+ */
+function isFunctionData(value: any): value is TMessageDataType {
+    if (typeof value !== "object") return false;
+    if (!("argument_names" in value)) return false;
+    if (!("argument_values" in value)) return false;
+    if (!("func_data" in value)) return false;
+    if (!("type" in value)) return false;
+    if (!Array.isArray(value.argument_names)) return false;
+    if (!Array.isArray(value.argument_values)) return false;
+    return true;
+}
+
+export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData };
+export type { GetProps, Ref, RemoveReadonly };

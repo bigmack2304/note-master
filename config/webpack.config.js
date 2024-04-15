@@ -185,7 +185,7 @@ module.exports = function (webpackEnv) {
         devtool: isEnvProduction ? (shouldUseSourceMap ? "source-map" : false) : isEnvDevelopment && "cheap-module-source-map",
         // These are the "entry points" to our application.
         // This means they will be the "root" imports that are included in JS bundle.
-        entry: paths.appIndexJs,
+        entry: [paths.appIndexJs, "0-shared/dedicatedWorker/dedicatedWorker.ts"],
         output: {
             // The build folder.
             path: paths.appBuild,
