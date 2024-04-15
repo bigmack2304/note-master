@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "./static/css/main.c9a8b6c6.css",
-    "main.js": "./static/js/main.671e8529.js",
+    "main.css": "./static/css/main.64b8b13a.css",
+    "main.js": "./static/js/main.30a8dd78.js",
     "react-syntax-highlighter/refractor-core-import.js": "./static/js/react-syntax-highlighter/refractor-core-import.b09260be.chunk.js",
     "react-syntax-highlighter_languages_refractor_abap.js": "./static/js/react-syntax-highlighter_languages_refractor_abap.22d68cac.chunk.js",
     "react-syntax-highlighter_languages_refractor_abnf.js": "./static/js/react-syntax-highlighter_languages_refractor_abnf.cbf2e095.chunk.js",
@@ -294,13 +294,14 @@
     "reactPlayerKaltura.js": "./static/js/reactPlayerKaltura.2e1799a1.chunk.js",
     "reactPlayerFilePlayer.js": "./static/js/reactPlayerFilePlayer.60679c46.chunk.js",
     "reactPlayerPreview.js": "./static/js/reactPlayerPreview.f73d6b48.chunk.js",
+    "Dedicated Worker.js": "./static/js/Dedicated Worker.21b65d32.chunk.js",
     "workbox-1c3383c2.js.map": "./workbox-1c3383c2.js.map",
     "service-worker.js.map": "./service-worker.js.map",
     "service-worker.js": "./service-worker.js",
     "workbox-1c3383c2.js": "./workbox-1c3383c2.js",
     "index.html": "./index.html",
-    "main.c9a8b6c6.css.map": "./static/css/main.c9a8b6c6.css.map",
-    "main.671e8529.js.map": "./static/js/main.671e8529.js.map",
+    "main.64b8b13a.css.map": "./static/css/main.64b8b13a.css.map",
+    "main.30a8dd78.js.map": "./static/js/main.30a8dd78.js.map",
     "refractor-core-import.b09260be.chunk.js.map": "./static/js/react-syntax-highlighter/refractor-core-import.b09260be.chunk.js.map",
     "react-syntax-highlighter_languages_refractor_abap.22d68cac.chunk.js.map": "./static/js/react-syntax-highlighter_languages_refractor_abap.22d68cac.chunk.js.map",
     "react-syntax-highlighter_languages_refractor_abnf.cbf2e095.chunk.js.map": "./static/js/react-syntax-highlighter_languages_refractor_abnf.cbf2e095.chunk.js.map",
@@ -592,10 +593,11 @@
     "reactPlayerVidyard.2d44ca76.chunk.js.map": "./static/js/reactPlayerVidyard.2d44ca76.chunk.js.map",
     "reactPlayerKaltura.2e1799a1.chunk.js.map": "./static/js/reactPlayerKaltura.2e1799a1.chunk.js.map",
     "reactPlayerFilePlayer.60679c46.chunk.js.map": "./static/js/reactPlayerFilePlayer.60679c46.chunk.js.map",
-    "reactPlayerPreview.f73d6b48.chunk.js.map": "./static/js/reactPlayerPreview.f73d6b48.chunk.js.map"
+    "reactPlayerPreview.f73d6b48.chunk.js.map": "./static/js/reactPlayerPreview.f73d6b48.chunk.js.map",
+    "Dedicated Worker.21b65d32.chunk.js.map": "./static/js/Dedicated Worker.21b65d32.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c9a8b6c6.css",
-    "static/js/main.671e8529.js"
+    "static/css/main.64b8b13a.css",
+    "static/js/main.30a8dd78.js"
   ]
 }
