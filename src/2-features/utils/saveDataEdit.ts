@@ -1,5 +1,14 @@
 import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
-import { setDataTreeDB, getDataTreeDB, setGlobalTagsDB, getGlobalTagsDB, delImageDB, setImageDB, setTableDB, delTableDB } from "./appIndexedDB";
+import {
+    setDataTreeDB,
+    getDataTreeDB,
+    setGlobalTagsDB,
+    getGlobalTagsDB,
+    delImageDB,
+    setImageDB,
+    setTableDB,
+    delTableDB,
+} from "./appIndexedDB";
 import { moveElement } from "0-shared/utils/arrayFunctions";
 import type {
     TchildrenType,
@@ -264,7 +273,13 @@ async function updateNodeTableSettings(data: {
  * @param target новое значение target
  * @param value новое значение value
  */
-async function updateNodeLink(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, target: TBodyComponentLink["target"], value: TBodyComponentLink["value"]) {
+async function updateNodeLink(
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    target: TBodyComponentLink["target"],
+    value: TBodyComponentLink["value"]
+) {
     let targetNote = getNodeById(rootFolder, noteId);
     let resultBool = false;
 
@@ -333,7 +348,13 @@ async function updateNoteComponentLinkSettings(data: {
  * @param imageDesc новое описание
  * @param isDescHidden нужноли скрыть описание
  */
-async function updateNoteComponentImageSettings(data: { rootFolder: IDataTreeRootFolder; noteId: string; componentId: string; imageDesc: string; isDescHidden: boolean }) {
+async function updateNoteComponentImageSettings(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    imageDesc: string;
+    isDescHidden: boolean;
+}) {
     let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
@@ -575,6 +596,8 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
  * @param data - обьект сохранения IDataTreeRootFolder
  * @param target_id - id ноды которую нужно удалить
  */
+type TReturnTypeDeleteById = ReturnType<typeof deleteById>;
+
 async function deleteById(data: IDataTreeRootFolder, target_id: string) {
     let parent: IDataTreeFolder;
     let deletedNode: TchildrenType | undefined;
@@ -822,7 +845,13 @@ async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, ta
  * @param newTagName - новое имя тега
  * @param newTagColor - новый цвет тега
  */
-async function projectEditeTag(tagData: IAllTags, data: IDataTreeRootFolder, oldTagName: string, newTagName: string, newTagColor: TTagColors) {
+async function projectEditeTag(
+    tagData: IAllTags,
+    data: IDataTreeRootFolder,
+    oldTagName: string,
+    newTagName: string,
+    newTagColor: TTagColors
+) {
     // так как теги в db хранятся в обьекте по (ключу = имя тега), если имя изменилось то и ключ должен изменится
     // TODO: возможно в будующем добавлю тегам id и в качестве ключа к тегу будет его id, это серьезно упростит работу с изменением тегов, + положительно скажется на визуальном отображаении. (речь идет о том как рендерится список с key в react ), ведь key равен имяни тега а значит и ключу в db
     let resultBool = false;
@@ -932,3 +961,5 @@ export {
     updateNodeTable,
     updateNodeTableSettings,
 };
+
+export type { TReturnTypeDeleteById };

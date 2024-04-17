@@ -31,6 +31,8 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_START,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
+import { deleteByIdOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
+import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
 import { log } from "0-shared/utils/reducer_log";
@@ -178,10 +180,12 @@ const saveDataInspectSlice = createAppSlice({
         deleteNoteOrFolder: create.asyncThunk<{ nodeId: string }, { deletedNode: TchildrenType } | undefined>(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
-
+                const worker = workerRef.DWorker;
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { deletedNode, resultBool } = await deleteById(dataTree, payload.nodeId);
+                //const { deletedNode, resultBool } = await deleteById(dataTree, payload.nodeId);
+                const { deletedNode, resultBool } = await deleteByIdOnWorker(worker, dataTree, payload.nodeId);
 
                 if (!resultBool) {
                     throw new Error();
@@ -226,7 +230,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // удалить компонент внутри заметки
-        deleteNoteComponent: create.asyncThunk<{ noteId: string; componentId: string }, { updatedNote: TchildrenType | TNoteBody } | undefined>(
+        deleteNoteComponent: create.asyncThunk<
+            { noteId: string; componentId: string },
+            { updatedNote: TchildrenType | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
@@ -266,13 +273,21 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // обновляем component.value в активной заметке и в indexedDB
-        updateNoteComponentValue: create.asyncThunk<{ noteId: string; componentId: string; newValue: string }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+        updateNoteComponentValue: create.asyncThunk<
+            { noteId: string; componentId: string; newValue: string },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeValue(dataTree, payload.noteId, payload.componentId, payload.newValue);
+                const { targetNote: updatedNode, resultBool } = await updateNodeValue(
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.newValue
+                );
 
                 if (!resultBool) {
                     throw new Error();
@@ -315,7 +330,12 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updNoteComponentsOrder(dataTree, payload.noteId, payload.componentDragId, payload.toComponentDragId);
+                const { targetNote: updatedNode, resultBool } = await updNoteComponentsOrder(
+                    dataTree,
+                    payload.noteId,
+                    payload.componentDragId,
+                    payload.toComponentDragId
+                );
 
                 if (!resultBool) {
                     throw new Error();
@@ -358,7 +378,13 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeImage(dataTree, payload.noteId, payload.componentId, payload.newSrc, payload.newName);
+                const { targetNote: updatedNode, resultBool } = await updateNodeImage(
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.newSrc,
+                    payload.newName
+                );
 
                 if (!resultBool) {
                     throw new Error();
@@ -401,7 +427,12 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeTable(dataTree, payload.noteId, payload.componentId, payload.newValue);
+                const { targetNote: updatedNode, resultBool } = await updateNodeTable(
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.newValue
+                );
 
                 if (!resultBool) {
                     throw new Error();
@@ -502,7 +533,13 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeLink(dataTree, payload.noteId, payload.componentId, payload.target, payload.value);
+                const { targetNote: updatedNode, resultBool } = await updateNodeLink(
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.target,
+                    payload.value
+                );
 
                 if (!resultBool) {
                     throw new Error();
@@ -576,7 +613,13 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляем настройки link в активной заметке и в indexedDB
         updateNoteComponentLinkSettings: create.asyncThunk<
-            { noteId: string; componentId: string; isLabel: TBodyComponentLink["isLabel"]; isBg: TBodyComponentLink["background"]; labelVal: TBodyComponentLink["labelValue"] },
+            {
+                noteId: string;
+                componentId: string;
+                isLabel: TBodyComponentLink["isLabel"];
+                isBg: TBodyComponentLink["background"];
+                labelVal: TBodyComponentLink["labelValue"];
+            },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -674,7 +717,14 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляет настройки компонента текста внутри заметки
         updateNoteComponentTextSettings: create.asyncThunk<
-            { noteId: string; componentId: string; textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean },
+            {
+                noteId: string;
+                componentId: string;
+                textBackground: boolean;
+                textFormat: boolean;
+                fontValue: TBodyComponentText["font"];
+                lineBreak: boolean;
+            },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -725,7 +775,13 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляет настройки компонента списка внутри заметки
         updateNoteComponentListSettings: create.asyncThunk<
-            { noteId: string; componentId: string; listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"]; aligin: TBodyComponentList["textAligin"] },
+            {
+                noteId: string;
+                componentId: string;
+                listBg: TBodyComponentList["background"];
+                isNumeric: TBodyComponentList["isNumeric"];
+                aligin: TBodyComponentList["textAligin"];
+            },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -775,7 +831,12 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляет настройки компонента заголовка внутри заметки
         updateNoteComponentHeaderSettings: create.asyncThunk<
-            { noteId: string; componentId: string; textAligin: TBodyComponentHeader["textAligin"]; headerSize: TBodyComponentHeader["headerSize"] },
+            {
+                noteId: string;
+                componentId: string;
+                textAligin: TBodyComponentHeader["textAligin"];
+                headerSize: TBodyComponentHeader["headerSize"];
+            },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -904,7 +965,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // обновляем note.completed в активной заметке и в indexedDB
-        updateNoteCompleted: create.asyncThunk<{ noteId: string; newCompleted: boolean }, { updatedNode: TchildrenType | TNoteBody } | undefined>(
+        updateNoteCompleted: create.asyncThunk<
+            { noteId: string; newCompleted: boolean },
+            { updatedNode: TchildrenType | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
@@ -991,7 +1055,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // добавление папки
-        addFolder: create.asyncThunk<{ nodeName: string; insertToId: string; color?: string }, { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
+        addFolder: create.asyncThunk<
+            { nodeName: string; insertToId: string; color?: string },
+            { addedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
@@ -1079,7 +1146,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // перемещение папки или заметки в другую папку
-        moveFolderOrNote: create.asyncThunk<{ muvedNodeID: string; muveToID: string }, { muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined>(
+        moveFolderOrNote: create.asyncThunk<
+            { muvedNodeID: string; muveToID: string },
+            { muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
@@ -1229,7 +1299,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         //удаляет тег из всего проекта
-        projectDeleteTag: create.asyncThunk<{ tagName: string }, { deletedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined>(
+        projectDeleteTag: create.asyncThunk<
+            { tagName: string },
+            { deletedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined
+        >(
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const allTags = await getGlobalTagsDB();
@@ -1288,7 +1361,13 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!allTags || !dataTree) return;
 
-                const { newTagName: editedTagName, resultBool } = await projectEditeTag(allTags, dataTree, payload.oldTagName, payload.newTagName, payload.newTagColor);
+                const { newTagName: editedTagName, resultBool } = await projectEditeTag(
+                    allTags,
+                    dataTree,
+                    payload.oldTagName,
+                    payload.newTagName,
+                    payload.newTagColor
+                );
 
                 let curentNoteInDB: ReturnType<typeof getNodeById> = null;
 
@@ -1328,7 +1407,10 @@ const saveDataInspectSlice = createAppSlice({
             }
         ),
         // добавляет новый компонент в заметку
-        addNewComponentInNote: create.asyncThunk<{ noteId: string; componentType: TAllComponents }, { updatedNote: TchildrenType | TNoteBody } | undefined>(
+        addNewComponentInNote: create.asyncThunk<
+            { noteId: string; componentType: TAllComponents },
+            { updatedNote: TchildrenType | TNoteBody } | undefined
+        >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 

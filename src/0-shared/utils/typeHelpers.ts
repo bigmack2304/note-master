@@ -1,6 +1,6 @@
 import { ForwardRefRenderFunction } from "react";
 import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
-import type { TMessageDataType } from "0-shared/dedicatedWorker/workerTypes";
+import type { TMessageDataType, TMessageDelById } from "0-shared/dedicatedWorker/workerTypes";
 
 /**
  *  убирает своиство readonly у полей массива или обьекта
@@ -75,11 +75,22 @@ function isFunctionData(value: any): value is TMessageDataType {
     if (!("argument_names" in value)) return false;
     if (!("argument_values" in value)) return false;
     if (!("func_data" in value)) return false;
-    if (!("type" in value)) return false;
+    if (!("type" in value) || ("type" in value && value.type !== "function executor")) return false;
     if (!Array.isArray(value.argument_names)) return false;
     if (!Array.isArray(value.argument_values)) return false;
     return true;
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageDelById dedicated воркера
+ */
+function isDelByIdData(value: any): value is TMessageDelById {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "delete by id")) return false;
+    if (!("data" in value) || ("data" in value && !isDataTreeFolder(value.data))) return false;
+    if (!("target" in value) || ("target" in value && typeof value.target !== "string")) return false;
+    return true;
+}
+
+export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData };
 export type { GetProps, Ref, RemoveReadonly };

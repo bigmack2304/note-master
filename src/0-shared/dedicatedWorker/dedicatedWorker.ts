@@ -1,5 +1,6 @@
-import type { TMessageDataType } from "./workerTypes";
-import { isFunctionData } from "0-shared/utils/typeHelpers";
+import type { TMessageDataType, TMessageDelById } from "./workerTypes";
+import { isFunctionData, isDelByIdData } from "0-shared/utils/typeHelpers";
+//import { deleteById } from "2-features/utils/saveDataEdit";
 
 /**
  * получение данных
@@ -7,16 +8,18 @@ import { isFunctionData } from "0-shared/utils/typeHelpers";
 //eslint-disable-next-line
 self.onmessage = (e: MessageEvent) => {
     const data = e.data;
-    // данные с функцией и параметрами для ее выполнения
     if (data && isFunctionData(data)) {
         funcExecutorCase(data);
+    }
+    if (data && isDelByIdData(data)) {
+        delByIdCase(data);
     }
 };
 
 /**
  * отправка данных в рантайм
  */
-function worker_postMessage(resolve = "", work_data = null) {
+function worker_postMessage(resolve: string = "", work_data: any = null) {
     //eslint-disable-next-line
     self.postMessage({
         resolve: resolve,
@@ -29,7 +32,7 @@ function worker_postMessage(resolve = "", work_data = null) {
  */
 function funcExecutorCase({ argument_names = [], argument_values = [], func_data = "" }: TMessageDataType) {
     if (func_data) {
-        worker_postMessage("Function executor started");
+        worker_postMessage("Function executor: started");
         func_runer(argument_names, argument_values, func_data);
     }
 }
@@ -41,9 +44,24 @@ function func_runer(argument_names: string[], argument_values: any[], func_data:
     try {
         const func = new Function(...argument_names, func_data);
         const result = func(...argument_values);
-        worker_postMessage("Function executor finished", result);
+        worker_postMessage("Function executor: finished", result);
     } catch (e) {
-        worker_postMessage("Function executor error");
+        worker_postMessage("Function executor: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением deleteById
+ */
+async function delByIdCase({ data, target }: TMessageDelById) {
+    try {
+        worker_postMessage("delete by id: started");
+        //const result = await deleteById(data, target);
+        const result = null;
+        worker_postMessage("delete by id: finished", result);
+    } catch (e) {
+        worker_postMessage("delete by id: error");
         console.error(e);
     }
 }
