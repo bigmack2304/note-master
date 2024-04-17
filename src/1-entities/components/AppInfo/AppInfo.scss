@@ -1,0 +1,29 @@
+.AppInfo__head {
+    text-align: center;
+}
+
+.AppInfo__components_list {
+    list-style-type: "\2705  ";
+
+    li:last-of-type {
+        list-style-type: "\23F3  ";
+    }
+}
+
+.AppInfo .AppInfo__link_to_git {
+    font-size: 2.5rem;
+    line-height: 0;
+    display: inline-block;
+
+    .MuiSvgIcon-root {
+        font-size: inherit;
+    }
+}
+
+.AppInfo__footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

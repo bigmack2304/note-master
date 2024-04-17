@@ -14,6 +14,7 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { addNote } from "5-app/GlobalState/saveDataInspectStore";
 import { ExportProjectDialog } from "2-features/components/ExportProjectDialog/ExportProjectDialog";
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
+import { AppInfo } from "1-entities/components/AppInfo/AppInfo";
 
 type THeaderBarProps = {};
 
@@ -139,7 +140,9 @@ function HeaderBar({}: THeaderBarProps) {
             <DialogWindow headerText="Меню настроек" isOpen={isSettingsOpen} onClose={onSettingsClose}>
                 <SettingsContent />
             </DialogWindow>
-            <DialogWindow headerText="О приложении" isOpen={isInfoOpen} onClose={onInfoClose}></DialogWindow>
+            <DialogWindow headerText="О приложении" isOpen={isInfoOpen} onClose={onInfoClose}>
+                <AppInfo />
+            </DialogWindow>
             <LoadDialog isOpen={isLoadDialog} onClose={onloadDialogClose} onCloseSave={onloadDialogCloseSave} />
             <ExportProjectDialog isOpen={isExportOpen} onClose={onExportDialogClose} onCloseSave={onExportDialogCloseSave} />
             {isNewNoteOpen && <TreeAddNoteDialog isTargetDefined={false} onClose={onNewNoteClose} onCloseSave={onNewNoteCloseSave} />}
