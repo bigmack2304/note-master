@@ -8,7 +8,7 @@ import { ThemeProvider, Container, CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { useAppUiInfo } from "0-shared/hooks/useAppUiInfo";
 import { register } from "registerServiceWorker";
-import { workerRegister, workerRef, runFuncOnWorker } from "0-shared/dedicatedWorker/workerInit";
+import { workerRegister, workerRef } from "0-shared/dedicatedWorker/workerInit";
 
 /**
  * базовый кормпонент, инициализация приложения
