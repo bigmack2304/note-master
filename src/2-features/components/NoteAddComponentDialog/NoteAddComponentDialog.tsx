@@ -88,23 +88,11 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                         </ListItemIcon>
                         <ListItemText>Код</ListItemText>
                     </MenuItem>
-                    <MenuItem divider value="image">
-                        <ListItemIcon>
-                            <ImageIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>Изображение</ListItemText>
-                    </MenuItem>
                     <MenuItem divider value="link">
                         <ListItemIcon>
                             <LinkIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText>Ссылка</ListItemText>
-                    </MenuItem>
-                    <MenuItem divider value="video">
-                        <ListItemIcon>
-                            <SmartDisplayIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>Видео</ListItemText>
                     </MenuItem>
                     <MenuItem divider value="list">
                         <ListItemIcon>
@@ -117,6 +105,18 @@ function NoteAddComponentDialog({ onClose, onCloseSave, dialogHeader = "Доба
                             <TableIcon svgIconSettings={{ fontSize: "small" }} />
                         </ListItemIcon>
                         <ListItemText>Таблица</ListItemText>
+                    </MenuItem>
+                    <MenuItem divider value="image">
+                        <ListItemIcon>
+                            <ImageIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Изображение</ListItemText>
+                    </MenuItem>
+                    <MenuItem divider value="video">
+                        <ListItemIcon>
+                            <SmartDisplayIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Видео</ListItemText>
                     </MenuItem>
                 </Select>
             </FormControl>
