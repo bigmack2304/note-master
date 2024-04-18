@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { useIndexedDBTreeUpdate } from "./useIndexedDBTreeUpdate";
+import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 /**
  * возвращает data_tree из indexed db

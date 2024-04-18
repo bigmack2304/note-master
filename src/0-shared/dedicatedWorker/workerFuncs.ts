@@ -1,6 +1,7 @@
 import type { TMessageDataType, TMessageDelById } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
-import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEdit";
+import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
+import type { TSavedIdGenerator } from "0-shared/utils/idGenerator";
 
 // скрипт содержит различные функции для удобного более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -79,7 +80,7 @@ function func_convertTo_string(func: Function, ...args: any[]) {
 }
 
 // запуск в воркере алгоритма deleteById из saveDataEdit.ts
-function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target_id: string) {
+function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target_id: string, savedIdGenerator: string[]) {
     return new Promise<TReturnTypeDeleteById>((resolve, reject) => {
         const callback = (e: MessageEvent) => {
             if (e.data.resolve && e.data.resolve === "delete by id: finished") {
@@ -94,8 +95,7 @@ function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target
         };
 
         workerObj.addEventListener("message", callback);
-
-        workerObj.postMessage({ data, target: target_id, type: "delete by id" } as TMessageDelById);
+        workerObj.postMessage({ data, target: target_id, type: "delete by id", savedIdGenerator } as TMessageDelById);
     });
 }
 

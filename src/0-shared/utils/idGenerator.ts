@@ -1,3 +1,5 @@
+import { isDWorkerScope } from "./scopeChecks";
+
 // генератор ID в виде строки из 16 символов
 
 /**
@@ -30,6 +32,7 @@ class IdGenerator {
 
         this._cache.add(newId);
         //console.log(this.getIdsArray());
+        console.log(`idGenerator: add -> ${newId}`);
         return newId;
     }
 
@@ -37,6 +40,7 @@ class IdGenerator {
         if (this._cache.has(id)) {
             this._cache.delete(id);
             //console.log(this.getIdsArray());
+            console.log(`idGenerator: delete -> ${id}`);
         }
     }
 
@@ -60,12 +64,20 @@ const savedIdGenerator: TSavedIdGenerator = new Proxy(
     },
     {
         set(target, prop, newValue, receiver) {
+            if (isDWorkerScope()) {
+                console.error("set savedIdGenerator.instatnceIdGenerator can not be used in worker scope");
+                throw new Error("set savedIdGenerator.instatnceIdGenerator can not be used in worker scope");
+            }
             if (prop === "instatnceIdGenerator") {
                 window.dispatchEvent(new CustomEvent("appIdGeneratorNewInstance"));
+                console.group("savedIdGenerator: updated");
+                console.log(newValue);
+                console.groupEnd();
             }
             return Reflect.set(target, prop, newValue, receiver);
         },
     }
 );
 
-export { IdGenerator, savedIdGenerator };
+export { savedIdGenerator, IdGenerator };
+export type { TSavedIdGenerator };

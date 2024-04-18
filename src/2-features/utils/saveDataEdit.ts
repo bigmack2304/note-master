@@ -1,15 +1,20 @@
-import { getNodeById, getAllIdsInNode, getParentNode, getAllNotes } from "./saveDataParse";
-import {
-    setDataTreeDB,
-    getDataTreeDB,
-    setGlobalTagsDB,
-    getGlobalTagsDB,
-    delImageDB,
-    setImageDB,
-    setTableDB,
-    delTableDB,
-} from "./appIndexedDB";
+import { getNodeById, getParentNode, getAllNotes } from "./saveDataParse";
+import { setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
+import { setDataTreeDB } from "./appIndexedDBFynctions/dataTreeDb";
+import { setTableDB, delTableDB } from "./appIndexedDBFynctions/tableFunctions";
+import { delImageDB, setImageDB } from "./appIndexedDBFynctions/imageFunctions";
 import { moveElement } from "0-shared/utils/arrayFunctions";
+import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
+import { savedIdGenerator } from "0-shared/utils/idGenerator";
+import { DataTag } from "0-shared/utils/classes/saveDataTag";
+import { DataComponentHeader } from "0-shared/utils/classes/saveDataComponentHeader";
+import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentText";
+import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
+import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
+import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
+import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponentVideo";
+import { saveDataComponentTable } from "0-shared/utils/classes/saveDataComponentTable";
+import { DataComponentList } from "0-shared/utils/classes/saveDataComponentList";
 import type {
     TchildrenType,
     TNoteBody,
@@ -29,17 +34,6 @@ import type {
     TBodyComponentTable,
     TTableValue,
 } from "0-shared/types/dataSave";
-import { isDataTreeFolder, isDataTreeNote, isDataNoteBody } from "0-shared/utils/typeHelpers";
-import { savedIdGenerator } from "0-shared/utils/idGenerator";
-import { DataTag } from "0-shared/utils/classes/saveDataTag";
-import { DataComponentHeader } from "0-shared/utils/classes/saveDataComponentHeader";
-import { saveDataComponentText } from "0-shared/utils/classes/saveDataComponentText";
-import { saveDataComponentCode } from "0-shared/utils/classes/saveDataComponentCode";
-import { saveDataComponentImage } from "0-shared/utils/classes/saveDataComponentImage";
-import { saveDataComponentLink } from "0-shared/utils/classes/saveDataComponentLink";
-import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponentVideo";
-import { saveDataComponentTable } from "0-shared/utils/classes/saveDataComponentTable";
-import { DataComponentList } from "0-shared/utils/classes/saveDataComponentList";
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
@@ -591,60 +585,60 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
     return { targetNote, resultBool };
 }
 
-/**
- * удаляет ноду типа TchildrenType по id из tempData в indexedDB
- * @param data - обьект сохранения IDataTreeRootFolder
- * @param target_id - id ноды которую нужно удалить
- */
-type TReturnTypeDeleteById = ReturnType<typeof deleteById>;
+// /**
+//  * удаляет ноду типа TchildrenType по id из tempData в indexedDB
+//  * @param data - обьект сохранения IDataTreeRootFolder
+//  * @param target_id - id ноды которую нужно удалить
+//  */
+// type TReturnTypeDeleteById = ReturnType<typeof deleteById>;
 
-async function deleteById(data: IDataTreeRootFolder, target_id: string) {
-    let parent: IDataTreeFolder;
-    let deletedNode: TchildrenType | undefined;
-    const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
-    let resultBool = false;
-    if (!insIdGenerator) throw new Error("IdGenerator is not defined");
+// async function deleteById(data: IDataTreeRootFolder, target_id: string) {
+//     let parent: IDataTreeFolder;
+//     let deletedNode: TchildrenType | undefined;
+//     const insIdGenerator = savedIdGenerator.instatnceIdGenerator;
+//     let resultBool = false;
+//     if (!insIdGenerator) throw new Error("IdGenerator is not defined");
 
-    const finder = (node: TchildrenType) => {
-        if (node.id === target_id && node.id !== "root") {
-            parent.children = parent.children!.filter((child) => {
-                if (child.id === target_id) {
-                    if (isDataTreeFolder(child) || isDataTreeNote(child)) {
-                        const innerIds = getAllIdsInNode(child);
-                        delImageDB({ key: innerIds });
-                        innerIds.map((id) => {
-                            insIdGenerator.deleteId(id);
-                        });
-                    }
-                    insIdGenerator.deleteId(target_id);
-                    deletedNode = child;
-                    return false;
-                }
-                return true;
-            });
-            resultBool = true;
-            return true;
-        }
+//     const finder = (node: TchildrenType) => {
+//         if (node.id === target_id && node.id !== "root") {
+//             parent.children = parent.children!.filter((child) => {
+//                 if (child.id === target_id) {
+//                     if (isDataTreeFolder(child) || isDataTreeNote(child)) {
+//                         const innerIds = getAllIdsInNode(child);
+//                         delImageDB({ key: innerIds });
+//                         innerIds.map((id) => {
+//                             insIdGenerator.deleteId(id);
+//                         });
+//                     }
+//                     insIdGenerator.deleteId(target_id);
+//                     deletedNode = child;
+//                     return false;
+//                 }
+//                 return true;
+//             });
+//             resultBool = true;
+//             return true;
+//         }
 
-        if (isDataTreeFolder(node)) {
-            if (node.children) {
-                let temp = parent;
-                parent = node;
-                for (let child of node.children) {
-                    let result = finder(child);
-                    if (result) return true;
-                }
-                parent = temp;
-            }
-        }
-    };
+//         if (isDataTreeFolder(node)) {
+//             if (node.children) {
+//                 let temp = parent;
+//                 parent = node;
+//                 for (let child of node.children) {
+//                     let result = finder(child);
+//                     if (result) return true;
+//                 }
+//                 parent = temp;
+//             }
+//         }
+//     };
 
-    parent = data;
-    let result = finder(data);
-    if (!result) throw new Error(`node not found`);
-    await setDataTreeDB({ value: data });
-    return { deletedNode, resultBool };
-}
+//     parent = data;
+//     let result = finder(data);
+//     if (!result) throw new Error(`node not found`);
+//     await setDataTreeDB({ value: data });
+//     return { deletedNode, resultBool };
+// }
 
 /**
  * Добавляет ноду в дерево
@@ -938,7 +932,7 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
 export {
     updateNodeValue,
     deleteComponentInNote,
-    deleteById,
+    //deleteById,
     updateNodeName,
     addNodeTo,
     nodeMuveTo,
@@ -962,4 +956,4 @@ export {
     updateNodeTableSettings,
 };
 
-export type { TReturnTypeDeleteById };
+//export type { TReturnTypeDeleteById };

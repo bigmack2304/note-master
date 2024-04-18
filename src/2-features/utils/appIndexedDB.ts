@@ -2,129 +2,11 @@
 // в indexed DB будем сохранять текущий фаил сохранения с которым работаем.
 // кроме этого там будем держать и temp фаил сохранения, который при выходе удалится. (чтобы не держать его в оперативе) (возможно потом както это обыграем)
 
-import { openDB, DBSchema } from "idb";
-import type { IDataSave, IDataTreeRootFolder, IAllTags, TTableValue } from "0-shared/types/dataSave";
-
-const DB_NAME = "app_note_master_db_data";
-const DB_VERSION = 3;
-const TEMP_DATA_KEY = "0";
-
-const tempStoreData = ["db_type", "data_tree", "global_tags", "data_images", "data_tables"] as const;
-
-interface MyDB extends DBSchema {
-    savedData: {
-        key: string;
-        value: IDataSave;
-    };
-
-    db_type: {
-        key: string;
-        value: string;
-    };
-    data_tree: {
-        key: string;
-        value: IDataTreeRootFolder;
-    };
-    global_tags: {
-        key: string;
-        value: IAllTags;
-    };
-    data_images: {
-        value: {
-            id: string;
-            src: string;
-        };
-        key: string;
-    };
-    data_tables: {
-        value: {
-            id: string;
-            value: TTableValue;
-        };
-        key: string;
-    };
-}
-
-type TSetDataEntity<SET_TYPE> = Omit<TSetKeyDataEntity<SET_TYPE>, "key">;
-type TGetDataEntity<CALLBACK_PARAM> = Omit<TGetKeyDataEntity<CALLBACK_PARAM>, "key">;
-
-type TSetKeyDataEntity<SET_TYPE> = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: SET_TYPE | undefined) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    value: SET_TYPE;
-    key: string;
-};
-
-type TGetKeyDataEntity<CALLBACK_PARAM, KEY_TYPE = string> = {
-    onComplete?: (this: IDBTransaction, ev: Event) => void;
-    onError?: (this: IDBTransaction, ev: Event) => void;
-    callback?: (value: CALLBACK_PARAM) => void;
-    key: KEY_TYPE;
-};
-
-function def_onError(e: Event) {
-    console.warn(e);
-}
-
-function def_onComplete(e: Event) {
-    //    console.log(e);
-}
-
-/**
- * async функция, возвращает обьект indexed db
- * @returns
- */
-async function openIndexedDB() {
-    const db = await openDB<MyDB>(DB_NAME, DB_VERSION, {
-        upgrade(db, oldVersion, newVersion, transaction, event) {
-            if (oldVersion === newVersion) {
-                const savedDataDB = db.createObjectStore("savedData");
-                const dbType = db.createObjectStore("db_type");
-                const data_tree = db.createObjectStore("data_tree");
-                const global_tags = db.createObjectStore("global_tags");
-                const data_images = db.createObjectStore("data_images", {
-                    keyPath: "id",
-                });
-                const data_tables = db.createObjectStore("data_tables", {
-                    keyPath: "id",
-                });
-            } else {
-                //TODO: при изменении схемы бд, нужно менять версию бд, после чего нежно тут реализовать обновление схемы бд, для новой версии.
-                let currentVersion = oldVersion;
-                debugger;
-                do {
-                    switch (currentVersion + 1) {
-                        case 1:
-                            const savedDataDB = db.createObjectStore("savedData");
-                            const dbType = db.createObjectStore("db_type");
-                            const data_tree = db.createObjectStore("data_tree");
-                            const global_tags = db.createObjectStore("global_tags");
-                            break;
-                        case 2:
-                            const data_images = db.createObjectStore("data_images", {
-                                keyPath: "id",
-                            });
-                            break;
-                        case 3:
-                            const data_tables = db.createObjectStore("data_tables", {
-                                keyPath: "id",
-                            });
-                            break;
-                        default:
-                            throw new Error("A new version of the database has been detected, but the logic for updating the schema has not been implemented.");
-                    }
-                    currentVersion++;
-                } while (currentVersion < (newVersion ?? 1));
-            }
-        },
-        blocked(currentVersion, blockedVersion, event) {},
-        blocking(currentVersion, blockedVersion, event) {},
-        terminated() {},
-    });
-
-    return db;
-}
+import { tempStoreData, DB_NAME, DB_VERSION, TEMP_DATA_KEY, def_onComplete, def_onError } from "./appIndexedDBFynctions/appIndexedDBConst";
+import { dispatchEventIndexedDBTagsUpdate, dispatchEventIndexedDBTreeUpdate } from "./appIndexedDBFynctions/appIndexedDBEvents";
+import { openIndexedDB } from "./appIndexedDBFynctions/openDB";
+import type { MyDB, TGetDataEntity, TSetDataEntity } from "./appIndexedDBFynctions/appIndexedDBTypes";
+import type { IDataSave } from "0-shared/types/dataSave";
 
 /**
  * Записывает новое значение вместо обьекта db_type в indexed db
@@ -133,7 +15,12 @@ async function openIndexedDB() {
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["db_type"]["value"]>) {
+async function setDbTypeDB({
+    onComplete = def_onComplete,
+    onError = def_onError,
+    callback,
+    value,
+}: TSetDataEntity<MyDB["db_type"]["value"]>) {
     const db = await openIndexedDB();
     const tx = db.transaction("db_type", "readwrite");
     tx.onerror = onError;
@@ -152,46 +39,13 @@ async function setDbTypeDB({ onComplete = def_onComplete, onError = def_onError,
  * @property callback(db_type | undefined): вызывается после поиска
  * @returns Promise<db_type | undefined>
  */
-async function getDbTypeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["db_type"]["value"] | undefined> = {}) {
+async function getDbTypeDB({
+    onComplete = def_onComplete,
+    onError = def_onError,
+    callback,
+}: TGetDataEntity<MyDB["db_type"]["value"] | undefined> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("db_type", "readonly");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    let value = await tx.store.get(TEMP_DATA_KEY);
-    await tx.done;
-    callback && callback(value);
-    return value;
-}
-
-/**
- * Записывает новое значение вместо обьекта data_tree в indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(value): вызывается после применения изменений
- * @property value: новое значение
- */
-async function setDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["data_tree"]["value"]>) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_tree", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    tx.store.put(value, TEMP_DATA_KEY);
-    await tx.done;
-    callback && callback(value);
-    dispatchEventIndexedDBTreeUpdate();
-    return value;
-}
-
-/**
- * возвращает обьект data_tree из indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(data_tree | undefined): вызывается после поиска
- * @returns Promise<data_tree | undefined>
- */
-async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["data_tree"]["value"] | undefined> = {}) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_tree", "readonly");
     tx.onerror = onError;
     tx.oncomplete = onComplete;
     let value = await tx.store.get(TEMP_DATA_KEY);
@@ -207,7 +61,12 @@ async function getDataTreeDB({ onComplete = def_onComplete, onError = def_onErro
  * @property callback(value): вызывается после применения изменений
  * @property value: новое значение
  */
-async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback, value }: TSetDataEntity<MyDB["global_tags"]["value"]>) {
+async function setGlobalTagsDB({
+    onComplete = def_onComplete,
+    onError = def_onError,
+    callback,
+    value,
+}: TSetDataEntity<MyDB["global_tags"]["value"]>) {
     const db = await openIndexedDB();
     const tx = db.transaction("global_tags", "readwrite");
     tx.onerror = onError;
@@ -226,7 +85,11 @@ async function setGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
  * @property callback(global_tags | undefined): вызывается после поиска
  * @returns Promise<global_tags | undefined>
  */
-async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onError, callback }: TGetDataEntity<MyDB["global_tags"]["value"] | undefined> = {}) {
+async function getGlobalTagsDB({
+    onComplete = def_onComplete,
+    onError = def_onError,
+    callback,
+}: TGetDataEntity<MyDB["global_tags"]["value"] | undefined> = {}) {
     const db = await openIndexedDB();
     const tx = db.transaction("global_tags", "readonly");
     tx.onerror = onError;
@@ -235,150 +98,6 @@ async function getGlobalTagsDB({ onComplete = def_onComplete, onError = def_onEr
     await tx.done;
     callback && callback(value);
     return value;
-}
-
-/**
- * Записывает новое значение в хранилище data_images в indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(value): вызывается после применения изменений
- * @property value: новое значение
- */
-async function setImageDB({ onComplete = def_onComplete, onError = def_onError, callback, value, key }: TSetKeyDataEntity<MyDB["data_images"]["value"]>) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_images", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-
-    const hasItemInDB = await tx.store.getKey(key);
-    if (hasItemInDB) {
-        await tx.store.delete(key);
-    }
-
-    await tx.store.add(value);
-    await tx.done;
-    callback && callback(value);
-    dispatchEventIndexedDBImagesUpdate();
-    return value;
-}
-
-/**
- * возвращает элемент из data_images из indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(global_tags | undefined): вызывается после поиска
- * @property key: ключь (ID) элемента который нужно получить
- * @returns Promise<global_tags | undefined>
- */
-async function getImageDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<MyDB["data_images"]["value"] | undefined>) {
-    if (!key) throw new Error("key ");
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_images", "readonly");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    let value = await tx.store.get(key);
-    await tx.done;
-    callback && callback(value);
-    return value;
-}
-
-/**
- * удаляет элемент из data_images по ключу, или много элементов по массиву ключей
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(global_tags | undefined): вызывается после поиска
- * @property key: ключь (ID) элемента который нужно получить
- * @returns Promise<global_tags | undefined>
- */
-async function delImageDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<boolean | undefined, string | string[]>) {
-    if (!key) throw new Error("the key is required");
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_images", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    if (Array.isArray(key)) {
-        for await (let keyItem of key) {
-            tx.store.delete(keyItem);
-        }
-    } else {
-        await tx.store.delete(key);
-    }
-    await tx.done;
-    callback && callback(true);
-    dispatchEventIndexedDBImagesUpdate();
-    return true;
-}
-
-/**
- * Записывает новое значение в хранилище data_table в indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(value): вызывается после применения изменений
- * @property value: новое значение
- */
-async function setTableDB({ onComplete = def_onComplete, onError = def_onError, callback, value, key }: TSetKeyDataEntity<MyDB["data_tables"]["value"]>) {
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_tables", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-
-    const hasItemInDB = await tx.store.getKey(key);
-    if (hasItemInDB) {
-        await tx.store.delete(key);
-    }
-
-    await tx.store.add(value);
-    await tx.done;
-    callback && callback(value);
-    dispatchEventIndexedDBTableUpdate();
-    return value;
-}
-
-/**
- * возвращает элемент из data_table из indexed db
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(global_tags | undefined): вызывается после поиска
- * @property key: ключь (ID) элемента который нужно получить
- * @returns Promise<global_tags | undefined>
- */
-async function getTableDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<MyDB["data_tables"]["value"] | undefined>) {
-    if (!key) throw new Error("key ");
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_tables", "readonly");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    let value = await tx.store.get(key);
-    await tx.done;
-    callback && callback(value);
-    return value;
-}
-
-/**
- * удаляет элемент из data_table по ключу, или много элементов по массиву ключей
- * @property onComplete: определение колбека db.transaction,
- * @property onError: определение колбека db.transaction,
- * @property callback(global_tags | undefined): вызывается после поиска
- * @property key: ключь (ID) элемента который нужно получить
- * @returns Promise<global_tags | undefined>
- */
-async function delTableDB({ onComplete = def_onComplete, onError = def_onError, callback, key }: TGetKeyDataEntity<boolean | undefined, string | string[]>) {
-    if (!key) throw new Error("the key is required");
-    const db = await openIndexedDB();
-    const tx = db.transaction("data_tables", "readwrite");
-    tx.onerror = onError;
-    tx.oncomplete = onComplete;
-    if (Array.isArray(key)) {
-        for await (let keyItem of key) {
-            tx.store.delete(keyItem);
-        }
-    } else {
-        await tx.store.delete(key);
-    }
-    await tx.done;
-    callback && callback(true);
-    dispatchEventIndexedDBTableUpdate();
-    return true;
 }
 
 /**
@@ -542,25 +261,6 @@ async function loadTempDataInSavedData({
 }
 
 /**
- * генерация событий на обьекте window
- */
-function dispatchEventIndexedDBTreeUpdate() {
-    window.dispatchEvent(new CustomEvent("appIndexedDBTreeUpdate"));
-}
-
-function dispatchEventIndexedDBTagsUpdate() {
-    window.dispatchEvent(new CustomEvent("appIndexedDBTagsUpdate"));
-}
-
-function dispatchEventIndexedDBImagesUpdate() {
-    window.dispatchEvent(new CustomEvent("appIndexedDBImagesUpdate"));
-}
-
-function dispatchEventIndexedDBTableUpdate() {
-    window.dispatchEvent(new CustomEvent("appIndexedDBTablesUpdate"));
-}
-
-/**
  * удаляем временные данные (TempData) из DB при закрытии приложения
  */
 function removeTempDataOnExit() {
@@ -588,17 +288,9 @@ export {
     setAllTempDataDB,
     setGlobalTagsDB,
     getGlobalTagsDB,
-    getDataTreeDB,
-    setDataTreeDB,
     getDbTypeDB,
     setDbTypeDB,
     saveTempData,
     loadTempDataInSavedData,
     getUnitedTempData,
-    setImageDB,
-    getImageDB,
-    delImageDB,
-    setTableDB,
-    getTableDB,
-    delTableDB,
 };

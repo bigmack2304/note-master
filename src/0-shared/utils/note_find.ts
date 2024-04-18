@@ -1,7 +1,7 @@
-import type { IDataTreeRootFolder, TchildrenType, IDataTreeFolder, IDataTreeNote, TBodyComponentLink } from "0-shared/types/dataSave";
-import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import { getTableDB } from "2-features/utils/appIndexedDB";
+import { getTableDB } from "2-features/utils/appIndexedDBFynctions/tableFunctions";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
+import type { IDataTreeRootFolder, IDataTreeFolder, IDataTreeNote } from "0-shared/types/dataSave";
 
 /**
  *  функционал для поиска заметок
@@ -11,7 +11,10 @@ import { getTableDB } from "2-features/utils/appIndexedDB";
  * @param filtres обьект с параметрами поиска
  * @returns [клонированный обьект, Set всех id папок которые есть в клон.обьекте]
  */
-async function cloneFiltredTree(orig_obj: IDataTreeRootFolder, filtres: IFindNodeParametres | undefined): Promise<[clonedObj: IDataTreeFolder, internalFoldersId: Set<string>]> {
+async function cloneFiltredTree(
+    orig_obj: IDataTreeRootFolder,
+    filtres: IFindNodeParametres | undefined
+): Promise<[clonedObj: IDataTreeFolder, internalFoldersId: Set<string>]> {
     let clonedObj = { ...orig_obj, children: [] } as IDataTreeFolder;
     let internalFoldersId: Set<string> = new Set<string>();
 
@@ -24,7 +27,12 @@ async function cloneFiltredTree(orig_obj: IDataTreeRootFolder, filtres: IFindNod
 /**
  * непосредственно функция клонирования
  */
-async function deepClone(origNode: IDataTreeFolder, clonedObj: IDataTreeFolder, filtres: IFindNodeParametres, internalFoldersId: Set<string>) {
+async function deepClone(
+    origNode: IDataTreeFolder,
+    clonedObj: IDataTreeFolder,
+    filtres: IFindNodeParametres,
+    internalFoldersId: Set<string>
+) {
     if (clonedObj.id === "root") !internalFoldersId.has(clonedObj.id) && internalFoldersId.add(clonedObj.id);
 
     for (let child of (origNode as IDataTreeFolder)["children"]!) {

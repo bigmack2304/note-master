@@ -1,6 +1,5 @@
 import {
     updateNodeValue,
-    deleteById,
     deleteComponentInNote,
     updateNodeName,
     addNodeTo,
@@ -36,7 +35,8 @@ import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
 import { log } from "0-shared/utils/reducer_log";
-import { getDataTreeDB, getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
+import { getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/classes/saveDataFolder";
@@ -181,11 +181,18 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
                 const worker = workerRef.DWorker;
+
                 if (!dataTree) return;
                 if (!worker) return;
+                if (!savedIdGenerator.instatnceIdGenerator) return;
 
-                //const { deletedNode, resultBool } = await deleteById(dataTree, payload.nodeId);
-                const { deletedNode, resultBool } = await deleteByIdOnWorker(worker, dataTree, payload.nodeId);
+                const { deletedNode, resultBool, newIdGenerator } = await deleteByIdOnWorker(
+                    worker,
+                    dataTree,
+                    payload.nodeId,
+                    savedIdGenerator.instatnceIdGenerator.getIdsArray()
+                );
+                savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
 
                 if (!resultBool) {
                     throw new Error();

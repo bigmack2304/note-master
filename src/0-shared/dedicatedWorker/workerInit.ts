@@ -1,3 +1,9 @@
+import {
+    dispatchEventIndexedDBImagesUpdate,
+    dispatchEventIndexedDBTableUpdate,
+    dispatchEventIndexedDBTagsUpdate,
+    dispatchEventIndexedDBTreeUpdate,
+} from "2-features/utils/appIndexedDBFynctions/appIndexedDBEvents";
 import type { RemoveReadonly } from "0-shared/utils/typeHelpers";
 
 // скрипт создает dedicated Worker, workerRegister должен выполнятся 1 раз при загрузке страницы
@@ -33,6 +39,7 @@ function workerRegister(autoUnregister: boolean = false) {
                     name: "Dedicated Worker",
                 })
             );
+            rgisterWorkerMessages();
             console.log("DW registered: ", workerRef.DWorker);
         } catch (e) {
             console.log("DW registration failed: ", e);
@@ -51,10 +58,38 @@ function workerRegister(autoUnregister: boolean = false) {
 }
 
 /**
+ *  вешаем на воркер дефолтный обработчик сообщений
+ */
+function rgisterWorkerMessages() {
+    if (!workerRef.DWorker) throw new Error("DWorker not found");
+    workerRef.DWorker.addEventListener("message", onWorkerMessage);
+}
+
+/**
+ * тут будем обрабатывать сообщения от воркера которые могут быть не связаны на прямую с выполнением какой либо задачи.
+ */
+function onWorkerMessage(e: MessageEvent) {
+    // воркер может менять indexeddb, если такое произойдет мы должны отреагировать на это в этом потоке
+    if (e.data === "worker generate event: appIndexedDBTagsUpdate") {
+        dispatchEventIndexedDBTagsUpdate();
+    }
+    if (e.data === "worker generate event: appIndexedDBTreeUpdate") {
+        dispatchEventIndexedDBTreeUpdate();
+    }
+    if (e.data === "worker generate event: appIndexedDBImagesUpdate") {
+        dispatchEventIndexedDBImagesUpdate();
+    }
+    if (e.data === "worker generate event: appIndexedDBTablesUpdate") {
+        dispatchEventIndexedDBTableUpdate();
+    }
+}
+
+/**
  * снятие воркера
  */
 function workerUnregister() {
     if (workerRef.DWorker !== null) {
+        workerRef.DWorker.removeEventListener("message", onWorkerMessage);
         workerRef.DWorker.terminate();
         setWorkerRef(null);
         console.log("DW unregistered: ", workerRef.DWorker);

@@ -1,6 +1,6 @@
 import type { TMessageDataType, TMessageDelById } from "./workerTypes";
 import { isFunctionData, isDelByIdData } from "0-shared/utils/typeHelpers";
-//import { deleteById } from "2-features/utils/saveDataEdit";
+import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 
 /**
  * получение данных
@@ -54,11 +54,10 @@ function func_runer(argument_names: string[], argument_values: any[], func_data:
 /**
  * кейс с выполнением deleteById
  */
-async function delByIdCase({ data, target }: TMessageDelById) {
+async function delByIdCase({ data, target, savedIdGenerator }: TMessageDelById) {
     try {
         worker_postMessage("delete by id: started");
-        //const result = await deleteById(data, target);
-        const result = null;
+        const result = await deleteById(data, target, savedIdGenerator);
         worker_postMessage("delete by id: finished", result);
     } catch (e) {
         worker_postMessage("delete by id: error");
