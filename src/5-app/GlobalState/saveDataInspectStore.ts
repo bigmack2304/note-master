@@ -29,6 +29,8 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
     EV_NAME_SAVE_DATA_REDUCER_REJECT,
     EV_NAME_SAVE_DATA_REDUCER_START,
+    EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED,
+    EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -134,7 +136,7 @@ const saveDataInspectSlice = createAppSlice({
                     log(action);
                 },
                 fulfilled: (state, action) => {
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                 },
             }
@@ -168,7 +170,7 @@ const saveDataInspectSlice = createAppSlice({
                     log(action);
                 },
                 fulfilled: (state, action) => {
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED));
                     window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
                     state.isProjectOpen = true;
                 },

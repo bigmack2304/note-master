@@ -17,6 +17,8 @@ const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // о
 const EV_NAME_SAVE_DATA_REDUCER_END = "saveDataInspectReducerEnd"; // конец редьюсера, неважно ошибка или успех
 const EV_NAME_SAVE_DATA_REDUCER_FULFILLED = "saveDataInspectReducerFulfield"; // успех
 const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // переход по ссылке на заметку, также можно применить для выбора заметки в окне навигации
+const EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED = "saveDataInspectReducerSaveFulfield"; // успешное сохранение
+const EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED = "saveDataInspectReducerLoadFulfield"; // успешная загрузка
 
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
@@ -104,4 +106,6 @@ export {
     TABLET_SCREEN_MIN,
     DESCTOP_SCREEN_MIN,
     MIN_DIALOG_WINDOW_W,
+    EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED,
+    EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED,
 };
