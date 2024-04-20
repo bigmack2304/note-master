@@ -2,7 +2,7 @@ const genTextDopClasses = (data: { isEdit: boolean }) => {
     const classes: string[] = [];
 
     if (data.isEdit) {
-        classes.push("NoteImage--editable");
+        classes.push("NotePhotoView--editable");
     }
 
     return classes;
