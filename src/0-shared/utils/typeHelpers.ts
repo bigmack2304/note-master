@@ -1,6 +1,6 @@
 import { ForwardRefRenderFunction } from "react";
 import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
-import type { TMessageDataType, TMessageDelById } from "0-shared/dedicatedWorker/workerTypes";
+import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "0-shared/dedicatedWorker/workerTypes";
 
 /**
  *  убирает своиство readonly у полей массива или обьекта
@@ -89,8 +89,21 @@ function isDelByIdData(value: any): value is TMessageDelById {
     if (!("type" in value) || ("type" in value && value.type !== "delete by id")) return false;
     if (!("data" in value) || ("data" in value && !isDataTreeFolder(value.data))) return false;
     if (!("target" in value) || ("target" in value && typeof value.target !== "string")) return false;
+    if (!("savedIdGenerator" in value) || ("savedIdGenerator" in value && !Array.isArray(value.savedIdGenerator))) return false;
     return true;
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageDelCompInNote dedicated воркера
+ */
+function isDelCompInNote(value: any): value is TMessageDelCompInNote {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "delete component in note")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("componentID" in value) || ("componentID" in value && typeof value.componentID !== "string")) return false;
+    if (!("savedIdGenerator" in value) || ("savedIdGenerator" in value && !Array.isArray(value.savedIdGenerator))) return false;
+    return true;
+}
+
+export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData, isDelCompInNote };
 export type { GetProps, Ref, RemoveReadonly };

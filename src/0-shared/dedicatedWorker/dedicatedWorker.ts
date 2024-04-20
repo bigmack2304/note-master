@@ -1,6 +1,7 @@
-import type { TMessageDataType, TMessageDelById } from "./workerTypes";
-import { isFunctionData, isDelByIdData } from "0-shared/utils/typeHelpers";
+import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "./workerTypes";
+import { isFunctionData, isDelByIdData, isDelCompInNote } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
+import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 
 /**
  * получение данных
@@ -13,6 +14,9 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (data && isDelByIdData(data)) {
         delByIdCase(data);
+    }
+    if (data && isDelCompInNote(data)) {
+        deleteComponentInNoteCase(data);
     }
 };
 
@@ -61,6 +65,20 @@ async function delByIdCase({ data, target, savedIdGenerator }: TMessageDelById) 
         worker_postMessage("delete by id: finished", result);
     } catch (e) {
         worker_postMessage("delete by id: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением deleteComponentInNote
+ */
+async function deleteComponentInNoteCase({ componentID, noteID, rootFolder, savedIdGenerator }: TMessageDelCompInNote) {
+    try {
+        worker_postMessage("delete component in note: started");
+        const result = await deleteComponentInNote(rootFolder, noteID, componentID, savedIdGenerator);
+        worker_postMessage("delete component in note: finished", result);
+    } catch (e) {
+        worker_postMessage("delete component in note: error");
         console.error(e);
     }
 }

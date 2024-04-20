@@ -1,7 +1,7 @@
-import type { TMessageDataType, TMessageDelById } from "./workerTypes";
+import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
-import type { TSavedIdGenerator } from "0-shared/utils/idGenerator";
+import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 
 // скрипт содержит различные функции для удобного более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -79,7 +79,9 @@ function func_convertTo_string(func: Function, ...args: any[]) {
     return obj_function;
 }
 
-// запуск в воркере алгоритма deleteById из saveDataEdit.ts
+/**
+ * запуск в воркере алгоритма deleteById из saveDataEdit.ts
+ */
 function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target_id: string, savedIdGenerator: string[]) {
     return new Promise<TReturnTypeDeleteById>((resolve, reject) => {
         const callback = (e: MessageEvent) => {
@@ -99,4 +101,38 @@ function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target
     });
 }
 
-export { runFuncOnWorker, deleteByIdOnWorker };
+/**
+ * запуск в воркере алгоритма deleteById из saveDataEdit.ts
+ */
+function deleteComponentInNoteOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteID: string,
+    componentID: string,
+    savedIdGenerator: string[]
+) {
+    return new Promise<TReturnTypeDeleteComponentInNote>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "delete component in note: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "delete component in note: error") {
+                reject("delete component in note: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            rootFolder,
+            noteID,
+            type: "delete component in note",
+            componentID,
+            savedIdGenerator,
+        } as TMessageDelCompInNote);
+    });
+}
+
+export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker };

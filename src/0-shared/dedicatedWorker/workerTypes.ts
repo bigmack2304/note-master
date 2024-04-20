@@ -1,7 +1,8 @@
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
-import type { TSavedIdGenerator } from "0-shared/utils/idGenerator";
 
-// тип обьекта данных с функцией, для запуска этой функции в воркере
+/**
+ *  тип обьекта данных с функцией, для запуска этой функции в воркере
+ */
 type TMessageDataType = {
     argument_names: string[];
     argument_values: any[];
@@ -9,7 +10,9 @@ type TMessageDataType = {
     type: "function executor";
 };
 
-// тип обьекта для выполнения deleteById
+/**
+ *  тип обьекта для выполнения deleteById в воркере
+ */
 type TMessageDelById = {
     type: "delete by id";
     data: IDataTreeRootFolder;
@@ -17,4 +20,15 @@ type TMessageDelById = {
     savedIdGenerator: string[];
 };
 
-export type { TMessageDataType, TMessageDelById };
+/**
+ *  тип обьекта для выполнения deleteComponentInNote в воркере
+ */
+type TMessageDelCompInNote = {
+    type: "delete component in note";
+    rootFolder: IDataTreeRootFolder;
+    noteID: string;
+    componentID: string;
+    savedIdGenerator: string[];
+};
+
+export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote };

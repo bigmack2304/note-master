@@ -1,6 +1,5 @@
 import {
     updateNodeValue,
-    deleteComponentInNote,
     updateNodeName,
     addNodeTo,
     nodeMuveTo,
@@ -31,13 +30,15 @@ import {
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
 import { deleteByIdOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
+import { deleteComponentInNoteOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
 import { log } from "0-shared/utils/reducer_log";
 import { getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
 import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
-import { getNodeById, getParentNode, getAllIds } from "2-features/utils/saveDataParse";
+import { getParentNode, getAllIds } from "2-features/utils/saveDataParse";
+import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 import { DataNote } from "0-shared/utils/classes/saveDataNote";
@@ -243,10 +244,24 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
+                if (!savedIdGenerator.instatnceIdGenerator) return;
 
-                const { targetNote: updatedNote, resultBool } = await deleteComponentInNote(dataTree, payload.noteId, payload.componentId);
+                const {
+                    targetNote: updatedNote,
+                    resultBool,
+                    newIdGenerator,
+                } = await deleteComponentInNoteOnWorker(
+                    worker,
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    savedIdGenerator.instatnceIdGenerator.getIdsArray()
+                );
+                savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
 
                 if (!resultBool) {
                     throw new Error();
