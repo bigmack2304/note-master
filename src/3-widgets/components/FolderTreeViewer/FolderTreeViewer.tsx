@@ -7,7 +7,15 @@ import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextM
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setCurrentNote, setCurrentFolder, deleteNoteOrFolder, renameNodeName, addFolder, addNote, moveFolderOrNote } from "5-app/GlobalState/saveDataInspectStore";
+import {
+    setCurrentNote,
+    setCurrentFolder,
+    deleteNoteOrFolder,
+    renameNodeName,
+    addFolder,
+    addNote,
+    moveFolderOrNote,
+} from "5-app/GlobalState/saveDataInspectStore";
 import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
@@ -21,7 +29,8 @@ import { useDataTree } from "0-shared/hooks/useDataTree";
 import { getParentFolder } from "2-features/utils/saveDataParse";
 import { useEventListener } from "0-shared/hooks/useEventListener";
 import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
-import { cloneFiltredTree } from "0-shared/utils/note_find";
+import { cloneFiltredTreeOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
+import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import "./FolderfTreeViewer.scss";
 
 type TFolderTreeViewerProps = {};
@@ -237,7 +246,8 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
             if (dataTree) {
                 setIsLoading(true);
                 const awaitData = async () => {
-                    const [cloned, folders] = await cloneFiltredTree(dataTree, findParams);
+                    if (!workerRef.DWorker) return;
+                    const [cloned, folders] = await cloneFiltredTreeOnWorker(workerRef.DWorker, dataTree, findParams);
                     let tempExpandedNodes = [...expandedNodes];
                     let isUpd = false;
 
@@ -296,14 +306,22 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                                 isMowDisabled={clickedNodeDataRef.current && clickedNodeDataRef.current.id === "root" ? true : false}
                             />
                         ) : clickedNodeDataRef.current && isDataTreeNote(clickedNodeDataRef.current) ? (
-                            <ContextMenuTreeNoteContent onDeleteClick={onDeleteClick} onRenameClick={onRenameClick} onMoveClick={onMoveClick} />
+                            <ContextMenuTreeNoteContent
+                                onDeleteClick={onDeleteClick}
+                                onRenameClick={onRenameClick}
+                                onMoveClick={onMoveClick}
+                            />
                         ) : null}
                     </DopContextMenu>
 
-                    {isRenameDialogOpen && <TreeItemRenameDialog inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />}
+                    {isRenameDialogOpen && (
+                        <TreeItemRenameDialog inputDefValue={contextNodeName} onClose={onCloseRDialog} onCloseSave={onSaveCloseRDialog} />
+                    )}
                     {isNewFolderDialogOpen && <TreeAddFolderDialog onClose={onCloseNFDialog} onCloseSave={onSaveCloseNFDialog} />}
                     {isNewNoteDialogOpen && <TreeAddNoteDialog onClose={onCloseNNDialog} onCloseSave={onSaveCloseNNDialog} />}
-                    {isMoveDialogOpen && <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />}
+                    {isMoveDialogOpen && (
+                        <TreeItemMoveDialog muvedFileName={contextNodeName} onClose={onCloseMNDialog} onCloseSave={onSaveCloseMNDialog} />
+                    )}
                 </>
             )}
         </Box>

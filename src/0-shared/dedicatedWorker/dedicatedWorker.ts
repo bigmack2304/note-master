@@ -1,7 +1,8 @@
-import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "./workerTypes";
-import { isFunctionData, isDelByIdData, isDelCompInNote } from "0-shared/utils/typeHelpers";
+import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker } from "./workerTypes";
+import { isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
+import { cloneFiltredTree } from "0-shared/utils/note_find";
 
 /**
  * получение данных
@@ -17,6 +18,9 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (data && isDelCompInNote(data)) {
         deleteComponentInNoteCase(data);
+    }
+    if (data && isCloneFiltredTree(data)) {
+        cloneFiltredTreeCase(data);
     }
 };
 
@@ -79,6 +83,20 @@ async function deleteComponentInNoteCase({ componentID, noteID, rootFolder, save
         worker_postMessage("delete component in note: finished", result);
     } catch (e) {
         worker_postMessage("delete component in note: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением cloneFiltredTree
+ */
+async function cloneFiltredTreeCase({ filtres, orig_obj }: TMessageCloneFiltredTreeOnWorker) {
+    try {
+        worker_postMessage("clone filtred tree: started");
+        const result = await cloneFiltredTree(orig_obj, filtres);
+        worker_postMessage("clone filtred tree: finished", result);
+    } catch (e) {
+        worker_postMessage("clone filtred tree: error");
         console.error(e);
     }
 }

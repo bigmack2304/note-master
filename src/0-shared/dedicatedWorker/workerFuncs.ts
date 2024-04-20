@@ -1,7 +1,9 @@
-import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "./workerTypes";
+import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
+import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 
 // скрипт содержит различные функции для удобного более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -135,4 +137,30 @@ function deleteComponentInNoteOnWorker(
     });
 }
 
-export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker };
+/**
+ * запуск в воркере алгоритма cloneFiltredTree
+ */
+function cloneFiltredTreeOnWorker(workerObj: Worker, orig_obj: IDataTreeRootFolder, filtres: IFindNodeParametres | undefined) {
+    return new Promise<TReturnTypeCloneFiltredTree>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "clone filtred tree: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "clone filtred tree: error") {
+                reject("clone filtred tree: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "clone filtred tree",
+            orig_obj,
+            filtres,
+        } as TMessageCloneFiltredTreeOnWorker);
+    });
+}
+
+export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker, cloneFiltredTreeOnWorker };

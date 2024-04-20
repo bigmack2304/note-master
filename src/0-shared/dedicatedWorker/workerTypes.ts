@@ -1,4 +1,5 @@
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -31,4 +32,13 @@ type TMessageDelCompInNote = {
     savedIdGenerator: string[];
 };
 
-export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote };
+/**
+ *  тип обьекта для выполнения deleteComponentInNote в воркере
+ */
+type TMessageCloneFiltredTreeOnWorker = {
+    type: "clone filtred tree";
+    orig_obj: IDataTreeRootFolder;
+    filtres: IFindNodeParametres | undefined;
+};
+
+export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker };

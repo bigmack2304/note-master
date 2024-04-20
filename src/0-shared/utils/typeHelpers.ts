@@ -1,6 +1,11 @@
 import { ForwardRefRenderFunction } from "react";
 import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
-import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote } from "0-shared/dedicatedWorker/workerTypes";
+import type {
+    TMessageDataType,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageCloneFiltredTreeOnWorker,
+} from "0-shared/dedicatedWorker/workerTypes";
 
 /**
  *  убирает своиство readonly у полей массива или обьекта
@@ -105,5 +110,16 @@ function isDelCompInNote(value: any): value is TMessageDelCompInNote {
     return true;
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData, isDelCompInNote };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageDelCompInNote dedicated воркера
+ */
+function isCloneFiltredTree(value: any): value is TMessageCloneFiltredTreeOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "clone filtred tree")) return false;
+    if (!("orig_obj" in value) || ("orig_obj" in value && !isDataTreeFolder(value.orig_obj))) return false;
+    if (!("filtres" in value)) return false;
+    return true;
+}
+
+export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree };
 export type { GetProps, Ref, RemoveReadonly };
