@@ -1,8 +1,15 @@
-import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker } from "./workerTypes";
-import { isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree } from "0-shared/utils/typeHelpers";
+import type {
+    TMessageDataType,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageCloneFiltredTreeOnWorker,
+    TMessageUpdateNodeValueOnWorker,
+} from "./workerTypes";
+import { isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree, isUpdateNodeValue } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import { cloneFiltredTree } from "0-shared/utils/note_find";
+import { updateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 
 /**
  * получение данных
@@ -21,6 +28,9 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (data && isCloneFiltredTree(data)) {
         cloneFiltredTreeCase(data);
+    }
+    if (data && isUpdateNodeValue(data)) {
+        updateNodeValueCase(data);
     }
 };
 
@@ -97,6 +107,20 @@ async function cloneFiltredTreeCase({ filtres, orig_obj }: TMessageCloneFiltredT
         worker_postMessage("clone filtred tree: finished", result);
     } catch (e) {
         worker_postMessage("clone filtred tree: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением UpdateNodeValue
+ */
+async function updateNodeValueCase({ componentId, newValue, noteId, rootFolder }: TMessageUpdateNodeValueOnWorker) {
+    try {
+        worker_postMessage("update node value: started");
+        const result = await updateNodeValue(rootFolder, noteId, componentId, newValue);
+        worker_postMessage("update node value: finished", result);
+    } catch (e) {
+        worker_postMessage("update node value: error");
         console.error(e);
     }
 }

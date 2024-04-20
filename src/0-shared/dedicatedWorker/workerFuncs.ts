@@ -1,9 +1,16 @@
-import type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker } from "./workerTypes";
+import type {
+    TMessageDataType,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageCloneFiltredTreeOnWorker,
+    TMessageUpdateNodeValueOnWorker,
+} from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
+import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 
 // скрипт содержит различные функции для удобного более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -163,4 +170,38 @@ function cloneFiltredTreeOnWorker(workerObj: Worker, orig_obj: IDataTreeRootFold
     });
 }
 
-export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker, cloneFiltredTreeOnWorker };
+/**
+ * запуск в воркере алгоритма updateNodeValue
+ */
+function updateNodeValueOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    newValue: string
+) {
+    return new Promise<TReturnTypeUpdateNodeValue>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update node value: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update node value: error") {
+                reject("update node value: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update node value",
+            rootFolder,
+            noteId,
+            componentId,
+            newValue,
+        } as TMessageUpdateNodeValueOnWorker);
+    });
+}
+
+export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker, cloneFiltredTreeOnWorker, updateNodeValueOnWorker };

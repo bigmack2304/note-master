@@ -5,6 +5,7 @@ import type {
     TMessageDelById,
     TMessageDelCompInNote,
     TMessageCloneFiltredTreeOnWorker,
+    TMessageUpdateNodeValueOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 
 /**
@@ -121,5 +122,28 @@ function isCloneFiltredTree(value: any): value is TMessageCloneFiltredTreeOnWork
     return true;
 }
 
-export { isDataTreeNote, isDataTreeFolder, isDataNoteBody, isDataSave, isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree };
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNodeValueOnWorker dedicated воркера
+ */
+function isUpdateNodeValue(value: any): value is TMessageUpdateNodeValueOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update node value")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("newValue" in value) || ("newValue" in value && typeof value.newValue !== "string")) return false;
+    return true;
+}
+
+export {
+    isDataTreeNote,
+    isDataTreeFolder,
+    isDataNoteBody,
+    isDataSave,
+    isFunctionData,
+    isDelByIdData,
+    isDelCompInNote,
+    isCloneFiltredTree,
+    isUpdateNodeValue,
+};
 export type { GetProps, Ref, RemoveReadonly };

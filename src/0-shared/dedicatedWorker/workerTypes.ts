@@ -41,4 +41,15 @@ type TMessageCloneFiltredTreeOnWorker = {
     filtres: IFindNodeParametres | undefined;
 };
 
-export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker };
+/**
+ *  тип обьекта для выполнения UpdateNodeValue в воркере
+ */
+type TMessageUpdateNodeValueOnWorker = {
+    type: "update node value";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    newValue: string;
+};
+
+export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker, TMessageUpdateNodeValueOnWorker };

@@ -105,34 +105,6 @@ async function updateNodeCompleted(rootFolder: IDataTreeRootFolder, noteId: stri
 }
 
 /**
- * изменяет своиство value в обьекте заметки
- * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id заметки в которой редактируем компонент
- * @param componentId id компонента в котором меняется value
- * @param newValue новое значение value
- * @returns
- */
-async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: string) {
-    let targetNote = getNodeById(rootFolder, noteId);
-    let resultBool = false;
-
-    // TODO: потом нужно это оптимизировать
-    if (targetNote && isDataTreeNote(targetNote)) {
-        for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
-            component.value = newValue;
-            break;
-        }
-
-        targetNote.lastEditTime = Date.now();
-        resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
-    }
-
-    return { targetNote, resultBool };
-}
-
-/**
  * изменяет компонент картинки в заметке
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id заметки в которой редактируем компонент
@@ -839,7 +811,6 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
 }
 
 export {
-    updateNodeValue,
     updateNodeName,
     addNodeTo,
     nodeMuveTo,

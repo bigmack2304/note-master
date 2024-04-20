@@ -1,5 +1,4 @@
 import {
-    updateNodeValue,
     updateNodeName,
     addNodeTo,
     nodeMuveTo,
@@ -29,6 +28,7 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_START,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
+import { updateNodeValueOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { deleteByIdOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { deleteComponentInNoteOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
@@ -301,10 +301,13 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
+                if (!worker) return;
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeValue(
+                const { targetNote: updatedNode, resultBool } = await updateNodeValueOnWorker(
+                    worker,
                     dataTree,
                     payload.noteId,
                     payload.componentId,
