@@ -5,6 +5,8 @@ import type {
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
     TMessageUpdateNodeImageOnWorker,
+    TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeTableOnWorker,
 } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -13,8 +15,9 @@ import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
-import { TMessageUpdNoteComponentsOrderOnWorker } from "./workerTypes";
 import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
+import type { TReturnTypeUpdateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
+import type { TTableValue } from "0-shared/types/dataSave";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -278,6 +281,40 @@ function updateNodeImageOnWorker(
     });
 }
 
+/**
+ * запуск в воркере алгоритма updateNodeTable
+ */
+function updateNodeTableOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    newValue: TTableValue | ""
+) {
+    return new Promise<TReturnTypeUpdateNodeTable>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update node table: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update node table: error") {
+                reject("update node table: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update node table",
+            rootFolder,
+            noteId,
+            componentId,
+            newValue,
+        } as TMessageUpdateNodeTableOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -286,4 +323,5 @@ export {
     updateNodeValueOnWorker,
     updNoteComponentsOrderOnWorker,
     updateNodeImageOnWorker,
+    updateNodeTableOnWorker,
 };

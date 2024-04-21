@@ -8,7 +8,9 @@ import type {
     TMessageUpdateNodeValueOnWorker,
     TMessageUpdNoteComponentsOrderOnWorker,
     TMessageUpdateNodeImageOnWorker,
+    TMessageUpdateNodeTableOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
+import type { TTableValue } from "0-shared/types/dataSave";
 
 /**
  *  убирает своиство readonly у полей массива или обьекта
@@ -49,6 +51,17 @@ function isDataTreeFolder(node: any): node is IDataTreeFolder {
     if (typeof node !== "object") return false;
     if (!("type" in node)) return false;
     return node.type === "folder";
+}
+
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TTableValue
+ * @returns boolean
+ */
+function isTableValue(value: any): value is TTableValue {
+    if (typeof value !== "object") return false;
+    if (!("headers" in value) || ("headers" in value && !Array.isArray(value.headers))) return false;
+    if (!("rows" in value) || ("rows" in value && !Array.isArray(value.rows))) return false;
+    return true;
 }
 
 /**
@@ -164,6 +177,19 @@ function isUpdateNodeImage(value: any): value is TMessageUpdateNodeImageOnWorker
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNodeTableOnWorker dedicated воркера
+ */
+function isUpdateNodeTable(value: any): value is TMessageUpdateNodeTableOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update node table")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("newValue" in value) || ("newValue" in value && !isTableValue(value.newValue))) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -176,5 +202,7 @@ export {
     isUpdateNodeValue,
     isUpdNoteComponentsOrder,
     isUpdateNodeImage,
+    isTableValue,
+    isUpdateNodeTable,
 };
 export type { GetProps, Ref, RemoveReadonly };

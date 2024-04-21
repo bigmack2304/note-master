@@ -64,48 +64,6 @@ async function updateNodeCompleted(rootFolder: IDataTreeRootFolder, noteId: stri
 }
 
 /**
- * изменяет компонент таблицы в заметке
- * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id заметки в которой редактируем компонент
- * @param componentId id компонента в котором меняется value
- * @param newValue новое значение TTableValue
- * @returns
- */
-async function updateNodeTable(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: TTableValue | "") {
-    let targetNote = getNodeById(rootFolder, noteId);
-    let resultBool = false;
-
-    // TODO: потом нужно это оптимизировать
-    if (targetNote && isDataTreeNote(targetNote)) {
-        for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
-            if (component.component === "table") {
-                if (newValue === "") {
-                    component.value = "";
-                    delTableDB({ key: componentId });
-                } else {
-                    component.value = componentId;
-                    setTableDB({
-                        value: {
-                            id: componentId,
-                            value: newValue,
-                        },
-                        key: componentId,
-                    });
-                }
-            }
-            break;
-        }
-
-        targetNote.lastEditTime = Date.now();
-        resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
-    }
-
-    return { targetNote, resultBool };
-}
-
-/**
  * изменяет настройки компонента таблицы в заметке
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id заметки в которой редактируем компонент
@@ -743,6 +701,5 @@ export {
     updateNodeLink,
     updateNoteComponentLinkSettings,
     updateNoteComponentListSettings,
-    updateNodeTable,
     updateNodeTableSettings,
 };
