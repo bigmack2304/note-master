@@ -11,8 +11,10 @@ import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditF
 import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
+import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
+import { TMessageUpdNoteComponentsOrderOnWorker } from "./workerTypes";
 
-// скрипт содержит различные функции для удобного более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
+// скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
 /**
  * запускает функцию с указанными параметрами в воркере
@@ -111,7 +113,7 @@ function deleteByIdOnWorker(workerObj: Worker, data: IDataTreeRootFolder, target
 }
 
 /**
- * запуск в воркере алгоритма deleteById из saveDataEdit.ts
+ * запуск в воркере алгоритма deleteComponentInNote из saveDataEdit.ts
  */
 function deleteComponentInNoteOnWorker(
     workerObj: Worker,
@@ -204,4 +206,45 @@ function updateNodeValueOnWorker(
     });
 }
 
-export { runFuncOnWorker, deleteByIdOnWorker, deleteComponentInNoteOnWorker, cloneFiltredTreeOnWorker, updateNodeValueOnWorker };
+/**
+ * запуск в воркере алгоритма updNoteComponentsOrder
+ */
+function updNoteComponentsOrderOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentDragId: string,
+    toComponentDragId: string
+) {
+    return new Promise<TReturnTypeUpdNoteComponentsOrder>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update note components order: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update note components order: error") {
+                reject("update note components order: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update note components order",
+            rootFolder,
+            noteId,
+            componentDragId,
+            toComponentDragId,
+        } as TMessageUpdNoteComponentsOrderOnWorker);
+    });
+}
+
+export {
+    runFuncOnWorker,
+    deleteByIdOnWorker,
+    deleteComponentInNoteOnWorker,
+    cloneFiltredTreeOnWorker,
+    updateNodeValueOnWorker,
+    updNoteComponentsOrderOnWorker,
+};

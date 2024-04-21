@@ -4,12 +4,21 @@ import type {
     TMessageDelCompInNote,
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
+    TMessageUpdNoteComponentsOrderOnWorker,
 } from "./workerTypes";
-import { isFunctionData, isDelByIdData, isDelCompInNote, isCloneFiltredTree, isUpdateNodeValue } from "0-shared/utils/typeHelpers";
+import {
+    isFunctionData,
+    isDelByIdData,
+    isDelCompInNote,
+    isCloneFiltredTree,
+    isUpdateNodeValue,
+    isUpdNoteComponentsOrder,
+} from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import { cloneFiltredTree } from "0-shared/utils/note_find";
 import { updateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
+import { updNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
 
 /**
  * получение данных
@@ -17,20 +26,31 @@ import { updateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNo
 //eslint-disable-next-line
 self.onmessage = (e: MessageEvent) => {
     const data = e.data;
-    if (data && isFunctionData(data)) {
+    if (!data) return;
+
+    if (isFunctionData(data)) {
         funcExecutorCase(data);
+        return;
     }
-    if (data && isDelByIdData(data)) {
+    if (isDelByIdData(data)) {
         delByIdCase(data);
+        return;
     }
-    if (data && isDelCompInNote(data)) {
+    if (isDelCompInNote(data)) {
         deleteComponentInNoteCase(data);
+        return;
     }
-    if (data && isCloneFiltredTree(data)) {
+    if (isCloneFiltredTree(data)) {
         cloneFiltredTreeCase(data);
+        return;
     }
-    if (data && isUpdateNodeValue(data)) {
+    if (isUpdateNodeValue(data)) {
         updateNodeValueCase(data);
+        return;
+    }
+    if (isUpdNoteComponentsOrder(data)) {
+        updNoteComponentsOrderCase(data);
+        return;
     }
 };
 
@@ -121,6 +141,25 @@ async function updateNodeValueCase({ componentId, newValue, noteId, rootFolder }
         worker_postMessage("update node value: finished", result);
     } catch (e) {
         worker_postMessage("update node value: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением updNoteComponentsOrder
+ */
+async function updNoteComponentsOrderCase({
+    noteId,
+    rootFolder,
+    componentDragId,
+    toComponentDragId,
+}: TMessageUpdNoteComponentsOrderOnWorker) {
+    try {
+        worker_postMessage("update note components order: started");
+        const result = await updNoteComponentsOrder(rootFolder, noteId, componentDragId, toComponentDragId);
+        worker_postMessage("update note components order: finished", result);
+    } catch (e) {
+        worker_postMessage("update note components order: error");
         console.error(e);
     }
 }

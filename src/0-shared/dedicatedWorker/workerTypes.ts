@@ -52,4 +52,22 @@ type TMessageUpdateNodeValueOnWorker = {
     newValue: string;
 };
 
-export type { TMessageDataType, TMessageDelById, TMessageDelCompInNote, TMessageCloneFiltredTreeOnWorker, TMessageUpdateNodeValueOnWorker };
+/**
+ *  тип обьекта для выполнения updNoteComponentsOrder в воркере
+ */
+type TMessageUpdNoteComponentsOrderOnWorker = {
+    type: "update note components order";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentDragId: string;
+    toComponentDragId: string;
+};
+
+export type {
+    TMessageDataType,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageCloneFiltredTreeOnWorker,
+    TMessageUpdateNodeValueOnWorker,
+    TMessageUpdNoteComponentsOrderOnWorker,
+};
