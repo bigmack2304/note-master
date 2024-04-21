@@ -7,6 +7,7 @@ import type {
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
     TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeImageOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 
 /**
@@ -149,6 +150,20 @@ function isUpdNoteComponentsOrder(value: any): value is TMessageUpdNoteComponent
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdNoteComponentsOrderOnWorker dedicated воркера
+ */
+function isUpdateNodeImage(value: any): value is TMessageUpdateNodeImageOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update node image")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("newName" in value) || ("newName" in value && typeof value.newName !== "string")) return false;
+    if (!("newSrc" in value) || ("newSrc" in value && typeof value.newSrc !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -160,5 +175,6 @@ export {
     isCloneFiltredTree,
     isUpdateNodeValue,
     isUpdNoteComponentsOrder,
+    isUpdateNodeImage,
 };
 export type { GetProps, Ref, RemoveReadonly };

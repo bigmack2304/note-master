@@ -5,6 +5,7 @@ import type {
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
     TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeImageOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -13,12 +14,14 @@ import {
     isCloneFiltredTree,
     isUpdateNodeValue,
     isUpdNoteComponentsOrder,
+    isUpdateNodeImage,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import { cloneFiltredTree } from "0-shared/utils/note_find";
 import { updateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 import { updNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
+import { updateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 
 /**
  * получение данных
@@ -50,6 +53,10 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (isUpdNoteComponentsOrder(data)) {
         updNoteComponentsOrderCase(data);
+        return;
+    }
+    if (isUpdateNodeImage(data)) {
+        updateNodeImageCase(data);
         return;
     }
 };
@@ -160,6 +167,20 @@ async function updNoteComponentsOrderCase({
         worker_postMessage("update note components order: finished", result);
     } catch (e) {
         worker_postMessage("update note components order: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением updateNodeImage
+ */
+async function updateNodeImageCase({ noteId, rootFolder, componentId, newSrc, newName }: TMessageUpdateNodeImageOnWorker) {
+    try {
+        worker_postMessage("update node image: started");
+        const result = await updateNodeImage(rootFolder, noteId, componentId, newSrc, newName);
+        worker_postMessage("update node image: finished", result);
+    } catch (e) {
+        worker_postMessage("update node image: error");
         console.error(e);
     }
 }

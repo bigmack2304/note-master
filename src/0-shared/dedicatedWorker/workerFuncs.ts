@@ -4,6 +4,7 @@ import type {
     TMessageDelCompInNote,
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
+    TMessageUpdateNodeImageOnWorker,
 } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -13,6 +14,7 @@ import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
 import { TMessageUpdNoteComponentsOrderOnWorker } from "./workerTypes";
+import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -240,6 +242,42 @@ function updNoteComponentsOrderOnWorker(
     });
 }
 
+/**
+ * запуск в воркере алгоритма updateNodeImage
+ */
+function updateNodeImageOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    newSrc: string,
+    newName: string
+) {
+    return new Promise<TReturnTypeUpdateNodeImage>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update node image: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update node image: error") {
+                reject("update node image: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update node image",
+            rootFolder,
+            noteId,
+            componentId,
+            newSrc,
+            newName,
+        } as TMessageUpdateNodeImageOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -247,4 +285,5 @@ export {
     cloneFiltredTreeOnWorker,
     updateNodeValueOnWorker,
     updNoteComponentsOrderOnWorker,
+    updateNodeImageOnWorker,
 };

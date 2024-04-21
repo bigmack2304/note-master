@@ -63,6 +63,18 @@ type TMessageUpdNoteComponentsOrderOnWorker = {
     toComponentDragId: string;
 };
 
+/**
+ *  тип обьекта для выполнения updateNodeImage в воркере
+ */
+type TMessageUpdateNodeImageOnWorker = {
+    type: "update node image";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    newSrc: string;
+    newName: string;
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -70,4 +82,5 @@ export type {
     TMessageCloneFiltredTreeOnWorker,
     TMessageUpdateNodeValueOnWorker,
     TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeImageOnWorker,
 };
