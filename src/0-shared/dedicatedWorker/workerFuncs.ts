@@ -8,6 +8,7 @@ import type {
     TMessageUpdNoteComponentsOrderOnWorker,
     TMessageUpdateNodeTableOnWorker,
     TMessageUpdateNodeTableSettingsOnWorker,
+    TMessageUpdateNodeLinkOnWorker,
 } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -19,8 +20,8 @@ import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDat
 import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 import type { TReturnTypeUpdateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
 import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
-import type { TBodyComponentTable } from "0-shared/types/dataSave";
-import type { TTableValue } from "0-shared/types/dataSave";
+import type { TTableValue, TBodyComponentLink, TBodyComponentTable } from "0-shared/types/dataSave";
+import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -358,6 +359,42 @@ function updateNodeTableSettingsOnWorker(
     });
 }
 
+/**
+ * запуск в воркере алгоритма updateNodeLink
+ */
+function updateNodeLinkOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    target: TBodyComponentLink["target"],
+    value: TBodyComponentLink["value"]
+) {
+    return new Promise<TReturnTypeUpdateNodeLink>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update node link: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update node link: error") {
+                reject("update node link: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update node link",
+            componentId,
+            noteId,
+            rootFolder,
+            target,
+            value,
+        } as TMessageUpdateNodeLinkOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -368,4 +405,5 @@ export {
     updateNodeImageOnWorker,
     updateNodeTableOnWorker,
     updateNodeTableSettingsOnWorker,
+    updateNodeLinkOnWorker,
 };

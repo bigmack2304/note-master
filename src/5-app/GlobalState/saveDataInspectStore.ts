@@ -15,7 +15,6 @@ import {
     updateNoteComponentImageSettings as componentImageSettings,
     updateNoteComponentLinkSettings as componentLinkSettings,
     updateNoteComponentListSettings as componentListSettings,
-    updateNodeLink,
 } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
@@ -32,6 +31,7 @@ import {
     updateNodeImageOnWorker,
     updNoteComponentsOrderOnWorker,
     updateNodeValueOnWorker,
+    updateNodeLinkOnWorker,
 } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -569,10 +569,13 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeLink(
+                const { targetNote: updatedNode, resultBool } = await updateNodeLinkOnWorker(
+                    worker,
                     dataTree,
                     payload.noteId,
                     payload.componentId,

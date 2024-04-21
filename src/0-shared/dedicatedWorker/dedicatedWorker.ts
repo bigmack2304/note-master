@@ -8,6 +8,7 @@ import type {
     TMessageUpdateNodeImageOnWorker,
     TMessageUpdateNodeTableOnWorker,
     TMessageUpdateNodeTableSettingsOnWorker,
+    TMessageUpdateNodeLinkOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -19,6 +20,7 @@ import {
     isUpdateNodeImage,
     isUpdateNodeTable,
     isUpdateNodeTableSettings,
+    isUpdateNodeLink,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -28,6 +30,7 @@ import { updNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/u
 import { updateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 import { updateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
 import { updateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
+import { updateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 
 /**
  * получение данных
@@ -71,6 +74,10 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (isUpdateNodeTableSettings(data)) {
         updateNodeTableSettingsCase(data);
+        return;
+    }
+    if (isUpdateNodeLink(data)) {
+        updateNodeLinkCase(data);
         return;
     }
 };
@@ -231,6 +238,20 @@ async function updateNodeTableSettingsCase({
         worker_postMessage("update node table settings: finished", result);
     } catch (e) {
         worker_postMessage("update node table settings: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением updateNodeLink
+ */
+async function updateNodeLinkCase({ noteId, rootFolder, componentId, target, value }: TMessageUpdateNodeLinkOnWorker) {
+    try {
+        worker_postMessage("update node link: started");
+        const result = await updateNodeLink(rootFolder, noteId, componentId, target, value);
+        worker_postMessage("update node link: finished", result);
+    } catch (e) {
+        worker_postMessage("update node link: error");
         console.error(e);
     }
 }
