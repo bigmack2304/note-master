@@ -13,7 +13,6 @@ import {
     updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
     updateNoteComponentImageSettings as componentImageSettings,
-    updateNoteComponentLinkSettings as componentLinkSettings,
     updateNoteComponentListSettings as componentListSettings,
 } from "2-features/utils/saveDataEdit";
 import {
@@ -33,6 +32,7 @@ import {
     updateNodeValueOnWorker,
     updateNodeLinkOnWorker,
     getNodeByIdOnWorker,
+    updateNoteComponentLinkSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -676,17 +676,20 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await componentLinkSettings({
-                    rootFolder: dataTree,
-                    componentId: payload.componentId,
-                    noteId: payload.noteId,
-                    isLabel: payload.isLabel,
-                    isBg: payload.isBg,
-                    labelVal: payload.labelVal,
-                });
+                const { targetNote: updatedNode, resultBool } = await updateNoteComponentLinkSettingsOnWorker(
+                    worker,
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.isLabel,
+                    payload.isBg,
+                    payload.labelVal
+                );
 
                 if (!resultBool) {
                     throw new Error();

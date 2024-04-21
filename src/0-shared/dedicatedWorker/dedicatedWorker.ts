@@ -10,6 +10,7 @@ import type {
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
+    TMessageUpdateNoteComponentLinkSettingsOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -23,6 +24,7 @@ import {
     isUpdateNodeTableSettings,
     isUpdateNodeLink,
     isGetNodeById,
+    isUpdateNoteComponentLinkSettings,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -34,6 +36,7 @@ import { updateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNo
 import { updateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
 import { updateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
+import { updateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
 
 /**
  * получение данных
@@ -85,6 +88,10 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (isGetNodeById(data)) {
         getNodeByidCase(data);
+        return;
+    }
+    if (isUpdateNoteComponentLinkSettings(data)) {
+        updateNoteComponentLinkSettingsCase(data);
         return;
     }
 };
@@ -273,6 +280,27 @@ async function getNodeByidCase({ find_id, rootNode }: TMessageGetNodeByIdOnWorke
         worker_postMessage("get node by id: finished", result);
     } catch (e) {
         worker_postMessage("get node by id: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением getNodeByid
+ */
+async function updateNoteComponentLinkSettingsCase({
+    rootFolder,
+    componentId,
+    isBg,
+    isLabel,
+    labelVal,
+    noteId,
+}: TMessageUpdateNoteComponentLinkSettingsOnWorker) {
+    try {
+        worker_postMessage("update Note component link settings: started");
+        const result = updateNoteComponentLinkSettings({ rootFolder, componentId, isBg, isLabel, labelVal, noteId });
+        worker_postMessage("update Note component link settings: finished", result);
+    } catch (e) {
+        worker_postMessage("update Note component link settings: error");
         console.error(e);
     }
 }

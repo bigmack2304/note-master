@@ -122,6 +122,19 @@ type TMessageGetNodeByIdOnWorker = {
     find_id: string;
 };
 
+/**
+ *  тип обьекта для выполнения updateNoteComponentLinkSettings в воркере
+ */
+type TMessageUpdateNoteComponentLinkSettingsOnWorker = {
+    type: "update Note component link settings";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    isLabel: TBodyComponentLink["isLabel"];
+    isBg: TBodyComponentLink["background"];
+    labelVal: TBodyComponentLink["labelValue"];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -134,4 +147,5 @@ export type {
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
+    TMessageUpdateNoteComponentLinkSettingsOnWorker,
 };

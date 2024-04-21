@@ -10,6 +10,7 @@ import type {
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
+    TMessageUpdateNoteComponentLinkSettingsOnWorker,
 } from "./workerTypes";
 import type { IDataTreeRootFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -24,6 +25,7 @@ import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDa
 import type { TTableValue, TBodyComponentLink, TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
+import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -423,6 +425,44 @@ function getNodeByIdOnWorker(workerObj: Worker, rootNode: IDataTreeRootFolder | 
     });
 }
 
+/**
+ * запуск в воркере алгоритма updateNoteComponentLinkSettings
+ */
+function updateNoteComponentLinkSettingsOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    isLabel: TBodyComponentLink["isLabel"],
+    isBg: TBodyComponentLink["background"],
+    labelVal: TBodyComponentLink["labelValue"]
+) {
+    return new Promise<TReturnTypeUpdateNoteComponentLinkSettings>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update Note component link settings: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update Note component link settings: error") {
+                reject("update Note component link settings: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update Note component link settings",
+            componentId,
+            isBg,
+            isLabel,
+            labelVal,
+            noteId,
+            rootFolder,
+        } as TMessageUpdateNoteComponentLinkSettingsOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -435,4 +475,5 @@ export {
     updateNodeTableSettingsOnWorker,
     updateNodeLinkOnWorker,
     getNodeByIdOnWorker,
+    updateNoteComponentLinkSettingsOnWorker,
 };
