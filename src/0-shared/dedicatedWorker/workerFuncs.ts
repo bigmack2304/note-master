@@ -7,6 +7,7 @@ import type {
     TMessageUpdateNodeImageOnWorker,
     TMessageUpdNoteComponentsOrderOnWorker,
     TMessageUpdateNodeTableOnWorker,
+    TMessageUpdateNodeTableSettingsOnWorker,
 } from "./workerTypes";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -17,6 +18,8 @@ import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFu
 import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
 import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 import type { TReturnTypeUpdateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
+import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
+import type { TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TTableValue } from "0-shared/types/dataSave";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
@@ -315,6 +318,46 @@ function updateNodeTableOnWorker(
     });
 }
 
+/**
+ * запуск в воркере алгоритма updateNodeTableSettings
+ */
+function updateNodeTableSettingsOnWorker(
+    workerObj: Worker,
+    rootFolder: IDataTreeRootFolder,
+    noteId: string,
+    componentId: string,
+    backlight: TBodyComponentTable["backlight"],
+    desc: TBodyComponentTable["desc"],
+    viewButtons: TBodyComponentTable["viewButtons"],
+    aligin: TBodyComponentTable["aligin"]
+) {
+    return new Promise<TReturnTypeUpdateNodeTableSettings>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "update node table settings: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "update node table settings: error") {
+                reject("update node table settings: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "update node table settings",
+            backlight,
+            componentId,
+            noteId,
+            rootFolder,
+            desc,
+            aligin,
+            viewButtons,
+        } as TMessageUpdateNodeTableSettingsOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -324,4 +367,5 @@ export {
     updNoteComponentsOrderOnWorker,
     updateNodeImageOnWorker,
     updateNodeTableOnWorker,
+    updateNodeTableSettingsOnWorker,
 };

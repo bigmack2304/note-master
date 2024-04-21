@@ -16,7 +16,6 @@ import {
     updateNoteComponentLinkSettings as componentLinkSettings,
     updateNoteComponentListSettings as componentListSettings,
     updateNodeLink,
-    updateNodeTableSettings,
 } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
@@ -25,12 +24,15 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_START,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
-import { updateNodeTableOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { updateNodeImageOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { updNoteComponentsOrderOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { updateNodeValueOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { deleteByIdOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { deleteComponentInNoteOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
+import {
+    updateNodeTableOnWorker,
+    updateNodeTableSettingsOnWorker,
+    deleteByIdOnWorker,
+    deleteComponentInNoteOnWorker,
+    updateNodeImageOnWorker,
+    updNoteComponentsOrderOnWorker,
+    updateNodeValueOnWorker,
+} from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
@@ -513,18 +515,21 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeTableSettings({
-                    rootFolder: dataTree,
-                    componentId: payload.componentId,
-                    noteId: payload.noteId,
-                    backlight: payload.backlight,
-                    desc: payload.desc,
-                    viewButtons: payload.viewButtons,
-                    aligin: payload.aligin,
-                });
+                const { targetNote: updatedNode, resultBool } = await updateNodeTableSettingsOnWorker(
+                    worker,
+                    dataTree,
+                    payload.noteId,
+                    payload.componentId,
+                    payload.backlight,
+                    payload.desc,
+                    payload.viewButtons,
+                    payload.aligin
+                );
 
                 if (!resultBool) {
                     throw new Error();

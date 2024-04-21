@@ -1,6 +1,7 @@
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TTableValue } from "0-shared/types/dataSave";
+import type { TBodyComponentTable } from "0-shared/types/dataSave";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -87,6 +88,20 @@ type TMessageUpdateNodeTableOnWorker = {
     newValue: TTableValue | "";
 };
 
+/**
+ *  тип обьекта для выполнения updateNodeTableSettings в воркере
+ */
+type TMessageUpdateNodeTableSettingsOnWorker = {
+    type: "update node table settings";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    backlight: TBodyComponentTable["backlight"];
+    desc: TBodyComponentTable["desc"];
+    viewButtons: TBodyComponentTable["viewButtons"];
+    aligin: TBodyComponentTable["aligin"];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -96,4 +111,5 @@ export type {
     TMessageUpdNoteComponentsOrderOnWorker,
     TMessageUpdateNodeImageOnWorker,
     TMessageUpdateNodeTableOnWorker,
+    TMessageUpdateNodeTableSettingsOnWorker,
 };

@@ -7,6 +7,7 @@ import type {
     TMessageUpdNoteComponentsOrderOnWorker,
     TMessageUpdateNodeImageOnWorker,
     TMessageUpdateNodeTableOnWorker,
+    TMessageUpdateNodeTableSettingsOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -17,6 +18,7 @@ import {
     isUpdNoteComponentsOrder,
     isUpdateNodeImage,
     isUpdateNodeTable,
+    isUpdateNodeTableSettings,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -25,6 +27,7 @@ import { updateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNo
 import { updNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
 import { updateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
 import { updateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
+import { updateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
 
 /**
  * получение данных
@@ -64,6 +67,10 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (isUpdateNodeTable(data)) {
         updateNodeTableCase(data);
+        return;
+    }
+    if (isUpdateNodeTableSettings(data)) {
+        updateNodeTableSettingsCase(data);
         return;
     }
 };
@@ -202,6 +209,28 @@ async function updateNodeTableCase({ noteId, rootFolder, componentId, newValue }
         worker_postMessage("update node table: finished", result);
     } catch (e) {
         worker_postMessage("update node table: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением updateNodeTable
+ */
+async function updateNodeTableSettingsCase({
+    noteId,
+    rootFolder,
+    componentId,
+    aligin,
+    backlight,
+    desc,
+    viewButtons,
+}: TMessageUpdateNodeTableSettingsOnWorker) {
+    try {
+        worker_postMessage("update node table settings: started");
+        const result = await updateNodeTableSettings({ rootFolder, noteId, componentId, aligin, backlight, desc, viewButtons });
+        worker_postMessage("update node table settings: finished", result);
+    } catch (e) {
+        worker_postMessage("update node table settings: error");
         console.error(e);
     }
 }
