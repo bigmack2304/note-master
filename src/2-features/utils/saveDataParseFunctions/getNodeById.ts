@@ -1,6 +1,8 @@
 import type { IDataTreeRootFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 
+type TReturnTypeGetNodeById = ReturnType<typeof getNodeById>;
+
 /**
  * ищет ноду по заданному id и возвращает ее
  * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody | undefined
@@ -42,3 +44,4 @@ function getNodeById(rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody |
 }
 
 export { getNodeById };
+export type { TReturnTypeGetNodeById };

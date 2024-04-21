@@ -9,6 +9,7 @@ import type {
     TMessageUpdateNodeTableOnWorker,
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
+    TMessageGetNodeByIdOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -21,6 +22,7 @@ import {
     isUpdateNodeTable,
     isUpdateNodeTableSettings,
     isUpdateNodeLink,
+    isGetNodeById,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -31,6 +33,7 @@ import { updateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNo
 import { updateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
 import { updateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
 import { updateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
+import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 
 /**
  * получение данных
@@ -78,6 +81,10 @@ self.onmessage = (e: MessageEvent) => {
     }
     if (isUpdateNodeLink(data)) {
         updateNodeLinkCase(data);
+        return;
+    }
+    if (isGetNodeById(data)) {
+        getNodeByidCase(data);
         return;
     }
 };
@@ -252,6 +259,20 @@ async function updateNodeLinkCase({ noteId, rootFolder, componentId, target, val
         worker_postMessage("update node link: finished", result);
     } catch (e) {
         worker_postMessage("update node link: error");
+        console.error(e);
+    }
+}
+
+/**
+ * кейс с выполнением getNodeByid
+ */
+async function getNodeByidCase({ find_id, rootNode }: TMessageGetNodeByIdOnWorker) {
+    try {
+        worker_postMessage("get node by id: started");
+        const result = getNodeById(rootNode, find_id);
+        worker_postMessage("get node by id: finished", result);
+    } catch (e) {
+        worker_postMessage("get node by id: error");
         console.error(e);
     }
 }

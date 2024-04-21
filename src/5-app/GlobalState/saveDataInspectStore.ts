@@ -32,6 +32,7 @@ import {
     updNoteComponentsOrderOnWorker,
     updateNodeValueOnWorker,
     updateNodeLinkOnWorker,
+    getNodeByIdOnWorker,
 } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -215,27 +216,34 @@ const saveDataInspectSlice = createAppSlice({
                     log(action);
                 },
                 fulfilled: (state, action) => {
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
-                    if (!action.payload || !action.payload.deletedNode) return;
-                    let {
-                        payload: { deletedNode },
-                    } = action;
+                    const handler = async () => {
+                        const worker = workerRef.DWorker;
+                        window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                        window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                        if (!action.payload || !action.payload.deletedNode) return;
+                        if (!worker) return;
 
-                    // если id удаляемой ноды совпадает с текущей активной заметкой то и ее удаляем
-                    if (state.currentNote && state.currentNote.id === deletedNode.id && isDataTreeNote(deletedNode)) {
-                        state.currentNote = undefined;
-                        return;
-                    }
+                        let {
+                            payload: { deletedNode },
+                        } = action;
 
-                    // если id удаляемой ноды совпадает с текущей активной папкой то и ее удаляем
-                    if (state.currentFolder && state.currentFolder.id === deletedNode.id && isDataTreeFolder(deletedNode)) {
-                        state.currentFolder = undefined;
-                        // если в нутри удаленной папки была активная заметка то ее удаляем из стора
-                        if (state.currentNote && getNodeById(deletedNode, state.currentNote.id)) {
+                        // если id удаляемой ноды совпадает с текущей активной заметкой то и ее удаляем
+                        if (state.currentNote && state.currentNote.id === deletedNode.id && isDataTreeNote(deletedNode)) {
                             state.currentNote = undefined;
+                            return;
                         }
-                    }
+
+                        // если id удаляемой ноды совпадает с текущей активной папкой то и ее удаляем
+                        if (state.currentFolder && state.currentFolder.id === deletedNode.id && isDataTreeFolder(deletedNode)) {
+                            state.currentFolder = undefined;
+                            // если в нутри удаленной папки была активная заметка то ее удаляем из стора
+                            if (state.currentNote && (await getNodeByIdOnWorker(worker, deletedNode, state.currentNote.id))) {
+                                state.currentNote = undefined;
+                            }
+                        }
+                    };
+
+                    handler();
                 },
             }
         ),
@@ -618,10 +626,12 @@ const saveDataInspectSlice = createAppSlice({
         redirectNoteComponentLink: create.asyncThunk<{ url: TRadioData }, { targetNote: TchildrenType | TNoteBody } | undefined>(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const targetNote = getNodeById(dataTree, payload.url.id);
+                const targetNote = await getNodeByIdOnWorker(worker, dataTree, payload.url.id);
 
                 if (targetNote) {
                     return { targetNote };
@@ -1349,8 +1359,10 @@ const saveDataInspectSlice = createAppSlice({
                 const state = thunkApi.getState() as RootState;
                 const allTags = await getGlobalTagsDB();
                 let dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!allTags || !dataTree) return;
+                if (!worker) return;
 
                 const { tagName: deletedTagName, resultBool } = await projectDelTag(allTags, dataTree, payload.tagName);
 
@@ -1363,7 +1375,7 @@ const saveDataInspectSlice = createAppSlice({
                 // после удаляения тега, нужно обновить данниы в редаксе, потомучто в активной заметке мог быть удаляемый тег
                 if (state.saveDataInspect.currentNote) {
                     dataTree = await getDataTreeDB();
-                    curentNoteInDB = getNodeById(dataTree, state.saveDataInspect.currentNote.id);
+                    curentNoteInDB = await getNodeByIdOnWorker(worker, dataTree, state.saveDataInspect.currentNote.id);
                 }
 
                 return { deletedTagName, curentNoteInDB };
@@ -1400,8 +1412,10 @@ const saveDataInspectSlice = createAppSlice({
                 const state = thunkApi.getState() as RootState;
                 const allTags = await getGlobalTagsDB();
                 let dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!allTags || !dataTree) return;
+                if (!worker) return;
 
                 const { newTagName: editedTagName, resultBool } = await projectEditeTag(
                     allTags,
@@ -1420,7 +1434,7 @@ const saveDataInspectSlice = createAppSlice({
                 // после изменения тега, нужно обновить данниые в редаксе, потомучто в активной заметке мог быть удаляемый тег
                 if (state.saveDataInspect.currentNote) {
                     dataTree = await getDataTreeDB();
-                    curentNoteInDB = getNodeById(dataTree, state.saveDataInspect.currentNote.id);
+                    curentNoteInDB = await getNodeByIdOnWorker(worker, dataTree, state.saveDataInspect.currentNote.id);
                 }
 
                 return { editedTagName, curentNoteInDB };

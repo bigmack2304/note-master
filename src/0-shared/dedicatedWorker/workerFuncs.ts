@@ -9,8 +9,9 @@ import type {
     TMessageUpdateNodeTableOnWorker,
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
+    TMessageGetNodeByIdOnWorker,
 } from "./workerTypes";
-import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
+import type { IDataTreeRootFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
@@ -22,6 +23,7 @@ import type { TReturnTypeUpdateNodeTable } from "2-features/utils/saveDataEditFu
 import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
 import type { TTableValue, TBodyComponentLink, TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
+import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 
 // скрипт содержит различные функции для более удобного взаимодействия с воркером, запуска конкретных задачь в нем.
 
@@ -395,6 +397,32 @@ function updateNodeLinkOnWorker(
     });
 }
 
+/**
+ * запуск в воркере алгоритма getNodeById
+ */
+function getNodeByIdOnWorker(workerObj: Worker, rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody | undefined, find_id: string) {
+    return new Promise<TReturnTypeGetNodeById>((resolve, reject) => {
+        const callback = (e: MessageEvent) => {
+            if (e.data.resolve && e.data.resolve === "get node by id: finished") {
+                resolve(e.data.work_data);
+                workerObj.removeEventListener("message", callback);
+            }
+
+            if (e.data.resolve && e.data.resolve === "get node by id: error") {
+                reject("get node by id: error");
+                workerObj.removeEventListener("message", callback);
+            }
+        };
+
+        workerObj.addEventListener("message", callback);
+        workerObj.postMessage({
+            type: "get node by id",
+            find_id,
+            rootNode,
+        } as TMessageGetNodeByIdOnWorker);
+    });
+}
+
 export {
     runFuncOnWorker,
     deleteByIdOnWorker,
@@ -406,4 +434,5 @@ export {
     updateNodeTableOnWorker,
     updateNodeTableSettingsOnWorker,
     updateNodeLinkOnWorker,
+    getNodeByIdOnWorker,
 };

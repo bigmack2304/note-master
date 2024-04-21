@@ -11,6 +11,7 @@ import type {
     TMessageUpdateNodeTableOnWorker,
     TMessageUpdateNodeTableSettingsOnWorker,
     TMessageUpdateNodeLinkOnWorker,
+    TMessageGetNodeByIdOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -221,6 +222,16 @@ function isUpdateNodeLink(value: any): value is TMessageUpdateNodeLinkOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageGetNodeByIdOnWorker dedicated воркера
+ */
+function isGetNodeById(value: any): value is TMessageGetNodeByIdOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "get node by id")) return false;
+    if (!("find_id" in value) || ("find_id" in value && typeof value.find_id !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -237,5 +248,6 @@ export {
     isUpdateNodeTable,
     isUpdateNodeTableSettings,
     isUpdateNodeLink,
+    isGetNodeById,
 };
 export type { GetProps, Ref, RemoveReadonly };
