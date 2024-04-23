@@ -29,9 +29,11 @@ import { useDataTree } from "0-shared/hooks/useDataTree";
 import { getParentFolder } from "2-features/utils/saveDataParse";
 import { useEventListener } from "0-shared/hooks/useEventListener";
 import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
-import { cloneFiltredTreeOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
+import { runTaskOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import "./FolderfTreeViewer.scss";
+import type { TMessageCloneFiltredTreeOnWorker } from "0-shared/dedicatedWorker/workerTypes";
+import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
 
 type TFolderTreeViewerProps = {};
 
@@ -247,7 +249,14 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                 setIsLoading(true);
                 const awaitData = async () => {
                     if (!workerRef.DWorker) return;
-                    const [cloned, folders] = await cloneFiltredTreeOnWorker(workerRef.DWorker, dataTree, findParams);
+                    const [cloned, folders] = await runTaskOnWorker<TMessageCloneFiltredTreeOnWorker, TReturnTypeCloneFiltredTree>(
+                        workerRef.DWorker,
+                        {
+                            type: "clone filtred tree",
+                            filtres: findParams,
+                            orig_obj: dataTree,
+                        }
+                    );
                     let tempExpandedNodes = [...expandedNodes];
                     let isUpd = false;
 

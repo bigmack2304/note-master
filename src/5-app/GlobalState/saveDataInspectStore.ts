@@ -12,7 +12,6 @@ import {
     updateNoteComponentTextSettings as componentTextSettings,
     updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
-    updateNoteComponentImageSettings as componentImageSettings,
     updateNoteComponentListSettings as componentListSettings,
 } from "2-features/utils/saveDataEdit";
 import {
@@ -23,16 +22,17 @@ import {
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
 import {
-    updateNodeTableOnWorker,
-    updateNodeTableSettingsOnWorker,
-    deleteByIdOnWorker,
-    deleteComponentInNoteOnWorker,
-    updateNodeImageOnWorker,
-    updNoteComponentsOrderOnWorker,
-    updateNodeValueOnWorker,
-    updateNodeLinkOnWorker,
-    getNodeByIdOnWorker,
-    updateNoteComponentLinkSettingsOnWorker,
+    // updateNodeTableOnWorker,
+    // updateNodeTableSettingsOnWorker,
+    // deleteByIdOnWorker,
+    // deleteComponentInNoteOnWorker,
+    // updateNodeImageOnWorker,
+    // updNoteComponentsOrderOnWorker,
+    // updateNodeValueOnWorker,
+    // updateNodeLinkOnWorker,
+    // getNodeByIdOnWorker,
+    // updateNoteComponentLinkSettingsOnWorker,
+    runTaskOnWorker,
 } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -68,6 +68,32 @@ import type {
 } from "0-shared/types/dataSave";
 import type { TRadioData } from "2-features/components/NoteSelector/NoteSelector";
 import type { RootState } from "5-app/GlobalState/store";
+import type {
+    TMessageUpdateNoteComponentImageSettingsOnWorker,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageUpdateNodeValueOnWorker,
+    TMessageUpdateNodeImageOnWorker,
+    TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeTableOnWorker,
+    TMessageUpdateNodeTableSettingsOnWorker,
+    TMessageUpdateNodeLinkOnWorker,
+    TMessageGetNodeByIdOnWorker,
+    TMessageUpdateNoteComponentLinkSettingsOnWorker,
+} from "0-shared/dedicatedWorker/workerTypes";
+import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
+import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
+import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
+import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
+import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
+import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
+import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
+import type { TReturnTypeUpdateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
+import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
+import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
+import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
+import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -190,12 +216,13 @@ const saveDataInspectSlice = createAppSlice({
                 if (!worker) return;
                 if (!savedIdGenerator.instatnceIdGenerator) return;
 
-                const { deletedNode, resultBool, newIdGenerator } = await deleteByIdOnWorker(
-                    worker,
-                    dataTree,
-                    payload.nodeId,
-                    savedIdGenerator.instatnceIdGenerator.getIdsArray()
-                );
+                const { deletedNode, resultBool, newIdGenerator } = await runTaskOnWorker<TMessageDelById, TReturnTypeDeleteById>(worker, {
+                    data: dataTree,
+                    savedIdGenerator: savedIdGenerator.instatnceIdGenerator.getIdsArray(),
+                    target: payload.nodeId,
+                    type: "delete by id",
+                });
+
                 savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
 
                 if (!resultBool) {
@@ -237,7 +264,14 @@ const saveDataInspectSlice = createAppSlice({
                         if (state.currentFolder && state.currentFolder.id === deletedNode.id && isDataTreeFolder(deletedNode)) {
                             state.currentFolder = undefined;
                             // если в нутри удаленной папки была активная заметка то ее удаляем из стора
-                            if (state.currentNote && (await getNodeByIdOnWorker(worker, deletedNode, state.currentNote.id))) {
+                            if (
+                                state.currentNote &&
+                                (await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
+                                    rootNode: deletedNode,
+                                    find_id: state.currentNote.id,
+                                    type: "get node by id",
+                                }))
+                            ) {
                                 state.currentNote = undefined;
                             }
                         }
@@ -264,13 +298,14 @@ const saveDataInspectSlice = createAppSlice({
                     targetNote: updatedNote,
                     resultBool,
                     newIdGenerator,
-                } = await deleteComponentInNoteOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    savedIdGenerator.instatnceIdGenerator.getIdsArray()
-                );
+                } = await runTaskOnWorker<TMessageDelCompInNote, TReturnTypeDeleteComponentInNote>(worker, {
+                    componentID: payload.componentId,
+                    noteID: payload.noteId,
+                    rootFolder: dataTree,
+                    savedIdGenerator: savedIdGenerator.instatnceIdGenerator.getIdsArray(),
+                    type: "delete component in note",
+                });
+
                 savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
 
                 if (!resultBool) {
@@ -316,13 +351,16 @@ const saveDataInspectSlice = createAppSlice({
                 if (!worker) return;
                 if (!dataTree) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeValueOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.newValue
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeValueOnWorker,
+                    TReturnTypeUpdateNodeValue
+                >(worker, {
+                    componentId: payload.componentId,
+                    newValue: payload.newValue,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
+                    type: "update node value",
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -367,13 +405,16 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updNoteComponentsOrderOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentDragId,
-                    payload.toComponentDragId
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdNoteComponentsOrderOnWorker,
+                    TReturnTypeUpdNoteComponentsOrder
+                >(worker, {
+                    componentDragId: payload.componentDragId,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
+                    toComponentDragId: payload.toComponentDragId,
+                    type: "update note components order",
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -418,14 +459,17 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeImageOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.newSrc,
-                    payload.newName
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeImageOnWorker,
+                    TReturnTypeUpdateNodeImage
+                >(worker, {
+                    componentId: payload.componentId,
+                    newName: payload.newName,
+                    newSrc: payload.newSrc,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
+                    type: "update node image",
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -470,13 +514,16 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeTableOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.newValue
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeTableOnWorker,
+                    TReturnTypeUpdateNodeTable
+                >(worker, {
+                    type: "update node table",
+                    componentId: payload.componentId,
+                    newValue: payload.newValue,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -528,16 +575,19 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeTableSettingsOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.backlight,
-                    payload.desc,
-                    payload.viewButtons,
-                    payload.aligin
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeTableSettingsOnWorker,
+                    TReturnTypeUpdateNodeTableSettings
+                >(worker, {
+                    rootFolder: dataTree,
+                    aligin: payload.aligin,
+                    backlight: payload.backlight,
+                    componentId: payload.componentId,
+                    desc: payload.desc,
+                    noteId: payload.noteId,
+                    type: "update node table settings",
+                    viewButtons: payload.viewButtons,
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -582,14 +632,17 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeLinkOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.target,
-                    payload.value
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeLinkOnWorker,
+                    TReturnTypeUpdateNodeLink
+                >(worker, {
+                    componentId: payload.componentId,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
+                    target: payload.target,
+                    type: "update node link",
+                    value: payload.value,
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -631,7 +684,11 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const targetNote = await getNodeByIdOnWorker(worker, dataTree, payload.url.id);
+                const targetNote = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
+                    rootNode: dataTree,
+                    find_id: payload.url.id,
+                    type: "get node by id",
+                });
 
                 if (targetNote) {
                     return { targetNote };
@@ -681,15 +738,18 @@ const saveDataInspectSlice = createAppSlice({
                 if (!dataTree) return;
                 if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNoteComponentLinkSettingsOnWorker(
-                    worker,
-                    dataTree,
-                    payload.noteId,
-                    payload.componentId,
-                    payload.isLabel,
-                    payload.isBg,
-                    payload.labelVal
-                );
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentLinkSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentLinkSettings
+                >(worker, {
+                    rootFolder: dataTree,
+                    noteId: payload.noteId,
+                    componentId: payload.componentId,
+                    isLabel: payload.isLabel,
+                    isBg: payload.isBg,
+                    labelVal: payload.labelVal,
+                    type: "update Note component link settings",
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -728,15 +788,21 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await componentImageSettings({
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentImageSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentImageSettings
+                >(worker, {
                     rootFolder: dataTree,
                     componentId: payload.componentId,
                     noteId: payload.noteId,
                     imageDesc: payload.imageDesc,
                     isDescHidden: payload.isDescHidden,
+                    type: "update note component image settings",
                 });
 
                 if (!resultBool) {
@@ -1359,7 +1425,7 @@ const saveDataInspectSlice = createAppSlice({
             { deletedTagName: string; curentNoteInDB: TchildrenType | TNoteBody | null } | undefined
         >(
             async (payload, thunkApi) => {
-                const state = thunkApi.getState() as RootState;
+                const state: RootState = thunkApi.getState() as RootState;
                 const allTags = await getGlobalTagsDB();
                 let dataTree = await getDataTreeDB();
                 const worker = workerRef.DWorker;
@@ -1376,9 +1442,15 @@ const saveDataInspectSlice = createAppSlice({
                 let curentNoteInDB: ReturnType<typeof getNodeById> = null;
 
                 // после удаляения тега, нужно обновить данниы в редаксе, потомучто в активной заметке мог быть удаляемый тег
+
                 if (state.saveDataInspect.currentNote) {
+                    const find_id = state.saveDataInspect.currentNote.id as string;
                     dataTree = await getDataTreeDB();
-                    curentNoteInDB = await getNodeByIdOnWorker(worker, dataTree, state.saveDataInspect.currentNote.id);
+                    curentNoteInDB = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
+                        find_id: find_id,
+                        rootNode: dataTree,
+                        type: "get node by id",
+                    });
                 }
 
                 return { deletedTagName, curentNoteInDB };
@@ -1437,7 +1509,12 @@ const saveDataInspectSlice = createAppSlice({
                 // после изменения тега, нужно обновить данниые в редаксе, потомучто в активной заметке мог быть удаляемый тег
                 if (state.saveDataInspect.currentNote) {
                     dataTree = await getDataTreeDB();
-                    curentNoteInDB = await getNodeByIdOnWorker(worker, dataTree, state.saveDataInspect.currentNote.id);
+                    const find_id = state.saveDataInspect.currentNote.id as string;
+                    curentNoteInDB = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
+                        find_id: find_id,
+                        rootNode: dataTree,
+                        type: "get node by id",
+                    });
                 }
 
                 return { editedTagName, curentNoteInDB };

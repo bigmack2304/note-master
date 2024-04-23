@@ -1,6 +1,7 @@
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TBodyComponentTable, TBodyComponentLink, TchildrenType, TTableValue, TNoteBody } from "0-shared/types/dataSave";
+import { updateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -135,6 +136,18 @@ type TMessageUpdateNoteComponentLinkSettingsOnWorker = {
     labelVal: TBodyComponentLink["labelValue"];
 };
 
+/**
+ *  тип обьекта для выполнения updateNoteComponentImageSettings в воркере
+ */
+type TMessageUpdateNoteComponentImageSettingsOnWorker = {
+    type: "update note component image settings";
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    imageDesc: string;
+    isDescHidden: boolean;
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -148,4 +161,5 @@ export type {
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
+    TMessageUpdateNoteComponentImageSettingsOnWorker,
 };

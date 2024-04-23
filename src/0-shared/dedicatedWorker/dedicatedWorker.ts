@@ -11,6 +11,7 @@ import type {
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
+    TMessageUpdateNoteComponentImageSettingsOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -25,6 +26,7 @@ import {
     isUpdateNodeLink,
     isGetNodeById,
     isUpdateNoteComponentLinkSettings,
+    isUpdateNoteComponentImageSettings,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -37,6 +39,21 @@ import { updateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/
 import { updateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import { updateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
+import { updateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
+
+type TTaskRunerTypes =
+    | TMessageDelById
+    | TMessageDelCompInNote
+    | TMessageCloneFiltredTreeOnWorker
+    | TMessageUpdateNodeValueOnWorker
+    | TMessageUpdNoteComponentsOrderOnWorker
+    | TMessageUpdateNodeImageOnWorker
+    | TMessageUpdateNodeTableOnWorker
+    | TMessageUpdateNodeTableSettingsOnWorker
+    | TMessageUpdateNodeLinkOnWorker
+    | TMessageGetNodeByIdOnWorker
+    | TMessageUpdateNoteComponentLinkSettingsOnWorker
+    | TMessageUpdateNoteComponentImageSettingsOnWorker;
 
 /**
  * получение данных
@@ -50,48 +67,22 @@ self.onmessage = (e: MessageEvent) => {
         funcExecutorCase(data);
         return;
     }
-    if (isDelByIdData(data)) {
-        delByIdCase(data);
-        return;
-    }
-    if (isDelCompInNote(data)) {
-        deleteComponentInNoteCase(data);
-        return;
-    }
-    if (isCloneFiltredTree(data)) {
-        cloneFiltredTreeCase(data);
-        return;
-    }
-    if (isUpdateNodeValue(data)) {
-        updateNodeValueCase(data);
-        return;
-    }
-    if (isUpdNoteComponentsOrder(data)) {
-        updNoteComponentsOrderCase(data);
-        return;
-    }
-    if (isUpdateNodeImage(data)) {
-        updateNodeImageCase(data);
-        return;
-    }
-    if (isUpdateNodeTable(data)) {
-        updateNodeTableCase(data);
-        return;
-    }
-    if (isUpdateNodeTableSettings(data)) {
-        updateNodeTableSettingsCase(data);
-        return;
-    }
-    if (isUpdateNodeLink(data)) {
-        updateNodeLinkCase(data);
-        return;
-    }
-    if (isGetNodeById(data)) {
-        getNodeByidCase(data);
-        return;
-    }
-    if (isUpdateNoteComponentLinkSettings(data)) {
-        updateNoteComponentLinkSettingsCase(data);
+
+    if (
+        isUpdateNoteComponentImageSettings(data) ||
+        isUpdateNoteComponentLinkSettings(data) ||
+        isGetNodeById(data) ||
+        isUpdateNodeLink(data) ||
+        isUpdateNodeTableSettings(data) ||
+        isUpdateNodeTable(data) ||
+        isUpdateNodeImage(data) ||
+        isUpdNoteComponentsOrder(data) ||
+        isUpdateNodeValue(data) ||
+        isCloneFiltredTree(data) ||
+        isDelCompInNote(data) ||
+        isDelByIdData(data)
+    ) {
+        taskRuner(data);
         return;
     }
 };
@@ -131,176 +122,57 @@ function func_runer(argument_names: string[], argument_values: any[], func_data:
     }
 }
 
-/**
- * кейс с выполнением deleteById
- */
-async function delByIdCase({ data, target, savedIdGenerator }: TMessageDelById) {
+async function taskRuner(data: TTaskRunerTypes) {
     try {
-        worker_postMessage("delete by id: started");
-        const result = await deleteById(data, target, savedIdGenerator);
-        worker_postMessage("delete by id: finished", result);
-    } catch (e) {
-        worker_postMessage("delete by id: error");
-        console.error(e);
-    }
-}
+        worker_postMessage(`${data.type}: started`);
+        console.info(`dedicatedWorker.taskRuner: type '${data.type}'`);
+        let result: any = undefined;
 
-/**
- * кейс с выполнением deleteComponentInNote
- */
-async function deleteComponentInNoteCase({ componentID, noteID, rootFolder, savedIdGenerator }: TMessageDelCompInNote) {
-    try {
-        worker_postMessage("delete component in note: started");
-        const result = await deleteComponentInNote(rootFolder, noteID, componentID, savedIdGenerator);
-        worker_postMessage("delete component in note: finished", result);
-    } catch (e) {
-        worker_postMessage("delete component in note: error");
-        console.error(e);
-    }
-}
+        switch (data.type) {
+            case "update note component image settings":
+                result = await updateNoteComponentImageSettings(data);
+                break;
+            case "clone filtred tree":
+                result = await cloneFiltredTree(data.orig_obj, data.filtres);
+                break;
+            case "delete by id":
+                result = await deleteById(data.data, data.target, data.savedIdGenerator);
+                break;
+            case "delete component in note":
+                result = await deleteComponentInNote(data.rootFolder, data.noteID, data.componentID, data.savedIdGenerator);
+                break;
+            case "get node by id":
+                result = getNodeById(data.rootNode, data.find_id);
+                break;
+            case "update Note component link settings":
+                result = await updateNoteComponentLinkSettings(data);
+                break;
+            case "update node image":
+                result = await updateNodeImage(data.rootFolder, data.noteId, data.componentId, data.newSrc, data.newName);
+                break;
+            case "update node link":
+                result = await updateNodeLink(data.rootFolder, data.noteId, data.componentId, data.target, data.value);
+                break;
+            case "update node table":
+                result = await updateNodeTable(data.rootFolder, data.noteId, data.componentId, data.newValue);
+                break;
+            case "update node table settings":
+                result = await updateNodeTableSettings(data);
+                break;
+            case "update node value":
+                result = await updateNodeValue(data.rootFolder, data.noteId, data.componentId, data.newValue);
+                break;
+            case "update note components order":
+                result = await updNoteComponentsOrder(data.rootFolder, data.noteId, data.componentDragId, data.toComponentDragId);
+                break;
+            default:
+                console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);
+                throw new Error();
+        }
 
-/**
- * кейс с выполнением cloneFiltredTree
- */
-async function cloneFiltredTreeCase({ filtres, orig_obj }: TMessageCloneFiltredTreeOnWorker) {
-    try {
-        worker_postMessage("clone filtred tree: started");
-        const result = await cloneFiltredTree(orig_obj, filtres);
-        worker_postMessage("clone filtred tree: finished", result);
+        worker_postMessage(`${data.type}: finished`, result);
     } catch (e) {
-        worker_postMessage("clone filtred tree: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением UpdateNodeValue
- */
-async function updateNodeValueCase({ componentId, newValue, noteId, rootFolder }: TMessageUpdateNodeValueOnWorker) {
-    try {
-        worker_postMessage("update node value: started");
-        const result = await updateNodeValue(rootFolder, noteId, componentId, newValue);
-        worker_postMessage("update node value: finished", result);
-    } catch (e) {
-        worker_postMessage("update node value: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением updNoteComponentsOrder
- */
-async function updNoteComponentsOrderCase({
-    noteId,
-    rootFolder,
-    componentDragId,
-    toComponentDragId,
-}: TMessageUpdNoteComponentsOrderOnWorker) {
-    try {
-        worker_postMessage("update note components order: started");
-        const result = await updNoteComponentsOrder(rootFolder, noteId, componentDragId, toComponentDragId);
-        worker_postMessage("update note components order: finished", result);
-    } catch (e) {
-        worker_postMessage("update note components order: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением updateNodeImage
- */
-async function updateNodeImageCase({ noteId, rootFolder, componentId, newSrc, newName }: TMessageUpdateNodeImageOnWorker) {
-    try {
-        worker_postMessage("update node image: started");
-        const result = await updateNodeImage(rootFolder, noteId, componentId, newSrc, newName);
-        worker_postMessage("update node image: finished", result);
-    } catch (e) {
-        worker_postMessage("update node image: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением updateNodeTable
- */
-async function updateNodeTableCase({ noteId, rootFolder, componentId, newValue }: TMessageUpdateNodeTableOnWorker) {
-    try {
-        worker_postMessage("update node table: started");
-        const result = await updateNodeTable(rootFolder, noteId, componentId, newValue);
-        worker_postMessage("update node table: finished", result);
-    } catch (e) {
-        worker_postMessage("update node table: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением updateNodeTable
- */
-async function updateNodeTableSettingsCase({
-    noteId,
-    rootFolder,
-    componentId,
-    aligin,
-    backlight,
-    desc,
-    viewButtons,
-}: TMessageUpdateNodeTableSettingsOnWorker) {
-    try {
-        worker_postMessage("update node table settings: started");
-        const result = await updateNodeTableSettings({ rootFolder, noteId, componentId, aligin, backlight, desc, viewButtons });
-        worker_postMessage("update node table settings: finished", result);
-    } catch (e) {
-        worker_postMessage("update node table settings: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением updateNodeLink
- */
-async function updateNodeLinkCase({ noteId, rootFolder, componentId, target, value }: TMessageUpdateNodeLinkOnWorker) {
-    try {
-        worker_postMessage("update node link: started");
-        const result = await updateNodeLink(rootFolder, noteId, componentId, target, value);
-        worker_postMessage("update node link: finished", result);
-    } catch (e) {
-        worker_postMessage("update node link: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением getNodeByid
- */
-async function getNodeByidCase({ find_id, rootNode }: TMessageGetNodeByIdOnWorker) {
-    try {
-        worker_postMessage("get node by id: started");
-        const result = getNodeById(rootNode, find_id);
-        worker_postMessage("get node by id: finished", result);
-    } catch (e) {
-        worker_postMessage("get node by id: error");
-        console.error(e);
-    }
-}
-
-/**
- * кейс с выполнением getNodeByid
- */
-async function updateNoteComponentLinkSettingsCase({
-    rootFolder,
-    componentId,
-    isBg,
-    isLabel,
-    labelVal,
-    noteId,
-}: TMessageUpdateNoteComponentLinkSettingsOnWorker) {
-    try {
-        worker_postMessage("update Note component link settings: started");
-        const result = updateNoteComponentLinkSettings({ rootFolder, componentId, isBg, isLabel, labelVal, noteId });
-        worker_postMessage("update Note component link settings: finished", result);
-    } catch (e) {
-        worker_postMessage("update Note component link settings: error");
+        worker_postMessage(`${data.type}: error`);
         console.error(e);
     }
 }
