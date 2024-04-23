@@ -4,6 +4,7 @@ import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
 import type { IDataTreeRootFolder, TBodyComponentLink } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNoteComponentLinkSettings = ReturnType<typeof updateNoteComponentLinkSettings>;
+type TParametersUpdateNoteComponentLinkSettings = Parameters<typeof updateNoteComponentLinkSettings>;
 
 /**
  * изменяет настройки компонента ссылки в обьекте заметки
@@ -45,4 +46,4 @@ async function updateNoteComponentLinkSettings(data: {
 }
 
 export { updateNoteComponentLinkSettings };
-export type { TReturnTypeUpdateNoteComponentLinkSettings };
+export type { TReturnTypeUpdateNoteComponentLinkSettings, TParametersUpdateNoteComponentLinkSettings };

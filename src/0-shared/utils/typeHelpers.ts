@@ -37,6 +37,15 @@ type GetProps<T> = T extends React.ComponentType<infer Props> ? Props : unknown;
 type Ref<T> = Parameters<ForwardRefRenderFunction<T>>[1];
 
 /**
+ * преобразует массив от Parameters<> в обьект, где, K будет массивом ключей
+ * @tparam T - массив возвращенный дженериком Parameters
+ * @tparam K - массив ключей, которые будут присвоины типам с соответствующими индексами в T
+ */
+type TupleToObject<T extends any[], K extends { [I in keyof T]: PropertyKey }> = {
+    [I in keyof T as I extends keyof any[] ? never : K[I]]: T[I];
+};
+
+/**
  * проверяет чтобы сущьность пренадлежала к типу IDataTreeNote
  * @param node
  * @returns boolean
@@ -283,4 +292,4 @@ export {
     isUpdateNoteComponentLinkSettings,
     isUpdateNoteComponentImageSettings,
 };
-export type { GetProps, Ref, RemoveReadonly };
+export type { GetProps, Ref, RemoveReadonly, TupleToObject };

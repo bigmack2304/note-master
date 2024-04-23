@@ -4,6 +4,7 @@ import { getNodeById } from "../saveDataParseFunctions/getNodeById";
 import type { TBodyComponentTable, IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNodeTableSettings = ReturnType<typeof updateNodeTableSettings>;
+type TParametersUpdateNodeTableSettings = Parameters<typeof updateNodeTableSettings>;
 
 /**
  * изменяет настройки компонента таблицы в заметке
@@ -48,4 +49,4 @@ async function updateNodeTableSettings(data: {
 }
 
 export { updateNodeTableSettings };
-export type { TReturnTypeUpdateNodeTableSettings };
+export type { TReturnTypeUpdateNodeTableSettings, TParametersUpdateNodeTableSettings };

@@ -7,6 +7,7 @@ import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
 import { IdGenerator } from "0-shared/utils/idGenerator";
 
 type TReturnTypeDeleteComponentInNote = ReturnType<typeof deleteComponentInNote>;
+type TParametersDeleteComponentInNote = Parameters<typeof deleteComponentInNote>;
 
 /**
  * удаление компонента из заметки
@@ -14,16 +15,21 @@ type TReturnTypeDeleteComponentInNote = ReturnType<typeof deleteComponentInNote>
  * @param noteID id заметки
  * @param componentID id компонента который нужно удалить
  */
-async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: string, componentID: string, savedIdGenerator: string[]) {
-    let newIdGenerator = new IdGenerator(new Set(savedIdGenerator));
+async function deleteComponentInNote(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteID: string;
+    componentID: string;
+    savedIdGenerator: string[];
+}) {
+    let newIdGenerator = new IdGenerator(new Set(data.savedIdGenerator));
     let resultBool = false;
 
-    let targetNote = getNodeById(rootFolder, noteID);
+    let targetNote = getNodeById(data.rootFolder, data.noteID);
 
     if (targetNote && isDataTreeNote(targetNote)) {
         targetNote.body = targetNote.body.filter((item) => {
-            if (item.id === componentID) {
-                newIdGenerator.deleteId(componentID);
+            if (item.id === data.componentID) {
+                newIdGenerator.deleteId(data.componentID);
                 if (item.component == "image") {
                     delImageDB({ key: item.id });
                     item.value = "";
@@ -39,11 +45,11 @@ async function deleteComponentInNote(rootFolder: IDataTreeRootFolder, noteID: st
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool, newIdGenerator: newIdGenerator.getIdsArray() };
 }
 
 export { deleteComponentInNote };
-export type { TReturnTypeDeleteComponentInNote };
+export type { TReturnTypeDeleteComponentInNote, TParametersDeleteComponentInNote };

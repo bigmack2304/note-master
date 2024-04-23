@@ -1,7 +1,15 @@
-import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
-import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
-import type { TBodyComponentTable, TBodyComponentLink, TchildrenType, TTableValue, TNoteBody } from "0-shared/types/dataSave";
-import { updateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
+import type { TParametersUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
+import type { TParametersUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
+import type { TParametersGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
+import type { TParametersUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
+import type { TParametersUpdateNodeTableSettings } from "2-features/utils/saveDataEditFunctions/updateNodeTableSettings";
+import type { TParametersUpdateNodeTable } from "2-features/utils/saveDataEditFunctions/updateNodeTable";
+import type { TParametersUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
+import type { TParametersUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
+import type { TParametersUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
+import type { TParametersDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
+import type { TParametersDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
+import type { TParametersCloneFiltredTree } from "0-shared/utils/note_find";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -16,22 +24,19 @@ type TMessageDataType = {
 /**
  *  тип обьекта для выполнения deleteById в воркере
  */
-type TMessageDelById = {
+type TMessageDelById<FUNC_PARAMS = TParametersDeleteById[0]> = {
     type: "delete by id";
-    data: IDataTreeRootFolder;
-    target: string;
-    savedIdGenerator: string[];
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения deleteComponentInNote в воркере
  */
-type TMessageDelCompInNote = {
+type TMessageDelCompInNote<FUNC_PARAMS = TParametersDeleteComponentInNote[0]> = {
     type: "delete component in note";
-    rootFolder: IDataTreeRootFolder;
-    noteID: string;
-    componentID: string;
-    savedIdGenerator: string[];
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
@@ -39,79 +44,61 @@ type TMessageDelCompInNote = {
  */
 type TMessageCloneFiltredTreeOnWorker = {
     type: "clone filtred tree";
-    orig_obj: IDataTreeRootFolder;
-    filtres: IFindNodeParametres | undefined;
+    args: TParametersCloneFiltredTree;
 };
 
 /**
  *  тип обьекта для выполнения UpdateNodeValue в воркере
  */
-type TMessageUpdateNodeValueOnWorker = {
+type TMessageUpdateNodeValueOnWorker<FUNC_PARAMS = TParametersUpdateNodeValue[0]> = {
     type: "update node value";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    newValue: string;
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updNoteComponentsOrder в воркере
  */
-type TMessageUpdNoteComponentsOrderOnWorker = {
+type TMessageUpdNoteComponentsOrderOnWorker<FUNC_PARAMS = TParametersUpdNoteComponentsOrder[0]> = {
     type: "update note components order";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentDragId: string;
-    toComponentDragId: string;
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updateNodeImage в воркере
  */
-type TMessageUpdateNodeImageOnWorker = {
+type TMessageUpdateNodeImageOnWorker<FUNC_PARAMS = TParametersUpdateNodeImage[0]> = {
     type: "update node image";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    newSrc: string;
-    newName: string;
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updateNodeTable в воркере
  */
-type TMessageUpdateNodeTableOnWorker = {
+type TMessageUpdateNodeTableOnWorker<FUNC_PARAMS = TParametersUpdateNodeTable[0]> = {
     type: "update node table";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    newValue: TTableValue | "";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updateNodeTableSettings в воркере
  */
-type TMessageUpdateNodeTableSettingsOnWorker = {
+type TMessageUpdateNodeTableSettingsOnWorker<FUNC_PARAMS = TParametersUpdateNodeTableSettings[0]> = {
     type: "update node table settings";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    backlight: TBodyComponentTable["backlight"];
-    desc: TBodyComponentTable["desc"];
-    viewButtons: TBodyComponentTable["viewButtons"];
-    aligin: TBodyComponentTable["aligin"];
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updateNodeLink в воркере
  */
-type TMessageUpdateNodeLinkOnWorker = {
+type TMessageUpdateNodeLinkOnWorker<FUNC_PARAMS = TParametersUpdateNodeLink[0]> = {
     type: "update node link";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    target: TBodyComponentLink["target"];
-    value: TBodyComponentLink["value"];
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
@@ -119,33 +106,25 @@ type TMessageUpdateNodeLinkOnWorker = {
  */
 type TMessageGetNodeByIdOnWorker = {
     type: "get node by id";
-    rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody | undefined;
-    find_id: string;
+    args: TParametersGetNodeById;
 };
 
 /**
  *  тип обьекта для выполнения updateNoteComponentLinkSettings в воркере
  */
-type TMessageUpdateNoteComponentLinkSettingsOnWorker = {
+type TMessageUpdateNoteComponentLinkSettingsOnWorker<FUNC_PARAMS = TParametersUpdateNoteComponentLinkSettings[0]> = {
     type: "update Note component link settings";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    isLabel: TBodyComponentLink["isLabel"];
-    isBg: TBodyComponentLink["background"];
-    labelVal: TBodyComponentLink["labelValue"];
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 /**
  *  тип обьекта для выполнения updateNoteComponentImageSettings в воркере
  */
-type TMessageUpdateNoteComponentImageSettingsOnWorker = {
+type TMessageUpdateNoteComponentImageSettingsOnWorker<FUNC_PARAMS = TParametersUpdateNoteComponentImageSettings[0]> = {
     type: "update note component image settings";
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    imageDesc: string;
-    isDescHidden: boolean;
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
 export type {

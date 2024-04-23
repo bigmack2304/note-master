@@ -4,6 +4,7 @@ import { getNodeById } from "../saveDataParseFunctions/getNodeById";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNoteComponentImageSettings = ReturnType<typeof updateNoteComponentImageSettings>;
+type TParametersUpdateNoteComponentImageSettings = Parameters<typeof updateNoteComponentImageSettings>;
 
 /**
  * изменяет настройки компонента image в обьекте заметки
@@ -42,4 +43,4 @@ async function updateNoteComponentImageSettings(data: {
 }
 
 export { updateNoteComponentImageSettings };
-export type { TReturnTypeUpdateNoteComponentImageSettings };
+export type { TReturnTypeUpdateNoteComponentImageSettings, TParametersUpdateNoteComponentImageSettings };

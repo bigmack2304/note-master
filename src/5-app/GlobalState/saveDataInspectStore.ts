@@ -217,9 +217,9 @@ const saveDataInspectSlice = createAppSlice({
                 if (!savedIdGenerator.instatnceIdGenerator) return;
 
                 const { deletedNode, resultBool, newIdGenerator } = await runTaskOnWorker<TMessageDelById, TReturnTypeDeleteById>(worker, {
-                    data: dataTree,
+                    rootNode: dataTree,
                     savedIdGenerator: savedIdGenerator.instatnceIdGenerator.getIdsArray(),
-                    target: payload.nodeId,
+                    target_id: payload.nodeId,
                     type: "delete by id",
                 });
 
@@ -267,8 +267,7 @@ const saveDataInspectSlice = createAppSlice({
                             if (
                                 state.currentNote &&
                                 (await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
-                                    rootNode: deletedNode,
-                                    find_id: state.currentNote.id,
+                                    args: [deletedNode, state.currentNote.id],
                                     type: "get node by id",
                                 }))
                             ) {
@@ -685,8 +684,7 @@ const saveDataInspectSlice = createAppSlice({
                 if (!worker) return;
 
                 const targetNote = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
-                    rootNode: dataTree,
-                    find_id: payload.url.id,
+                    args: [dataTree, payload.url.id],
                     type: "get node by id",
                 });
 
@@ -1447,9 +1445,8 @@ const saveDataInspectSlice = createAppSlice({
                     const find_id = state.saveDataInspect.currentNote.id as string;
                     dataTree = await getDataTreeDB();
                     curentNoteInDB = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
-                        find_id: find_id,
-                        rootNode: dataTree,
                         type: "get node by id",
+                        args: [dataTree, find_id],
                     });
                 }
 
@@ -1511,8 +1508,7 @@ const saveDataInspectSlice = createAppSlice({
                     dataTree = await getDataTreeDB();
                     const find_id = state.saveDataInspect.currentNote.id as string;
                     curentNoteInDB = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
-                        find_id: find_id,
-                        rootNode: dataTree,
+                        args: [dataTree, find_id],
                         type: "get node by id",
                     });
                 }

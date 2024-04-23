@@ -4,6 +4,7 @@ import { getNodeById } from "../saveDataParseFunctions/getNodeById";
 import type { IDataTreeRootFolder, TBodyComponentLink } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNodeLink = ReturnType<typeof updateNodeLink>;
+type TParametersUpdateNodeLink = Parameters<typeof updateNodeLink>;
 
 /**
  * изменяет компонент ссылки в заметке
@@ -13,33 +14,33 @@ type TReturnTypeUpdateNodeLink = ReturnType<typeof updateNodeLink>;
  * @param target новое значение target
  * @param value новое значение value
  */
-async function updateNodeLink(
-    rootFolder: IDataTreeRootFolder,
-    noteId: string,
-    componentId: string,
-    target: TBodyComponentLink["target"],
-    value: TBodyComponentLink["value"]
-) {
-    let targetNote = getNodeById(rootFolder, noteId);
+async function updateNodeLink(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    target: TBodyComponentLink["target"];
+    value: TBodyComponentLink["value"];
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
+            if (component.id !== data.componentId) continue;
             if (component.component === "link") {
-                component.target = target;
-                component.value = value;
+                component.target = data.target;
+                component.value = data.value;
             }
             break;
         }
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool };
 }
 
 export { updateNodeLink };
-export type { TReturnTypeUpdateNodeLink };
+export type { TReturnTypeUpdateNodeLink, TParametersUpdateNodeLink };

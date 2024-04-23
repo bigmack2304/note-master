@@ -133,37 +133,37 @@ async function taskRuner(data: TTaskRunerTypes) {
                 result = await updateNoteComponentImageSettings(data);
                 break;
             case "clone filtred tree":
-                result = await cloneFiltredTree(data.orig_obj, data.filtres);
+                result = await cloneFiltredTree(...data.args);
                 break;
             case "delete by id":
-                result = await deleteById(data.data, data.target, data.savedIdGenerator);
+                result = await deleteById(data);
                 break;
             case "delete component in note":
-                result = await deleteComponentInNote(data.rootFolder, data.noteID, data.componentID, data.savedIdGenerator);
+                result = await deleteComponentInNote(data);
                 break;
             case "get node by id":
-                result = getNodeById(data.rootNode, data.find_id);
+                result = getNodeById(...data.args);
                 break;
             case "update Note component link settings":
                 result = await updateNoteComponentLinkSettings(data);
                 break;
             case "update node image":
-                result = await updateNodeImage(data.rootFolder, data.noteId, data.componentId, data.newSrc, data.newName);
+                result = await updateNodeImage(data);
                 break;
             case "update node link":
-                result = await updateNodeLink(data.rootFolder, data.noteId, data.componentId, data.target, data.value);
+                result = await updateNodeLink(data);
                 break;
             case "update node table":
-                result = await updateNodeTable(data.rootFolder, data.noteId, data.componentId, data.newValue);
+                result = await updateNodeTable(data);
                 break;
             case "update node table settings":
                 result = await updateNodeTableSettings(data);
                 break;
             case "update node value":
-                result = await updateNodeValue(data.rootFolder, data.noteId, data.componentId, data.newValue);
+                result = await updateNodeValue(data);
                 break;
             case "update note components order":
-                result = await updNoteComponentsOrder(data.rootFolder, data.noteId, data.componentDragId, data.toComponentDragId);
+                result = await updNoteComponentsOrder(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

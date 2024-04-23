@@ -6,6 +6,7 @@ import type { TTableValue } from "0-shared/types/dataSave";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNodeTable = ReturnType<typeof updateNodeTable>;
+type TParametersUpdateNodeTable = Parameters<typeof updateNodeTable>;
 
 /**
  * изменяет компонент таблицы в заметке
@@ -15,26 +16,26 @@ type TReturnTypeUpdateNodeTable = ReturnType<typeof updateNodeTable>;
  * @param newValue новое значение TTableValue
  * @returns
  */
-async function updateNodeTable(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: TTableValue | "") {
-    let targetNote = getNodeById(rootFolder, noteId);
+async function updateNodeTable(data: { rootFolder: IDataTreeRootFolder; noteId: string; componentId: string; newValue: TTableValue | "" }) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     // TODO: потом нужно это оптимизировать
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
+            if (component.id !== data.componentId) continue;
             if (component.component === "table") {
-                if (newValue === "") {
+                if (data.newValue === "") {
                     component.value = "";
-                    delTableDB({ key: componentId });
+                    delTableDB({ key: data.componentId });
                 } else {
-                    component.value = componentId;
+                    component.value = data.componentId;
                     setTableDB({
                         value: {
-                            id: componentId,
-                            value: newValue,
+                            id: data.componentId,
+                            value: data.newValue,
                         },
-                        key: componentId,
+                        key: data.componentId,
                     });
                 }
             }
@@ -43,11 +44,11 @@ async function updateNodeTable(rootFolder: IDataTreeRootFolder, noteId: string, 
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool };
 }
 
 export { updateNodeTable };
-export type { TReturnTypeUpdateNodeTable };
+export type { TReturnTypeUpdateNodeTable, TParametersUpdateNodeTable };

@@ -13,17 +13,18 @@ import type { IDataTreeRootFolder, IDataTreeFolder, TchildrenType } from "0-shar
  * @param savedIdGenerator - результат вызова savedIdGenerator.instatnceIdGenerator.getIdsArray()
  */
 type TReturnTypeDeleteById = ReturnType<typeof deleteById>;
+type TParametersDeleteById = Parameters<typeof deleteById>;
 
-async function deleteById(data: IDataTreeRootFolder, target_id: string, savedIdGenerator: string[]) {
+async function deleteById(data: { rootNode: IDataTreeRootFolder; target_id: string; savedIdGenerator: string[] }) {
     let parent: IDataTreeFolder;
     let deletedNode: TchildrenType | undefined;
     let resultBool = false;
-    let newIdGenerator = new IdGenerator(new Set(savedIdGenerator));
+    let newIdGenerator = new IdGenerator(new Set(data.savedIdGenerator));
 
     const finder = (node: TchildrenType) => {
-        if (node.id === target_id && node.id !== "root") {
+        if (node.id === data.target_id && node.id !== "root") {
             parent.children = parent.children!.filter((child) => {
-                if (child.id === target_id) {
+                if (child.id === data.target_id) {
                     if (isDataTreeFolder(child) || isDataTreeNote(child)) {
                         const innerIds = getAllIdsInNode(child);
                         delImageDB({ key: innerIds });
@@ -32,7 +33,7 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string, savedIdG
                             newIdGenerator.deleteId(id);
                         });
                     }
-                    newIdGenerator.deleteId(target_id);
+                    newIdGenerator.deleteId(data.target_id);
                     deletedNode = child;
                     return false;
                 }
@@ -55,12 +56,12 @@ async function deleteById(data: IDataTreeRootFolder, target_id: string, savedIdG
         }
     };
 
-    parent = data;
-    let result = finder(data);
+    parent = data.rootNode;
+    let result = finder(data.rootNode);
     if (!result) throw new Error(`node not found`);
-    await setDataTreeDB({ value: data });
+    await setDataTreeDB({ value: data.rootNode });
     return { deletedNode, resultBool, newIdGenerator: newIdGenerator.getIdsArray() };
 }
 
 export { deleteById };
-export type { TReturnTypeDeleteById };
+export type { TReturnTypeDeleteById, TParametersDeleteById };

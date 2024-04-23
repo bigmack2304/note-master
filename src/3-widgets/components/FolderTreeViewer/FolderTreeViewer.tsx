@@ -253,8 +253,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                         workerRef.DWorker,
                         {
                             type: "clone filtred tree",
-                            filtres: findParams,
-                            orig_obj: dataTree,
+                            args: [dataTree, findParams],
                         }
                     );
                     let tempExpandedNodes = [...expandedNodes];

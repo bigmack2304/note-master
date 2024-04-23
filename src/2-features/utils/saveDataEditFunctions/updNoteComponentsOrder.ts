@@ -5,6 +5,7 @@ import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdNoteComponentsOrder = ReturnType<typeof updNoteComponentsOrder>;
+type TParametersUpdNoteComponentsOrder = Parameters<typeof updNoteComponentsOrder>;
 
 /**
  * меняет порядок компонентов в заметке
@@ -13,8 +14,13 @@ type TReturnTypeUpdNoteComponentsOrder = ReturnType<typeof updNoteComponentsOrde
  * @param componentDragId id компонента который двигаем
  * @param toComponentDragId id компонента на место которого поставим "componentDragId"
  */
-async function updNoteComponentsOrder(rootFolder: IDataTreeRootFolder, noteId: string, componentDragId: string, toComponentDragId: string) {
-    let targetNote = getNodeById(rootFolder, noteId);
+async function updNoteComponentsOrder(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentDragId: string;
+    toComponentDragId: string;
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     if (targetNote && isDataTreeNote(targetNote)) {
@@ -25,11 +31,11 @@ async function updNoteComponentsOrder(rootFolder: IDataTreeRootFolder, noteId: s
             if (dragComponentIndex && toComponentIndex) {
                 break;
             }
-            if (targetNote.body[i].id === componentDragId) {
+            if (targetNote.body[i].id === data.componentDragId) {
                 dragComponentIndex = i;
                 continue;
             }
-            if (targetNote.body[i].id === toComponentDragId) {
+            if (targetNote.body[i].id === data.toComponentDragId) {
                 toComponentIndex = i;
                 continue;
             }
@@ -41,11 +47,11 @@ async function updNoteComponentsOrder(rootFolder: IDataTreeRootFolder, noteId: s
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool };
 }
 
 export { updNoteComponentsOrder };
-export type { TReturnTypeUpdNoteComponentsOrder };
+export type { TReturnTypeUpdNoteComponentsOrder, TParametersUpdNoteComponentsOrder };

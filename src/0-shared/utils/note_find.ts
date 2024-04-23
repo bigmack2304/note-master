@@ -4,6 +4,7 @@ import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { IDataTreeRootFolder, IDataTreeFolder, IDataTreeNote } from "0-shared/types/dataSave";
 
 type TReturnTypeCloneFiltredTree = ReturnType<typeof cloneFiltredTree>;
+type TParametersCloneFiltredTree = Parameters<typeof cloneFiltredTree>;
 
 /**
  *  функционал для поиска заметок
@@ -124,4 +125,4 @@ async function checkFilter(note: IDataTreeNote, filtres: IFindNodeParametres) {
 }
 
 export { cloneFiltredTree };
-export type { TReturnTypeCloneFiltredTree };
+export type { TReturnTypeCloneFiltredTree, TParametersCloneFiltredTree };

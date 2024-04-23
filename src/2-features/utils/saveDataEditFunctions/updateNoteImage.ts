@@ -5,6 +5,7 @@ import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNodeImage = ReturnType<typeof updateNodeImage>;
+type TParametersUpdateNodeImage = Parameters<typeof updateNodeImage>;
 
 /**
  * изменяет компонент картинки в заметке
@@ -14,18 +15,24 @@ type TReturnTypeUpdateNodeImage = ReturnType<typeof updateNodeImage>;
  * @param newValue новое значение value
  * @returns
  */
-async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newSrc: string, newName: string) {
-    let targetNote = getNodeById(rootFolder, noteId);
+async function updateNodeImage(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentId: string;
+    newSrc: string;
+    newName: string;
+}) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     // TODO: потом нужно это оптимизировать
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
+            if (component.id !== data.componentId) continue;
             if (component.component === "image") {
-                component.fileName = newName;
+                component.fileName = data.newName;
 
-                if (newSrc === "") {
+                if (data.newSrc === "") {
                     component.value = "";
                     component.desc = "";
                 } else {
@@ -33,8 +40,8 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
                 }
                 setImageDB({
                     value: {
-                        id: componentId,
-                        src: newSrc,
+                        id: data.componentId,
+                        src: data.newSrc,
                     },
                     key: component.id,
                 });
@@ -44,11 +51,11 @@ async function updateNodeImage(rootFolder: IDataTreeRootFolder, noteId: string, 
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool };
 }
 
 export { updateNodeImage };
-export type { TReturnTypeUpdateNodeImage };
+export type { TReturnTypeUpdateNodeImage, TParametersUpdateNodeImage };

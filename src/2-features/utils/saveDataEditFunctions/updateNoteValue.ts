@@ -4,6 +4,7 @@ import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
 import type { IDataTreeRootFolder } from "0-shared/types/dataSave";
 
 type TReturnTypeUpdateNodeValue = ReturnType<typeof updateNodeValue>;
+type TParametersUpdateNodeValue = Parameters<typeof updateNodeValue>;
 
 /**
  * изменяет своиство value в обьекте заметки
@@ -13,25 +14,25 @@ type TReturnTypeUpdateNodeValue = ReturnType<typeof updateNodeValue>;
  * @param newValue новое значение value
  * @returns
  */
-async function updateNodeValue(rootFolder: IDataTreeRootFolder, noteId: string, componentId: string, newValue: string) {
-    let targetNote = getNodeById(rootFolder, noteId);
+async function updateNodeValue(data: { rootFolder: IDataTreeRootFolder; noteId: string; componentId: string; newValue: string }) {
+    let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
 
     // TODO: потом нужно это оптимизировать
     if (targetNote && isDataTreeNote(targetNote)) {
         for (let component of targetNote.body) {
-            if (component.id !== componentId) continue;
-            component.value = newValue;
+            if (component.id !== data.componentId) continue;
+            component.value = data.newValue;
             break;
         }
 
         targetNote.lastEditTime = Date.now();
         resultBool = true;
-        await setDataTreeDB({ value: rootFolder });
+        await setDataTreeDB({ value: data.rootFolder });
     }
 
     return { targetNote, resultBool };
 }
 
 export { updateNodeValue };
-export type { TReturnTypeUpdateNodeValue };
+export type { TReturnTypeUpdateNodeValue, TParametersUpdateNodeValue };
