@@ -12,6 +12,7 @@ import type {
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentImageSettingsOnWorker,
+    TMessageUpdateNoteComponentTextSettingsOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -27,6 +28,7 @@ import {
     isGetNodeById,
     isUpdateNoteComponentLinkSettings,
     isUpdateNoteComponentImageSettings,
+    isUpdateNoteComponentTextSettings,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -40,6 +42,7 @@ import { updateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNod
 import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import { updateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
 import { updateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
+import { updateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -53,7 +56,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNodeLinkOnWorker
     | TMessageGetNodeByIdOnWorker
     | TMessageUpdateNoteComponentLinkSettingsOnWorker
-    | TMessageUpdateNoteComponentImageSettingsOnWorker;
+    | TMessageUpdateNoteComponentImageSettingsOnWorker
+    | TMessageUpdateNoteComponentTextSettingsOnWorker;
 
 /**
  * получение данных
@@ -80,7 +84,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNodeValue(data) ||
         isCloneFiltredTree(data) ||
         isDelCompInNote(data) ||
-        isDelByIdData(data)
+        isDelByIdData(data) ||
+        isUpdateNoteComponentTextSettings(data)
     ) {
         taskRuner(data);
         return;
@@ -164,6 +169,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "update note components order":
                 result = await updNoteComponentsOrder(data);
+                break;
+            case "update note component text settings":
+                result = await updateNoteComponentTextSettings(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

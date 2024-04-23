@@ -10,6 +10,7 @@ import type { TParametersUpdateNodeValue } from "2-features/utils/saveDataEditFu
 import type { TParametersDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
 import type { TParametersDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import type { TParametersCloneFiltredTree } from "0-shared/utils/note_find";
+import type { TParametersUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -127,6 +128,15 @@ type TMessageUpdateNoteComponentImageSettingsOnWorker<FUNC_PARAMS = TParametersU
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения updateNoteComponentTextSettings в воркере
+ */
+type TMessageUpdateNoteComponentTextSettingsOnWorker<FUNC_PARAMS = TParametersUpdateNoteComponentTextSettings[0]> = {
+    type: "update note component text settings";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -141,4 +151,5 @@ export type {
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentImageSettingsOnWorker,
+    TMessageUpdateNoteComponentTextSettingsOnWorker,
 };

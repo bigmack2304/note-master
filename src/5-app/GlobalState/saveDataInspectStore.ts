@@ -9,7 +9,6 @@ import {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
-    updateNoteComponentTextSettings as componentTextSettings,
     updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
     updateNoteComponentListSettings as componentListSettings,
@@ -80,6 +79,7 @@ import type {
     TMessageUpdateNodeLinkOnWorker,
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
+    TMessageUpdateNoteComponentTextSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -94,6 +94,7 @@ import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDa
 import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
+import { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -848,10 +849,15 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNote, resultBool } = await componentTextSettings({
+                const { targetNote: updatedNote, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentTextSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentTextSettings
+                >(worker, {
                     rootFolder: dataTree,
                     noteId: payload.noteId,
                     componentId: payload.componentId,
@@ -859,6 +865,7 @@ const saveDataInspectSlice = createAppSlice({
                     textFormat: payload.textFormat,
                     fontValue: payload.fontValue,
                     lineBreak: payload.lineBreak,
+                    type: "update note component text settings",
                 });
 
                 if (!resultBool) {

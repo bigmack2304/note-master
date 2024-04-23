@@ -14,6 +14,7 @@ import type {
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentImageSettingsOnWorker,
+    TMessageUpdateNoteComponentTextSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -272,6 +273,22 @@ function isUpdateNoteComponentImageSettings(value: any): value is TMessageUpdate
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNoteComponentTextSettingsOnWorker dedicated воркера
+ */
+function isUpdateNoteComponentTextSettings(value: any): value is TMessageUpdateNoteComponentTextSettingsOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update note component text settings")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("textBackground" in value) || ("textBackground" in value && typeof value.textBackground !== "boolean")) return false;
+    if (!("textFormat" in value) || ("textFormat" in value && typeof value.textFormat !== "boolean")) return false;
+    if (!("fontValue" in value) || ("fontValue" in value && typeof value.fontValue !== "string")) return false;
+    if (!("lineBreak" in value) || ("lineBreak" in value && typeof value.lineBreak !== "boolean")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -291,5 +308,6 @@ export {
     isGetNodeById,
     isUpdateNoteComponentLinkSettings,
     isUpdateNoteComponentImageSettings,
+    isUpdateNoteComponentTextSettings,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };
