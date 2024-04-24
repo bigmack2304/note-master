@@ -1,5 +1,4 @@
 import {
-    noteDeleteTag,
     noteAddTag as noteAdTag,
     projectAddTag,
     projectDeleteTag as projectDelTag,
@@ -69,6 +68,7 @@ import type {
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
+    TMessageNoteDeleteTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -89,6 +89,7 @@ import type { TReturnTypeUpdateNodeCompleted } from "2-features/utils/saveDataEd
 import type { TReturnTypeUpdateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 import type { TReturnTypeAddNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 import type { TReturnTypeNodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
+import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
@@ -1356,11 +1357,16 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
-                const currentNote = state.saveDataInspect.currentNote;
+                const currentNoteID = state.saveDataInspect.currentNote?.id as string | undefined;
+                const worker = workerRef.DWorker;
 
-                if (!currentNote || !dataTree) return;
+                if (!currentNoteID || !dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: editedNote, resultBool } = await noteDeleteTag(dataTree, currentNote.id, payload.tag);
+                const { targetNote: editedNote, resultBool } = await runTaskOnWorker<
+                    TMessageNoteDeleteTagOnWorker,
+                    TReturnTypeNoteDeleteTag
+                >(worker, { rootFolder: dataTree, targetNoteID: currentNoteID, tag: payload.tag, type: "note delete tag" });
 
                 if (!resultBool) {
                     throw new Error();

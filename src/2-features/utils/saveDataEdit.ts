@@ -41,32 +41,6 @@ import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
 
 /**
- * удаляет тег у заметки
- * @param data обьект IDataTreeRootFolder
- * @param targetNoteID id заметки в которой удаляем
- * @param tag обьект тега который нужно убрать
- */
-async function noteDeleteTag(data: IDataTreeRootFolder, targetNoteID: string, tag: IGlobalTag) {
-    let targetNote = getNodeById(data, targetNoteID);
-    let resultBool = false;
-
-    if (!targetNote) return { targetNote: null, resultBool };
-    if (!isDataTreeNote(targetNote)) return { targetNote: null, resultBool };
-    if (!("tags" in targetNote)) return { targetNote: null, resultBool };
-
-    targetNote.tags = targetNote.tags!.filter((tagName) => {
-        if (tagName === tag.tag_name) return false;
-        return true;
-    });
-
-    targetNote.lastEditTime = Date.now();
-    resultBool = true;
-    await setDataTreeDB({ value: data });
-
-    return { targetNote, resultBool };
-}
-
-/**
  * добавляет тег в заметку
  * @param data обьект IDataTreeRootFolder
  * @param targetNoteID id заметки в которую добавляем
@@ -251,4 +225,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
+export { noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };

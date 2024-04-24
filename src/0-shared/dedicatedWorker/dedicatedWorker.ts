@@ -20,6 +20,7 @@ import type {
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
+    TMessageNoteDeleteTagOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -43,6 +44,7 @@ import {
     isUpdateNodeName,
     isAddNodeTo,
     isNodeMuveTo,
+    isNoteDeleteTag,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -64,6 +66,7 @@ import { updateNodeCompleted } from "2-features/utils/saveDataEditFunctions/upda
 import { updateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 import { addNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 import { nodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
+import { noteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -85,7 +88,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNodeCompletedOnWorker
     | TMessageUpdateNodeNameOnWorker
     | TMessageAddNodeToOnWorker
-    | TMessageNodeMuveToOnWorker;
+    | TMessageNodeMuveToOnWorker
+    | TMessageNoteDeleteTagOnWorker;
 
 /**
  * получение данных
@@ -120,7 +124,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNodeCompleted(data) ||
         isUpdateNodeName(data) ||
         isAddNodeTo(data) ||
-        isNodeMuveTo(data)
+        isNodeMuveTo(data) ||
+        isNoteDeleteTag(data)
     ) {
         taskRuner(data);
         return;
@@ -229,6 +234,10 @@ async function taskRuner(data: TTaskRunerTypes) {
             case "node move to":
                 result = await nodeMuveTo(data);
                 break;
+            case "note delete tag":
+                result = await noteDeleteTag(data);
+                break;
+
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);
                 throw new Error();

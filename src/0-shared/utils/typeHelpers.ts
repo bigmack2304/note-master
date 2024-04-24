@@ -1,5 +1,5 @@
 import { ForwardRefRenderFunction } from "react";
-import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave } from "0-shared/types/dataSave";
+import type { IDataTreeNote, IDataTreeFolder, TNoteBody, IDataSave, IGlobalTag } from "0-shared/types/dataSave";
 import type {
     TMessageDataType,
     TMessageDelById,
@@ -22,6 +22,7 @@ import type {
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
+    TMessageNoteDeleteTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -52,6 +53,13 @@ type Ref<T> = Parameters<ForwardRefRenderFunction<T>>[1];
 type TupleToObject<T extends any[], K extends { [I in keyof T]: PropertyKey }> = {
     [I in keyof T as I extends keyof any[] ? never : K[I]]: T[I];
 };
+
+function isTGlobalTag(value: any): value is IGlobalTag {
+    if (typeof value !== "object") return false;
+    if (!("tag_name" in value) || ("tag_name" in value && typeof value.tag_name !== "string")) return false;
+    if (!("color" in value) || ("color" in value && typeof value.color !== "string")) return false;
+    return true;
+}
 
 /**
  * проверяет чтобы сущьность пренадлежала к типу IDataTreeNote
@@ -391,6 +399,18 @@ function isNodeMuveTo(value: any): value is TMessageNodeMuveToOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageNoteDeleteTagOnWorker dedicated воркера
+ */
+function isNoteDeleteTag(value: any): value is TMessageNoteDeleteTagOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "note delete tag")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("targetNoteID" in value) || ("targetNoteID" in value && typeof value.targetNoteID !== "string")) return false;
+    if (!("tag" in value) || ("tag" in value && !isTGlobalTag(value.tag))) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -418,5 +438,7 @@ export {
     isUpdateNodeName,
     isAddNodeTo,
     isNodeMuveTo,
+    isTGlobalTag,
+    isNoteDeleteTag,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };
