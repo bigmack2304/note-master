@@ -64,42 +64,6 @@ async function updateNodeCompleted(rootFolder: IDataTreeRootFolder, noteId: stri
 }
 
 /**
- * изменяет настройки компонента заголовка в обьекте заметки
- * @param rootFolder обьект IDataTreeRootFolder
- * @param noteId id заметки в которой редактируем компонент
- * @param componentId id компонента в котором меняется value
- * @param textAligin выравнивание текста
- * @param headerSize размер заголовка
- */
-async function updateNoteComponentHeaderSettings(data: {
-    rootFolder: IDataTreeRootFolder;
-    noteId: string;
-    componentId: string;
-    textAligin: TBodyComponentHeader["textAligin"];
-    headerSize: TBodyComponentHeader["headerSize"];
-}) {
-    let targetNote = getNodeById(data.rootFolder, data.noteId);
-    let resultBool = false;
-
-    if (targetNote && isDataTreeNote(targetNote)) {
-        for (let component of targetNote.body) {
-            if (component.id !== data.componentId) continue;
-            if (component.component === "header") {
-                component.headerSize = data.headerSize;
-                component.textAligin = data.textAligin;
-
-                targetNote.lastEditTime = Date.now();
-                resultBool = true;
-                await setDataTreeDB({ value: data.rootFolder });
-                break;
-            }
-        }
-    }
-
-    return { targetNote, resultBool };
-}
-
-/**
  * изменяет настройки компонента кода в обьекте заметки
  * @param rootFolder обьект IDataTreeRootFolder
  * @param noteId id заметки в которой редактируем компонент
@@ -461,6 +425,5 @@ export {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
-    updateNoteComponentHeaderSettings,
     updateNoteComponentCodeSettings,
 };

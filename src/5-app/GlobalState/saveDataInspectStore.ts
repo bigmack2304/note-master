@@ -9,7 +9,6 @@ import {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
-    updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
 } from "2-features/utils/saveDataEdit";
 import {
@@ -68,6 +67,7 @@ import type {
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentTextSettingsOnWorker,
     TMessageUpdateNoteComponentListSettingsOnWorker,
+    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -82,6 +82,7 @@ import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunct
 import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
 import type { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 import type { TReturnTypeUpdateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
+import type { TReturnTypeUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -960,15 +961,21 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNote, resultBool } = await componentHeaderSettings({
+                const { targetNote: updatedNote, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentHeaderSettings
+                >(worker, {
                     rootFolder: dataTree,
                     noteId: payload.noteId,
                     componentId: payload.componentId,
                     headerSize: payload.headerSize,
                     textAligin: payload.textAligin,
+                    type: "update note component header settings",
                 });
 
                 if (!resultBool) {

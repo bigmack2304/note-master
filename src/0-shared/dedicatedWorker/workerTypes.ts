@@ -12,6 +12,7 @@ import type { TParametersDeleteById } from "2-features/utils/saveDataEditFunctio
 import type { TParametersCloneFiltredTree } from "0-shared/utils/note_find";
 import type { TParametersUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 import type { TParametersUpdateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
+import type { TParametersUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -147,6 +148,15 @@ type TMessageUpdateNoteComponentListSettingsOnWorker<FUNC_PARAMS = TParametersUp
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения updateNoteComponentHeaderSettings в воркере
+ */
+type TMessageUpdateNoteComponentHeaderSettingsOnWorker<FUNC_PARAMS = TParametersUpdateNoteComponentHeaderSettings[0]> = {
+    type: "update note component header settings";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -163,4 +173,5 @@ export type {
     TMessageUpdateNoteComponentImageSettingsOnWorker,
     TMessageUpdateNoteComponentTextSettingsOnWorker,
     TMessageUpdateNoteComponentListSettingsOnWorker,
+    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
 };

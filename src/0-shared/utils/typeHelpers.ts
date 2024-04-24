@@ -16,6 +16,7 @@ import type {
     TMessageUpdateNoteComponentImageSettingsOnWorker,
     TMessageUpdateNoteComponentTextSettingsOnWorker,
     TMessageUpdateNoteComponentListSettingsOnWorker,
+    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -305,6 +306,20 @@ function isUpdateNoteComponentListSettings(value: any): value is TMessageUpdateN
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNoteComponentHeaderSettingsOnWorker dedicated воркера
+ */
+function isUpdateNoteComponentHeaderSettings(value: any): value is TMessageUpdateNoteComponentHeaderSettingsOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update note component header settings")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("textAligin" in value) || ("textAligin" in value && typeof value.textAligin !== "string")) return false;
+    if (!("headerSize" in value) || ("headerSize" in value && typeof value.headerSize !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -326,5 +341,6 @@ export {
     isUpdateNoteComponentImageSettings,
     isUpdateNoteComponentTextSettings,
     isUpdateNoteComponentListSettings,
+    isUpdateNoteComponentHeaderSettings,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };
