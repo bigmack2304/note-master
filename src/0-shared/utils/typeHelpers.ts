@@ -138,8 +138,8 @@ function isFunctionData(value: any): value is TMessageDataType {
 function isDelByIdData(value: any): value is TMessageDelById {
     if (typeof value !== "object") return false;
     if (!("type" in value) || ("type" in value && value.type !== "delete by id")) return false;
-    if (!("data" in value) || ("data" in value && !isDataTreeFolder(value.data))) return false;
-    if (!("target" in value) || ("target" in value && typeof value.target !== "string")) return false;
+    if (!("rootNode" in value) || ("rootNode" in value && !isDataTreeFolder(value.rootNode))) return false;
+    if (!("target_id" in value) || ("target_id" in value && typeof value.target_id !== "string")) return false;
     if (!("savedIdGenerator" in value) || ("savedIdGenerator" in value && !Array.isArray(value.savedIdGenerator))) return false;
     return true;
 }
