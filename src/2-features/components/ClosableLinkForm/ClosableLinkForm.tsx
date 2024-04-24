@@ -5,11 +5,11 @@ import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { OkButton } from "0-shared/components/OkButton/OkButton";
 import * as style from "./ClosableLinkFormStyle";
-import type { TBodyComponentLink } from "0-shared/types/dataSave";
-import type { SelectChangeEvent } from "@mui/material";
 import { SelectNoteButton } from "../SelectNoteButton/SelectNoteButton";
-import type { TRadioData } from "../NoteSelector/NoteSelector";
 import "./style.scss";
+import type { TBodyComponentLink } from "0-shared/types/dataSave";
+import type { TRadioData } from "../NoteSelector/NoteSelector";
+import type { SelectChangeEvent } from "@mui/material";
 
 // одностройчный текстовый инпут + кнопки (ок, отмена)
 
@@ -96,7 +96,14 @@ function ClosableLinkForm({ addClassNames = [], onClose, onCloseSave, urlValue, 
                 </Box>
                 <FormControl className="ClosableLinkForm__select_wrapper">
                     <InputLabel id={selectId}>Цель</InputLabel>
-                    <Select labelId={selectId} value={selectValue} label="Цель" onChange={onSelectChange} input={<OutlinedInput label="Цель" />} size="small">
+                    <Select
+                        labelId={selectId}
+                        value={selectValue}
+                        label="Цель"
+                        onChange={onSelectChange}
+                        input={<OutlinedInput label="Цель" />}
+                        size="small"
+                    >
                         <MenuItem divider value="web">
                             <ListItemText>URL</ListItemText>
                         </MenuItem>

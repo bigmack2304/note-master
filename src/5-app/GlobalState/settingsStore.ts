@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 import { get_stprage_data, storage_save_value } from "2-features/utils/appLoacalStorage";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface ISettingsSlice {
     highlightingTagsInForms: boolean;

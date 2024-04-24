@@ -7,7 +7,6 @@ import { List, ListItem, TextField } from "@mui/material";
 import type { PaletteMode, SxProps } from "@mui/material";
 import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import { useTags } from "0-shared/hooks/useTags";
 import { AllTagsEdit } from "../AllTagsEdit/AllTagsEdit";
 import { AddNewTagForm } from "../AddNewTagForm/AddNewTagForm";
 import "./NewTagButton.scss";
@@ -49,7 +48,14 @@ function NewTagButton({ addClassNames = [] }: TNewTagButtonProps) {
 
     return (
         <>
-            <IconButton className={genClassName} aria-label="упраление тегами" title={"Упраление тегами"} size="small" onClick={onButtonClick} disabled={!isProjectOpen}>
+            <IconButton
+                className={genClassName}
+                aria-label="упраление тегами"
+                title={"Упраление тегами"}
+                size="small"
+                onClick={onButtonClick}
+                disabled={!isProjectOpen}
+            >
                 <LocalOfferIcon fontSize="small" />
             </IconButton>
             <DialogWindow addClassNames={["NewTag_window"]} headerText="Упраление тегами" isOpen={isDialogOpen} onClose={onDialogClose}>

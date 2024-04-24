@@ -13,9 +13,9 @@ import {
     redirectNoteComponentLink,
 } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteLinkEditDialog } from "../NoteLinkEditDialog/NoteLinkEditDialog";
+import { genTextDopClasses } from "./EditableLinkStyle";
 import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import type { TRadioData } from "../NoteSelector/NoteSelector";
-import { genTextDopClasses } from "./EditableLinkStyle";
 
 type TEditableLinkProps = {
     addClassNames?: string[];
@@ -121,7 +121,9 @@ function EditableLink({ addClassNames = [], componentData }: TEditableLinkProps)
         setLinkValue(data.value);
 
         if (!componentData || !currentNoteData) return;
-        dispatch(updateNoteComponentLink({ noteId: currentNoteData.id, componentId: componentData.id, target: data.target, value: data.value }));
+        dispatch(
+            updateNoteComponentLink({ noteId: currentNoteData.id, componentId: componentData.id, target: data.target, value: data.value })
+        );
     };
 
     // функции окна с вормой настроек заголовка
@@ -130,10 +132,22 @@ function EditableLink({ addClassNames = [], componentData }: TEditableLinkProps)
         setIsLinkEditDialog(false);
     };
 
-    const onEditHeaderDialogCloseSave = (data: { isLabel: TBodyComponentLink["isLabel"]; isBg: TBodyComponentLink["background"]; labelVal: TBodyComponentLink["labelValue"] }) => {
+    const onEditHeaderDialogCloseSave = (data: {
+        isLabel: TBodyComponentLink["isLabel"];
+        isBg: TBodyComponentLink["background"];
+        labelVal: TBodyComponentLink["labelValue"];
+    }) => {
         setIsLinkEditDialog(false);
         if (!componentData || !currentNoteData) return;
-        dispatch(updateNoteComponentLinkSettings({ componentId: componentData.id, noteId: currentNoteData.id, isBg: data.isBg, isLabel: data.isLabel, labelVal: data.labelVal }));
+        dispatch(
+            updateNoteComponentLinkSettings({
+                componentId: componentData.id,
+                noteId: currentNoteData.id,
+                isBg: data.isBg,
+                isLabel: data.isLabel,
+                labelVal: data.labelVal,
+            })
+        );
     };
 
     return (
@@ -171,7 +185,13 @@ function EditableLink({ addClassNames = [], componentData }: TEditableLinkProps)
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isLinkEditDialog && <NoteLinkEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
+                    {isLinkEditDialog && (
+                        <NoteLinkEditDialog
+                            onClose={onEditHeaderDialogClose}
+                            onCloseSave={onEditHeaderDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

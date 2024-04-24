@@ -1,11 +1,11 @@
 import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, Typography, TextField } from "@mui/material";
-import type { SxProps, SelectChangeEvent } from "@mui/material";
-import type { TBodyComponentCode } from "0-shared/types/dataSave";
 import { codeLanguages } from "0-shared/components/NoteCode/NoteCodeValues";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 import "./style.scss";
+import type { SelectChangeEvent } from "@mui/material";
+import type { TBodyComponentCode } from "0-shared/types/dataSave";
 
 type TOnSaveType = {
     selectCodeTheme: TBodyComponentCode["codeTheme"];
@@ -69,7 +69,14 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+        >
             <List className="NoteCodeEditDialog__content">
                 <ListItem divider>
                     <ListItemText>Цветовая тема</ListItemText>
@@ -96,7 +103,12 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 </ListItem>
                 <ListItem>
                     <ListItemText></ListItemText>
-                    <TextField className="NoteCodeEditDialog__syntax_find" placeholder="поиск языка" onChange={onInputLanguageChange} value={inputLangValue} />
+                    <TextField
+                        className="NoteCodeEditDialog__syntax_find"
+                        placeholder="поиск языка"
+                        onChange={onInputLanguageChange}
+                        value={inputLangValue}
+                    />
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Язык</ListItemText>
@@ -127,7 +139,13 @@ function NoteCodeEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 </ListItem>
                 <ListItem divider>
                     <ListItemText>Описание содержимого</ListItemText>
-                    <TextField value={expandDesc} onChange={onExpandDescChange} className="NoteCodeEditDialog__expand_desc" label="Описание" variant="outlined" />
+                    <TextField
+                        value={expandDesc}
+                        onChange={onExpandDescChange}
+                        className="NoteCodeEditDialog__expand_desc"
+                        label="Описание"
+                        variant="outlined"
+                    />
                 </ListItem>
             </List>
         </DialogWindowAlt>

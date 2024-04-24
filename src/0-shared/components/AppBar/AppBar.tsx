@@ -1,11 +1,10 @@
 import React from "react";
 import { AppBar as MuiAppBar, Toolbar } from "@mui/material";
-
+import "./AppBar.scss";
 import type { OverridableComponent } from "@mui/material/OverridableComponent";
 import type { AppBarTypeMap } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { SxProps } from "@mui/material";
-import "./AppBar.scss";
 
 type TAppBarProps = {
     children?: React.ReactNode;

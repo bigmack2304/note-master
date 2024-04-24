@@ -3,15 +3,19 @@ import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/Dop
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { deleteNoteComponent, updateNoteComponentTableDbSettings, updateNoteComponentTableDbData } from "5-app/GlobalState/saveDataInspectStore";
+import {
+    deleteNoteComponent,
+    updateNoteComponentTableDbSettings,
+    updateNoteComponentTableDbData,
+} from "5-app/GlobalState/saveDataInspectStore";
 import { TableEditWindow } from "../TableEditWindow/TableEditWindow";
 import { genTextDopClasses } from "./EditableTableStyle";
-import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 import { useTableValue } from "0-shared/hooks/useTableValue";
 import { NoteTable } from "../NoteTable/NoteTable";
 import { NoteTableEditDialog } from "../NoteTableEditDialog/NoteTableEditDialog";
 import { ErrorCacher } from "0-shared/hoc/ErrorCacher/ErrorCacher";
 import "./EditableTable.scss";
+import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 
 type TEditableTableProps = {
     addClassNames?: string[];
@@ -132,7 +136,13 @@ function EditableTable({ addClassNames = [], componentData }: TEditableTableProp
         <>
             {isEdit ? (
                 <ErrorCacher errDialog={false}>
-                    <TableEditWindow isOpen={true} onClose={onEditExit} tableData={tableValue} addClassNames={["EditableTable__editMod"]} backLight={componentData.backlight} />
+                    <TableEditWindow
+                        isOpen={true}
+                        onClose={onEditExit}
+                        tableData={tableValue}
+                        addClassNames={["EditableTable__editMod"]}
+                        backLight={componentData.backlight}
+                    />
                 </ErrorCacher>
             ) : (
                 <>
@@ -159,7 +169,13 @@ function EditableTable({ addClassNames = [], componentData }: TEditableTableProp
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isTableEditDialog && <NoteTableEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
+                    {isTableEditDialog && (
+                        <NoteTableEditDialog
+                            onClose={onEditHeaderDialogClose}
+                            onCloseSave={onEditHeaderDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

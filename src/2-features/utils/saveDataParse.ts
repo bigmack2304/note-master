@@ -1,6 +1,6 @@
 import { isDataTreeFolder, isDataTreeNote, isDataSave } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "./saveDataUtils";
-import type { IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder, IDataSave } from "0-shared/types/dataSave";
+import type { IDataTreeFolder, IDataTreeNote, TNoteBody, IDataTreeRootFolder, IDataSave } from "0-shared/types/dataSave";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 

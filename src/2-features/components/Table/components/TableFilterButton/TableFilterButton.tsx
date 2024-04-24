@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useId, useRef } from "react";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { FilterButton } from "0-shared/components/FilterButton/FilterButton";
-import { TextField, Divider, Box, FormGroup, FormControlLabel, Checkbox, Button, MenuItem, FormControl, InputLabel, NativeSelect, Select } from "@mui/material";
+import { TextField, Divider, Box, Button, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import { deep_object_is_equal } from "0-shared/utils/is_equal";
+import "./TableFilterButton.scss";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 import type { TTableValue } from "0-shared/types/dataSave";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import { deep_object_is_equal } from "0-shared/utils/is_equal";
-import * as style from "./TableFilterButtonStyle";
-import "./TableFilterButton.scss";
 
 interface TTableFilterButtonProps extends GetProps<typeof FilterButton> {
     allColumns: TTableValue["headers"];
@@ -25,7 +24,15 @@ type TOperators = "" | ">" | "<" | ">=" | "<=" | "=" | "'т'.." | "..'т'.." | "
  * кнопка для фильтрации колонок таблицы
  * @ дублирует пропсы ColumnsButton
  */
-function TableFilterButton({ addClassNames = [], allColumns, onCloseSave, filterColumnIndex, filterOperator, filterValue, ...props }: TTableFilterButtonProps) {
+function TableFilterButton({
+    addClassNames = [],
+    allColumns,
+    onCloseSave,
+    filterColumnIndex,
+    filterOperator,
+    filterValue,
+    ...props
+}: TTableFilterButtonProps) {
     const defaultClassName = "TableFilterButton";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const [contextMenuAnchorEl, setContextMenuAnchorEl] = useState<null | HTMLElement>(null);

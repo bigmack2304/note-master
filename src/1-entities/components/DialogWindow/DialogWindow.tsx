@@ -1,15 +1,13 @@
 import React from "react";
 import { Dialog, DialogActions, DialogTitle, DialogContent, Button } from "@mui/material";
-import type { SxProps, DialogProps } from "@mui/material";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 import { TransitionSlideRightForvardRef } from "0-shared/components/TransitionSlideFR/TransitionSlideFR";
 import { TRANSITION_DURATION } from "5-app/settings";
-import type { PaletteMode } from "@mui/material";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { Box } from "@mui/material";
 import * as styles from "./DialogWindowStyle";
 import "./DialogWindow.scss";
+import type { DialogProps } from "@mui/material";
+import type { GetProps } from "0-shared/utils/typeHelpers";
 
 // диалоговое окно на весь экран с возможностью закрытия
 

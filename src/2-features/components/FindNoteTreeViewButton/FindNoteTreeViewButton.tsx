@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { FindNoteButton } from "0-shared/components/FindNoteButton/FindNoteButton";
-import { EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5-app/settings";
-import { useEventDispatch } from "0-shared/hooks/useEventDispatch";
 import { setFindNodeTree, resetFindNodeTree } from "5-app/GlobalState/toolBarStore";
 import { FindNoteDialog } from "../FindNoteDialog/FindNoteDialog";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
@@ -61,7 +59,14 @@ function FindNoteTreeViewButton({ addClassNames = [], type }: TFindNoteTreeViewB
 
     return (
         <>
-            <FindNoteButton addClassNames={[genClassName]} disabled={!isProjectOpen} onClick={onButtonClick} size="small" title="Поиск заметки" isActive={Boolean(findData)} />
+            <FindNoteButton
+                addClassNames={[genClassName]}
+                disabled={!isProjectOpen}
+                onClick={onButtonClick}
+                size="small"
+                title="Поиск заметки"
+                isActive={Boolean(findData)}
+            />
             {isDialogOpen && (
                 <FindNoteDialog
                     dialogHeader="Поиск заметки"

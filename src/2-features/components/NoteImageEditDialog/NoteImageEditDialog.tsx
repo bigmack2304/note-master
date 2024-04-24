@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
-import { List, ListItem, ListItemText, TextField } from "@mui/material";
+import { List, ListItem, ListItemText } from "@mui/material";
 import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
-import * as styles from "./NoteImageEditDialogStyle";
 import "./NoteImageEditDialog.scss";
 import type { TBodyComponentImage } from "0-shared/types/dataSave";
 
@@ -39,7 +38,14 @@ function NoteImageEditDialog({ onClose, onCloseSave, dialogHeader = "Управ�
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+        >
             <List className="NoteImageEditDialog__list">
                 <ListItem divider>
                     <ListItemText>Показать описание</ListItemText>

@@ -4,13 +4,13 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
-import type { SelectChangeEvent } from "@mui/material/Select";
-import type { TTagColors } from "0-shared/types/dataSave";
-import type { PaletteMode, SxProps } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { ColorBox } from "0-shared/components/ColorBox/ColorBox";
 import { TAGS_COLORS_LIGHT } from "5-app/settings";
 import { useEventListener } from "0-shared/hooks/useEventListener";
+import type { SelectChangeEvent } from "@mui/material/Select";
+import type { TTagColors } from "0-shared/types/dataSave";
+import type { PaletteMode, SxProps } from "@mui/material";
 
 type TSelectValue = TTagColors | "";
 

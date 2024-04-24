@@ -9,7 +9,7 @@ type TParametersNoteAddTag = Parameters<typeof noteAddTag>;
 
 /**
  * добавляет тег в заметку
- * @param data обьект IDataTreeRootFolder
+ * @param rootFolder обьект IDataTreeRootFolder
  * @param targetNoteID id заметки в которую добавляем
  * @param tag имена тегов которые нужно добавить
  */

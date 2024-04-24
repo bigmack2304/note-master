@@ -9,7 +9,7 @@ type TParametersProjectDeleteTag = Parameters<typeof projectDeleteTag>;
 /**
  * удаляет тег из проекта
  * @param tagData обьект
- * @param data обьект IDataTreeRootFolder
+ * @param rootFolder обьект IDataTreeRootFolder
  * @param tagName - имя тега который нужно удалить
  */
 async function projectDeleteTag(data: { tagData: IAllTags; rootFolder: IDataTreeRootFolder; tagName: string }) {

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import type { PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { CircularProgress, Typography } from "@mui/material";
 import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, OUTLINE_DARK_COLOR, OUTLINE_LIGHT_COLOR } from "5-app/settings";
 import { useTags } from "0-shared/hooks/useTags";
-import "./NoteTagList.scss";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
-import type { IGlobalTag } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { noteDelTag, noteAddTag } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteAddTagDialog } from "../NoteAddTagDialog/NoteAddTagDialog";
+import "./NoteTagList.scss";
+import type { PaletteMode } from "@mui/material";
+import type { IGlobalTag } from "0-shared/types/dataSave";
 
 type TNoteTagListProps = {
     noteTags: string[];
@@ -84,7 +84,9 @@ function NoteTagList({ noteTags, isNoteEdit }: TNoteTagListProps) {
                 </div>
                 {isNoteEdit && <AddButton onClick={onAddTag} addClassNames={["NoteTagList__edit_button"]} />}
             </div>
-            {isAddTagDialog && <NoteAddTagDialog dialogHeader="Добавить тег" onClose={addTagDialogClose} onCloseSave={addTagDialogCloseSave} />}
+            {isAddTagDialog && (
+                <NoteAddTagDialog dialogHeader="Добавить тег" onClose={addTagDialogClose} onCloseSave={addTagDialogCloseSave} />
+            )}
         </>
     );
 }

@@ -1,4 +1,4 @@
-import { projectAddTag } from "2-features/utils/saveDataEdit";
+import { projectAddTag } from "2-features/utils/saveDataEditFunctions/projectAddTag";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
@@ -16,7 +16,6 @@ import { loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/app
 import { getGlobalTagsDB } from "2-features/utils/appIndexedDBFynctions/globalTagsFunctions";
 import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { getAllIds } from "2-features/utils/saveDataParse";
-import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/classes/saveDataFolder";

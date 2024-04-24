@@ -1,5 +1,5 @@
-import type { SxProps, PaletteMode } from "@mui/material";
 import { OUTLINE_LIGHT_COLOR, OUTLINE_DARK_COLOR, CONTROLS_PRIMARY_LIGHT, CONTROLS_PRIMARY_DARK } from "5-app/settings";
+import type { SxProps, PaletteMode } from "@mui/material";
 
 function loaderStyle(): SxProps {
     return {

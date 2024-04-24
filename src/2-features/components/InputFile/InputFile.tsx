@@ -1,7 +1,5 @@
 import React, { useRef, useImperativeHandle } from "react";
 import { useFileReader } from "0-shared/hooks/useFileReader";
-import type { Ref } from "0-shared/utils/typeHelpers";
-import type { IDataSave } from "0-shared/types/dataSave";
 import { inputLoadStringHandler } from "2-features/utils/inputLoadStringHandler";
 import { setAllTempDataDB } from "2-features/utils/appIndexedDB";
 import { IdGenerator, savedIdGenerator } from "0-shared/utils/idGenerator";
@@ -9,6 +7,8 @@ import { getAllIds } from "2-features/utils/saveDataParse";
 import { setIsOpen } from "5-app/GlobalState/leftMenuStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { setProjectOpen, setCurrentFolder, setCurrentNote } from "5-app/GlobalState/saveDataInspectStore";
+import type { Ref } from "0-shared/utils/typeHelpers";
+import type { IDataSave } from "0-shared/types/dataSave";
 
 type TInputFileProps = {
     inputSettings?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -38,7 +38,18 @@ function InputFileComponent({ inputSettings }: TInputFileProps, ref: Ref<HTMLInp
         fileReader.readAsText(file);
     };
 
-    return <input className="visually_hidden" type="file" accept=".txt,.json" name="file" tabIndex={-1} ref={inputElement} onChange={onInputChange} {...inputSettings}></input>;
+    return (
+        <input
+            className="visually_hidden"
+            type="file"
+            accept=".txt,.json"
+            name="file"
+            tabIndex={-1}
+            ref={inputElement}
+            onChange={onInputChange}
+            {...inputSettings}
+        ></input>
+    );
 }
 
 /**

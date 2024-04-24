@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.scss";
 import "5-app/normalize/normalize.scss";
 import "5-app/baseStyles/baseStyles.scss";
@@ -29,8 +29,7 @@ function App() {
     );
 }
 
-//register(); // регистрация сервис воркера
-unregister(); //TODO: незабыть это удалить в конце этой ветки (worker)
+register(); // регистрация сервис воркера
 workerRegister(true); // регистрация dedicated воркера
 
 export default App;

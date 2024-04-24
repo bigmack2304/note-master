@@ -19,7 +19,6 @@ import {
 import { RenderTreeAsFile } from "1-entities/components/RenderTreeAsFiles/RenderTreeAsFiles";
 import { ContextMenuTreeFolderContent } from "1-entities/components/ContextMenuTreeFolderContent/ContextMenuTreeFolderContent";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import type { TchildrenType, IDataTreeFolder, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { ContextMenuTreeNoteContent } from "1-entities/components/ContextMenuTreeNoteContent/ContextMenuTreeNoteContent";
 import { TreeItemRenameDialog } from "2-features/components/TreeItemRenameDialog/TreeItemRenameDialog";
 import { TreeAddFolderDialog } from "2-features/components/TreeAddFolderDialog/TreeAddFolderDialog";
@@ -32,6 +31,7 @@ import { EV_NAME_LINK_NOTE_REDIRECT, EV_NAME_BUTTON_CLOSE_TREE_FOLDERS } from "5
 import { runTaskOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import "./FolderfTreeViewer.scss";
+import type { TchildrenType, IDataTreeFolder, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import type { TMessageCloneFiltredTreeOnWorker } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
 

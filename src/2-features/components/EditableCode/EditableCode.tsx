@@ -7,9 +7,9 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentCodeSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteCodeEditDialog } from "../NoteCodeEditDialog/NoteCodeEditDialog";
+import { useClipboardText } from "0-shared/hooks/useClipboardText";
 import type { TBodyComponentCode } from "0-shared/types/dataSave";
 import type { TOnSaveType } from "../NoteCodeEditDialog/NoteCodeEditDialog";
-import { useClipboardText } from "0-shared/hooks/useClipboardText";
 
 type TEditableCodeProps = {
     defaultText?: string;
@@ -170,7 +170,13 @@ function EditableCode({ defaultText = "", addClassNames = [], componentData }: T
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isCodeEditDialog && <NoteCodeEditDialog onClose={onEditHeaderDialogClose} onCloseSave={onEditHeaderDialogCloseSave} componentData={componentData} />}
+                    {isCodeEditDialog && (
+                        <NoteCodeEditDialog
+                            onClose={onEditHeaderDialogClose}
+                            onCloseSave={onEditHeaderDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

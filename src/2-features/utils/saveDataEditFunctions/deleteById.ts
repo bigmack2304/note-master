@@ -8,7 +8,7 @@ import type { IDataTreeRootFolder, IDataTreeFolder, TchildrenType } from "0-shar
 
 /**
  * удаляет ноду типа TchildrenType по id из tempData в indexedDB
- * @param data - обьект сохранения IDataTreeRootFolder
+ * @param rootNode - обьект сохранения IDataTreeRootFolder
  * @param target_id - id ноды которую нужно удалить
  * @param savedIdGenerator - результат вызова savedIdGenerator.instatnceIdGenerator.getIdsArray()
  */

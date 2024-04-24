@@ -2,8 +2,8 @@
 // в indexed DB будем сохранять текущий фаил сохранения с которым работаем.
 // кроме этого там будем держать и temp фаил сохранения, который при выходе удалится. (чтобы не держать его в оперативе) (возможно потом както это обыграем)
 
-import { tempStoreData, DB_NAME, DB_VERSION, TEMP_DATA_KEY, def_onComplete, def_onError } from "./appIndexedDBFynctions/appIndexedDBConst";
-import { dispatchEventIndexedDBTagsUpdate, dispatchEventIndexedDBTreeUpdate } from "./appIndexedDBFynctions/appIndexedDBEvents";
+import { tempStoreData, TEMP_DATA_KEY, def_onComplete, def_onError } from "./appIndexedDBFynctions/appIndexedDBConst";
+import { dispatchEventIndexedDBTreeUpdate } from "./appIndexedDBFynctions/appIndexedDBEvents";
 import { openIndexedDB } from "./appIndexedDBFynctions/openDB";
 import type { MyDB, TGetDataEntity, TSetDataEntity } from "./appIndexedDBFynctions/appIndexedDBTypes";
 import type { IDataSave } from "0-shared/types/dataSave";
@@ -28,7 +28,6 @@ async function setDbTypeDB({
     tx.store.put(value, TEMP_DATA_KEY);
     await tx.done;
     callback && callback(value);
-    //dispatchEventIndexedDBTempUpdate();
     return value;
 }
 

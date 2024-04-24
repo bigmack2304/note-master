@@ -8,7 +8,7 @@ type TParametersNoteDeleteTag = Parameters<typeof noteDeleteTag>;
 
 /**
  * удаляет тег у заметки
- * @param data обьект IDataTreeRootFolder
+ * @param rootFolder обьект IDataTreeRootFolder
  * @param targetNoteID id заметки в которой удаляем
  * @param tag обьект тега который нужно убрать
  */

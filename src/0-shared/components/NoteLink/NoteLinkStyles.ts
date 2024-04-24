@@ -1,6 +1,6 @@
-import type { PaletteMode, SxProps } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { fontThemeColor } from "2-features/utils/themeStylesOverride";
+import type { PaletteMode, SxProps } from "@mui/material";
 
 function wrapperStyle(themeMode: PaletteMode): SxProps {
     return {

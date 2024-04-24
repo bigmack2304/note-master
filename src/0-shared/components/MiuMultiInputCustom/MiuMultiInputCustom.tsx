@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import "./MiuMultiInputCustom.scss";
 import * as style from "./MiuMultiInputCustomStyle";
 import { Box, Input } from "@mui/material";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TMiuMultiInputCustomProps = {
     addClassNames?: string[];

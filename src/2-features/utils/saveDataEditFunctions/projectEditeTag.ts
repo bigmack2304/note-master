@@ -10,7 +10,7 @@ type TParametersProjectEditeTag = Parameters<typeof projectEditeTag>;
 /**
  * изменяет тег во всем проекте
  * @param tagData обьект
- * @param data обьект IDataTreeRootFolder
+ * @param rootFolder обьект IDataTreeRootFolder
  * @param oldTagName - старое имя тега
  * @param newTagName - новое имя тега
  * @param newTagColor - новый цвет тега

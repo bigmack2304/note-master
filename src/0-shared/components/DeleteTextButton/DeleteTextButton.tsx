@@ -1,7 +1,7 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
-import type { SxProps } from "@mui/material";
 import FontDownloadOffIcon from "@mui/icons-material/FontDownloadOff";
+import type { SxProps } from "@mui/material";
 
 type TDeleteTextButtonProps = {
     onClick?: (e: React.MouseEvent, customData: any) => void;
@@ -34,7 +34,14 @@ function DeleteTextButton({ onClick, addClassNames = [], title, size = "inherit"
     };
 
     return (
-        <IconButton className={genClassName} aria-label="закрыть" sx={ButtonStyle} onClick={clickCallback} title={title} disabled={disabled}>
+        <IconButton
+            className={genClassName}
+            aria-label="закрыть"
+            sx={ButtonStyle}
+            onClick={clickCallback}
+            title={title}
+            disabled={disabled}
+        >
             <FontDownloadOffIcon fontSize={size} />
         </IconButton>
     );

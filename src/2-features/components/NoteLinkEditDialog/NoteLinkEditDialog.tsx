@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
-import { List, ListItem, ListItemText, TextField } from "@mui/material";
+import { List, ListItem, ListItemText } from "@mui/material";
 import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
-import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import "./style.scss";
-import { Label } from "@mui/icons-material";
+import type { TBodyComponentLink } from "0-shared/types/dataSave";
 
 type TNoteLinkEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (data: { isLabel: TBodyComponentLink["isLabel"]; isBg: TBodyComponentLink["background"]; labelVal: TBodyComponentLink["labelValue"] }) => void;
+    onCloseSave?: (data: {
+        isLabel: TBodyComponentLink["isLabel"];
+        isBg: TBodyComponentLink["background"];
+        labelVal: TBodyComponentLink["labelValue"];
+    }) => void;
     dialogHeader?: string;
     componentData: TBodyComponentLink;
 };
@@ -45,7 +48,14 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+        >
             <List className="NoteLinkEditDialog__list">
                 <ListItem divider>
                     <ListItemText>Фон</ListItemText>
@@ -58,7 +68,13 @@ function NoteLinkEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
                 <ListItem divider>
                     <ListItemText>Текст</ListItemText>
                     {/* <TextField className="NoteLinkEditDialog__desc_text" value={labelVal} label="Текст" onChange={onInputChange} multiline maxRows={3} variant="outlined" /> */}
-                    <MiuMultiInputCustom addClassNames={["NoteLinkEditDialog__desc_text"]} value={labelVal} inputProps={{ label: "Текст" }} onChange={onInputChange} maxRow={3} />
+                    <MiuMultiInputCustom
+                        addClassNames={["NoteLinkEditDialog__desc_text"]}
+                        value={labelVal}
+                        inputProps={{ label: "Текст" }}
+                        onChange={onInputChange}
+                        maxRow={3}
+                    />
                 </ListItem>
             </List>
         </DialogWindowAlt>

@@ -1,10 +1,9 @@
 import React from "react";
-import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { nodeWithoutChildren } from "2-features/utils/saveDataUtils";
-import type { TchildrenType } from "0-shared/types/dataSave";
-import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { CustomTreeItem } from "1-entities/components/CustomTreeItem/CustomTreeItem";
+import type { TchildrenType } from "0-shared/types/dataSave";
+import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 
 type TRenderTreeAsFileProps = {
     node: TchildrenType | undefined;

@@ -10,7 +10,7 @@ type TParametersAddNodeTo = Parameters<typeof addNodeTo>;
 
 /**
  * Добавляет ноду в дерево
- * @param data - обьект сохранения IDataTreeRootFolder
+ * @param rootFolder - обьект сохранения IDataTreeRootFolder
  * @param insertToId - id ноды в которую нужно добавить
  * @param newNode - обьект новой ноды (классы из 0-shared/utils/saveData... .ts)
  */

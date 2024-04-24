@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Box, Collapse } from "@mui/material";
-import type { SxProps, PaletteMode } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import "./Note.scss";
 import { EditableHeader } from "2-features/components/EditableHeader/EditableHeader";
@@ -21,6 +20,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "0-shared/utils/getSystemStyle";
 import { EditableTable } from "2-features/components/EditableTable/EditableTable";
+import type { SxProps, PaletteMode } from "@mui/material";
 
 type TNoteProps = {
     addClassNames?: string[];

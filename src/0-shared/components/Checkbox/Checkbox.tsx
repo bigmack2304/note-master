@@ -1,9 +1,9 @@
 import React from "react";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { FormControlLabel, Checkbox as MCheckbox } from "@mui/material";
-import type { CheckboxProps } from "@mui/material";
 import * as style from "./CheckboxStyle";
 import { deep_object_is_equal } from "0-shared/utils/is_equal";
+import type { CheckboxProps } from "@mui/material";
 
 interface TCheckboxProps {
     label?: string;

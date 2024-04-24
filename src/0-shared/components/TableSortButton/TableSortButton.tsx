@@ -2,7 +2,6 @@ import React from "react";
 import IconButton from "@mui/material/IconButton";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import type { SxProps } from "@mui/material";
 import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import "./TableSortButton.scss";
 
@@ -26,7 +25,15 @@ type TTableSortButtonProps = {
  * @prop isActive - если false то иконка будет полупрозрачной
  * @prop dataSet - data атрибуты
  */
-function TableSortButton({ onClick = () => {}, addClassNames = [], title, size = "inherit", icon = "top", isActive = false, dataSet }: TTableSortButtonProps) {
+function TableSortButton({
+    onClick = () => {},
+    addClassNames = [],
+    title,
+    size = "inherit",
+    icon = "top",
+    isActive = false,
+    dataSet,
+}: TTableSortButtonProps) {
     const defaultClassName = "TableSortButton";
     let genClassName = "";
 

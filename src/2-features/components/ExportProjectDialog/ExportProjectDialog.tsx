@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import { nameValidator } from "0-shared/utils/validators";
 import "./ExportProjectDialog.scss";
 

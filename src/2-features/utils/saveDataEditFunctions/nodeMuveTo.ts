@@ -9,7 +9,7 @@ type TParametersNodeMuveTo = Parameters<typeof nodeMuveTo>;
 
 /**
  * перемещает заметку или папку в другую папку
- * @param data - обьект сохранения IDataTreeRootFolder
+ * @param rootFolder - обьект сохранения IDataTreeRootFolder
  * @param muvedNodeID - id ноды которую перемещаем
  * @param muveToID - id ноды куда перемещаем
  */

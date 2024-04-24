@@ -1,15 +1,18 @@
-import React, { useState, useId, useEffect, useLayoutEffect } from "react";
+import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
-import type { SxProps, SelectChangeEvent } from "@mui/material";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
-import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import type { SxProps, SelectChangeEvent } from "@mui/material";
 import type { TBodyComponentText } from "0-shared/types/dataSave";
 
 type TNoteTextEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (data: { textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean }) => void;
+    onCloseSave?: (data: {
+        textBackground: boolean;
+        textFormat: boolean;
+        fontValue: TBodyComponentText["font"];
+        lineBreak: boolean;
+    }) => void;
     dialogHeader?: string;
     editId?: string;
     componentData: TBodyComponentText;
@@ -41,7 +44,13 @@ const fontNames: Record<TBodyComponentText["font"], string> = {
  * @prop editId - id сущьности которую редактируем
  * @prop componentData - компонент внутри заметки который мы редактируем
  */
-function NoteTextEditDialog({ onClose, onCloseSave, dialogHeader = "Управление текстом", editId, componentData }: TNoteTextEditDialogProps) {
+function NoteTextEditDialog({
+    onClose,
+    onCloseSave,
+    dialogHeader = "Управление текстом",
+    editId,
+    componentData,
+}: TNoteTextEditDialogProps) {
     const [textBackground, setTextBackground] = useState(componentData.background);
     const [textFormat, setTextFormat] = useState(componentData.formatting);
     const [lineBreak, setLineBreak] = useState(componentData.lineBreak);
@@ -69,7 +78,14 @@ function NoteTextEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+        >
             <List sx={listStyles()}>
                 <ListItem divider>
                     <ListItemText>Фон текста</ListItemText>

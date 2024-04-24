@@ -4,8 +4,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useNotes } from "0-shared/hooks/useNotes";
 import * as styles from "./NoteSelectorStyles";
-import type { IDataTreeNote } from "0-shared/types/dataSave";
 import { NoteTagList } from "../NoteTagList/NoteTagList";
+import type { IDataTreeNote } from "0-shared/types/dataSave";
 
 type TNoteSelectorProps = {
     addClassNames?: string[];

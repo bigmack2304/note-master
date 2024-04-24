@@ -1,7 +1,7 @@
 import React, { useRef, useImperativeHandle } from "react";
-import type { Ref } from "0-shared/utils/typeHelpers";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import "./style.scss";
+import type { Ref } from "0-shared/utils/typeHelpers";
 
 type TNoteComponentMoverProps = {};
 

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import ViewComfyIcon from "@mui/icons-material/ViewComfy";
 import { IconButton } from "@mui/material";
-import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { toggleIsActive } from "5-app/GlobalState/toolBarStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 

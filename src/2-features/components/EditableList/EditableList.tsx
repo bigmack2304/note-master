@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { ClosableMultiLineTextInput } from "2-features/components/ClosableMultiLineTextInput/ClosableMultiLineTextInput";
 import { NoteList } from "0-shared/components/NoteList/NoteList";
 import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/DopContextMenuFree";
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
@@ -132,10 +131,21 @@ function EditableList({ defaultValue = "", addClassNames = [], componentData }: 
     return (
         <>
             {isEdit ? (
-                <ListEditWindow addClassNames={[...addClassNames, "editable"]} listValue={listValue} isOpen={true} onCloseSave={onInputSave} isNimeric={componentData.isNumeric} />
+                <ListEditWindow
+                    addClassNames={[...addClassNames, "editable"]}
+                    listValue={listValue}
+                    isOpen={true}
+                    onCloseSave={onInputSave}
+                    isNimeric={componentData.isNumeric}
+                />
             ) : (
                 <>
-                    <NoteList addClassNames={[...addClassNames, ...listDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={isNoteEdit}>
+                    <NoteList
+                        addClassNames={[...addClassNames, ...listDopClasses]}
+                        onContextMenu={onClickMoreActions}
+                        dragId={componentData.id}
+                        isNoteEdit={isNoteEdit}
+                    >
                         {listValue}
                     </NoteList>
 
@@ -149,7 +159,13 @@ function EditableList({ defaultValue = "", addClassNames = [], componentData }: 
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isListEditDialog && <NoteListEditDialog onClose={onEditListDialogClose} onCloseSave={onEditListDialogCloseSave} componentData={componentData} />}
+                    {isListEditDialog && (
+                        <NoteListEditDialog
+                            onClose={onEditListDialogClose}
+                            onCloseSave={onEditListDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

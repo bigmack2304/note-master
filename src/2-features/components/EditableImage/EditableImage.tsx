@@ -6,12 +6,12 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { deleteNoteComponent, updateNoteComponentImage, updateNoteComponentImageSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { isUrl } from "0-shared/utils/validators";
-import type { TBodyComponentImage } from "0-shared/types/dataSave";
 import { useImageSrc } from "0-shared/hooks/useImageSrc";
 import { ClosableImageForm } from "../ClosableImageForm/ClosableImageForm";
 import * as styles from "./EditableImageStyle";
 import "react-photo-view/dist/react-photo-view.css";
 import { NotePhotoView } from "0-shared/components/NotePhotoView/NotePhotoView";
+import type { TBodyComponentImage } from "0-shared/types/dataSave";
 
 type TEditableImageProps = {
     addClassNames?: string[];

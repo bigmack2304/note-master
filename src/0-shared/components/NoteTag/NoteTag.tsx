@@ -1,10 +1,10 @@
 import React from "react";
 import Chip from "@mui/material/Chip";
-import type { SxProps } from "@mui/material";
-import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { PaletteMode } from "@mui/material";
 import { TAGS_COLORS_LIGHT } from "5-app/settings";
+import type { SxProps } from "@mui/material";
+import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 
 type TNoteTagProps = {
     isEdit: boolean;
@@ -42,7 +42,14 @@ function NoteTag({ onDel, addClassNames = [], tagObj, isEdit }: TNoteTagProps) {
         onDel && onDel(tagObj);
     };
 
-    return <Chip className={genClassName} label={tagObj.tag_name} onDelete={isEdit ? handleDelete : undefined} sx={noteEditBlockStyles(tagObj.color, themeValue)} />;
+    return (
+        <Chip
+            className={genClassName}
+            label={tagObj.tag_name}
+            onDelete={isEdit ? handleDelete : undefined}
+            sx={noteEditBlockStyles(tagObj.color, themeValue)}
+        />
+    );
 }
 
 export { NoteTag };

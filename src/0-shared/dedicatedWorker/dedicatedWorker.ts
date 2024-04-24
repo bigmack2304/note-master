@@ -1,31 +1,3 @@
-import type {
-    TMessageDataType,
-    TMessageDelById,
-    TMessageDelCompInNote,
-    TMessageCloneFiltredTreeOnWorker,
-    TMessageUpdateNodeValueOnWorker,
-    TMessageUpdNoteComponentsOrderOnWorker,
-    TMessageUpdateNodeImageOnWorker,
-    TMessageUpdateNodeTableOnWorker,
-    TMessageUpdateNodeTableSettingsOnWorker,
-    TMessageUpdateNodeLinkOnWorker,
-    TMessageGetNodeByIdOnWorker,
-    TMessageUpdateNoteComponentLinkSettingsOnWorker,
-    TMessageUpdateNoteComponentImageSettingsOnWorker,
-    TMessageUpdateNoteComponentTextSettingsOnWorker,
-    TMessageUpdateNoteComponentListSettingsOnWorker,
-    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
-    TMessageUpdateNoteComponentCodeSettingsOnWorker,
-    TMessageUpdateNodeCompletedOnWorker,
-    TMessageUpdateNodeNameOnWorker,
-    TMessageAddNodeToOnWorker,
-    TMessageNodeMuveToOnWorker,
-    TMessageNoteDeleteTagOnWorker,
-    TMessageNoteAddTagOnWorker,
-    TMessageProjectDeleteTagOnWorker,
-    TMessageGetParentNodeOnWorker,
-    TMessageProjectEditeTagOnWorker,
-} from "./workerTypes";
 import {
     isFunctionData,
     isDelByIdData,
@@ -79,6 +51,34 @@ import { noteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import { projectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 import { projectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
+import type {
+    TMessageDataType,
+    TMessageDelById,
+    TMessageDelCompInNote,
+    TMessageCloneFiltredTreeOnWorker,
+    TMessageUpdateNodeValueOnWorker,
+    TMessageUpdNoteComponentsOrderOnWorker,
+    TMessageUpdateNodeImageOnWorker,
+    TMessageUpdateNodeTableOnWorker,
+    TMessageUpdateNodeTableSettingsOnWorker,
+    TMessageUpdateNodeLinkOnWorker,
+    TMessageGetNodeByIdOnWorker,
+    TMessageUpdateNoteComponentLinkSettingsOnWorker,
+    TMessageUpdateNoteComponentImageSettingsOnWorker,
+    TMessageUpdateNoteComponentTextSettingsOnWorker,
+    TMessageUpdateNoteComponentListSettingsOnWorker,
+    TMessageUpdateNoteComponentHeaderSettingsOnWorker,
+    TMessageUpdateNoteComponentCodeSettingsOnWorker,
+    TMessageUpdateNodeCompletedOnWorker,
+    TMessageUpdateNodeNameOnWorker,
+    TMessageAddNodeToOnWorker,
+    TMessageNodeMuveToOnWorker,
+    TMessageNoteDeleteTagOnWorker,
+    TMessageNoteAddTagOnWorker,
+    TMessageProjectDeleteTagOnWorker,
+    TMessageGetParentNodeOnWorker,
+    TMessageProjectEditeTagOnWorker,
+} from "./workerTypes";
 
 type TTaskRunerTypes =
     | TMessageDelById

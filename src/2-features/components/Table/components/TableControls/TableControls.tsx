@@ -7,12 +7,11 @@ import { DeleteTextButton } from "0-shared/components/DeleteTextButton/DeleteTex
 import { TableColumnsButton_memo_is_equal } from "../TableColumnsButton/TableColumnsButton";
 import { TableFilterButton_memo_is_equal } from "../TableFilterButton/TableFilterButton";
 import { ResetButton } from "0-shared/components/ResetButton/ResetButton";
-import { TextField } from "@mui/material";
 import { cellValueUpdate } from "../../utils/TableFunc";
+import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TOperators } from "../TableFilterButton/TableFilterButton";
 import type { TActiveCellData } from "../../commonTypes/types";
-import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
 
 type TTableControlsProps = {
     sortedFiltredRenderData: TTableValue;
@@ -73,7 +72,8 @@ function TableControls({
 }: TTableControlsProps) {
     const { excludeColumns, setExcludeColumns } = getStateExcludeColumns();
     const isTableColumnsButtonActive = excludeColumns.size > 0; // активна-ли опция скрытия колонок
-    const { filterColumnIndex, filterOperator, filterValue, resetFilter, setFilterColumnIndex, setFilterOperator, setFilterValue } = getStateFilter();
+    const { filterColumnIndex, filterOperator, filterValue, resetFilter, setFilterColumnIndex, setFilterOperator, setFilterValue } =
+        getStateFilter();
     const { editSelectColumnIndex, editSelectRowIndex, setEditSelectColumnIndex, setEditSelectRowIndex } = getStateSelect();
     const { sortHeaderIndex } = getStateSort();
     const isFilterActive = filterOperator !== "" && filterColumnIndex !== ""; // активен-ли фильтр
@@ -123,13 +123,16 @@ function TableControls({
     }, []);
 
     // закрытие меню фильтра
-    const onTableFilterButtonClose = useCallback((filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string, isChange: boolean) => {
-        if (!isChange) return;
-        setFilterColumnIndex(filterColumnIndex);
-        setFilterOperator(filterOperator);
-        setFilterValue(filterValue);
-        setEditSelectRowIndex([]);
-    }, []);
+    const onTableFilterButtonClose = useCallback(
+        (filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string, isChange: boolean) => {
+            if (!isChange) return;
+            setFilterColumnIndex(filterColumnIndex);
+            setFilterOperator(filterOperator);
+            setFilterValue(filterValue);
+            setEditSelectRowIndex([]);
+        },
+        []
+    );
 
     const onInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
         if (!e.relatedTarget?.className.includes("MuiInputBase-input")) {
@@ -189,7 +192,12 @@ function TableControls({
                         />
 
                         <div className="Table__edit_controls">
-                            <SaveButton_memo_is_equal size="small" addClassNames={["Table__control_button"]} title="Сохранить" onClick={onTableSave} />
+                            <SaveButton_memo_is_equal
+                                size="small"
+                                addClassNames={["Table__control_button"]}
+                                title="Сохранить"
+                                onClick={onTableSave}
+                            />
                             <TableAddButton_memo_is_equal addClassNames={["Table__control_button"]} onCloseSave={onTableAdd} />
                             <DeleteTextButton
                                 size="small"
@@ -198,7 +206,13 @@ function TableControls({
                                 onClick={onTableDelText}
                                 disabled={!isCellsSelect}
                             />
-                            <DeleteButton size="small" title="Удалить выбранное" addClassNames={["Table__control_button"]} onClick={onDeleteSelected} disabled={!isCellsSelect} />
+                            <DeleteButton
+                                size="small"
+                                title="Удалить выбранное"
+                                addClassNames={["Table__control_button"]}
+                                onClick={onDeleteSelected}
+                                disabled={!isCellsSelect}
+                            />
                         </div>
                     </>
                 )}

@@ -1,8 +1,8 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import type { SxProps } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 type TResetButtonProps = {
     onClick?: (e: React.MouseEvent) => void;
@@ -27,7 +27,15 @@ const ButtonStyle: SxProps = {
  * @prop isStopPropagation - если true то при клике, всплытие события будет остановлено
  * @prop size - размер кнопки
  */
-function ResetButton({ onClick = () => {}, addClassNames = [], buttonSettings = {}, sx: addSx = {}, title, isStopPropagation = false, size = "inherit" }: TResetButtonProps) {
+function ResetButton({
+    onClick = () => {},
+    addClassNames = [],
+    buttonSettings = {},
+    sx: addSx = {},
+    title,
+    isStopPropagation = false,
+    size = "inherit",
+}: TResetButtonProps) {
     const defaultClassName = "ResetButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
@@ -37,7 +45,14 @@ function ResetButton({ onClick = () => {}, addClassNames = [], buttonSettings = 
     };
 
     return (
-        <IconButton className={genClassName} aria-label="закрыть" sx={{ ...ButtonStyle, ...addSx } as SxProps} onClick={onButtonClick} title={title} {...buttonSettings}>
+        <IconButton
+            className={genClassName}
+            aria-label="закрыть"
+            sx={{ ...ButtonStyle, ...addSx } as SxProps}
+            onClick={onButtonClick}
+            title={title}
+            {...buttonSettings}
+        >
             <RestartAltIcon fontSize={size} />
         </IconButton>
     );

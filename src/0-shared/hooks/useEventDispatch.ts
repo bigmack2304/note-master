@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback } from "react";
-import { useHandleUpdate } from "./useHandleUpdate";
+import React, { useCallback } from "react";
 
 type TuseEventDispatchProps = {
     eventName?: string;

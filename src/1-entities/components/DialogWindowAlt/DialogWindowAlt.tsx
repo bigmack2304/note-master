@@ -6,10 +6,10 @@ import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { DialogProps } from "@mui/material";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 import * as styles from "./DialogWindowAltStyle";
 import "./DialogWindowAlt.scss";
+import type { DialogProps } from "@mui/material";
+import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TDialogOnClose = GetProps<typeof Dialog>["onClose"];
 

@@ -1,6 +1,5 @@
-import type { IDataTreeRootFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
-import type { TupleToObject } from "0-shared/utils/typeHelpers";
+import type { IDataTreeRootFolder, TchildrenType, TNoteBody } from "0-shared/types/dataSave";
 
 type TReturnTypeGetNodeById = ReturnType<typeof getNodeById>;
 type TParametersGetNodeById = Parameters<typeof getNodeById>;

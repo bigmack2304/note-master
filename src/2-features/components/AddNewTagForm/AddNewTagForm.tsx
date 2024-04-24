@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Typography, TextField } from "@mui/material";
 import { ColorTagSelect } from "../ColorTagSelect/ColorTagSelect";
 import { OkButton } from "0-shared/components/OkButton/OkButton";
-import type { TTagColors } from "0-shared/types/dataSave";
 import { projectAddNewTag } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useEventDispatch } from "0-shared/hooks/useEventDispatch";
 import "./AddNewTagForm.scss";
+import type { TTagColors } from "0-shared/types/dataSave";
 
 type TAddNewTagFormProps = {
     addClassNames?: string[];
@@ -49,7 +49,14 @@ function AddNewTagForm({ addClassNames = [] }: TAddNewTagFormProps) {
                 </legend>
                 <div className="AddNewTagForm__inner">
                     <div className="AddNewTagForm__inputs">
-                        <TextField value={newTagName} label="Новый тег" placeholder="Имя тега" variant="standard" onChange={onInputChange} required />
+                        <TextField
+                            value={newTagName}
+                            label="Новый тег"
+                            placeholder="Имя тега"
+                            variant="standard"
+                            onChange={onInputChange}
+                            required
+                        />
                         <ColorTagSelect onChange={onSelectChange} updateOnEvent="AddNewTagFormSelectReset" resetOnEvent required />
                     </div>
                     <OkButton type="submit" />
