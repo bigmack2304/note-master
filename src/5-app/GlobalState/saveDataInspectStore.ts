@@ -1,4 +1,4 @@
-import { projectAddTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
+import { projectAddTag } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
@@ -6,6 +6,7 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_START,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
+import { addNewComponentToNote } from "2-features/utils/saveDataEditFunctions/addNewComponentToNote";
 import { runTaskOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
@@ -1630,7 +1631,11 @@ const saveDataInspectSlice = createAppSlice({
 
                 if (!dataTree) return;
 
-                const { updatedNote, resultBool } = await addNewComponentToNote(dataTree, payload.noteId, payload.componentType);
+                const { updatedNote, resultBool } = await addNewComponentToNote({
+                    rootFolder: dataTree,
+                    noteId: payload.noteId,
+                    componentType: payload.componentType,
+                });
 
                 if (!resultBool) {
                     throw new Error();
