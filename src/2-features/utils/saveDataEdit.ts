@@ -40,42 +40,6 @@ import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
 
 /**
- * Добавляет ноду в дерево
- * @param data - обьект сохранения IDataTreeRootFolder
- * @param insertToId - id ноды в которую нужно добавить
- * @param newNode - обьект новой ноды (классы из 0-shared/utils/saveData... .ts)
- */
-async function addNodeTo(
-    data: IDataTreeRootFolder,
-    insertToId: string,
-    newNode: TchildrenType | TNoteBody | DataNote | DataFolder
-): Promise<{ newNode: null | IDataTreeFolder | IDataTreeNote | TNoteBody; resultBool: boolean }> {
-    let targetNode = getNodeById(data, insertToId);
-    let resultBool = false;
-
-    if (!targetNode) return { newNode: null, resultBool };
-
-    // в папку мы можем добавить другую папку или заметку
-    if (isDataTreeFolder(targetNode) && (isDataTreeFolder(newNode) || isDataTreeNote(newNode))) {
-        if (!targetNode.children) targetNode.children = [];
-        targetNode.children.push(newNode);
-        resultBool = true;
-        await setDataTreeDB({ value: data });
-        return { newNode, resultBool };
-    }
-
-    // в заметку мы можем добавить компонент
-    if (isDataTreeNote(targetNode) && isDataNoteBody(newNode)) {
-        targetNode.body.push(newNode);
-        resultBool = true;
-        await setDataTreeDB({ value: data });
-        return { newNode, resultBool };
-    }
-
-    return { newNode: null, resultBool };
-}
-
-/**
  * перемещает заметку или папку в другую папку
  * @param data - обьект сохранения IDataTreeRootFolder
  * @param muvedNodeID - id ноды которую перемещаем
@@ -328,4 +292,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
+export { nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };

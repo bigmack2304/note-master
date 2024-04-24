@@ -18,6 +18,7 @@ import type {
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
     TMessageUpdateNodeCompletedOnWorker,
     TMessageUpdateNodeNameOnWorker,
+    TMessageAddNodeToOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -39,6 +40,7 @@ import {
     isUpdateNoteComponentCodeSettings,
     isUpdateNodeCompleted,
     isUpdateNodeName,
+    isAddNodeTo,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -58,6 +60,7 @@ import { updateNoteComponentHeaderSettings } from "2-features/utils/saveDataEdit
 import { updateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 import { updateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 import { updateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
+import { addNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -77,7 +80,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNoteComponentHeaderSettingsOnWorker
     | TMessageUpdateNoteComponentCodeSettingsOnWorker
     | TMessageUpdateNodeCompletedOnWorker
-    | TMessageUpdateNodeNameOnWorker;
+    | TMessageUpdateNodeNameOnWorker
+    | TMessageAddNodeToOnWorker;
 
 /**
  * получение данных
@@ -110,7 +114,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNoteComponentHeaderSettings(data) ||
         isUpdateNoteComponentCodeSettings(data) ||
         isUpdateNodeCompleted(data) ||
-        isUpdateNodeName(data)
+        isUpdateNodeName(data) ||
+        isAddNodeTo(data)
     ) {
         taskRuner(data);
         return;
@@ -213,6 +218,10 @@ async function taskRuner(data: TTaskRunerTypes) {
             case "update node name":
                 result = await updateNodeName(data);
                 break;
+            case "add node to":
+                result = await addNodeTo(data);
+                break;
+
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);
                 throw new Error();

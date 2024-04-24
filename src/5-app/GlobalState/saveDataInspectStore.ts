@@ -1,5 +1,4 @@
 import {
-    addNodeTo,
     nodeMuveTo,
     noteDeleteTag,
     noteAddTag as noteAdTag,
@@ -68,6 +67,7 @@ import type {
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
     TMessageUpdateNodeCompletedOnWorker,
     TMessageUpdateNodeNameOnWorker,
+    TMessageAddNodeToOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -86,6 +86,7 @@ import type { TReturnTypeUpdateNoteComponentHeaderSettings } from "2-features/ut
 import type { TReturnTypeUpdateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 import type { TReturnTypeUpdateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 import type { TReturnTypeUpdateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
+import type { TReturnTypeAddNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1207,11 +1208,18 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
                 const newNode = new DataFolder(payload.nodeName, payload.color);
-                const { newNode: addedNode, resultBool } = await addNodeTo(dataTree, payload.insertToId, newNode);
+                const { newNode: addedNode, resultBool } = await runTaskOnWorker<TMessageAddNodeToOnWorker, TReturnTypeAddNodeTo>(worker, {
+                    rootFolder: dataTree,
+                    insertToId: payload.insertToId,
+                    newNode: newNode,
+                    type: "add node to",
+                });
 
                 if (!resultBool) {
                     throw new Error();
@@ -1245,11 +1253,18 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 let dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
                 const newNode = new DataNote(payload.nodeName, payload.tags);
-                const { newNode: addedNode, resultBool } = await addNodeTo(dataTree, payload.insertToId, newNode);
+                const { newNode: addedNode, resultBool } = await runTaskOnWorker<TMessageAddNodeToOnWorker, TReturnTypeAddNodeTo>(worker, {
+                    rootFolder: dataTree,
+                    insertToId: payload.insertToId,
+                    newNode: newNode,
+                    type: "add node to",
+                });
 
                 if (!resultBool) {
                     throw new Error();
