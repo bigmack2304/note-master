@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { Typography, Collapse } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 import * as styles from "./NoteHeadStyles";
 import "./NoteHead.scss";
 import { NoteComponentMover } from "../NoteComponentMover/NoteComponentMover";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import { DragDropWrapper } from "0-shared/components/DragDropWrapper/DragDropWrapper";
+import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TNoteHeadProps = {
     addClassNames?: string[];
@@ -37,7 +37,13 @@ function NoteHead({ addClassNames = [], onClick, children, typographySettings, o
     const componentRef = useRef<HTMLDivElement>(null);
     const moverRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    genClassName = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: genClassName });
+    genClassName = useNoteComponentDrag({
+        wrapperRef: componentRef,
+        containerRef: contentRef,
+        moverRef: moverRef,
+        dragId,
+        fullClassName: genClassName,
+    });
 
     const classNameGen = () => {
         let tempClassName = genClassName.split(" ");

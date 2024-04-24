@@ -1,4 +1,4 @@
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { THEME_LIGHT_GRAY } from "5-app/settings";
 
 const codeLanguages = [
     "abap",

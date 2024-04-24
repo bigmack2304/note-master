@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { IDataImages } from "0-shared/types/dataSave";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
 import { useIndexedDBImagesUpdate } from "./useIndexedDBImageUpdate";
-import { getImageDB } from "2-features/utils/appIndexedDB";
+import { getImageDB } from "2-features/utils/appIndexedDBFynctions/imageFunctions";
 import { isNoDataUrl } from "0-shared/utils/validators";
 
 type TUseDataTreeParams = {

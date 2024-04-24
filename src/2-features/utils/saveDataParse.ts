@@ -1,6 +1,6 @@
-import type { IDataTreeFolder, IDataTreeNote, TNoteBody, TchildrenType, IDataTreeRootFolder, IDataSave } from "0-shared/types/dataSave";
 import { isDataTreeFolder, isDataTreeNote, isDataSave } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren } from "./saveDataUtils";
+import type { IDataTreeFolder, IDataTreeNote, TNoteBody, IDataTreeRootFolder, IDataSave } from "0-shared/types/dataSave";
 
 // функции для поиска разлиных элементов в tempData в indexedDB
 
@@ -32,129 +32,6 @@ function getAllIds(data: IDataTreeRootFolder | IDataSave) {
     parser(isDataSave(data) ? data.data_tree : data);
 
     return allIds;
-}
-
-/**
- * возвращает массив всех вложенных id внутри Node
- * @param node обьект типа IDataTreeFolder | IDataTreeNote внутри которого нужно собрать id
- */
-function getAllIdsInNode(node: IDataTreeFolder | IDataTreeNote) {
-    const allIds = new Set<string>();
-
-    const parser = (node: IDataTreeFolder | IDataTreeNote | TNoteBody) => {
-        for (let prop in node) {
-            if (prop === "id") {
-                if (allIds.has(node[prop])) throw new Error("Duplicate id in tempData");
-                allIds.add(node[prop]);
-                continue;
-            }
-            if (prop === "children") {
-                for (let item of (node as IDataTreeFolder)[prop]!) {
-                    parser(item);
-                }
-            }
-            if (prop === "body") {
-                for (let item of (node as IDataTreeNote)[prop]) {
-                    parser(item);
-                }
-            }
-        }
-    };
-
-    parser(node);
-    return Array.from(allIds);
-}
-
-/**
- * ищет ноду по заданному id и возвращает ее
- * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody | undefined
- * @param find_id искомый ID
- * @returns
- */
-function getNodeById(rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody | undefined, find_id: string) {
-    const finder = (node: TchildrenType | TNoteBody): TchildrenType | TNoteBody | null => {
-        if (node.id === find_id) {
-            return node;
-        }
-
-        if (isDataTreeFolder(node)) {
-            if (node.children) {
-                for (let child of node.children) {
-                    let result = finder(child);
-                    if (result) return result;
-                }
-            }
-        }
-
-        if (isDataTreeNote(node)) {
-            for (let component of node.body) {
-                if (component.id === find_id) {
-                    return component;
-                }
-            }
-        }
-
-        return null;
-    };
-
-    if (rootNode) {
-        let root = rootNode;
-        return finder(root as TchildrenType | TNoteBody);
-    }
-
-    return null;
-}
-
-/**
- * ищет родителя ноды. Родителем может быть как папка (для других папок или заметок) так и заметка (для компонентов)
- * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody
- * @param nodeId id ноды для которой нужно отыскать родителя
- */
-function getParentNode(rootNode: IDataTreeRootFolder | TchildrenType | TNoteBody, nodeId: string): IDataTreeNote | IDataTreeFolder | TNoteBody | null | undefined {
-    type TTreeElement = IDataTreeNote | IDataTreeFolder | TNoteBody;
-
-    let parent: IDataTreeNote | IDataTreeFolder | IDataTreeRootFolder | TNoteBody;
-
-    parent = rootNode;
-
-    let result: TTreeElement | null | undefined;
-
-    const finder = (node: TTreeElement): TTreeElement | null | undefined => {
-        if (node.id === nodeId) {
-            if (node.id === parent.id) return undefined;
-            return parent as TTreeElement;
-        }
-
-        if (isDataTreeFolder(node)) {
-            if (node.children) {
-                let saveParent = parent;
-                parent = node;
-                for (let child of node.children) {
-                    let finder_result = finder(child);
-                    if (finder_result === undefined) return null;
-                    if (finder_result) return finder_result;
-                }
-                parent = saveParent;
-            }
-            return null;
-        }
-
-        if (isDataTreeNote(node)) {
-            let saveParent = parent;
-            parent = node;
-            for (let component of node.body) {
-                let finder_result = finder(component);
-                if (finder_result === undefined) return null;
-                if (finder_result) return finder_result;
-            }
-            parent = saveParent;
-        }
-
-        return null;
-    };
-
-    result = finder(parent);
-    return result;
 }
 
 /**
@@ -248,4 +125,4 @@ function getParentFolder(rootNode: IDataTreeFolder, nodeId: string): IDataTreeNo
     return result;
 }
 
-export { getAllIds, getNodeById, getAllIdsInNode, getParentNode, getAllFolders, getAllNotes, getParentFolder };
+export { getAllIds, getAllFolders, getAllNotes, getParentFolder };

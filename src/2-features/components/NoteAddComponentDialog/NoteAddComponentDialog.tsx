@@ -9,9 +9,9 @@ import LinkIcon from "@mui/icons-material/Link";
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ListIcon from "@mui/icons-material/List";
 import { TableIcon } from "0-shared/components/TableIcon/TableIcon";
+import "./NoteAddComponentDialog.scss";
 import type { SelectChangeEvent } from "@mui/material";
 import type { TAllComponents } from "0-shared/types/dataSave";
-import "./NoteAddComponentDialog.scss";
 
 type TNoteAddComponentDialogProps = {
     onClose?: (e: React.MouseEvent) => void;

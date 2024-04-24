@@ -1,7 +1,7 @@
 import React, { useRef, useImperativeHandle } from "react";
 import { Box } from "@mui/material";
-import type { Ref } from "0-shared/utils/typeHelpers";
 import "./DragDropWrapper.scss";
+import type { Ref } from "0-shared/utils/typeHelpers";
 
 type TDragDropWrapperProps = {
     addClassNames?: string[];

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { Input } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import "./NoteAddTagDialog.scss";
 
 type TNoteAddTagDialogProps = {

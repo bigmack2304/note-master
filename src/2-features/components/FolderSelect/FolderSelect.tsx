@@ -1,11 +1,9 @@
 import React, { useState, useId } from "react";
-import { OutlinedInput, CircularProgress, Box, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
+import { OutlinedInput, CircularProgress, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
 import { useFolders } from "0-shared/hooks/useFolders";
-import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
-import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { IDataTreeFolder } from "0-shared/types/dataSave";
-import type { PaletteMode, SxProps, SelectChangeEvent } from "@mui/material";
 import { useEventListener } from "0-shared/hooks/useEventListener";
+import type { IDataTreeFolder } from "0-shared/types/dataSave";
+import type { SelectChangeEvent } from "@mui/material";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TFolderSelectProps = {
@@ -34,7 +32,15 @@ type TSelectFOlderData = {
  * @prop size - размер селекта
  * @prop defaultValue - выбранная папка по умолчанию
  */
-function FolderSelect({ onChange, sortName = "", addClassNames = [], updateOnEvent, resetOnEvent, size = "medium", defaultValue }: TFolderSelectProps) {
+function FolderSelect({
+    onChange,
+    sortName = "",
+    addClassNames = [],
+    updateOnEvent,
+    resetOnEvent,
+    size = "medium",
+    defaultValue,
+}: TFolderSelectProps) {
     const prepareDefaultValue = defaultValue ? JSON.stringify(defaultValue) : undefined;
     const defaultClassName = "FolderSelect";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");

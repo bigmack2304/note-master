@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import type { IDataTreeFolder } from "0-shared/types/dataSave";
 import { getAllFolders } from "2-features/utils/saveDataParse";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { useIndexedDBTreeUpdate } from "./useIndexedDBTreeUpdate";
+import type { IDataTreeFolder } from "0-shared/types/dataSave";
 
 type TuseFoldersParams = {
     onStartLoading?: () => void;

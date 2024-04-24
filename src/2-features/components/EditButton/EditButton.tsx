@@ -1,7 +1,6 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import type { SxProps } from "@mui/material";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { toggleIsEdit } from "5-app/GlobalState/noteStore";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { AddButton } from "0-shared/components/AddButton/AddButton";
 import { NoteAddComponentDialog } from "../NoteAddComponentDialog/NoteAddComponentDialog";
-import type { TAllComponents } from "0-shared/types/dataSave";
 import { addNewComponentInNote } from "5-app/GlobalState/saveDataInspectStore";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import type { TAllComponents } from "0-shared/types/dataSave";
 
 type TButtonAddComponentToNoteDialogProps = {};
 

@@ -4,7 +4,6 @@ import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { Input, Divider } from "@mui/material";
 import Button from "@mui/material/Button";
 import "./FindNoteDialog.scss";
-import * as style from "./FindNoteDialogStyle";
 
 type TFindNoteDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
@@ -28,7 +27,16 @@ type TFindNoteDialogProps = {
  * @prop defaultNameValue - искомое имя по умолчанию
  * @prop defaultContentValue - искомое содержимое по умолчанию
  */
-function FindNoteDialog({ onClose, onReset, onCloseSave, dialogHeader, addClassNames = [], defaultselectValue, defaultNameValue, defaultContentValue }: TFindNoteDialogProps) {
+function FindNoteDialog({
+    onClose,
+    onReset,
+    onCloseSave,
+    dialogHeader,
+    addClassNames = [],
+    defaultselectValue,
+    defaultNameValue,
+    defaultContentValue,
+}: TFindNoteDialogProps) {
     const defaultClassName = "FindNoteDialog";
     let genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const [selectValue, setSelectValue] = useState<string[]>(defaultselectValue ? defaultselectValue : []);
@@ -82,9 +90,20 @@ function FindNoteDialog({ onClose, onReset, onCloseSave, dialogHeader, addClassN
             <Input value={inputNameValue} placeholder="по имяни" onChange={onInputNameChange} className="FindNoteDialog__input" />
             <Divider />
             <Input value={inputTagName} placeholder="поиск тега" onChange={onInputTagNameChange} className="FindNoteDialog__input" />
-            <AddTagSelect onChange={onSelectChange} sortName={inputTagName} viewAll selectLabel="по тегу" defaultValue={defaultselectValue} />
+            <AddTagSelect
+                onChange={onSelectChange}
+                sortName={inputTagName}
+                viewAll
+                selectLabel="по тегу"
+                defaultValue={defaultselectValue}
+            />
             <Divider />
-            <Input value={inputContentValue} placeholder="по содержимому" onChange={onInputContentChange} className="FindNoteDialog__input" />
+            <Input
+                value={inputContentValue}
+                placeholder="по содержимому"
+                onChange={onInputContentChange}
+                className="FindNoteDialog__input"
+            />
         </DialogWindowAlt>
     );
 }

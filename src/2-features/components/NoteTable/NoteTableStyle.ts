@@ -1,6 +1,6 @@
-import type { SxProps, PaletteMode } from "@mui/material";
 import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import { fontThemeColor } from "2-features/utils/themeStylesOverride";
+import type { SxProps, PaletteMode } from "@mui/material";
 
 function noteTableStyle(theme: PaletteMode): SxProps {
     return {

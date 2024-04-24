@@ -1,9 +1,9 @@
 import React, { useRef, useImperativeHandle } from "react";
 import { Box } from "@mui/material";
-import type { Ref } from "0-shared/utils/typeHelpers";
 import "./style.scss";
 import * as styles from "./NoteFaceComponentStyle";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import type { Ref } from "0-shared/utils/typeHelpers";
 
 type NoteFaceComponentProps = {
     beforeName?: string;

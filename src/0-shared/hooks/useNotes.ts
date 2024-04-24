@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import type { IDataTreeNote, IDataTreeRootFolder } from "0-shared/types/dataSave";
 import { getAllNotes } from "2-features/utils/saveDataParse";
-import { getDataTreeDB } from "2-features/utils/appIndexedDB";
+import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { useIndexedDBTreeUpdate } from "./useIndexedDBTreeUpdate";
+import type { IDataTreeNote } from "0-shared/types/dataSave";
 
 type TuseNotesParams = {
     onStartLoading?: () => void;

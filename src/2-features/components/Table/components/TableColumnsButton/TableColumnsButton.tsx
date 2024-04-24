@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DopContextMenu } from "1-entities/components/DopContextMenu/DopContextMenu";
 import { ColumnsButton } from "0-shared/components/ColumnsButton/ColumnsButton";
 import { TextField, Divider, Box, FormGroup, Button } from "@mui/material";
 import { generateHashCode } from "0-shared/utils/stringFuncs";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { GetProps } from "0-shared/utils/typeHelpers";
-import type { TTableValue } from "0-shared/types/dataSave";
 import { Checkbox_memo_is_equal } from "0-shared/components/Checkbox/Checkbox";
 import { deep_object_is_equal } from "0-shared/utils/is_equal";
 import "./TableColumnsButton.scss";
+import type { GetProps } from "0-shared/utils/typeHelpers";
+import type { TTableValue } from "0-shared/types/dataSave";
 
 interface TTableColumnsButtonProps extends GetProps<typeof ColumnsButton> {
     allColumns: TTableValue["headers"];

@@ -5,13 +5,13 @@ import { SaveButton } from "0-shared/components/SaveButton/SaveButton";
 import { DeleteButton } from "0-shared/components/DeleteButton/DeleteButton";
 import { useTags } from "0-shared/hooks/useTags";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import CircularProgress from "@mui/material/CircularProgress";
 import { projectDeleteTag, projectEditTag } from "5-app/GlobalState/saveDataInspectStore";
 import { EV_NAME_SAVE_DATA_REDUCER_REJECT } from "5-app/settings";
 import * as styles from "./AllTagsEditStyles";
 import "./AllTagsEdit.scss";
+import type { IGlobalTag, TTagColors } from "0-shared/types/dataSave";
 
 type TAllTagsEditProps = {
     addClassNames?: string[];
@@ -76,7 +76,13 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
                 prepareAllTags.map((tag) => {
                     return (
                         <ListItem key={tag.tag_name} divider className="AllTagsEdit__Item">
-                            <form autoComplete="off" className="AllTagsEdit__form" onSubmit={onFormSubmit} data-old-name={tag.tag_name} data-old-color={tag.color}>
+                            <form
+                                autoComplete="off"
+                                className="AllTagsEdit__form"
+                                onSubmit={onFormSubmit}
+                                data-old-name={tag.tag_name}
+                                data-old-color={tag.color}
+                            >
                                 {/* TODO: AllTagsEdit__form_inner поставил, иначе при клике в пустое место фармы появлялась ошибка "Failed to execute 'matches' on 'Element'" */}
                                 <div className="AllTagsEdit__form_inner">
                                     <div className="AllTagsEdit__inpits">
@@ -89,7 +95,13 @@ function AllTagsEdit({ addClassNames = [], sortName = "" }: TAllTagsEditProps) {
                                             autoComplete="off"
                                             required
                                         />
-                                        <ColorTagSelect name="tagColor" defaultValue={tag.color} updateOnEvent={EV_NAME_SAVE_DATA_REDUCER_REJECT} resetOnEvent required />
+                                        <ColorTagSelect
+                                            name="tagColor"
+                                            defaultValue={tag.color}
+                                            updateOnEvent={EV_NAME_SAVE_DATA_REDUCER_REJECT}
+                                            resetOnEvent
+                                            required
+                                        />
                                     </div>
                                     <div className="AllTagsEdit__Buttons">
                                         <SaveButton size="large" title="Сохранить" type="submit" />

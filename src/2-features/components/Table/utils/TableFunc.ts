@@ -1,7 +1,6 @@
 import type { TOperators } from "../components/TableFilterButton/TableFilterButton";
 import type { TTableValue, TTableRow } from "0-shared/types/dataSave";
 import type { TActiveCellData } from "../commonTypes/types";
-import { debug } from "console";
 
 // вспомогательные функции для Table.tsx, работает в связке с ним. Поэтому все имена функций и других параметров стоит воспринемать как одно и тоже сдесь и в Table.tsx
 
@@ -43,7 +42,13 @@ type TCellValueUpdateParams = {
 /**
  * проверяет удовлетворяют ли данные указанному фильтру
  */
-function checkFilter(isFilterActive: boolean, row: TTableRow, filterColumnIndex: number | "", filterValue: string, filterOperator: TOperators) {
+function checkFilter(
+    isFilterActive: boolean,
+    row: TTableRow,
+    filterColumnIndex: number | "",
+    filterValue: string,
+    filterOperator: TOperators
+) {
     if (isFilterActive) {
         if (filterColumnIndex === "") return true; // вообще этого кейса никогда не должно быть при текущем использовании, но навсякий случай (еще чтоб ts не ругался)
 
@@ -122,8 +127,12 @@ function sortTableData(sortedFiltredRenderData: TTableValue, sortIndex: number, 
     if (currentSortIndex === undefined) return sortedFiltredRenderData;
 
     sortedFiltredRenderData.rows = sortedFiltredRenderData.rows.sort((a, b) => {
-        let prepareA = isNaN(Number(a.value[currentSortIndex!].value)) ? a.value[currentSortIndex!].value : Number(a.value[currentSortIndex!].value);
-        let prepareB = isNaN(Number(b.value[currentSortIndex!].value)) ? b.value[currentSortIndex!].value : Number(b.value[currentSortIndex!].value);
+        let prepareA = isNaN(Number(a.value[currentSortIndex!].value))
+            ? a.value[currentSortIndex!].value
+            : Number(a.value[currentSortIndex!].value);
+        let prepareB = isNaN(Number(b.value[currentSortIndex!].value))
+            ? b.value[currentSortIndex!].value
+            : Number(b.value[currentSortIndex!].value);
 
         // если какието данные не удалось преобразовать в число, то щитаем что обе данных строка
         if (typeof prepareA === "string" || typeof prepareB === "string") {
@@ -142,7 +151,12 @@ function sortTableData(sortedFiltredRenderData: TTableValue, sortIndex: number, 
 /**
  * фильтрация таблицы (изменяет входной фаил)
  */
-function filterTableData(sortedFiltredRenderData: TTableValue, filterColumnIndex: number | "", filterOperator: TOperators, filterValue: string) {
+function filterTableData(
+    sortedFiltredRenderData: TTableValue,
+    filterColumnIndex: number | "",
+    filterOperator: TOperators,
+    filterValue: string
+) {
     const isFilterActive = filterOperator !== "" && filterColumnIndex !== "";
     if (!isFilterActive) return sortedFiltredRenderData;
     sortedFiltredRenderData.rows = sortedFiltredRenderData.rows.filter((row) => {
@@ -310,7 +324,13 @@ function tableAdd({ type, savedRenderData, amount, resetFilter, setExcludeColumn
 /**
  * удаляет текст в выбранных ячейках. (выбор в sortedFiltredRenderData, удаление в savedRenderData)
  */
-function tableDelText({ editSelectRowIndex, editSelectColumnIndex, sortedFiltredRenderData, savedRenderData, updateView }: TTableDelTextParams) {
+function tableDelText({
+    editSelectRowIndex,
+    editSelectColumnIndex,
+    sortedFiltredRenderData,
+    savedRenderData,
+    updateView,
+}: TTableDelTextParams) {
     let isChange = false;
 
     if (editSelectRowIndex.length > 0 || editSelectColumnIndex.length > 0) {

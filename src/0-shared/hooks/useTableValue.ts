@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import type { TTableValue } from "0-shared/types/dataSave";
+import React, { useState, useEffect } from "react";
 import { useIndexedDBTablesUpdate } from "./useIndexedDBTableUpdate";
-import { getTableDB } from "2-features/utils/appIndexedDB";
+import { getTableDB } from "2-features/utils/appIndexedDBFynctions/tableFunctions";
+import type { TTableValue } from "0-shared/types/dataSave";
 
 type TUseDataTreeParams = {
     componentTableID: string;

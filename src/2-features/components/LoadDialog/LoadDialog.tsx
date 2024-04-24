@@ -1,8 +1,8 @@
 import React, { useState, useId } from "react";
-import { Button, Typography, MenuItem, Select, OutlinedInput, InputLabel, FormControl } from "@mui/material";
+import { Typography, MenuItem, Select, OutlinedInput, InputLabel, FormControl } from "@mui/material";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
-import type { SelectChangeEvent } from "@mui/material";
 import "./LoadDialog.scss";
+import type { SelectChangeEvent } from "@mui/material";
 
 type TLoadDialogprops = {
     addClassNames?: string[];

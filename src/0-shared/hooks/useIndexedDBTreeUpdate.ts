@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from "react";
 import { useHandleUpdate } from "./useHandleUpdate";
-import type { IDataSave } from "0-shared/types/dataSave";
 
 /**
  * подписка на обновление data_tree в indexed db

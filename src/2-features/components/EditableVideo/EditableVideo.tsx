@@ -4,7 +4,6 @@ import { DopContextMenuFree } from "1-entities/components/DopContextMenuFree/Dop
 import { ContextMenuEditContent } from "1-entities/components/ContextMenuEditContent/ContextMenuEditContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { updateNoteComponentValue, deleteNoteComponent } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteVideo } from "1-entities/components/NoteVideo/NoteVideo";
 import type { TBodyComponentVideo } from "0-shared/types/dataSave";

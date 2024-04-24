@@ -1,6 +1,6 @@
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 import type { PaletteMode } from "@mui/material";
 import type { SxProps } from "@mui/material";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
 
 function ListStyle(themeMode: PaletteMode): SxProps {
     return {

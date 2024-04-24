@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.scss";
 import "5-app/normalize/normalize.scss";
 import "5-app/baseStyles/baseStyles.scss";
@@ -7,8 +7,8 @@ import { useUiTeme } from "0-shared/hooks/useUiTeme";
 import { ThemeProvider, Container, CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { useAppUiInfo } from "0-shared/hooks/useAppUiInfo";
-import { register } from "registerServiceWorker";
-import { workerRegister, workerRef } from "0-shared/dedicatedWorker/workerInit";
+import { register, unregister } from "registerServiceWorker";
+import { workerRegister } from "0-shared/dedicatedWorker/workerInit";
 
 /**
  * базовый кормпонент, инициализация приложения

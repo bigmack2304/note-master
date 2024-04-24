@@ -1,8 +1,8 @@
 import React from "react";
 import SvgIcon from "@mui/material/SvgIcon";
-import type { SvgIconProps } from "@mui/material/SvgIcon";
 import { svgThemeColor } from "2-features/utils/themeStylesOverride";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
+import type { SvgIconProps } from "@mui/material/SvgIcon";
 
 type THeaderIconProps = {
     svgIconSettings?: SvgIconProps;

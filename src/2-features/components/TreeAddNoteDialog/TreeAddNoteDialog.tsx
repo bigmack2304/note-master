@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { Input, Divider } from "@mui/material";
-import type { SxProps } from "@mui/material";
 import { FolderSelect } from "../FolderSelect/FolderSelect";
 import { AddTagSelect } from "../AddTagSelect/AddTagSelect";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";

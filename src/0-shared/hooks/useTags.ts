@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import type { IAllTags } from "0-shared/types/dataSave";
-import { getGlobalTagsDB } from "2-features/utils/appIndexedDB";
+import { getGlobalTagsDB } from "2-features/utils/appIndexedDBFynctions/globalTagsFunctions";
 import { useIndexedDBTagsUpdate } from "./useIndexedDBTagsUpdate";
 
 type TUseTagsParams = {

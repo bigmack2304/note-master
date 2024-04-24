@@ -7,9 +7,9 @@ import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { updateNoteComponentValue, deleteNoteComponent, updateNoteComponentTextSettings } from "5-app/GlobalState/saveDataInspectStore";
 import { NoteTextEditDialog } from "../NoteTextEditDialog/NoteTextEditDialog";
-import type { TBodyComponentText } from "0-shared/types/dataSave";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import * as styles from "./EditableTextStyles";
+import type { TBodyComponentText } from "0-shared/types/dataSave";
 
 type TEditableTextProps = {
     defaultText?: string;
@@ -109,7 +109,12 @@ function EditableText({ defaultText = "", addClassNames = [], componentData }: T
         setIsTextEditDialog(false);
     };
 
-    const onEditTextDialogCloseSave = (data: { textBackground: boolean; textFormat: boolean; fontValue: TBodyComponentText["font"]; lineBreak: boolean }) => {
+    const onEditTextDialogCloseSave = (data: {
+        textBackground: boolean;
+        textFormat: boolean;
+        fontValue: TBodyComponentText["font"];
+        lineBreak: boolean;
+    }) => {
         setIsTextEditDialog(false);
 
         if (!componentData || !currentNoteData) return;
@@ -139,7 +144,12 @@ function EditableText({ defaultText = "", addClassNames = [], componentData }: T
                 />
             ) : (
                 <>
-                    <NoteText addClassNames={[...addClassNames, ...textDopClasses]} onContextMenu={onClickMoreActions} dragId={componentData.id} isNoteEdit={isNoteEdit}>
+                    <NoteText
+                        addClassNames={[...addClassNames, ...textDopClasses]}
+                        onContextMenu={onClickMoreActions}
+                        dragId={componentData.id}
+                        isNoteEdit={isNoteEdit}
+                    >
                         {textValue}
                     </NoteText>
 
@@ -153,7 +163,13 @@ function EditableText({ defaultText = "", addClassNames = [], componentData }: T
                             isAllDisabled={!isNoteEdit}
                         />
                     </DopContextMenuFree>
-                    {isTextEditDialog && <NoteTextEditDialog onClose={onEditTextDialogClose} onCloseSave={onEditTextDialogCloseSave} componentData={componentData} />}
+                    {isTextEditDialog && (
+                        <NoteTextEditDialog
+                            onClose={onEditTextDialogClose}
+                            onCloseSave={onEditTextDialogCloseSave}
+                            componentData={componentData}
+                        />
+                    )}
                 </>
             )}
         </>

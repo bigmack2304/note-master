@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { TextField } from "@mui/material";
 import { Box } from "@mui/material";
-import Divider from "@mui/material/Divider";
 import { CloseButton } from "0-shared/components/CloseButton/CloseButton";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { OkButton } from "0-shared/components/OkButton/OkButton";
@@ -55,7 +54,14 @@ const dividerStyle: SxProps = {
  * @prop placeholder - плейсхолдер формы
  * @returns
  */
-function ClosableOneLineTextInput({ addClassNames = [], onClose, onCloseSave, inputDefValue = "", placeholder, inputLabel }: TClosableOneLineTextInputProps) {
+function ClosableOneLineTextInput({
+    addClassNames = [],
+    onClose,
+    onCloseSave,
+    inputDefValue = "",
+    placeholder,
+    inputLabel,
+}: TClosableOneLineTextInputProps) {
     const defaultClassName = "ClosableOneLineTextInput";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
     const themeValue = useTemeMode();

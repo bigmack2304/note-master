@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from "react";
-import { GetProps } from "0-shared/utils/typeHelpers";
+import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { Box } from "@mui/material";
 import { useEventListener } from "0-shared/hooks/useEventListener";
 import { resizableStyle, resizableControllerStyle } from "./ResizableStyle";

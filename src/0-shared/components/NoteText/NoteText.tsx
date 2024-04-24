@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { Typography, Box, Collapse } from "@mui/material";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { GetProps } from "0-shared/utils/typeHelpers";
 import * as styles from "./NoteTextStyles";
 import "./NoteText.scss";
 import { NoteComponentMover } from "../NoteComponentMover/NoteComponentMover";
 import { useNoteComponentDrag } from "0-shared/hooks/useNoteComponentDrag";
 import { DragDropWrapper } from "../DragDropWrapper/DragDropWrapper";
+import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TNoteTextProps = {
     addClassNames?: string[];
@@ -36,7 +36,13 @@ function NoteText({ addClassNames = [], onClick, children, typographySettings, o
     const componentRef = useRef<HTMLDivElement>(null);
     const moverRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const innerWrapperClass = useNoteComponentDrag({ wrapperRef: componentRef, containerRef: contentRef, moverRef: moverRef, dragId, fullClassName: "NoteText_outWrapper" });
+    const innerWrapperClass = useNoteComponentDrag({
+        wrapperRef: componentRef,
+        containerRef: contentRef,
+        moverRef: moverRef,
+        dragId,
+        fullClassName: "NoteText_outWrapper",
+    });
 
     // если children пуст, то добавляем в Typography класс text_empty
     if (!isChildren) {

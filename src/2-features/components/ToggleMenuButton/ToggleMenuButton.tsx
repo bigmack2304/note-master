@@ -2,10 +2,10 @@ import React from "react";
 import { LeftMenu } from "0-shared/components/LeftMenu/LeftMenu";
 import { MenuButton } from "0-shared/components/MenuButton/MenuButton";
 import { MenuContent } from "1-entities/components/MenuContent/MenuContent";
-import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { toggleLeftMenu, setIsOpen } from "5-app/GlobalState/leftMenuStore";
+import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 
 type TToggleMenuButtonProps = {
     menuContentProps?: TMenuContentProps;

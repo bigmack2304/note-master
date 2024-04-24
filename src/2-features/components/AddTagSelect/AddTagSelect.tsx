@@ -4,9 +4,9 @@ import { useAppSelector } from "0-shared/hooks/useAppSelector";
 import { useTags } from "0-shared/hooks/useTags";
 import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
-import type { IGlobalTag } from "0-shared/types/dataSave";
-import type { PaletteMode, SxProps, SelectChangeEvent } from "@mui/material";
 import { useEventListener } from "0-shared/hooks/useEventListener";
+import type { PaletteMode, SxProps, SelectChangeEvent } from "@mui/material";
+import type { IGlobalTag } from "0-shared/types/dataSave";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
 type TAddTagSelectProps = {

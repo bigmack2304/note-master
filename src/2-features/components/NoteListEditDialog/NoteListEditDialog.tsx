@@ -1,15 +1,17 @@
-import React, { useState, useId, useEffect, useLayoutEffect } from "react";
+import React, { useState, useId } from "react";
 import { DialogWindowAlt } from "1-entities/components/DialogWindowAlt/DialogWindowAlt";
 import { List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
-import type { SxProps, SelectChangeEvent } from "@mui/material";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
-import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import type { SxProps, SelectChangeEvent } from "@mui/material";
 import type { TBodyComponentList } from "0-shared/types/dataSave";
 
 type TNoteListEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (data: { listBg: TBodyComponentList["background"]; isNumeric: TBodyComponentList["isNumeric"]; aligin: TBodyComponentList["textAligin"] }) => void;
+    onCloseSave?: (data: {
+        listBg: TBodyComponentList["background"];
+        isNumeric: TBodyComponentList["isNumeric"];
+        aligin: TBodyComponentList["textAligin"];
+    }) => void;
     dialogHeader?: string;
     componentData: TBodyComponentList;
 };
@@ -64,7 +66,14 @@ function NoteListEditDialog({ onClose, onCloseSave, dialogHeader = "Управл
     };
 
     return (
-        <DialogWindowAlt isOpen={true} onClose={onClose} onCloseSave={onSave} headerText={dialogHeader} actionButtonName="Сохранить" actionButton>
+        <DialogWindowAlt
+            isOpen={true}
+            onClose={onClose}
+            onCloseSave={onSave}
+            headerText={dialogHeader}
+            actionButtonName="Сохранить"
+            actionButton
+        >
             <List sx={listStyles()}>
                 <ListItem divider>
                     <ListItemText>Фон списка</ListItemText>

@@ -5,10 +5,10 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import type { SelectChangeEvent } from "@mui/material";
 import { getAllFolders } from "2-features/utils/saveDataParse";
 import { useDataTree } from "0-shared/hooks/useDataTree";
 import "./TreeItemMoveDialog.scss";
+import type { SelectChangeEvent } from "@mui/material";
 
 type TTreeItemMoveDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
