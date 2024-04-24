@@ -54,36 +54,6 @@ async function projectAddTag(tagData: IAllTags, newTag: IGlobalTag | DataTag) {
 }
 
 /**
- * удаляет тег из проекта
- * @param tagData обьект
- * @param data обьект IDataTreeRootFolder
- * @param tagName - имя тега который нужно удалить
- */
-async function projectDeleteTag(tagData: IAllTags, data: IDataTreeRootFolder, tagName: string) {
-    let resultBool = false;
-
-    if (tagName in tagData) {
-        delete tagData[tagName];
-        const allNotes = getAllNotes(data);
-
-        for (let note of allNotes) {
-            if (!note.tags) continue;
-            note.tags = note.tags.filter((tag) => {
-                if (tag === tagName) return false;
-                return true;
-            });
-        }
-
-        // удалить этот тег из всех заметок
-        resultBool = true;
-        await setGlobalTagsDB({ value: tagData });
-        await setDataTreeDB({ value: data });
-    }
-
-    return { tagName, resultBool };
-}
-
-/**
  * изменяет тег во всем проекте
  * @param tagData обьект
  * @param data обьект IDataTreeRootFolder
@@ -181,4 +151,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
+export { projectAddTag, projectEditeTag, addNewComponentToNote };

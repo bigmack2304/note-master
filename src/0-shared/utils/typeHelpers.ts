@@ -24,6 +24,7 @@ import type {
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
+    TMessageProjectDeleteTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -256,7 +257,10 @@ function isUpdateNodeLink(value: any): value is TMessageUpdateNodeLinkOnWorker {
 function isGetNodeById(value: any): value is TMessageGetNodeByIdOnWorker {
     if (typeof value !== "object") return false;
     if (!("type" in value) || ("type" in value && value.type !== "get node by id")) return false;
-    if (!("find_id" in value) || ("find_id" in value && typeof value.find_id !== "string")) return false;
+    if (!("args" in value) || ("args" in value && !Array.isArray(value.args))) return false;
+    if (value.args.length < 2) return false;
+    if (!isDataTreeFolder(value.args[0])) return false;
+    if (typeof value.args[1] !== "string") return false;
     return true;
 }
 
@@ -424,6 +428,18 @@ function isNoteAddTag(value: any): value is TMessageNoteAddTagOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageProjectDeleteTagOnWorker dedicated воркера
+ */
+function isProjectDeleteTag(value: any): value is TMessageProjectDeleteTagOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "project delete tag")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("tagName" in value) || ("tagName" in value && typeof value.tagName !== "string")) return false;
+    if (!("tagData" in value) || ("tagData" in value && !(typeof value.tagData === "object"))) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -454,5 +470,6 @@ export {
     isTGlobalTag,
     isNoteDeleteTag,
     isNoteAddTag,
+    isProjectDeleteTag,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

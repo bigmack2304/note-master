@@ -1,6 +1,9 @@
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import type { IDataTreeRootFolder, TchildrenType, TNoteBody, IDataTreeFolder, IDataTreeNote } from "0-shared/types/dataSave";
 
+type TReturnTypeGetParentNode = ReturnType<typeof getParentNode>;
+type TParametersGetParentNode = Parameters<typeof getParentNode>;
+
 /**
  * ищет родителя ноды. Родителем может быть как папка (для других папок или заметок) так и заметка (для компонентов)
  * @param rootNode обект типа IDataTreeRootFolder | TchildrenType | TNoteBody

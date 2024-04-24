@@ -1,4 +1,4 @@
-import { projectAddTag, projectDeleteTag as projectDelTag, projectEditeTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
+import { projectAddTag, projectEditeTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
@@ -65,6 +65,7 @@ import type {
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
+    TMessageProjectDeleteTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -87,6 +88,7 @@ import type { TReturnTypeAddNodeTo } from "2-features/utils/saveDataEditFunction
 import type { TReturnTypeNodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 import type { TReturnTypeNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
+import type { TReturnTypeProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
@@ -1488,7 +1490,10 @@ const saveDataInspectSlice = createAppSlice({
                 if (!allTags || !dataTree) return;
                 if (!worker) return;
 
-                const { tagName: deletedTagName, resultBool } = await projectDelTag(allTags, dataTree, payload.tagName);
+                const { tagName: deletedTagName, resultBool } = await runTaskOnWorker<
+                    TMessageProjectDeleteTagOnWorker,
+                    TReturnTypeProjectDeleteTag
+                >(worker, { tagData: allTags, rootFolder: dataTree, tagName: payload.tagName, type: "project delete tag" });
 
                 if (!resultBool) {
                     throw new Error();
