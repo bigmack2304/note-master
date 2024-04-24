@@ -9,7 +9,6 @@ import {
     projectEditeTag,
     updateNodeCompleted,
     addNewComponentToNote,
-    updateNoteComponentCodeSettings as componentCodeSettings,
 } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
@@ -68,6 +67,7 @@ import type {
     TMessageUpdateNoteComponentTextSettingsOnWorker,
     TMessageUpdateNoteComponentListSettingsOnWorker,
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
+    TMessageUpdateNoteComponentCodeSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -83,6 +83,7 @@ import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/util
 import type { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 import type { TReturnTypeUpdateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
 import type { TReturnTypeUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
+import type { TReturnTypeUpdateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1023,10 +1024,15 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNote, resultBool } = await componentCodeSettings({
+                const { targetNote: updatedNote, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentCodeSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentCodeSettings
+                >(worker, {
                     rootFolder: dataTree,
                     noteId: payload.noteId,
                     componentId: payload.componentId,
@@ -1034,6 +1040,7 @@ const saveDataInspectSlice = createAppSlice({
                     codeLanguage: payload.codeLanguage,
                     isExpand: payload.isExpand,
                     expandDesc: payload.expandDesc,
+                    type: "update note component code settings",
                 });
 
                 if (!resultBool) {

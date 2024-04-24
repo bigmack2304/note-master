@@ -15,6 +15,7 @@ import type {
     TMessageUpdateNoteComponentTextSettingsOnWorker,
     TMessageUpdateNoteComponentListSettingsOnWorker,
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
+    TMessageUpdateNoteComponentCodeSettingsOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -33,6 +34,7 @@ import {
     isUpdateNoteComponentTextSettings,
     isUpdateNoteComponentListSettings,
     isUpdateNoteComponentHeaderSettings,
+    isUpdateNoteComponentCodeSettings,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -49,6 +51,7 @@ import { updateNoteComponentImageSettings } from "2-features/utils/saveDataEditF
 import { updateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
 import { updateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
 import { updateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
+import { updateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -65,7 +68,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNoteComponentImageSettingsOnWorker
     | TMessageUpdateNoteComponentTextSettingsOnWorker
     | TMessageUpdateNoteComponentListSettingsOnWorker
-    | TMessageUpdateNoteComponentHeaderSettingsOnWorker;
+    | TMessageUpdateNoteComponentHeaderSettingsOnWorker
+    | TMessageUpdateNoteComponentCodeSettingsOnWorker;
 
 /**
  * получение данных
@@ -95,7 +99,8 @@ self.onmessage = (e: MessageEvent) => {
         isDelByIdData(data) ||
         isUpdateNoteComponentTextSettings(data) ||
         isUpdateNoteComponentListSettings(data) ||
-        isUpdateNoteComponentHeaderSettings(data)
+        isUpdateNoteComponentHeaderSettings(data) ||
+        isUpdateNoteComponentCodeSettings(data)
     ) {
         taskRuner(data);
         return;
@@ -188,6 +193,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "update note component header settings":
                 result = await updateNoteComponentHeaderSettings(data);
+                break;
+            case "update note component code settings":
+                result = await updateNoteComponentCodeSettings(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);
