@@ -15,6 +15,7 @@ import type {
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentImageSettingsOnWorker,
     TMessageUpdateNoteComponentTextSettingsOnWorker,
+    TMessageUpdateNoteComponentListSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -289,6 +290,21 @@ function isUpdateNoteComponentTextSettings(value: any): value is TMessageUpdateN
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNoteComponentListSettingsOnWorker dedicated воркера
+ */
+function isUpdateNoteComponentListSettings(value: any): value is TMessageUpdateNoteComponentListSettingsOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update note component list settings")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
+    if (!("listBg" in value) || ("listBg" in value && typeof value.listBg !== "boolean")) return false;
+    if (!("isNumeric" in value) || ("isNumeric" in value && typeof value.isNumeric !== "boolean")) return false;
+    if (!("aligin" in value) || ("aligin" in value && typeof value.aligin !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -309,5 +325,6 @@ export {
     isUpdateNoteComponentLinkSettings,
     isUpdateNoteComponentImageSettings,
     isUpdateNoteComponentTextSettings,
+    isUpdateNoteComponentListSettings,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

@@ -11,7 +11,6 @@ import {
     addNewComponentToNote,
     updateNoteComponentHeaderSettings as componentHeaderSettings,
     updateNoteComponentCodeSettings as componentCodeSettings,
-    updateNoteComponentListSettings as componentListSettings,
 } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
@@ -20,19 +19,7 @@ import {
     EV_NAME_SAVE_DATA_REDUCER_START,
     EV_NAME_LINK_NOTE_REDIRECT,
 } from "5-app/settings";
-import {
-    // updateNodeTableOnWorker,
-    // updateNodeTableSettingsOnWorker,
-    // deleteByIdOnWorker,
-    // deleteComponentInNoteOnWorker,
-    // updateNodeImageOnWorker,
-    // updNoteComponentsOrderOnWorker,
-    // updateNodeValueOnWorker,
-    // updateNodeLinkOnWorker,
-    // getNodeByIdOnWorker,
-    // updateNoteComponentLinkSettingsOnWorker,
-    runTaskOnWorker,
-} from "0-shared/dedicatedWorker/workerFuncs";
+import { runTaskOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
 import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
@@ -80,12 +67,11 @@ import type {
     TMessageGetNodeByIdOnWorker,
     TMessageUpdateNoteComponentLinkSettingsOnWorker,
     TMessageUpdateNoteComponentTextSettingsOnWorker,
+    TMessageUpdateNoteComponentListSettingsOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { TReturnTypeDeleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
-import type { TReturnTypeCloneFiltredTree } from "0-shared/utils/note_find";
-import type { IFindNodeParametres } from "5-app/GlobalState/toolBarStore";
 import type { TReturnTypeUpdateNodeValue } from "2-features/utils/saveDataEditFunctions/updateNoteValue";
 import type { TReturnTypeUpdNoteComponentsOrder } from "2-features/utils/saveDataEditFunctions/updNoteComponentsOrder";
 import type { TReturnTypeUpdateNodeImage } from "2-features/utils/saveDataEditFunctions/updateNoteImage";
@@ -94,7 +80,8 @@ import type { TReturnTypeUpdateNodeTableSettings } from "2-features/utils/saveDa
 import type { TReturnTypeUpdateNodeLink } from "2-features/utils/saveDataEditFunctions/updateNodeLink";
 import type { TReturnTypeGetNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import type { TReturnTypeUpdateNoteComponentLinkSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentLinkSettings";
-import { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
+import type { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentTextSettings";
+import type { TReturnTypeUpdateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -912,16 +899,22 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNote, resultBool } = await componentListSettings({
+                const { targetNote: updatedNote, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNoteComponentListSettingsOnWorker,
+                    TReturnTypeUpdateNoteComponentListSettings
+                >(worker, {
                     rootFolder: dataTree,
                     noteId: payload.noteId,
                     componentId: payload.componentId,
                     listBg: payload.listBg,
                     isNumeric: payload.isNumeric,
                     aligin: payload.aligin,
+                    type: "update note component list settings",
                 });
 
                 if (!resultBool) {
