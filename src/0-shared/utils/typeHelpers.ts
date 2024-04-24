@@ -23,6 +23,7 @@ import type {
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
+    TMessageNoteAddTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -411,6 +412,18 @@ function isNoteDeleteTag(value: any): value is TMessageNoteDeleteTagOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageNoteAddTagOnWorker dedicated воркера
+ */
+function isNoteAddTag(value: any): value is TMessageNoteAddTagOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "note add tag")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("targetNoteID" in value) || ("targetNoteID" in value && typeof value.targetNoteID !== "string")) return false;
+    if (!("tag" in value) || ("tag" in value && !(typeof value.tag === "string" || Array.isArray(value.tag)))) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -440,5 +453,6 @@ export {
     isNodeMuveTo,
     isTGlobalTag,
     isNoteDeleteTag,
+    isNoteAddTag,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

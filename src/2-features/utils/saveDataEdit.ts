@@ -1,7 +1,7 @@
 import { getAllNotes } from "./saveDataParse";
 import { getParentNode } from "./saveDataParseFunctions/getParentNode";
 import { getNodeById } from "./saveDataParseFunctions/getNodeById";
-import { setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
+import { setGlobalTagsDB } from "./appIndexedDBFynctions/globalTagsFunctions";
 import { setDataTreeDB } from "./appIndexedDBFynctions/dataTreeDb";
 import { setTableDB, delTableDB } from "./appIndexedDBFynctions/tableFunctions";
 import { delImageDB, setImageDB } from "./appIndexedDBFynctions/imageFunctions";
@@ -39,50 +39,6 @@ import type {
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
-
-/**
- * добавляет тег в заметку
- * @param data обьект IDataTreeRootFolder
- * @param targetNoteID id заметки в которую добавляем
- * @param tag имена тегов которые нужно добавить
- */
-async function noteAddTag(data: IDataTreeRootFolder, targetNoteID: string, tag: string | string[]) {
-    let targetNote = getNodeById(data, targetNoteID);
-    const allTags = await getGlobalTagsDB();
-    let prepareTags: string[] = [];
-    let resultBool = false;
-
-    if (!allTags) return { targetNote: null, resultBool };
-
-    if (Array.isArray(tag) && tag.length > 0) {
-        for (let tagItem of tag) {
-            if (!(tagItem in allTags)) return { targetNote: null, resultBool };
-        }
-        prepareTags = [...tag];
-    }
-
-    if (typeof tag === "string" && tag !== "") {
-        if (!(tag in allTags)) {
-            return { targetNote: null, resultBool };
-        }
-        prepareTags.push(tag);
-    }
-
-    if (!targetNote) return { targetNote: null, resultBool };
-    if (!isDataTreeNote(targetNote)) return { targetNote: null, resultBool };
-
-    if (!("tags" in targetNote)) {
-        targetNote.tags = [];
-    }
-
-    targetNote.tags = targetNote.tags!.concat(prepareTags);
-    targetNote.lastEditTime = Date.now();
-
-    resultBool = true;
-    await setDataTreeDB({ value: data });
-
-    return { targetNote, resultBool };
-}
 
 /**
  * добавляет тег в проект
@@ -225,4 +181,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
+export { projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };

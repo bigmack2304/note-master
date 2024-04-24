@@ -1,10 +1,4 @@
-import {
-    noteAddTag as noteAdTag,
-    projectAddTag,
-    projectDeleteTag as projectDelTag,
-    projectEditeTag,
-    addNewComponentToNote,
-} from "2-features/utils/saveDataEdit";
+import { projectAddTag, projectDeleteTag as projectDelTag, projectEditeTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
@@ -17,7 +11,8 @@ import { workerRef } from "0-shared/dedicatedWorker/workerInit";
 import { isDataTreeFolder, isDataTreeNote } from "0-shared/utils/typeHelpers";
 import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUtils";
 import { log } from "0-shared/utils/reducer_log";
-import { getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
+import { loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
+import { getGlobalTagsDB } from "2-features/utils/appIndexedDBFynctions/globalTagsFunctions";
 import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
 import { getAllIds } from "2-features/utils/saveDataParse";
 import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
@@ -69,6 +64,7 @@ import type {
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
+    TMessageNoteAddTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -90,6 +86,7 @@ import type { TReturnTypeUpdateNodeName } from "2-features/utils/saveDataEditFun
 import type { TReturnTypeAddNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 import type { TReturnTypeNodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
+import type { TReturnTypeNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
@@ -1402,11 +1399,15 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
-                const currentNote = state.saveDataInspect.currentNote;
+                const currentNote = state.saveDataInspect.currentNote as IDataTreeNote | undefined;
+                const worker = workerRef.DWorker;
 
-                if (!currentNote || !dataTree) return;
+                if (!currentNote || !dataTree || !worker) return;
 
-                const { targetNote: editedNote, resultBool } = await noteAdTag(dataTree, currentNote.id, payload.tag);
+                const { targetNote: editedNote, resultBool } = await runTaskOnWorker<TMessageNoteAddTagOnWorker, TReturnTypeNoteAddTag>(
+                    worker,
+                    { rootFolder: dataTree, targetNoteID: currentNote.id, tag: payload.tag, type: "note add tag" }
+                );
 
                 if (!resultBool) {
                     throw new Error();

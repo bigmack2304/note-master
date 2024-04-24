@@ -21,6 +21,7 @@ import type {
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
+    TMessageNoteAddTagOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -45,6 +46,7 @@ import {
     isAddNodeTo,
     isNodeMuveTo,
     isNoteDeleteTag,
+    isNoteAddTag,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -67,6 +69,7 @@ import { updateNodeName } from "2-features/utils/saveDataEditFunctions/updateNod
 import { addNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 import { nodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 import { noteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
+import { noteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -89,7 +92,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNodeNameOnWorker
     | TMessageAddNodeToOnWorker
     | TMessageNodeMuveToOnWorker
-    | TMessageNoteDeleteTagOnWorker;
+    | TMessageNoteDeleteTagOnWorker
+    | TMessageNoteAddTagOnWorker;
 
 /**
  * получение данных
@@ -125,7 +129,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNodeName(data) ||
         isAddNodeTo(data) ||
         isNodeMuveTo(data) ||
-        isNoteDeleteTag(data)
+        isNoteDeleteTag(data) ||
+        isNoteAddTag(data)
     ) {
         taskRuner(data);
         return;
@@ -236,6 +241,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "note delete tag":
                 result = await noteDeleteTag(data);
+                break;
+            case "note add tag":
+                result = await noteAddTag(data);
                 break;
 
             default:

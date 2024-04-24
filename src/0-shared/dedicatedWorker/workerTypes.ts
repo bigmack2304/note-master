@@ -19,6 +19,7 @@ import type { TParametersUpdateNodeName } from "2-features/utils/saveDataEditFun
 import type { TParametersAddNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
 import type { TParametersNodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 import type { TParametersNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
+import type { TParametersNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -217,6 +218,15 @@ type TMessageNoteDeleteTagOnWorker<FUNC_PARAMS = TParametersNoteDeleteTag[0]> = 
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения noteAddTag в воркере
+ */
+type TMessageNoteAddTagOnWorker<FUNC_PARAMS = TParametersNoteAddTag[0]> = {
+    type: "note add tag";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -240,4 +250,5 @@ export type {
     TMessageAddNodeToOnWorker,
     TMessageNodeMuveToOnWorker,
     TMessageNoteDeleteTagOnWorker,
+    TMessageNoteAddTagOnWorker,
 };
