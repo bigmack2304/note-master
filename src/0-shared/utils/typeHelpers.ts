@@ -26,6 +26,7 @@ import type {
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
+    TMessageProjectEditeTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -454,6 +455,20 @@ function isGetParentNode(value: any): value is TMessageGetParentNodeOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageProjectEditeTagOnWorker dedicated воркера
+ */
+function isProjectEditeTag(value: any): value is TMessageProjectEditeTagOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "project edite tag")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("tagData" in value) || ("tagData" in value && !(typeof value.tagData === "object"))) return false;
+    if (!("oldTagName" in value) || ("oldTagName" in value && typeof value.oldTagName !== "string")) return false;
+    if (!("newTagName" in value) || ("newTagName" in value && typeof value.newTagName !== "string")) return false;
+    if (!("newTagColor" in value) || ("newTagColor" in value && typeof value.newTagColor !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -486,5 +501,6 @@ export {
     isNoteAddTag,
     isProjectDeleteTag,
     isGetParentNode,
+    isProjectEditeTag,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

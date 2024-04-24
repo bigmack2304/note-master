@@ -1,4 +1,4 @@
-import { projectAddTag, projectEditeTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
+import { projectAddTag, addNewComponentToNote } from "2-features/utils/saveDataEdit";
 import {
     EV_NAME_SAVE_DATA_REDUCER_END,
     EV_NAME_SAVE_DATA_REDUCER_FULFILLED,
@@ -67,6 +67,7 @@ import type {
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
+    TMessageProjectEditeTagOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -91,6 +92,7 @@ import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunc
 import type { TReturnTypeNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import type { TReturnTypeProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import type { TReturnTypeGetParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
+import { TReturnTypeProjectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1306,7 +1308,6 @@ const saveDataInspectSlice = createAppSlice({
                             window.dispatchEvent(
                                 new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: addedNode.id } })
                             ); // делает эту заметку активной в блоке навигации
-                            //TODO:
 
                             let nodeParent = runTaskOnWorker<TMessageGetParentNodeOnWorker, TReturnTypeGetParentNode>(worker, {
                                 args: [dataTree, addedNode.id],
@@ -1566,13 +1567,17 @@ const saveDataInspectSlice = createAppSlice({
                 if (!allTags || !dataTree) return;
                 if (!worker) return;
 
-                const { newTagName: editedTagName, resultBool } = await projectEditeTag(
-                    allTags,
-                    dataTree,
-                    payload.oldTagName,
-                    payload.newTagName,
-                    payload.newTagColor
-                );
+                const { newTagName: editedTagName, resultBool } = await runTaskOnWorker<
+                    TMessageProjectEditeTagOnWorker,
+                    TReturnTypeProjectEditeTag
+                >(worker, {
+                    tagData: allTags,
+                    rootFolder: dataTree,
+                    oldTagName: payload.oldTagName,
+                    newTagName: payload.newTagName,
+                    newTagColor: payload.newTagColor,
+                    type: "project edite tag",
+                });
 
                 let curentNoteInDB: ReturnType<typeof getNodeById> = null;
 

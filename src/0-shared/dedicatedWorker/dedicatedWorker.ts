@@ -24,6 +24,7 @@ import type {
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
+    TMessageProjectEditeTagOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -51,6 +52,7 @@ import {
     isNoteAddTag,
     isProjectDeleteTag,
     isGetParentNode,
+    isProjectEditeTag,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -76,6 +78,7 @@ import { noteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDelete
 import { noteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import { projectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
+import { projectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -101,7 +104,8 @@ type TTaskRunerTypes =
     | TMessageNoteDeleteTagOnWorker
     | TMessageNoteAddTagOnWorker
     | TMessageProjectDeleteTagOnWorker
-    | TMessageGetParentNodeOnWorker;
+    | TMessageGetParentNodeOnWorker
+    | TMessageProjectEditeTagOnWorker;
 
 /**
  * получение данных
@@ -140,7 +144,8 @@ self.onmessage = (e: MessageEvent) => {
         isNoteDeleteTag(data) ||
         isNoteAddTag(data) ||
         isProjectDeleteTag(data) ||
-        isGetParentNode(data)
+        isGetParentNode(data) ||
+        isProjectEditeTag(data)
     ) {
         taskRuner(data);
         return;
@@ -260,6 +265,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "get parent node":
                 result = await getParentNode(...data.args);
+                break;
+            case "project edite tag":
+                result = await projectEditeTag(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

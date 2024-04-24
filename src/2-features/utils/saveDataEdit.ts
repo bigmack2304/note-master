@@ -54,51 +54,6 @@ async function projectAddTag(tagData: IAllTags, newTag: IGlobalTag | DataTag) {
 }
 
 /**
- * изменяет тег во всем проекте
- * @param tagData обьект
- * @param data обьект IDataTreeRootFolder
- * @param oldTagName - старое имя тега
- * @param newTagName - новое имя тега
- * @param newTagColor - новый цвет тега
- */
-async function projectEditeTag(
-    tagData: IAllTags,
-    data: IDataTreeRootFolder,
-    oldTagName: string,
-    newTagName: string,
-    newTagColor: TTagColors
-) {
-    // так как теги в db хранятся в обьекте по (ключу = имя тега), если имя изменилось то и ключ должен изменится
-    // TODO: возможно в будующем добавлю тегам id и в качестве ключа к тегу будет его id, это серьезно упростит работу с изменением тегов, + положительно скажется на визуальном отображаении. (речь идет о том как рендерится список с key в react ), ведь key равен имяни тега а значит и ключу в db
-    let resultBool = false;
-
-    if (oldTagName !== newTagName) {
-        if (!(newTagName in tagData)) {
-            delete tagData[oldTagName];
-            tagData[newTagName] = new DataTag(newTagName, newTagColor);
-            const allNotes = getAllNotes(data);
-
-            for (let note of allNotes) {
-                if (!note.tags) continue;
-                const indexTagOldName = note.tags.indexOf(oldTagName);
-                if (indexTagOldName !== -1) {
-                    note.tags[indexTagOldName] = newTagName;
-                }
-            }
-            resultBool = true;
-            await setDataTreeDB({ value: data });
-        }
-    } else {
-        resultBool = true;
-        tagData[oldTagName].color = newTagColor;
-    }
-
-    await setGlobalTagsDB({ value: tagData });
-
-    return { newTagName, resultBool };
-}
-
-/**
  * Добавляет новый компонент в заметку
  * @param data обьект IDataTreeRootFolder
  * @param noteId id заметки в которую нужно добавить компонент
@@ -151,4 +106,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { projectAddTag, projectEditeTag, addNewComponentToNote };
+export { projectAddTag, addNewComponentToNote };
