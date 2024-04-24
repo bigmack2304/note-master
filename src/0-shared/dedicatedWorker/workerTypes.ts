@@ -15,6 +15,7 @@ import type { TParametersUpdateNoteComponentListSettings } from "2-features/util
 import type { TParametersUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 import type { TParametersUpdateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 import type { TParametersUpdateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
+import type { TParametersUpdateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -177,6 +178,15 @@ type TMessageUpdateNodeCompletedOnWorker<FUNC_PARAMS = TParametersUpdateNodeComp
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения updateNodeName в воркере
+ */
+type TMessageUpdateNodeNameOnWorker<FUNC_PARAMS = TParametersUpdateNodeName[0]> = {
+    type: "update node name";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -196,4 +206,5 @@ export type {
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
     TMessageUpdateNodeCompletedOnWorker,
+    TMessageUpdateNodeNameOnWorker,
 };

@@ -19,6 +19,7 @@ import type {
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
     TMessageUpdateNodeCompletedOnWorker,
+    TMessageUpdateNodeNameOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -349,6 +350,18 @@ function isUpdateNodeCompleted(value: any): value is TMessageUpdateNodeCompleted
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageUpdateNodeNameOnWorker dedicated воркера
+ */
+function isUpdateNodeName(value: any): value is TMessageUpdateNodeNameOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "update node name")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("target_id" in value) || ("target_id" in value && typeof value.target_id !== "string")) return false;
+    if (!("newName" in value) || ("newName" in value && typeof value.newName !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -373,5 +386,6 @@ export {
     isUpdateNoteComponentHeaderSettings,
     isUpdateNoteComponentCodeSettings,
     isUpdateNodeCompleted,
+    isUpdateNodeName,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

@@ -40,28 +40,6 @@ import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
 
 /**
- * изменяет своиство Name в ноде дерева
- * @param rootFolder обьект IDataTreeRootFolder
- * @param target_id id компонента в котором нужно поменять Name
- * @param newName новое значение Name
- */
-async function updateNodeName(rootFolder: IDataTreeRootFolder, target_id: string, newName: string) {
-    let targetNode = getNodeById(rootFolder, target_id);
-    let resultBool = false;
-
-    if ((targetNode && isDataTreeFolder(targetNode)) || isDataTreeNote(targetNode)) {
-        targetNode.name = newName;
-        resultBool = true;
-        if (isDataTreeNote(targetNode)) {
-            targetNode.lastEditTime = Date.now();
-        }
-        await setDataTreeDB({ value: rootFolder });
-    }
-
-    return { targetNode, resultBool };
-}
-
-/**
  * Добавляет ноду в дерево
  * @param data - обьект сохранения IDataTreeRootFolder
  * @param insertToId - id ноды в которую нужно добавить
@@ -350,14 +328,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export {
-    updateNodeName,
-    addNodeTo,
-    nodeMuveTo,
-    noteDeleteTag,
-    noteAddTag,
-    projectAddTag,
-    projectDeleteTag,
-    projectEditeTag,
-    addNewComponentToNote,
-};
+export { addNodeTo, nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };

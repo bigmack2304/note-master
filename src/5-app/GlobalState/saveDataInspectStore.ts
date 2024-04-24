@@ -1,5 +1,4 @@
 import {
-    updateNodeName,
     addNodeTo,
     nodeMuveTo,
     noteDeleteTag,
@@ -68,6 +67,7 @@ import type {
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
     TMessageUpdateNodeCompletedOnWorker,
+    TMessageUpdateNodeNameOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -85,6 +85,7 @@ import type { TReturnTypeUpdateNoteComponentListSettings } from "2-features/util
 import type { TReturnTypeUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 import type { TReturnTypeUpdateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
 import type { TReturnTypeUpdateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
+import type { TReturnTypeUpdateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1151,10 +1152,15 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNode: updatedNode, resultBool } = await updateNodeName(dataTree, payload.nodeId, payload.newName);
+                const { targetNode: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeNameOnWorker,
+                    TReturnTypeUpdateNodeName
+                >(worker, { rootFolder: dataTree, target_id: payload.nodeId, newName: payload.newName, type: "update node name" });
 
                 if (!resultBool) {
                     throw new Error();
