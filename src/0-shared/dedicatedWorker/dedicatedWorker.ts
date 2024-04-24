@@ -16,6 +16,7 @@ import type {
     TMessageUpdateNoteComponentListSettingsOnWorker,
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
+    TMessageUpdateNodeCompletedOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -35,6 +36,7 @@ import {
     isUpdateNoteComponentListSettings,
     isUpdateNoteComponentHeaderSettings,
     isUpdateNoteComponentCodeSettings,
+    isUpdateNodeCompleted,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -52,6 +54,7 @@ import { updateNoteComponentTextSettings } from "2-features/utils/saveDataEditFu
 import { updateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
 import { updateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 import { updateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
+import { updateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -69,7 +72,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNoteComponentTextSettingsOnWorker
     | TMessageUpdateNoteComponentListSettingsOnWorker
     | TMessageUpdateNoteComponentHeaderSettingsOnWorker
-    | TMessageUpdateNoteComponentCodeSettingsOnWorker;
+    | TMessageUpdateNoteComponentCodeSettingsOnWorker
+    | TMessageUpdateNodeCompletedOnWorker;
 
 /**
  * получение данных
@@ -100,7 +104,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNoteComponentTextSettings(data) ||
         isUpdateNoteComponentListSettings(data) ||
         isUpdateNoteComponentHeaderSettings(data) ||
-        isUpdateNoteComponentCodeSettings(data)
+        isUpdateNoteComponentCodeSettings(data) ||
+        isUpdateNodeCompleted(data)
     ) {
         taskRuner(data);
         return;
@@ -196,6 +201,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "update note component code settings":
                 result = await updateNoteComponentCodeSettings(data);
+                break;
+            case "update node completed":
+                result = await updateNodeCompleted(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

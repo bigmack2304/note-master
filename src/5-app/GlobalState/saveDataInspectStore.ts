@@ -7,7 +7,6 @@ import {
     projectAddTag,
     projectDeleteTag as projectDelTag,
     projectEditeTag,
-    updateNodeCompleted,
     addNewComponentToNote,
 } from "2-features/utils/saveDataEdit";
 import {
@@ -68,6 +67,7 @@ import type {
     TMessageUpdateNoteComponentListSettingsOnWorker,
     TMessageUpdateNoteComponentHeaderSettingsOnWorker,
     TMessageUpdateNoteComponentCodeSettingsOnWorker,
+    TMessageUpdateNodeCompletedOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -84,6 +84,7 @@ import type { TReturnTypeUpdateNoteComponentTextSettings } from "2-features/util
 import type { TReturnTypeUpdateNoteComponentListSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentListSettings";
 import type { TReturnTypeUpdateNoteComponentHeaderSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentHeaderSettings";
 import type { TReturnTypeUpdateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFunctions/componentCodeSettings";
+import type { TReturnTypeUpdateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1104,10 +1105,15 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { targetNote: updatedNode, resultBool } = await updateNodeCompleted(dataTree, payload.noteId, payload.newCompleted);
+                const { targetNote: updatedNode, resultBool } = await runTaskOnWorker<
+                    TMessageUpdateNodeCompletedOnWorker,
+                    TReturnTypeUpdateNodeCompleted
+                >(worker, { rootFolder: dataTree, noteId: payload.noteId, newValue: payload.newCompleted, type: "update node completed" });
 
                 if (!resultBool) {
                     throw new Error();
