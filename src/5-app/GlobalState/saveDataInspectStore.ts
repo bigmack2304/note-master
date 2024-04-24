@@ -1,5 +1,4 @@
 import {
-    nodeMuveTo,
     noteDeleteTag,
     noteAddTag as noteAdTag,
     projectAddTag,
@@ -21,7 +20,8 @@ import { nodeWithoutChildren, saveDataAsFile } from "2-features/utils/saveDataUt
 import { log } from "0-shared/utils/reducer_log";
 import { getGlobalTagsDB, loadTempDataInSavedData, getUnitedTempData } from "2-features/utils/appIndexedDB";
 import { getDataTreeDB } from "2-features/utils/appIndexedDBFynctions/dataTreeDb";
-import { getParentNode, getAllIds } from "2-features/utils/saveDataParse";
+import { getAllIds } from "2-features/utils/saveDataParse";
+import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 import { getNodeById } from "2-features/utils/saveDataParseFunctions/getNodeById";
 import { createAppSlice } from "./scliceCreator";
 import { DataFolder } from "0-shared/utils/classes/saveDataFolder";
@@ -68,6 +68,7 @@ import type {
     TMessageUpdateNodeCompletedOnWorker,
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
+    TMessageNodeMuveToOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -87,7 +88,7 @@ import type { TReturnTypeUpdateNoteComponentCodeSettings } from "2-features/util
 import type { TReturnTypeUpdateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 import type { TReturnTypeUpdateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 import type { TReturnTypeAddNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
-
+import type { TReturnTypeNodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
@@ -1296,6 +1297,7 @@ const saveDataInspectSlice = createAppSlice({
                     if (isDataTreeNote(addedNode)) {
                         state.currentNote = addedNode;
                         window.dispatchEvent(new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: addedNode.id } })); // делает эту заметку активной в блоке навигации
+                        //TODO:
                         let nodeParent = getParentNode(dataTree, addedNode.id);
 
                         if (isDataTreeFolder(nodeParent)) {
@@ -1313,10 +1315,17 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const state = thunkApi.getState() as RootState;
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
                 if (!dataTree) return;
+                if (!worker) return;
 
-                const { muvedNode, resultBool } = await nodeMuveTo(dataTree, payload.muvedNodeID, payload.muveToID);
+                const { muvedNode, resultBool } = await runTaskOnWorker<TMessageNodeMuveToOnWorker, TReturnTypeNodeMuveTo>(worker, {
+                    rootFolder: dataTree,
+                    muvedNodeID: payload.muvedNodeID,
+                    muveToID: payload.muveToID,
+                    type: "node move to",
+                });
 
                 if (!resultBool) {
                     throw new Error();

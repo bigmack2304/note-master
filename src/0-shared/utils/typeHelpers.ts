@@ -21,6 +21,7 @@ import type {
     TMessageUpdateNodeCompletedOnWorker,
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
+    TMessageNodeMuveToOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -378,6 +379,18 @@ function isAddNodeTo(value: any): value is TMessageAddNodeToOnWorker {
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageNodeMuveToOnWorker dedicated воркера
+ */
+function isNodeMuveTo(value: any): value is TMessageNodeMuveToOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "node move to")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("muvedNodeID" in value) || ("muvedNodeID" in value && typeof value.muvedNodeID !== "string")) return false;
+    if (!("muveToID" in value) || ("muveToID" in value && typeof value.muveToID !== "string")) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -404,5 +417,6 @@ export {
     isUpdateNodeCompleted,
     isUpdateNodeName,
     isAddNodeTo,
+    isNodeMuveTo,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

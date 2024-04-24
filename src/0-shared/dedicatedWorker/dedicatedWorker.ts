@@ -19,6 +19,7 @@ import type {
     TMessageUpdateNodeCompletedOnWorker,
     TMessageUpdateNodeNameOnWorker,
     TMessageAddNodeToOnWorker,
+    TMessageNodeMuveToOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -41,6 +42,7 @@ import {
     isUpdateNodeCompleted,
     isUpdateNodeName,
     isAddNodeTo,
+    isNodeMuveTo,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -61,6 +63,7 @@ import { updateNoteComponentCodeSettings } from "2-features/utils/saveDataEditFu
 import { updateNodeCompleted } from "2-features/utils/saveDataEditFunctions/updateNodeCompleted";
 import { updateNodeName } from "2-features/utils/saveDataEditFunctions/updateNodeName";
 import { addNodeTo } from "2-features/utils/saveDataEditFunctions/addNodeTo";
+import { nodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -81,7 +84,8 @@ type TTaskRunerTypes =
     | TMessageUpdateNoteComponentCodeSettingsOnWorker
     | TMessageUpdateNodeCompletedOnWorker
     | TMessageUpdateNodeNameOnWorker
-    | TMessageAddNodeToOnWorker;
+    | TMessageAddNodeToOnWorker
+    | TMessageNodeMuveToOnWorker;
 
 /**
  * получение данных
@@ -115,7 +119,8 @@ self.onmessage = (e: MessageEvent) => {
         isUpdateNoteComponentCodeSettings(data) ||
         isUpdateNodeCompleted(data) ||
         isUpdateNodeName(data) ||
-        isAddNodeTo(data)
+        isAddNodeTo(data) ||
+        isNodeMuveTo(data)
     ) {
         taskRuner(data);
         return;
@@ -221,7 +226,9 @@ async function taskRuner(data: TTaskRunerTypes) {
             case "add node to":
                 result = await addNodeTo(data);
                 break;
-
+            case "node move to":
+                result = await nodeMuveTo(data);
+                break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);
                 throw new Error();

@@ -1,4 +1,5 @@
-import { getParentNode, getAllNotes } from "./saveDataParse";
+import { getAllNotes } from "./saveDataParse";
+import { getParentNode } from "./saveDataParseFunctions/getParentNode";
 import { getNodeById } from "./saveDataParseFunctions/getNodeById";
 import { setGlobalTagsDB, getGlobalTagsDB } from "./appIndexedDB";
 import { setDataTreeDB } from "./appIndexedDBFynctions/dataTreeDb";
@@ -38,48 +39,6 @@ import type {
 import type { DataNote } from "0-shared/utils/classes/saveDataNote";
 import type { DataFolder } from "0-shared/utils/classes/saveDataFolder";
 // функции для применения изменений к tempData в indexedDB
-
-/**
- * перемещает заметку или папку в другую папку
- * @param data - обьект сохранения IDataTreeRootFolder
- * @param muvedNodeID - id ноды которую перемещаем
- * @param muveToID - id ноды куда перемещаем
- */
-async function nodeMuveTo(
-    data: IDataTreeRootFolder,
-    muvedNodeID: string,
-    muveToID: string
-): Promise<{ muvedNode: IDataTreeFolder | IDataTreeNote | TNoteBody | null; resultBool: boolean }> {
-    let muvedNode = getNodeById(data, muvedNodeID);
-    let muvedNodeParent = muvedNode && getParentNode(data, muvedNode.id);
-    let moveToNode = getNodeById(data, muveToID);
-    let resultBool = false;
-
-    if (!muvedNode || !muvedNodeParent || !moveToNode) return { muvedNode: null, resultBool };
-    if (muvedNode.id === "root") return { muvedNode: muvedNode, resultBool };
-    if (getNodeById(muvedNode, moveToNode.id)) return { muvedNode: muvedNode, resultBool }; // чтобы нельзя было переместить папку в ее дочернюю папку
-    if (muvedNodeParent.id === moveToNode.id) return { muvedNode, resultBool }; // если, откуда = куда перемещаем то ничего не делаем
-    if (moveToNode.id === muvedNodeID) return { muvedNode, resultBool }; // чтобы нельзя было перемещать элементы самих в себя
-
-    // убераем muvedNode из дочерних элементов muvedNodeParent
-    if (isDataTreeFolder(muvedNodeParent)) {
-        muvedNodeParent.children = muvedNodeParent.children!.filter((element) => {
-            if (element.id === muvedNode!.id) return false;
-            return true;
-        });
-    }
-
-    if (isDataTreeFolder(moveToNode)) {
-        if (!isDataTreeFolder(muvedNode) && !isDataTreeNote(muvedNode)) return { muvedNode: null, resultBool };
-        if (!moveToNode.children) moveToNode.children = [];
-        moveToNode.children.push(muvedNode);
-        resultBool = true;
-        await setDataTreeDB({ value: data });
-        return { muvedNode, resultBool };
-    }
-
-    return { muvedNode: null, resultBool };
-}
 
 /**
  * удаляет тег у заметки
@@ -292,4 +251,4 @@ async function addNewComponentToNote(data: IDataTreeRootFolder, noteId: string, 
     return { updatedNote, resultBool };
 }
 
-export { nodeMuveTo, noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
+export { noteDeleteTag, noteAddTag, projectAddTag, projectDeleteTag, projectEditeTag, addNewComponentToNote };
