@@ -60,3 +60,4 @@ function getParentNode(
 }
 
 export { getParentNode };
+export type { TReturnTypeGetParentNode, TParametersGetParentNode };

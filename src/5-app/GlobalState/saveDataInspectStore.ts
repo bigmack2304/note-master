@@ -66,6 +66,7 @@ import type {
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
+    TMessageGetParentNodeOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -89,6 +90,8 @@ import type { TReturnTypeNodeMuveTo } from "2-features/utils/saveDataEditFunctio
 import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 import type { TReturnTypeNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import type { TReturnTypeProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
+import type { TReturnTypeGetParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
+
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
 interface ISaveDataInspectStore {
@@ -1287,23 +1290,35 @@ const saveDataInspectSlice = createAppSlice({
                     log(action);
                 },
                 fulfilled: (state, action) => {
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
-                    window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
-                    if (!action.payload) return;
-                    let {
-                        payload: { addedNode, dataTree },
-                    } = action;
+                    const handler = async () => {
+                        window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_FULFILLED));
+                        window.dispatchEvent(new CustomEvent(EV_NAME_SAVE_DATA_REDUCER_END));
+                        const worker = workerRef.DWorker;
 
-                    if (isDataTreeNote(addedNode)) {
-                        state.currentNote = addedNode;
-                        window.dispatchEvent(new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: addedNode.id } })); // делает эту заметку активной в блоке навигации
-                        //TODO:
-                        let nodeParent = getParentNode(dataTree, addedNode.id);
+                        if (!action.payload) return;
+                        if (!worker) return;
+                        let {
+                            payload: { addedNode, dataTree },
+                        } = action;
 
-                        if (isDataTreeFolder(nodeParent)) {
-                            state.currentFolder = nodeWithoutChildren(nodeParent) as IDataTreeFolder;
+                        if (isDataTreeNote(addedNode)) {
+                            state.currentNote = addedNode;
+                            window.dispatchEvent(
+                                new CustomEvent<{ id: string }>(EV_NAME_LINK_NOTE_REDIRECT, { detail: { id: addedNode.id } })
+                            ); // делает эту заметку активной в блоке навигации
+                            //TODO:
+
+                            let nodeParent = runTaskOnWorker<TMessageGetParentNodeOnWorker, TReturnTypeGetParentNode>(worker, {
+                                args: [dataTree, addedNode.id],
+                                type: "get parent node",
+                            });
+
+                            if (isDataTreeFolder(nodeParent)) {
+                                state.currentFolder = nodeWithoutChildren(nodeParent) as IDataTreeFolder;
+                            }
                         }
-                    }
+                    };
+                    handler();
                 },
             }
         ),

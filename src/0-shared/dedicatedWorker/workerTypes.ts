@@ -21,6 +21,7 @@ import type { TParametersNodeMuveTo } from "2-features/utils/saveDataEditFunctio
 import type { TParametersNoteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 import type { TParametersNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import type { TParametersProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
+import type { TParametersGetParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -237,6 +238,14 @@ type TMessageProjectDeleteTagOnWorker<FUNC_PARAMS = TParametersProjectDeleteTag[
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения getParentNode в воркере
+ */
+type TMessageGetParentNodeOnWorker = {
+    type: "get parent node";
+    args: TParametersGetParentNode;
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -262,4 +271,5 @@ export type {
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
+    TMessageGetParentNodeOnWorker,
 };

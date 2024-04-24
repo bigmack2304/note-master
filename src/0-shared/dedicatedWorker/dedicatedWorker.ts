@@ -23,6 +23,7 @@ import type {
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
+    TMessageGetParentNodeOnWorker,
 } from "./workerTypes";
 import {
     isFunctionData,
@@ -49,6 +50,7 @@ import {
     isNoteDeleteTag,
     isNoteAddTag,
     isProjectDeleteTag,
+    isGetParentNode,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -73,6 +75,7 @@ import { nodeMuveTo } from "2-features/utils/saveDataEditFunctions/nodeMuveTo";
 import { noteDeleteTag } from "2-features/utils/saveDataEditFunctions/noteDeleteTag";
 import { noteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import { projectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
+import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 
 type TTaskRunerTypes =
     | TMessageDelById
@@ -97,7 +100,8 @@ type TTaskRunerTypes =
     | TMessageNodeMuveToOnWorker
     | TMessageNoteDeleteTagOnWorker
     | TMessageNoteAddTagOnWorker
-    | TMessageProjectDeleteTagOnWorker;
+    | TMessageProjectDeleteTagOnWorker
+    | TMessageGetParentNodeOnWorker;
 
 /**
  * получение данных
@@ -135,7 +139,8 @@ self.onmessage = (e: MessageEvent) => {
         isNodeMuveTo(data) ||
         isNoteDeleteTag(data) ||
         isNoteAddTag(data) ||
-        isProjectDeleteTag(data)
+        isProjectDeleteTag(data) ||
+        isGetParentNode(data)
     ) {
         taskRuner(data);
         return;
@@ -252,6 +257,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "project delete tag":
                 result = await projectDeleteTag(data);
+                break;
+            case "get parent node":
+                result = await getParentNode(...data.args);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

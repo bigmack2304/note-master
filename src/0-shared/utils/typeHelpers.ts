@@ -25,6 +25,7 @@ import type {
     TMessageNoteDeleteTagOnWorker,
     TMessageNoteAddTagOnWorker,
     TMessageProjectDeleteTagOnWorker,
+    TMessageGetParentNodeOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -440,6 +441,19 @@ function isProjectDeleteTag(value: any): value is TMessageProjectDeleteTagOnWork
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageGetParentNodeOnWorker dedicated воркера
+ */
+function isGetParentNode(value: any): value is TMessageGetParentNodeOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "get parent node")) return false;
+    if (!("args" in value) || ("args" in value && !Array.isArray(value.args))) return false;
+    if (value.args.length < 2) return false;
+    if (!isDataTreeFolder(value.args[0])) return false;
+    if (typeof value.args[1] !== "string") return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -471,5 +485,6 @@ export {
     isNoteDeleteTag,
     isNoteAddTag,
     isProjectDeleteTag,
+    isGetParentNode,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };
