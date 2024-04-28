@@ -44,7 +44,13 @@ function NoteAddTagDialog({ onClose, onCloseSave, dialogHeader }: TNoteAddTagDia
             actionButton
             addClassNames={["NoteAddTagDialog"]}
         >
-            <Input value={inputValue} placeholder="поиск тега" onChange={onInputChange} className="NoteAddTagDialog__input" />
+            <Input
+                value={inputValue}
+                placeholder="поиск тега"
+                onChange={onInputChange}
+                className="NoteAddTagDialog__input"
+                autoComplete="off"
+            />
             <AddTagSelect onChange={onSelectChange} sortName={inputValue} />
         </DialogWindowAlt>
     );

@@ -63,13 +63,14 @@ function ListEditWindow({ addClassNames = [], isOpen, listValue, onCloseSave, is
         setAddNewValue(e.target.value);
     };
 
-    const onAddNewClick = () => {
-        updateListValue("new", addNewValue);
-        setAddNewValue("");
-    };
-
     const onDialogClose = () => {
         onCloseSave && onCloseSave(JSON.stringify({ li: processedСontent }));
+    };
+
+    const onAddFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        updateListValue("new", addNewValue);
+        setAddNewValue("");
     };
 
     calcClassName();
@@ -114,9 +115,16 @@ function ListEditWindow({ addClassNames = [], isOpen, listValue, onCloseSave, is
                         </Box>
                     </ListItem>
                     <ListItem>
-                        <Box className={"ListEditWindow__new_item"}>
-                            <TextField className="ListEditWindow__addNew_input" value={addNewValue} variant="filled" onChange={addNewInputChange} size="small" autoComplete="off" />
-                            <AddButton onClick={onAddNewClick} size="large" />
+                        <Box component={"form"} className={"ListEditWindow__new_item"} onSubmit={onAddFormSubmit}>
+                            <TextField
+                                className="ListEditWindow__addNew_input"
+                                value={addNewValue}
+                                variant="filled"
+                                onChange={addNewInputChange}
+                                size="small"
+                                autoComplete="off"
+                            />
+                            <AddButton size="large" type="submit" />
                         </Box>
                     </ListItem>
                 </List>

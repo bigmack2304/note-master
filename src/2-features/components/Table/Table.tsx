@@ -255,7 +255,6 @@ function Table({
             sortedFiltredRenderData={sortedFiltredRenderData}
             savedRenderData={savedRenderData}
             editMode={editMode}
-            tableViewControls={tableViewControls}
             updateView={updateView}
             resetSort={resetSort}
             getStateExcludeColumns={getStateExcludeColumns}

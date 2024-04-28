@@ -1,5 +1,3 @@
-import { THEME_LIGHT_GRAY } from "5-app/settings";
-
 const codeLanguages = [
     "abap",
     "actionscript",
@@ -80,8 +78,8 @@ const codeLanguages = [
 
 const codeCustomThemeLight = {
     lineNumberColor: "#383a42",
-    lineNumberBgColor: THEME_LIGHT_GRAY,
-    backgroundColor: THEME_LIGHT_GRAY,
+    lineNumberBgColor: "#f0f0f0",
+    backgroundColor: "#f0f0f0",
     textColor: "#383a42",
     substringColor: "#e45649",
     keywordColor: "#a626a4",

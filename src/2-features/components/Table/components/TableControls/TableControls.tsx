@@ -9,6 +9,8 @@ import { TableFilterButton_memo_is_equal } from "../TableFilterButton/TableFilte
 import { ResetButton } from "0-shared/components/ResetButton/ResetButton";
 import { cellValueUpdate } from "../../utils/TableFunc";
 import { MiuMultiInputCustom } from "0-shared/components/MiuMultiInputCustom/MiuMultiInputCustom";
+import { useEventDispatch } from "0-shared/hooks/useEventDispatch";
+import { EV_NAME_TABLE_SAVE } from "5-app/settings";
 import type { TTableValue, TBodyComponentTable } from "0-shared/types/dataSave";
 import type { TOperators } from "../TableFilterButton/TableFilterButton";
 import type { TActiveCellData } from "../../commonTypes/types";
@@ -16,7 +18,6 @@ import type { TActiveCellData } from "../../commonTypes/types";
 type TTableControlsProps = {
     sortedFiltredRenderData: TTableValue;
     editMode: boolean | undefined;
-    tableViewControls: TBodyComponentTable["viewButtons"];
     onSave?: (newValue: TTableValue) => void;
     savedRenderData: React.MutableRefObject<TTableValue>;
     getStateExcludeColumns: () => {
@@ -68,7 +69,6 @@ function TableControls({
     getStateSort,
     getRefsInputDubleCellValue,
     onSave,
-    tableViewControls,
 }: TTableControlsProps) {
     const { excludeColumns, setExcludeColumns } = getStateExcludeColumns();
     const isTableColumnsButtonActive = excludeColumns.size > 0; // активна-ли опция скрытия колонок
@@ -79,10 +79,12 @@ function TableControls({
     const isFilterActive = filterOperator !== "" && filterColumnIndex !== ""; // активен-ли фильтр
     const isCellsSelect = editSelectColumnIndex.length > 0 || editSelectRowIndex.length > 0; // выбраны-ли какието клеточки в режиме редактирования
     const { inputDubleCellValue, focusCellData } = getRefsInputDubleCellValue();
+    const [eventDispatch] = useEventDispatch({ eventName: EV_NAME_TABLE_SAVE });
 
     // нажатие на кнопку сохранить
     const onTableSave = useCallback(() => {
         onSave && onSave(savedRenderData.current);
+        eventDispatch();
     }, []);
 
     // нажатие на кнопку добавления строки или колонки
@@ -172,16 +174,6 @@ function TableControls({
             <div className="Table__controls">
                 {editMode && (
                     <>
-                        {/* <TextField
-                            variant="outlined"
-                            size="small"
-                            multiline
-                            rows={5}
-                            inputProps={{ ref: inputDubleCellValue, className: "Table_inputValueDubleCell" }}
-                            onBlur={onInputBlur}
-                            onChange={onInputChange}
-                            className="Table__inputDoubleValue"
-                        /> */}
                         <MiuMultiInputCustom
                             rows={6}
                             onBlur={onInputBlur}

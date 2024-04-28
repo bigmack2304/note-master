@@ -8,6 +8,7 @@ type TAddButtonProps = {
     addClassNames?: string[];
     size?: "inherit" | "small" | "medium" | "large";
     title?: string;
+    type?: HTMLButtonElement["type"];
 };
 
 const ButtonStyle: SxProps = {
@@ -19,12 +20,12 @@ const ButtonStyle: SxProps = {
  * @prop onClick - вызывается при клике на кнопку
  * @prop addClassNames - массив строк, которые будут применены к компоненту в качестве доп.классов
  */
-function AddButton({ onClick = () => {}, addClassNames = [], title, size = "large" }: TAddButtonProps) {
+function AddButton({ onClick = () => {}, addClassNames = [], title, size = "large", type }: TAddButtonProps) {
     const defaultClassName = "AddButton";
     const genClassName = defaultClassName.split(" ").concat(addClassNames).join(" ");
 
     return (
-        <IconButton className={genClassName} aria-label="добавить элемент" sx={ButtonStyle} onClick={onClick} title={title}>
+        <IconButton className={genClassName} aria-label="добавить элемент" sx={ButtonStyle} onClick={onClick} title={title} type={type}>
             <AddCircleIcon fontSize={size} color="primary" />
         </IconButton>
     );
