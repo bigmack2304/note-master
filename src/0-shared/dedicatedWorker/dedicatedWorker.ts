@@ -25,6 +25,7 @@ import {
     isProjectDeleteTag,
     isGetParentNode,
     isProjectEditeTag,
+    isAddNewComponentToNote,
 } from "0-shared/utils/typeHelpers";
 import { deleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
 import { deleteComponentInNote } from "2-features/utils/saveDataEditFunctions/deleteComponentInNote";
@@ -51,6 +52,7 @@ import { noteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import { projectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import { getParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 import { projectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
+import { addNewComponentToNote } from "2-features/utils/saveDataEditFunctions/addNewComponentToNote";
 import type {
     TMessageDataType,
     TMessageDelById,
@@ -78,6 +80,7 @@ import type {
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
     TMessageProjectEditeTagOnWorker,
+    TMessageAddNewComponentToNoteOnWorker,
 } from "./workerTypes";
 
 type TTaskRunerTypes =
@@ -105,7 +108,8 @@ type TTaskRunerTypes =
     | TMessageNoteAddTagOnWorker
     | TMessageProjectDeleteTagOnWorker
     | TMessageGetParentNodeOnWorker
-    | TMessageProjectEditeTagOnWorker;
+    | TMessageProjectEditeTagOnWorker
+    | TMessageAddNewComponentToNoteOnWorker;
 
 /**
  * получение данных
@@ -145,7 +149,8 @@ self.onmessage = (e: MessageEvent) => {
         isNoteAddTag(data) ||
         isProjectDeleteTag(data) ||
         isGetParentNode(data) ||
-        isProjectEditeTag(data)
+        isProjectEditeTag(data) ||
+        isAddNewComponentToNote(data)
     ) {
         taskRuner(data);
         return;
@@ -268,6 +273,9 @@ async function taskRuner(data: TTaskRunerTypes) {
                 break;
             case "project edite tag":
                 result = await projectEditeTag(data);
+                break;
+            case "add new component to note":
+                result = await addNewComponentToNote(data);
                 break;
             default:
                 console.error(`dedicatedWorker.taskRuner: task type error, task '${(data as any).type}' unknown`);

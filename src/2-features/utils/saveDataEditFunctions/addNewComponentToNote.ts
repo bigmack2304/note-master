@@ -12,6 +12,9 @@ import { IdGenerator } from "0-shared/utils/idGenerator";
 import type { IDataTreeRootFolder, TAllComponents, TNoteBody } from "0-shared/types/dataSave";
 import { getNodeById } from "../saveDataParseFunctions/getNodeById";
 
+type TReturnTypeAddNewComponentToNote = ReturnType<typeof addNewComponentToNote>;
+type TParametersAddNewComponentToNote = Parameters<typeof addNewComponentToNote>;
+
 /**
  * Добавляет новый компонент в заметку
  * @param rootFolder обьект IDataTreeRootFolder
@@ -72,3 +75,4 @@ async function addNewComponentToNote(data: {
 }
 
 export { addNewComponentToNote };
+export type { TReturnTypeAddNewComponentToNote, TParametersAddNewComponentToNote };

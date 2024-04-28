@@ -27,6 +27,7 @@ import type {
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
     TMessageProjectEditeTagOnWorker,
+    TMessageAddNewComponentToNoteOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TTableValue } from "0-shared/types/dataSave";
 
@@ -469,6 +470,19 @@ function isProjectEditeTag(value: any): value is TMessageProjectEditeTagOnWorker
     return true;
 }
 
+/**
+ * проверяет чтобы сущьность пренадлежала к типу TMessageAddNewComponentToNoteOnWorker dedicated воркера
+ */
+function isAddNewComponentToNote(value: any): value is TMessageAddNewComponentToNoteOnWorker {
+    if (typeof value !== "object") return false;
+    if (!("type" in value) || ("type" in value && value.type !== "add new component to note")) return false;
+    if (!("rootFolder" in value) || ("rootFolder" in value && !isDataTreeFolder(value.rootFolder))) return false;
+    if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
+    if (!("componentType" in value) || ("componentType" in value && typeof value.componentType !== "string")) return false;
+    if (!("savedIdGenerator" in value) || ("savedIdGenerator" in value && !Array.isArray(value.savedIdGenerator))) return false;
+    return true;
+}
+
 export {
     isDataTreeNote,
     isDataTreeFolder,
@@ -502,5 +516,6 @@ export {
     isProjectDeleteTag,
     isGetParentNode,
     isProjectEditeTag,
+    isAddNewComponentToNote,
 };
 export type { GetProps, Ref, RemoveReadonly, TupleToObject };

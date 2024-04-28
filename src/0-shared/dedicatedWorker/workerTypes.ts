@@ -23,6 +23,7 @@ import type { TParametersNoteAddTag } from "2-features/utils/saveDataEditFunctio
 import type { TParametersProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import type { TParametersGetParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
 import type { TParametersProjectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
+import type { TParametersAddNewComponentToNote } from "2-features/utils/saveDataEditFunctions/addNewComponentToNote";
 
 /**
  *  тип обьекта данных с функцией, для запуска этой функции в воркере
@@ -256,6 +257,15 @@ type TMessageProjectEditeTagOnWorker<FUNC_PARAMS = TParametersProjectEditeTag[0]
     [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
 };
 
+/**
+ *  тип обьекта для выполнения addNewComponentToNote в воркере
+ */
+type TMessageAddNewComponentToNoteOnWorker<FUNC_PARAMS = TParametersAddNewComponentToNote[0]> = {
+    type: "add new component to note";
+} & {
+    [K in keyof FUNC_PARAMS]: FUNC_PARAMS[K];
+};
+
 export type {
     TMessageDataType,
     TMessageDelById,
@@ -283,4 +293,5 @@ export type {
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
     TMessageProjectEditeTagOnWorker,
+    TMessageAddNewComponentToNoteOnWorker,
 };

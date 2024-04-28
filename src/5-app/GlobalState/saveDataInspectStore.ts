@@ -70,6 +70,7 @@ import type {
     TMessageProjectDeleteTagOnWorker,
     TMessageGetParentNodeOnWorker,
     TMessageProjectEditeTagOnWorker,
+    TMessageAddNewComponentToNoteOnWorker,
 } from "0-shared/dedicatedWorker/workerTypes";
 import type { TReturnTypeUpdateNoteComponentImageSettings } from "2-features/utils/saveDataEditFunctions/updateNoteComponentImageSettings";
 import type { TReturnTypeDeleteById } from "2-features/utils/saveDataEditFunctions/deleteById";
@@ -94,7 +95,8 @@ import type { TReturnTypeNoteDeleteTag } from "2-features/utils/saveDataEditFunc
 import type { TReturnTypeNoteAddTag } from "2-features/utils/saveDataEditFunctions/noteAddTag";
 import type { TReturnTypeProjectDeleteTag } from "2-features/utils/saveDataEditFunctions/projectDeleteTag";
 import type { TReturnTypeGetParentNode } from "2-features/utils/saveDataParseFunctions/getParentNode";
-import { TReturnTypeProjectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
+import type { TReturnTypeProjectEditeTag } from "2-features/utils/saveDataEditFunctions/projectEditeTag";
+import type { TReturnTypeAddNewComponentToNote } from "2-features/utils/saveDataEditFunctions/addNewComponentToNote";
 
 // взаимодействия с папками и заметками, и все нужные данные для этого
 
@@ -1629,15 +1631,21 @@ const saveDataInspectSlice = createAppSlice({
         >(
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
+                const worker = workerRef.DWorker;
 
+                if (!worker) return;
                 if (!savedIdGenerator.instatnceIdGenerator) return;
                 if (!dataTree) return;
 
-                const { updatedNote, resultBool, newIdGenerator } = await addNewComponentToNote({
-                    rootFolder: dataTree,
-                    noteId: payload.noteId,
+                const { updatedNote, resultBool, newIdGenerator } = await runTaskOnWorker<
+                    TMessageAddNewComponentToNoteOnWorker,
+                    TReturnTypeAddNewComponentToNote
+                >(worker, {
                     componentType: payload.componentType,
+                    noteId: payload.noteId,
+                    rootFolder: dataTree,
                     savedIdGenerator: savedIdGenerator.instatnceIdGenerator.getIdsArray(),
+                    type: "add new component to note",
                 });
 
                 savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
