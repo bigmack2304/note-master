@@ -127,7 +127,20 @@ type TNoteBody =
 /**
  * цвета тега
  */
-type TTagColors = "red" | "blue" | "gray" | "yellow" | "green" | "transparent";
+type TTagColors =
+    | "red"
+    | "blue"
+    | "gray"
+    | "yellow"
+    | "green"
+    | "transparent"
+    | "fiolet"
+    | "orange"
+    | "whiteBlue"
+    | "fern"
+    | "aquamarine"
+    | "blackGreen"
+    | "fioletAlt";
 
 /**
  * типизация тега заметок

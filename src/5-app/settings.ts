@@ -58,14 +58,21 @@ const BORDER_DARK = "#E6E6E6";
 const NOTE_STATUS_COMPLETE = "#349515";
 const NOTE_STATUS_NO_COMPLETE = "#ff692d";
 
-// цвета для тегов при светлой и темной теме
+// цвета для тегов при светлой и темной теме (кроме этого этот обьект напрямую влияет на очередь отображения цветов в списках)
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
-    red: "#ff4e4e",
-    blue: "#6ba8ff",
+    transparent: "#aaaaaa24",
     gray: "#c7c7c7",
+    blue: "#6ba8ff",
+    whiteBlue: "#1B9EB0",
+    red: "#ff4e4e",
+    orange: "#DC8330",
     yellow: "#E1DD20",
     green: "#39C726",
-    transparent: "#aaaaaa24",
+    fern: "#8BB01B",
+    blackGreen: "#267020",
+    aquamarine: "#199060",
+    fioletAlt: "#D020A7",
+    fiolet: "#E66BFF",
 };
 
 export {

@@ -5,7 +5,9 @@ import { useTags } from "0-shared/hooks/useTags";
 import { NoteTag } from "0-shared/components/NoteTag/NoteTag";
 import { useTemeMode } from "0-shared/hooks/useThemeMode";
 import { useEventListener } from "0-shared/hooks/useEventListener";
-import type { PaletteMode, SxProps, SelectChangeEvent } from "@mui/material";
+import * as styles from "./AddTagSelectStyle";
+import "./AddTagSelect.scss";
+import type { SelectChangeEvent } from "@mui/material";
 import type { IGlobalTag } from "0-shared/types/dataSave";
 import type { GetProps } from "0-shared/utils/typeHelpers";
 
@@ -19,18 +21,6 @@ type TAddTagSelectProps = {
     size?: GetProps<typeof Select>["size"];
     selectLabel?: string;
     defaultValue?: string[];
-};
-
-const addTagSelectStyle = (tag: IGlobalTag, isColored: boolean, theme: PaletteMode) => {
-    let style = {} as React.CSSProperties;
-
-    if (isColored) {
-        let colorMix = theme === "light" ? "#FFFFFF0F" : "#000000";
-        let colorOpacyty = theme === "light" ? "60%" : "85%";
-        style.backgroundColor = `color-mix(in srgb-linear, ${tag.color}, ${colorMix} ${colorOpacyty})`;
-    }
-
-    return style as SxProps;
 };
 
 /**
@@ -137,7 +127,12 @@ function AddTagSelect({
                 )}
                 {availableTags.map((tag) => {
                     return (
-                        <MenuItem value={tag.tag_name} key={tag.tag_name} sx={addTagSelectStyle(tag, tagColored, themeValue)}>
+                        <MenuItem
+                            className="AddTagSelect__item"
+                            value={tag.tag_name}
+                            key={tag.tag_name}
+                            sx={styles.addTagSelectStyle(tag, tagColored, themeValue)}
+                        >
                             {tag.tag_name}
                         </MenuItem>
                     );
