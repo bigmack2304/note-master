@@ -1,5 +1,5 @@
-import type { IDataTreeNote } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import type { IDataTreeNote } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых заметок в дереве IDataTreeRootFolder

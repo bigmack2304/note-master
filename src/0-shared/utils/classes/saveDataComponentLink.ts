@@ -1,5 +1,6 @@
-import type { TBodyComponentLink } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentLink } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых компонентов ссылок заметки
@@ -12,8 +13,8 @@ class saveDataComponentLink extends DataNode implements TBodyComponentLink {
     public background: TBodyComponentLink["background"];
     public target: TBodyComponentLink["target"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "link";
         this.value = "#";

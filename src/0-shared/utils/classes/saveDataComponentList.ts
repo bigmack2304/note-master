@@ -1,5 +1,6 @@
-import type { TBodyComponentList } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentList } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых компонентов заголовка заметки
@@ -11,8 +12,8 @@ class DataComponentList extends DataNode implements TBodyComponentList {
     public isNumeric: TBodyComponentList["isNumeric"];
     public textAligin: TBodyComponentList["textAligin"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "list";
         this.value = "";

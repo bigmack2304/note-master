@@ -1630,13 +1630,17 @@ const saveDataInspectSlice = createAppSlice({
             async (payload, thunkApi) => {
                 const dataTree = await getDataTreeDB();
 
+                if (!savedIdGenerator.instatnceIdGenerator) return;
                 if (!dataTree) return;
 
-                const { updatedNote, resultBool } = await addNewComponentToNote({
+                const { updatedNote, resultBool, newIdGenerator } = await addNewComponentToNote({
                     rootFolder: dataTree,
                     noteId: payload.noteId,
                     componentType: payload.componentType,
+                    savedIdGenerator: savedIdGenerator.instatnceIdGenerator.getIdsArray(),
                 });
+
+                savedIdGenerator.instatnceIdGenerator = new IdGenerator(new Set(newIdGenerator));
 
                 if (!resultBool) {
                     throw new Error();

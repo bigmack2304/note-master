@@ -1,5 +1,5 @@
-import type { IDataTreeFolder } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import type { IDataTreeFolder } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых папок в дереве IDataTreeRootFolder

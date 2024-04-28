@@ -1,5 +1,6 @@
-import type { TBodyComponentCode } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentCode } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых компонентов кода заметки
@@ -12,8 +13,8 @@ class saveDataComponentCode extends DataNode implements TBodyComponentCode {
     public isExpand: TBodyComponentCode["isExpand"];
     public expandDesc: TBodyComponentCode["expandDesc"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "code";
         this.value = "";

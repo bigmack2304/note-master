@@ -1,5 +1,6 @@
-import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentTable, TTableValue } from "0-shared/types/dataSave";
 
 /**
  *  значение пустой таблицы. (для db и компонента таблицы)
@@ -39,8 +40,8 @@ class saveDataComponentTable extends DataNode implements TBodyComponentTable {
     public backlight: TBodyComponentTable["backlight"];
     public aligin: TBodyComponentTable["aligin"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "table";
         this.value = "";

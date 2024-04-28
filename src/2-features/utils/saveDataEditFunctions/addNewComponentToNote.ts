@@ -8,11 +8,9 @@ import { saveDataComponentVideo } from "0-shared/utils/classes/saveDataComponent
 import { DataComponentList } from "0-shared/utils/classes/saveDataComponentList";
 import { saveDataComponentTable } from "0-shared/utils/classes/saveDataComponentTable";
 import { setDataTreeDB } from "../appIndexedDBFynctions/dataTreeDb";
-import { runTaskOnWorker } from "0-shared/dedicatedWorker/workerFuncs";
-import { workerRef } from "0-shared/dedicatedWorker/workerInit";
+import { IdGenerator } from "0-shared/utils/idGenerator";
 import type { IDataTreeRootFolder, TAllComponents, TNoteBody } from "0-shared/types/dataSave";
-import type { TMessageGetNodeByIdOnWorker } from "0-shared/dedicatedWorker/workerTypes";
-import type { TReturnTypeGetNodeById } from "../saveDataParseFunctions/getNodeById";
+import { getNodeById } from "../saveDataParseFunctions/getNodeById";
 
 /**
  * Добавляет новый компонент в заметку
@@ -20,42 +18,42 @@ import type { TReturnTypeGetNodeById } from "../saveDataParseFunctions/getNodeBy
  * @param noteId id заметки в которую нужно добавить компонент
  * @param componentType тип добавляемого компонента (заголовок, текст... короче TAllComponents)
  */
-async function addNewComponentToNote(data: { rootFolder: IDataTreeRootFolder; noteId: string; componentType: TAllComponents }) {
+async function addNewComponentToNote(data: {
+    rootFolder: IDataTreeRootFolder;
+    noteId: string;
+    componentType: TAllComponents;
+    savedIdGenerator: string[];
+}) {
     let resultBool = false;
-    const worker = workerRef.DWorker;
-    if (!worker) return { updatedNote: undefined, resultBool };
-
-    let updatedNote = await runTaskOnWorker<TMessageGetNodeByIdOnWorker, TReturnTypeGetNodeById>(worker, {
-        type: "get node by id",
-        args: [data.rootFolder, data.noteId],
-    });
+    let newIdGenerator = new IdGenerator(new Set(data.savedIdGenerator));
+    let updatedNote = getNodeById(data.rootFolder, data.noteId);
 
     if (updatedNote && isDataTreeNote(updatedNote)) {
         let component: TNoteBody | undefined;
         switch (data.componentType) {
             case "header":
-                component = new DataComponentHeader();
+                component = new DataComponentHeader(newIdGenerator);
                 break;
             case "text":
-                component = new saveDataComponentText();
+                component = new saveDataComponentText(newIdGenerator);
                 break;
             case "code":
-                component = new saveDataComponentCode();
+                component = new saveDataComponentCode(newIdGenerator);
                 break;
             case "image":
-                component = new saveDataComponentImage();
+                component = new saveDataComponentImage(newIdGenerator);
                 break;
             case "link":
-                component = new saveDataComponentLink();
+                component = new saveDataComponentLink(newIdGenerator);
                 break;
             case "video":
-                component = new saveDataComponentVideo();
+                component = new saveDataComponentVideo(newIdGenerator);
                 break;
             case "list":
-                component = new DataComponentList();
+                component = new DataComponentList(newIdGenerator);
                 break;
             case "table":
-                component = new saveDataComponentTable();
+                component = new saveDataComponentTable(newIdGenerator);
                 break;
             default:
                 component = undefined;
@@ -70,7 +68,7 @@ async function addNewComponentToNote(data: { rootFolder: IDataTreeRootFolder; no
         }
     }
 
-    return { updatedNote, resultBool };
+    return { updatedNote, resultBool, newIdGenerator: newIdGenerator.getIdsArray() };
 }
 
 export { addNewComponentToNote };

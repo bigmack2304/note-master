@@ -1,5 +1,6 @@
-import type { TBodyComponentImage } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentImage } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых компонентов картинки заметки
@@ -11,8 +12,8 @@ class saveDataComponentImage extends DataNode implements TBodyComponentImage {
     public isDescHidden: TBodyComponentImage["isDescHidden"];
     public fileName: TBodyComponentImage["fileName"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "image";
         this.value = "";

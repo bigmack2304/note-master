@@ -1,5 +1,6 @@
-import type { TBodyComponentText } from "0-shared/types/dataSave";
 import { DataNode } from "./saveDataNode";
+import { IdGenerator } from "../idGenerator";
+import type { TBodyComponentText } from "0-shared/types/dataSave";
 
 /**
  *  класс для создания новых компонентов текста заметки
@@ -12,8 +13,8 @@ class saveDataComponentText extends DataNode implements TBodyComponentText {
     public font: TBodyComponentText["font"];
     public lineBreak: TBodyComponentText["lineBreak"];
 
-    constructor() {
-        super("component");
+    constructor(idGenerator: InstanceType<typeof IdGenerator>) {
+        super("component", idGenerator);
 
         this.component = "text";
         this.value = "";
