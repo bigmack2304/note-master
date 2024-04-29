@@ -19,7 +19,7 @@ function addTagSelectStyle(tag: IGlobalTag, isColored: boolean, theme: PaletteMo
                       },
                       "&.Mui-selected": {
                           backgroundColor: `color-mix(in srgb-linear, ${TAGS_COLORS_LIGHT[tag.color]}, ${colorMixSelect} ${colorOpacyty})`,
-                          "box-shadow": `inset 0px 0px 0px 2px ${theme === "light" ? CONTROLS_PRIMARY_LIGHT : CONTROLS_PRIMARY_DARK}`,
+                          boxShadow: `inset 0px 0px 0px 2px ${theme === "light" ? CONTROLS_PRIMARY_LIGHT : CONTROLS_PRIMARY_DARK}`,
                           margin: "3px 3px",
                       },
                       "&.Mui-selected:hover": {

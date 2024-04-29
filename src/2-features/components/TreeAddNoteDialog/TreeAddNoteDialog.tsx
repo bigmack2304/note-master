@@ -66,8 +66,15 @@ function TreeAddNoteDialog({ onClose, onCloseSave, dialogHeader = "Новая з
             actionButton
             addClassNames={["TreeAddNoteDialog"]}
         >
-            <Input value={inputValue} placeholder="имя заметки" onChange={onInputChange} required className="TreeAddNoteDialog__input" />
-            <AddTagSelect onChange={onSelectChange} />
+            <Input
+                value={inputValue}
+                placeholder="имя заметки"
+                autoComplete="off"
+                onChange={onInputChange}
+                required
+                className="TreeAddNoteDialog__input"
+            />
+            <AddTagSelect onChange={onSelectChange} viewAll />
 
             {!isTargetDefined && (
                 <>
