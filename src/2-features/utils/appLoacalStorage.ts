@@ -10,7 +10,7 @@ interface IAppLocalStorage {
     highlightingTagsInForms: boolean;
     treeViewWidth: number;
     fsTools: boolean;
-    noteMarginCollapse: boolean;
+    noteMarginCollapse: boolean; //DEPRECATED
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -22,7 +22,7 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     highlightingTagsInForms: false,
     treeViewWidth: 250,
     fsTools: false,
-    noteMarginCollapse: false,
+    noteMarginCollapse: false, //DEPRECATED
 };
 
 /**

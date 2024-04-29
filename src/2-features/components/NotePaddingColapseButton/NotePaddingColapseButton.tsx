@@ -6,7 +6,7 @@ import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 
 type TNotePaddingColapseButtonProps = {};
 /**
- * кнопка уменьшает отступы в заметках
+ * кнопка уменьшает отступы в заметках //DEPRECATED
  * @returns
  */
 function NotePaddingColapseButton({}: TNotePaddingColapseButtonProps) {

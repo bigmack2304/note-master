@@ -35,13 +35,14 @@ function SettingsContent({}: TSettingsContentProps) {
                     <ListItemText className="SettingsContent__listItemText">Подцветка тегов в формах</ListItemText>
                     <TagColoringInForms />
                 </ListItem>
-                <ListItem className="SettingsContent__listItem">
+                {/* // DEPRECATED */}
+                {/* <ListItem className="SettingsContent__listItem">
                     <ListItemIcon>
                         <MarginIcon />
                     </ListItemIcon>
                     <ListItemText className="SettingsContent__listItemText">Уменьшенные отступы в заметках</ListItemText>
                     <NotePaddingColapseButton />
-                </ListItem>
+                </ListItem> */}
             </List>
         </>
     );

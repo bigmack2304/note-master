@@ -6,14 +6,14 @@ interface ISettingsSlice {
     highlightingTagsInForms: boolean;
     treeViewWidth: number;
     fsTools: boolean;
-    noteMarginCollapse: boolean;
+    noteMarginCollapse: boolean; //DEPRECATED
 }
 
 const initialState: ISettingsSlice = {
     highlightingTagsInForms: false, // подцветка тегов в формах
     treeViewWidth: 250, // ширина окна с заметками и папками
     fsTools: false, // дополнительные инструменты для понели фаиловой струткуры
-    noteMarginCollapse: false, // уменьшенные отступы в заметках
+    noteMarginCollapse: false, // уменьшенные отступы в заметках //DEPRECATED
 };
 
 // в начале загружаем значения из localStorage
@@ -22,7 +22,7 @@ function init_values() {
     initialState.highlightingTagsInForms = get_stprage_data().highlightingTagsInForms;
     initialState.treeViewWidth = get_stprage_data().treeViewWidth;
     initialState.fsTools = get_stprage_data().fsTools;
-    initialState.noteMarginCollapse = get_stprage_data().noteMarginCollapse;
+    initialState.noteMarginCollapse = get_stprage_data().noteMarginCollapse; //DEPRECATED
 }
 
 /**
@@ -44,6 +44,7 @@ const settingsSlice = createSlice({
             state.fsTools = action.payload;
             storage_save_value("fsTools", action.payload);
         },
+        //DEPRECATED
         setNoteMarginCollapse: (state, action: PayloadAction<ISettingsSlice["noteMarginCollapse"]>) => {
             state.noteMarginCollapse = action.payload;
             storage_save_value("noteMarginCollapse", action.payload);
