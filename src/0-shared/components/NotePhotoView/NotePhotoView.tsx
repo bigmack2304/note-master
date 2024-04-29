@@ -15,7 +15,7 @@ type TNotePhotoViewProps = {
     onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
     imageData?: string;
     imageDesc?: string;
-    isDescHidden?: boolean;
+    isDesc?: boolean;
     isLoading?: boolean;
     dragId: string;
     isNoteEdit: boolean;
@@ -28,7 +28,7 @@ type TNotePhotoViewProps = {
  * @prop onContextMenu вызывается при клике левой кнопкой мыши по всему окну
  * @prop imageData ссылка на картинку (src)
  * @prop imageDesc описание (alt) картинки
- * @prop isDescHidden если true то описание не отображается
+ * @prop isDesc если true то описание отображается
  * @prop isLoading если true то отображает значок загрузки
  * @prop isNoteEdit - редактируется ли в данный момент заметка
  */
@@ -39,7 +39,7 @@ function NotePhotoView({
     imageData,
     imageDesc,
     isLoading = false,
-    isDescHidden,
+    isDesc,
     dragId,
     isNoteEdit,
 }: TNotePhotoViewProps) {
@@ -94,7 +94,7 @@ function NotePhotoView({
                                         />
                                     </PhotoView>
                                 </PhotoProvider>
-                                {isDescHidden === true && (
+                                {isDesc === true && (
                                     <Typography className="NotePhotoView__img_name" component={"figcaption"}>
                                         {imageDesc}
                                     </Typography>

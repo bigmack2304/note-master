@@ -8,7 +8,7 @@ import type { TBodyComponentImage } from "0-shared/types/dataSave";
 
 type TNoteImageEditDialogProps = {
     onClose?: (e: React.MouseEvent) => void;
-    onCloseSave?: (data: { imageDesc: string; isDescHidden: boolean }) => void;
+    onCloseSave?: (data: { imageDesc: string; isDesc: boolean }) => void;
     dialogHeader?: string;
     componentData: TBodyComponentImage;
 };
@@ -23,10 +23,10 @@ type TNoteImageEditDialogProps = {
  */
 function NoteImageEditDialog({ onClose, onCloseSave, dialogHeader = "Управление изображением", componentData }: TNoteImageEditDialogProps) {
     const [inputValue, setInputValue] = useState<TBodyComponentImage["desc"]>(componentData.desc);
-    const [descHidden, setDescHidden] = useState<TBodyComponentImage["isDescHidden"]>(componentData.isDescHidden);
+    const [descHidden, setDescHidden] = useState<TBodyComponentImage["isDesc"]>(componentData.isDesc);
 
     const onSave = () => {
-        onCloseSave && onCloseSave({ imageDesc: inputValue, isDescHidden: descHidden });
+        onCloseSave && onCloseSave({ imageDesc: inputValue, isDesc: descHidden });
     };
 
     const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

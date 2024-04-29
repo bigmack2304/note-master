@@ -9,7 +9,7 @@ class saveDataComponentImage extends DataNode implements TBodyComponentImage {
     public component: TBodyComponentImage["component"];
     public value: TBodyComponentImage["value"];
     public desc: TBodyComponentImage["desc"];
-    public isDescHidden: TBodyComponentImage["isDescHidden"];
+    public isDesc: TBodyComponentImage["isDesc"];
     public fileName: TBodyComponentImage["fileName"];
 
     constructor(idGenerator: InstanceType<typeof IdGenerator>) {
@@ -18,7 +18,7 @@ class saveDataComponentImage extends DataNode implements TBodyComponentImage {
         this.component = "image";
         this.value = "";
         this.desc = "";
-        this.isDescHidden = false;
+        this.isDesc = false;
         this.fileName = "";
 
         Object.setPrototypeOf(this, null);

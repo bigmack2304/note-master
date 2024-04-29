@@ -70,7 +70,7 @@ interface TBodyComponentImage extends IDataTreeNode {
     value: string; // это поле либо пустое либо = id этого компонента, если тут  есть id то по нему будет подгружатся данные из db
     fileName: string;
     desc: string;
-    isDescHidden: boolean;
+    isDesc: boolean;
 }
 
 // cсписок

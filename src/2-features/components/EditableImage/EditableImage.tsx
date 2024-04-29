@@ -115,7 +115,7 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
         setIsImageEditDialog(false);
     };
 
-    const onEditImageDialogCloseSave = (data: { imageDesc: string; isDescHidden: boolean }) => {
+    const onEditImageDialogCloseSave = (data: { imageDesc: string; isDesc: boolean }) => {
         setIsImageEditDialog(false);
         if (!componentData || !currentNoteData) return;
         dispatch(
@@ -123,7 +123,7 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
                 componentId: componentData.id,
                 noteId: currentNoteData.id,
                 imageDesc: data.imageDesc,
-                isDescHidden: data.isDescHidden,
+                isDesc: data.isDesc,
             })
         );
     };
@@ -145,7 +145,7 @@ function EditableImage({ addClassNames = [], componentData }: TEditableImageProp
                         isLoading={isImageLoadDb}
                         onContextMenu={onClickMoreActions}
                         imageDesc={componentData.desc}
-                        isDescHidden={componentData.isDescHidden}
+                        isDesc={componentData.isDesc}
                         imageData={imageSrc}
                         dragId={componentData.id}
                         isNoteEdit={isNoteEdit}

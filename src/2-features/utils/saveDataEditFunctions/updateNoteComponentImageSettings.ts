@@ -12,14 +12,14 @@ type TParametersUpdateNoteComponentImageSettings = Parameters<typeof updateNoteC
  * @param noteId id заметки в которой редактируем компонент
  * @param componentId id компонента в котором меняются данные
  * @param imageDesc новое описание
- * @param isDescHidden нужноли скрыть описание
+ * @param isDesc нужноли скрыть описание
  */
 async function updateNoteComponentImageSettings(data: {
     rootFolder: IDataTreeRootFolder;
     noteId: string;
     componentId: string;
     imageDesc: string;
-    isDescHidden: boolean;
+    isDesc: boolean;
 }) {
     let targetNote = getNodeById(data.rootFolder, data.noteId);
     let resultBool = false;
@@ -29,7 +29,7 @@ async function updateNoteComponentImageSettings(data: {
             if (component.id !== data.componentId) continue;
             if (component.component === "image") {
                 component.desc = data.imageDesc;
-                component.isDescHidden = data.isDescHidden;
+                component.isDesc = data.isDesc;
 
                 targetNote.lastEditTime = Date.now();
                 resultBool = true;

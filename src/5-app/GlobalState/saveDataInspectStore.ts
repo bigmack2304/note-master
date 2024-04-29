@@ -784,7 +784,7 @@ const saveDataInspectSlice = createAppSlice({
         ),
         // обновляем настройки image в активной заметке и в indexedDB
         updateNoteComponentImageSettings: create.asyncThunk<
-            { noteId: string; componentId: string; imageDesc: string; isDescHidden: boolean },
+            { noteId: string; componentId: string; imageDesc: string; isDesc: boolean },
             { updatedNode: TchildrenType | TNoteBody } | undefined
         >(
             async (payload, thunkApi) => {
@@ -802,7 +802,7 @@ const saveDataInspectSlice = createAppSlice({
                     componentId: payload.componentId,
                     noteId: payload.noteId,
                     imageDesc: payload.imageDesc,
-                    isDescHidden: payload.isDescHidden,
+                    isDesc: payload.isDesc,
                     type: "update note component image settings",
                 });
 

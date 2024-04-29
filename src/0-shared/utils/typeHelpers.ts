@@ -167,8 +167,13 @@ function isDelCompInNote(value: any): value is TMessageDelCompInNote {
 function isCloneFiltredTree(value: any): value is TMessageCloneFiltredTreeOnWorker {
     if (typeof value !== "object") return false;
     if (!("type" in value) || ("type" in value && value.type !== "clone filtred tree")) return false;
-    if (!("orig_obj" in value) || ("orig_obj" in value && !isDataTreeFolder(value.orig_obj))) return false;
-    if (!("filtres" in value)) return false;
+    if (!("args" in value) || ("args" in value && !Array.isArray(value.args))) return false;
+    if (value.args.length < 2) return false;
+    if (!isDataTreeFolder(value.args[0])) return false;
+    if (typeof value.args[1] !== "object") return false;
+    if (!("name" in value.args[1]) || ("name" in value.args[1] && typeof value.args[1].name !== "string")) return false;
+    if (!("content" in value.args[1]) || ("content" in value.args[1] && typeof value.args[1].content !== "string")) return false;
+    if (!("tags" in value.args[1]) || ("tags" in value.args[1] && !Array.isArray(value.args[1].tags))) return false;
     return true;
 }
 
@@ -292,7 +297,7 @@ function isUpdateNoteComponentImageSettings(value: any): value is TMessageUpdate
     if (!("noteId" in value) || ("noteId" in value && typeof value.noteId !== "string")) return false;
     if (!("componentId" in value) || ("componentId" in value && typeof value.componentId !== "string")) return false;
     if (!("imageDesc" in value) || ("imageDesc" in value && typeof value.imageDesc !== "string")) return false;
-    if (!("isDescHidden" in value) || ("isDescHidden" in value && typeof value.isDescHidden !== "boolean")) return false;
+    if (!("isDesc" in value) || ("isDesc" in value && typeof value.isDesc !== "boolean")) return false;
     return true;
 }
 

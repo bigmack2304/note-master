@@ -101,7 +101,7 @@ async function checkFilter(note: IDataTreeNote, filtres: IFindNodeParametres) {
             }
 
             if (component.component == "image") {
-                return !component.isDescHidden && component.desc.includes(filtres.content);
+                return component.isDesc && component.desc.includes(filtres.content);
             }
 
             // TODO: для поиска по содержимому таблицы придется реальзовать всю логику через промисы, поэтому пока отложим
