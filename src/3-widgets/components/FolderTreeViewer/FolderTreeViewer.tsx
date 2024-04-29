@@ -288,6 +288,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                 <>
                     <TreeView
                         aria-label="структура заметок"
+                        className="FolderTreeViewer__list"
                         defaultCollapseIcon={<ExpandMoreIcon />}
                         defaultExpandIcon={<ChevronRightIcon />}
                         selected={treeNodeSelect}
