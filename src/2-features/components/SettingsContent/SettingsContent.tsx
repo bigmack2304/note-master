@@ -11,6 +11,10 @@ import { NotePaddingColapseButton } from "../NotePaddingColapseButton/NotePaddin
 import { ButtonTreeNoteStatus } from "../ButtonTreeNoteStatus/ButtonTreeNoteStatus";
 import { CustomTooltip } from "0-shared/components/CustomTooltip/CustomTooltip";
 import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { ButtonNoteStatus } from "../ButtonNoteStatus/ButtonNoteStatus";
+import { ButtonNoteInfo } from "../ButtonNoteInfo/ButtonNoteInfo";
+import InfoIcon from "@mui/icons-material/Info";
 import * as styles from "./SettingsContentStyle";
 
 type TSettingsContentProps = {};
@@ -58,6 +62,24 @@ function SettingsContent({}: TSettingsContentProps) {
                         <ListItemText className="SettingsContent__listItemText">Отображать статус заметки</ListItemText>
                     </CustomTooltip>
                     <ButtonTreeNoteStatus />
+                </ListItem>
+                <ListItem className="SettingsContent__listItem">
+                    <ListItemIcon>
+                        <CheckCircleIcon />
+                    </ListItemIcon>
+                    <CustomTooltip title="Если отключить эту опцию то блок статуса в заметках не будет отображатся.">
+                        <ListItemText className="SettingsContent__listItemText">Показать блок статус в замекте</ListItemText>
+                    </CustomTooltip>
+                    <ButtonNoteStatus />
+                </ListItem>
+                <ListItem className="SettingsContent__listItem">
+                    <ListItemIcon>
+                        <InfoIcon />
+                    </ListItemIcon>
+                    <CustomTooltip title="Отображает время создания и последнего редактирования заметки.">
+                        <ListItemText className="SettingsContent__listItemText">Информация о заметке</ListItemText>
+                    </CustomTooltip>
+                    <ButtonNoteInfo />
                 </ListItem>
             </List>
         </>

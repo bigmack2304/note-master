@@ -59,6 +59,8 @@ function Note({ addClassNames = [] }: TNoteProps) {
     const currentNote = useAppSelector((store) => store.saveDataInspect.currentNote);
     const isNoteEdit = useAppSelector((state) => state.noteEditData.isEdit);
     const marginCollapse = useAppSelector((state) => state.settingsData.noteMarginCollapse);
+    const isNoteStatus = useAppSelector((state) => state.settingsData.viewNoteStatus);
+    const isNoteInfo = useAppSelector((state) => state.settingsData.viewNoteInfo);
 
     const calcClassName = () => {
         let tempClassName = defaultClassName.split(" ");
@@ -74,8 +76,10 @@ function Note({ addClassNames = [] }: TNoteProps) {
     return (
         <Box className={genClassName} component={"div"} sx={noteStyles(themeValue, isEdit)}>
             <div className="note__content_wrapper">
-                <ChangeTime createTime_timestamp={currentNote.createTime} lastEditTime_timestamp={currentNote.lastEditTime} />
-                <NoteStatus />
+                {isNoteInfo && (
+                    <ChangeTime createTime_timestamp={currentNote.createTime} lastEditTime_timestamp={currentNote.lastEditTime} />
+                )}
+                {isNoteStatus && <NoteStatus />}
                 <NoteTagList isNoteEdit={isNoteEdit} noteTags={currentNote.tags ?? []} />
                 {/* DndProvider нужеен для работы react-dnd для драг-дропа, ...Backend"ы служат для корректной работы на устройствах с мышкой и тачскринах */}
                 {/* выбор backend работает 1 раз, если во время работы тип isTouchDevice изменится то в интерфейсе ничего не изменится, как isTouchDevice странно себя ведет так и backend не хочет работать при переключении*/}

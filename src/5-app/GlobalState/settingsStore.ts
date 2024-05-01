@@ -8,6 +8,8 @@ interface ISettingsSlice {
     fsTools: boolean;
     noteMarginCollapse: boolean; //DEPRECATED
     treeViewNoteStatus: boolean;
+    viewNoteStatus: boolean;
+    viewNoteInfo: boolean;
 }
 
 const initialState: ISettingsSlice = {
@@ -16,6 +18,8 @@ const initialState: ISettingsSlice = {
     fsTools: false, // дополнительные инструменты для понели фаиловой струткуры
     noteMarginCollapse: false, // уменьшенные отступы в заметках //DEPRECATED
     treeViewNoteStatus: true, // показать статус заметки в блоке навигации
+    viewNoteStatus: true, // показать блок статуса в заметках
+    viewNoteInfo: true, // показать информацию о создании и редактировании в заметках
 };
 
 // в начале загружаем значения из localStorage
@@ -26,6 +30,8 @@ function init_values() {
     initialState.fsTools = get_stprage_data().fsTools;
     initialState.noteMarginCollapse = get_stprage_data().noteMarginCollapse; //DEPRECATED
     initialState.treeViewNoteStatus = get_stprage_data().treeViewNoteStatus;
+    initialState.viewNoteStatus = get_stprage_data().viewNoteStatus;
+    initialState.viewNoteInfo = get_stprage_data().viewNoteInfo;
 }
 
 /**
@@ -56,10 +62,26 @@ const settingsSlice = createSlice({
             state.treeViewNoteStatus = action.payload;
             storage_save_value("treeViewNoteStatus", action.payload);
         },
+        setViewNoteStatus: (state, action: PayloadAction<ISettingsSlice["viewNoteStatus"]>) => {
+            state.viewNoteStatus = action.payload;
+            storage_save_value("viewNoteStatus", action.payload);
+        },
+        setViewNoteInfo: (state, action: PayloadAction<ISettingsSlice["viewNoteInfo"]>) => {
+            state.viewNoteInfo = action.payload;
+            storage_save_value("viewNoteInfo", action.payload);
+        },
     },
 });
 
-export const { setHGLGTagsInForms, setTreeViewWidth, setFsTools, setNoteMarginCollapse, setTreeViewNoteStatus } = settingsSlice.actions;
+export const {
+    setHGLGTagsInForms,
+    setTreeViewWidth,
+    setFsTools,
+    setNoteMarginCollapse,
+    setTreeViewNoteStatus,
+    setViewNoteStatus,
+    setViewNoteInfo,
+} = settingsSlice.actions;
 export const { reducer } = settingsSlice;
 export { settingsSlice };
 export type { ISettingsSlice };

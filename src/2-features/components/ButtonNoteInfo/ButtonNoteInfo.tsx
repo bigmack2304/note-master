@@ -1,27 +1,27 @@
 import React from "react";
 import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
 import { useAppSelector } from "0-shared/hooks/useAppSelector";
-import { setTreeViewNoteStatus } from "5-app/GlobalState/settingsStore";
+import { setViewNoteInfo } from "5-app/GlobalState/settingsStore";
 import { SwitchCustom } from "0-shared/components/SwitchCustom/SwitchCustom";
 
-type TButtonTreeNoteStatusProps = {};
+type TButtonNoteInfoProps = {};
 /**
  * кнопка переключает отображение статуса заметок в блоке навигации
  * @returns
  */
-function ButtonTreeNoteStatus({}: TButtonTreeNoteStatusProps) {
-    const treeViewNoteStatus = useAppSelector((state) => state.settingsData.treeViewNoteStatus);
+function ButtonNoteInfo({}: TButtonNoteInfoProps) {
+    const viewNoteInfo = useAppSelector((state) => state.settingsData.viewNoteInfo);
     const dispatch = useAppDispatch();
 
     const onChange = (e: React.ChangeEvent, checked: boolean) => {
-        dispatch(setTreeViewNoteStatus(checked));
+        dispatch(setViewNoteInfo(checked));
     };
 
     return (
         <>
-            <SwitchCustom onChange={onChange} checked={treeViewNoteStatus} />
+            <SwitchCustom onChange={onChange} checked={viewNoteInfo} />
         </>
     );
 }
 
-export { ButtonTreeNoteStatus };
+export { ButtonNoteInfo };
