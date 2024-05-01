@@ -15,11 +15,12 @@ function CustomTooltip({ className, ...props }: TooltipProps) {
     return (
         <Tooltip
             {...props}
-            arrow
+            placement="bottom-start"
             className={componentClassName}
             classes={{ popper: `${className ? className : ""} ${componentClassName}` }}
             componentsProps={{ popper: { sx: style.customToolTipStyle(themeValue) } }}
-            enterDelay={400}
+            enterDelay={800}
+            enterNextDelay={800}
         />
     );
 }
