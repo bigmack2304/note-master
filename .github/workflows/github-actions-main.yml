@@ -1,9 +1,9 @@
 
-name: GitHub Actions main
-run-name: Main updated
+name: GitHub Actions master
+run-name: master updated
 on:
   push:
-    branches: [main]
+    branches: [master]
 env:
   GIT_BRANCH_DIR: final
 jobs:
