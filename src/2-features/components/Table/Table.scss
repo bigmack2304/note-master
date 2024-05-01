@@ -1,0 +1,134 @@
+.Table {
+    overflow: auto;
+}
+
+.Table .Table__control_button {
+    padding: 8px;
+}
+
+// таблица в режиме редактирования
+.Table--editMode {
+    padding: 5px;
+    border-radius: 5px;
+
+    .Table__header_inner_container {
+        flex-wrap: wrap;
+        justify-content: center;
+        flex-direction: column;
+        width: 150px;
+    }
+
+    .Table__body {
+        padding: 2px;
+    }
+
+    .Table__body_inner_container {
+        width: 230px;
+        max-height: 200px;
+        overflow: auto;
+        height: fit-content;
+    }
+}
+
+.Table__controls {
+    position: sticky;
+    z-index: 2;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 0px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 5px 10px 5px 5px;
+    gap: 5px;
+    margin-bottom: 10px;
+
+    &:not(:has(.Table__view_controls)) {
+        display: none;
+    }
+}
+
+.Table__view_controls,
+.Table__edit_controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.Table__table {
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.Table__desc {
+    line-height: initial;
+    font-style: italic;
+    padding: 8px;
+}
+
+.Table__body,
+.Table__header {
+    border: 1px solid rgb(0, 0, 0);
+    transition: box-shadow linear 0.1s;
+}
+
+.Table__header .MuiTypography-root,
+.Table__header .Table__header_text_input {
+    font-weight: bold;
+}
+
+.Table__header_inner_container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.Table__header_inner_container,
+.Table__body_inner_container {
+    line-height: 0;
+}
+
+.Table__header_sort_button {
+    font-size: 1.2rem;
+}
+
+.Table__header_text_input,
+.Table__body_text_input {
+    width: 100%;
+    white-space: break-spaces;
+    overflow: hidden;
+
+    .MuiInputBase-input {
+        text-overflow: ellipsis;
+    }
+}
+
+.Table__body--edit .Table__editable_select_row,
+.Table__header_inner_container .Table__editable_select_column {
+    margin: 0;
+}
+
+.Table--editMode .Table__header_controls_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
+}
+
+.Table__header_text,
+.Table__body_text {
+    padding: 4px;
+    white-space: break-spaces;
+}
+
+.Table__inputDoubleValue {
+    width: 100%;
+}

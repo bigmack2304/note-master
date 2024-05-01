@@ -1,0 +1,39 @@
+.ToolBar {
+    height: 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+}
+
+.ToolBar__main_constiols {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 5px;
+    flex-shrink: 1;
+    line-height: 0;
+    padding: 0 5px;
+}
+
+.ToolBar .ToolBar__fs_constiols_wrapper {
+    height: 100%;
+    line-height: 0;
+}
+
+.ToolBar__fs_constiols {
+    height: 100%;
+    line-height: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    padding: 0 10px;
+    box-shadow: 1px 0px black;
+}

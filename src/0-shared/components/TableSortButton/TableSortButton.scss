@@ -1,0 +1,12 @@
+.TableSortButton {
+    opacity: 10%;
+    padding: 5px;
+
+    &--active {
+        opacity: 100%;
+    }
+
+    &:hover {
+        opacity: 100%;
+    }
+}

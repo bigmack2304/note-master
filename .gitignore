@@ -10,6 +10,8 @@
 
 # production
 /build
+.vscode/settings.json
+public/manifest.json
 
 # misc
 .env

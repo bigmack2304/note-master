@@ -1,0 +1,40 @@
+.NoteVideo {
+    width: clamp(10px, 100%, 710px);
+    padding: 2px;
+    margin: 0 auto;
+    aspect-ratio: 16/9;
+    line-height: initial;
+}
+
+.NoteVideo.video_empty {
+    display: flex;
+    justify-content: center;
+    min-height: 3rem;
+    border-radius: 3px;
+    aspect-ratio: initial;
+    line-height: initial;
+}
+
+.NoteVideo.EditableVideo--pause {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00000066;
+    }
+}
+
+.NoteVideo.video_empty:before {
+    font-size: 1rem;
+    content: "Видео";
+    opacity: 50%;
+}
+
+.NoteVideo.EditableVideo--editable:hover {
+    outline: 1px red solid;
+}

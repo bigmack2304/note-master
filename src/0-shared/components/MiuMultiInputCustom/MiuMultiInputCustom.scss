@@ -1,0 +1,27 @@
+.MiuMultiInputCustom {
+    border-radius: 4px;
+    padding: 8.5px 14px;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375rem;
+    letter-spacing: 0.00938em;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    margin: 2px;
+}
+
+.MiuMultiInputCustom__input {
+    font: inherit;
+    letter-spacing: inherit;
+    color: currentColor;
+    display: block;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+    width: 100%;
+    resize: none;
+    background-color: transparent;
+
+    &:focus-visible {
+        outline: none;
+    }
+}

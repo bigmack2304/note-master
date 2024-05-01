@@ -1,0 +1,13 @@
+.FolderTreeViewer {
+    border-right: 1px #0000005c solid;
+    background-color: #1a1c5017;
+    white-space: nowrap;
+    overflow: auto;
+    padding: 10px 0 0 5px;
+    height: 100%;
+    width: 100%;
+}
+
+.FolderTreeViewer .FolderTreeViewer__list {
+    min-width: fit-content;
+}

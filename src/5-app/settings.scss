@@ -1,0 +1,46 @@
+$MIN-FULLSCREEN-W: 400px; // минимальная ширина для fullscreen блоков
+$MIN_DIALOG_WINDOW_W: 560px; // минимальная ширина для dialogWindowAlt.tsx
+
+$MOBILE_SCREEN_MIN: 0px; // митимальный размер окна для мобил
+$TABLET_SCREEN_MIN: 400px; // митимальный размер окна для плашетов
+$DESCTOP_SCREEN_MIN: 1200px; // митимальный размер окна для мониторов
+
+// функция для более удобной установки медиа запросов
+// применение: @include is-screen(desctop) { width: 100% ;}
+// брекпоинты [mobile, tablet, desctop, min_dialogWindow]
+@mixin is-screen($media) {
+    @if $media == mobile {
+        @media only screen and (min-width: #{$MOBILE_SCREEN_MIN + 1}) and (max-width: #{$TABLET_SCREEN_MIN - 1}) {
+            @content;
+        }
+    } @else if $media == tablet {
+        @media only screen and (min-width: $TABLET_SCREEN_MIN) and (max-width: #{$DESCTOP_SCREEN_MIN - 1}) {
+            @content;
+        }
+    } @else if $media == min_dialogWindow {
+        @media only screen and (min-width: #{$MOBILE_SCREEN_MIN + 1}) and (max-width: #{$MIN_DIALOG_WINDOW_W - 1}) {
+            @content;
+        }
+    } @else if $media == desctop {
+        @media only screen and (min-width: $DESCTOP_SCREEN_MIN) {
+            @content;
+        }
+    }
+}
+
+// адаптивный шрифт, зависящий от размера дисплея
+// использование @include adaptiv-font(14px, 22px);
+@mixin adaptiv-font($min-font-size: 12px, $max-font-size: 21px, $lower-range: $MIN-FULLSCREEN-W, $upper-range: $DESCTOP_SCREEN_MIN) {
+    font-size: calc(
+        #{$min-font-size} + #{(($max-font-size / ($max-font-size * 0 + 1)) - ($min-font-size / ($min-font-size * 0 + 1)))} * ((100vw - #{$lower-range}) / #{(
+                        ($upper-range / ($upper-range * 0 + 1)) - ($lower-range / ($lower-range * 0 + 1))
+                    )})
+    );
+
+    @media screen and (max-width: $lower-range) {
+        font-size: $min-font-size;
+    }
+    @media screen and (min-width: $upper-range) {
+        font-size: $max-font-size;
+    }
+}

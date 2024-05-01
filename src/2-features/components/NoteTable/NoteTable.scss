@@ -1,0 +1,47 @@
+.NoteTable {
+    width: 100%;
+    overflow: hidden;
+    font-size: 1rem;
+    padding: 2px;
+
+    &.text_empty {
+        flex-direction: column;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 3rem;
+        border-radius: 3px;
+    }
+
+    &.text_empty:before {
+        font-size: 1rem;
+        content: "Таблица";
+        opacity: 50%;
+        line-height: initial;
+    }
+
+    &--editable:hover {
+        outline: 1px red solid;
+    }
+}
+
+.NoteTable__out_wrapper {
+}
+
+.NoteTable__inner_wrapper:has(:not(.text_empty)) {
+    width: fit-content;
+    padding: 2px;
+    max-width: 100%;
+}
+
+.NoteTable__inner_wrapper:has(.NoteTable--aligin_left) {
+    margin: 0 auto 0 0;
+}
+
+.NoteTable__inner_wrapper:has(.NoteTable--aligin_right) {
+    margin: 0 0 0 auto;
+}
+
+.NoteTable__inner_wrapper:has(.NoteTable--aligin_center) {
+    margin: 0 auto;
+}

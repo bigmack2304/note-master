@@ -1,0 +1,26 @@
+.NoteTagList {
+    display: flex;
+    column-gap: 10px;
+    padding: 5px;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.NoteTagList .NoteTagList__tags_head {
+    align-self: flex-start;
+}
+
+.NoteTagList .NoteTagList__tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+    flex-basis: 100%;
+}
+
+.NoteTagList .NoteTagList__edit_button {
+    align-self: flex-start;
+}

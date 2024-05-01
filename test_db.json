@@ -1,0 +1,115 @@
+{
+    "db_type": "note_Master",
+    "global_tags": {
+        "tag1": {
+            "tag_name": "tag1",
+            "color": "red"
+        },
+        "tag2": {
+            "tag_name": "tag2",
+            "color": "blue"
+        },
+        "tag3": {
+            "tag_name": "tag3",
+            "color": "gray"
+        },
+        "tag4": {
+            "tag_name": "tag4",
+            "color": "yellow"
+        },
+        "tag5": {
+            "tag_name": "tag5",
+            "color": "green"
+        }
+    },
+    "data_tree": {
+        "id": "root",
+        "type": "folder",
+        "name": "root",
+        "color": "green",
+        "children": [
+            {
+                "id": "2",
+                "type": "note",
+                "name": "Note 1",
+                "createTime": 1697043600000,
+                "lastEditTime": 1697043600000,
+                "completed": true,
+                "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+                "body": [
+                    {
+                        "id": "3",
+                        "type": "component",
+                        "component": "header",
+                        "value": "Header 1",
+                        "textAligin": "center",
+                        "headerSize": "h3"
+                    },
+                    {
+                        "id": "4",
+                        "type": "component",
+                        "component": "header",
+                        "value": "header 2",
+                        "textAligin": "center",
+                        "headerSize": "h3"
+                    }
+                ]
+            },
+            {
+                "id": "5",
+                "type": "note",
+                "name": "Note 2",
+                "createTime": 1679043600000,
+                "lastEditTime": 1697043600000,
+                "completed": true,
+                "tags": ["tag2"],
+                "body": [
+                    {
+                        "id": "6",
+                        "type": "component",
+                        "component": "header",
+                        "value": "Header 3",
+                        "textAligin": "center",
+                        "headerSize": "h3"
+                    },
+                    {
+                        "id": "7",
+                        "type": "component",
+                        "component": "header",
+                        "value": "Header 4",
+                        "textAligin": "center",
+                        "headerSize": "h3"
+                    }
+                ]
+            },
+            {
+                "id": "8",
+                "type": "folder",
+                "name": "folder 1",
+                "color": "green",
+                "children": [
+                    {
+                        "id": "9",
+                        "type": "note",
+                        "name": "Note 3",
+                        "createTime": 1279043600000,
+                        "lastEditTime": 1397043600000,
+                        "completed": false,
+                        "tags": ["tag1"],
+                        "body": [
+                            {
+                                "id": "10",
+                                "type": "component",
+                                "component": "header",
+                                "value": "Header 5",
+                                "textAligin": "center",
+                                "headerSize": "h3"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "data_images": {}
+}

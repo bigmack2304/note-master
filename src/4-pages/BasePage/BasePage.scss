@@ -1,5 +1,43 @@
+@import "5-app/settings";
+
 .BasePage {
     height: 100dvh;
     width: 100dvw;
+    min-width: $MIN-FULLSCREEN-W;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.BasePage_loader {
+    width: 100dvw;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+}
+
+.BasePage .BasePage__workSpace_wrapper {
+    flex-grow: 1;
+    overflow: auto;
+    // display: flex;
+    // flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.BasePage .BasePage__workSpace {
+    // flex-grow: 1;
+    overflow: hidden;
+    overflow-y: auto;
+    // flex-basis: min-content;
+}
+
+.BasePage .ToolBar_wrapper {
+    margin-top: 64px;
+    flex-shrink: 0;
+}
+
+.BasePage .BasePage__toolbar {
+    width: 100%;
 }

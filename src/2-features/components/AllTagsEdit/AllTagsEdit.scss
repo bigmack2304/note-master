@@ -1,0 +1,53 @@
+@import "5-app/settings";
+
+.AllTagsEdit {
+    border-radius: 10px;
+    margin-top: 15px;
+    flex-grow: 1;
+    width: clamp(0px, 1000px, 100%);
+    container-type: inline-size;
+    container-name: AllTagsEdit;
+
+    @include is-screen(mobile) {
+        & > li {
+            padding: 8px 4px;
+        }
+    }
+}
+
+.AllTagsEdit .AllTagsEdit__form {
+    width: 100%;
+}
+
+.AllTagsEdit .AllTagsEdit__form_inner {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.AllTagsEdit .AllTagsEdit__inpits {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    @include is-screen(mobile) {
+        justify-content: center;
+    }
+}
+
+.AllTagsEdit .AllTagsEdit__Buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+@container AllTagsEdit (max-width: 431px) {
+    .AllTagsEdit .AllTagsEdit__form_inner {
+        justify-content: center;
+    }
+}

@@ -1,22 +1,29 @@
-import React, { useState } from "react";
-import { LeftMenu } from "0-shared";
-import { MenuButton } from "1-entities";
-import { MenuContent } from "1-entities";
-import type { TMenuContentProps } from "1-entities";
+import React from "react";
+import { LeftMenu } from "0-shared/components/LeftMenu/LeftMenu";
+import { MenuButton } from "0-shared/components/MenuButton/MenuButton";
+import { MenuContent } from "1-entities/components/MenuContent/MenuContent";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import { toggleLeftMenu, setIsOpen } from "5-app/GlobalState/leftMenuStore";
+import type { TMenuContentProps } from "1-entities/components/MenuContent/MenuContent";
 
-type TProps = {
+type TToggleMenuButtonProps = {
     menuContentProps?: TMenuContentProps;
 };
-
-function ToggleMenuButton({ menuContentProps }: TProps) {
-    const [isLeftMenuOpen, setIsLeftMenuOpen] = useState(false);
+/**
+ * кнопка открывает\закрывает боковое меню приложения
+ * @prop menuContentProps : пропсы для MenuContent
+ */
+function ToggleMenuButton({ menuContentProps }: TToggleMenuButtonProps) {
+    const isLeftMenuOpen = useAppSelector((state) => state.leftMenu.isOpen);
+    const dispatch = useAppDispatch();
 
     const onOpenMenu = (e: React.MouseEvent) => {
-        setIsLeftMenuOpen((isOpen) => !isOpen);
+        dispatch(toggleLeftMenu());
     };
 
     const onCloseMenu = (event: React.KeyboardEvent | React.MouseEvent) => {
-        setIsLeftMenuOpen(false);
+        dispatch(setIsOpen({ isOpen: false }));
     };
 
     return (
@@ -29,4 +36,6 @@ function ToggleMenuButton({ menuContentProps }: TProps) {
     );
 }
 
-export { ToggleMenuButton };
+const ToggleMenuButtonMemo = React.memo(ToggleMenuButton);
+
+export { ToggleMenuButton, ToggleMenuButtonMemo };

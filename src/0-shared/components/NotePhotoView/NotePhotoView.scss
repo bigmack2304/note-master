@@ -1,0 +1,41 @@
+.NotePhotoView__imgWrapper {
+    margin: 5px;
+}
+
+.NotePhotoView {
+    width: 100%;
+    overflow: hidden;
+    font-size: 1rem;
+    margin: 0 auto;
+
+    &.img_empty {
+        flex-direction: column;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 3rem;
+        border-radius: 3px;
+    }
+
+    &.img_empty:before {
+        font-size: 1rem;
+        content: "Изображение";
+        opacity: 50%;
+        line-height: initial;
+    }
+
+    &--editable:hover {
+        outline: 1px red solid;
+    }
+}
+
+.NotePhotoView__img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.NotePhotoView__img_name {
+    text-align: center;
+    font-style: italic;
+}

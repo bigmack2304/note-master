@@ -1,9 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { themeSlice } from "5-app/theme/themeStore"; // реэкспорт через индекс почемуто не работает
+import { themeSlice } from "./themeStore"; // реэкспорт через индекс почемуто не работает
+import { ToolBarSlice } from "./toolBarStore";
+import { saveDataInspectSlice } from "./saveDataInspectStore";
+import { leftMenuSlice } from "./leftMenuStore";
+import { editDataSlice } from "./noteStore";
+import { settingsSlice } from "./settingsStore";
 
 const store = configureStore({
     reducer: {
-        theme: themeSlice.reducer,
+        [themeSlice.name]: themeSlice.reducer,
+        [ToolBarSlice.name]: ToolBarSlice.reducer,
+        [saveDataInspectSlice.name]: saveDataInspectSlice.reducer,
+        [leftMenuSlice.name]: leftMenuSlice.reducer,
+        [editDataSlice.name]: editDataSlice.reducer,
+        [settingsSlice.name]: settingsSlice.reducer,
     },
 });
 

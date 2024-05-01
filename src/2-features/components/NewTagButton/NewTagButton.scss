@@ -1,0 +1,21 @@
+@import "5-app/settings";
+
+.NewTag_window .NewTag_window__find {
+    width: 100%;
+}
+
+.NewTag_window .NewTag_window__list {
+    width: clamp(0px, 1000px, 100%);
+    border-radius: 10px;
+    flex-shrink: 0;
+
+    @include is-screen(mobile) {
+        & > .MuiListItem-root {
+            padding: 8px 4px;
+        }
+    }
+}
+
+.NewTag_window .NewTag_window__allTagsList {
+    margin-top: 10px;
+}

@@ -1,0 +1,38 @@
+@import "5-app/settings";
+
+.AddNewTagForm {
+    width: 100%;
+    container-type: inline-size;
+    container-name: AddNewTagForm;
+}
+
+.AddNewTagForm__fieldset {
+    border-radius: 10px;
+}
+
+.AddNewTagForm__inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.AddNewTagForm__inputs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+
+    @include is-screen(mobile) {
+        justify-content: center;
+    }
+}
+
+@container AddNewTagForm (max-width: 368px) {
+    .AddNewTagForm__inner {
+        justify-content: center;
+    }
+}

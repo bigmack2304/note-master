@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, ButtonGroup } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsAuto, setIsDark } from "5-app/theme/themeStore";
-import type { RootState } from "5-app";
-import type { GetProps } from "0-shared";
-import type { IThemeState } from "5-app/theme/themeStore";
+import { useAppDispatch } from "0-shared/hooks/useAppDispatch";
+import { useAppSelector } from "0-shared/hooks/useAppSelector";
+import { setIsAuto, setIsDark } from "5-app/GlobalState/themeStore";
+import type { GetProps } from "0-shared/utils/typeHelpers";
+import type { IThemeState } from "5-app/GlobalState/themeStore";
 import type { SxProps } from "@mui/material";
 
 type TButtonVatiant = GetProps<typeof Button>["variant"];
@@ -57,10 +57,13 @@ function calcButtonCalback(index: number, lightCallback: TButtonCallback, darkCa
     return callback;
 }
 
+/**
+ * блок кнопок для переключения цветовой темы
+ */
 function ToggleThemeButton() {
     const variants = ["светлая", "темная", "авто"];
-    const theme = useSelector((state: RootState) => state.theme);
-    const dispatch = useDispatch();
+    const theme = useAppSelector((state) => state.theme);
+    const dispatch = useAppDispatch();
 
     const lightCallback = (e: React.MouseEvent) => {
         dispatch(setIsDark(false));

@@ -1,12 +1,16 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import type { RootState } from "5-app";
+import { useAppSelector } from "./useAppSelector";
+import type { RootState } from "5-app/GlobalState/store";
 import { createTheme } from "@mui/material/styles";
-import { themeOverrideStyles } from "5-app";
+import { themeOverrideStyles } from "2-features/utils/themeStylesOverride";
 
+/**
+ *  возвращает обьект темы material UI, автоматически меняет цвета темы в обьекте, операясь на глобальное состояние.
+ *  @ Используется для провайдера темы
+ */
 function useUiTeme() {
     let theme = createTheme({});
-    const storeTheme = useSelector((state: RootState) => state.theme);
+    const storeTheme = useAppSelector((state) => state.theme);
     const themeValue = storeTheme.isDark ? "dark" : "light";
 
     theme = createTheme(theme, {

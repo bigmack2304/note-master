@@ -1,0 +1,7 @@
+.AppBar {
+    height: 64px;
+
+    & > .MuiToolbar-root {
+        height: inherit;
+    }
+}

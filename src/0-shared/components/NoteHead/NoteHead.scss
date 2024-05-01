@@ -1,0 +1,36 @@
+.NoteHead {
+    display: inline-block;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all linear 0.1s;
+
+    &--editable:hover {
+        outline: 1px red solid;
+    }
+
+    &--aliginLeft {
+        text-align: left;
+    }
+
+    &--aliginCenter {
+        text-align: center;
+    }
+
+    &--aliginRight {
+        text-align: right;
+    }
+}
+
+.NoteHead.text_empty {
+    display: flex;
+    justify-content: center;
+    min-height: 3rem;
+    border-radius: 3px;
+
+    &:before {
+        font-size: 1rem;
+        content: "Заголовок";
+        opacity: 50%;
+    }
+}
