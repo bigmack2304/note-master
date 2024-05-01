@@ -11,6 +11,7 @@ interface IAppLocalStorage {
     treeViewWidth: number;
     fsTools: boolean;
     noteMarginCollapse: boolean; //DEPRECATED
+    treeViewNoteStatus: boolean;
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -23,6 +24,7 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     treeViewWidth: 250,
     fsTools: false,
     noteMarginCollapse: false, //DEPRECATED
+    treeViewNoteStatus: true,
 };
 
 /**

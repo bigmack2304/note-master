@@ -4,6 +4,7 @@ import type { TNodeType } from "0-shared/types/dataSave";
 type TCuspomProps = {
     nodeType?: TNodeType;
     noteComplete?: "complete" | "noComlete";
+    isNoteStatus?: boolean;
     addClassNames?: string[];
     //onSelectCallback?: (e: React.MouseEvent) => void;
     onSelectCallback?: () => void;
@@ -11,9 +12,7 @@ type TCuspomProps = {
 
 type TCustomTreeItemContentProps = {
     props: TreeItemProps;
-
     customProps: TCuspomProps;
-
     children: React.ReactNode;
 };
 

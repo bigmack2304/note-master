@@ -59,6 +59,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
     const clickedNodeDataRef = useRef<TchildrenType | null>(); // нода tempData по которой был клик при открытии контекстного меню, зпоминаем значение без лишнего обновления
     const [isLoading, setIsLoading] = useState(false);
     const [prepDataTree, setprepDataTree] = useState(dataTree);
+    const isTreeNoteStatus = useAppSelector((state) => state.settingsData.treeViewNoteStatus);
 
     // клик по ноде (для кастомных элементов дерева)
     //TODO: возможно потом стоит переделать это на onNodeSelect
@@ -300,6 +301,7 @@ function FolderTreeViewer({}: TFolderTreeViewerProps) {
                             node: prepDataTree,
                             onClickNodeCallback: onClickNode,
                             onNodeContextCallback: onNodeContext,
+                            isNoteStatus: isTreeNoteStatus,
                         })}
                     </TreeView>
                     <DopContextMenu isOpen={isContextMenuOpen} onClose={onContextMenuClose} anchorEl={contextMenuAnchorEl}>

@@ -80,6 +80,7 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
     });
     const themeValue = useTemeMode();
     const nameRef = useRef<HTMLDivElement>(null);
+    const isNoteStatus = props.isNoteStatus === undefined ? false : props.isNoteStatus;
 
     const genClassName = defaultClassName
         .concat(" ", MuiClassname)
@@ -126,14 +127,18 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
                 {icon}
             </Box>
             <Box onClick={handleIconClick.bind(null, props.nodeType)} sx={{ lineHeight: "0" }}>
-                {props.nodeType && props.nodeType === "folder" ? <FolderIcon fontSize="small" sx={IconFolderStyle()} /> : <ContentPasteIcon fontSize="small" />}
+                {props.nodeType && props.nodeType === "folder" ? (
+                    <FolderIcon fontSize="small" sx={IconFolderStyle()} />
+                ) : (
+                    <ContentPasteIcon fontSize="small" />
+                )}
             </Box>
             <Typography className={NodeNameClass} onClick={handleSelectionClick} component="span" ref={nameRef}>
                 {props.label}
             </Typography>
-            {props.noteComplete === "complete" ? (
+            {isNoteStatus && props.noteComplete === "complete" ? (
                 <Box className="CustomTreeItemContent__noteStatus--complete"></Box>
-            ) : props.noteComplete === "noComlete" ? (
+            ) : isNoteStatus && props.noteComplete === "noComlete" ? (
                 <Box className="CustomTreeItemContent__noteStatus--noComplete"></Box>
             ) : null}
         </Box>

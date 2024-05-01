@@ -7,6 +7,7 @@ interface ISettingsSlice {
     treeViewWidth: number;
     fsTools: boolean;
     noteMarginCollapse: boolean; //DEPRECATED
+    treeViewNoteStatus: boolean;
 }
 
 const initialState: ISettingsSlice = {
@@ -14,6 +15,7 @@ const initialState: ISettingsSlice = {
     treeViewWidth: 250, // ширина окна с заметками и папками
     fsTools: false, // дополнительные инструменты для понели фаиловой струткуры
     noteMarginCollapse: false, // уменьшенные отступы в заметках //DEPRECATED
+    treeViewNoteStatus: true, // показать статус заметки в блоке навигации
 };
 
 // в начале загружаем значения из localStorage
@@ -23,6 +25,7 @@ function init_values() {
     initialState.treeViewWidth = get_stprage_data().treeViewWidth;
     initialState.fsTools = get_stprage_data().fsTools;
     initialState.noteMarginCollapse = get_stprage_data().noteMarginCollapse; //DEPRECATED
+    initialState.treeViewNoteStatus = get_stprage_data().treeViewNoteStatus;
 }
 
 /**
@@ -49,10 +52,14 @@ const settingsSlice = createSlice({
             state.noteMarginCollapse = action.payload;
             storage_save_value("noteMarginCollapse", action.payload);
         },
+        setTreeViewNoteStatus: (state, action: PayloadAction<ISettingsSlice["treeViewNoteStatus"]>) => {
+            state.treeViewNoteStatus = action.payload;
+            storage_save_value("treeViewNoteStatus", action.payload);
+        },
     },
 });
 
-export const { setHGLGTagsInForms, setTreeViewWidth, setFsTools, setNoteMarginCollapse } = settingsSlice.actions;
+export const { setHGLGTagsInForms, setTreeViewWidth, setFsTools, setNoteMarginCollapse, setTreeViewNoteStatus } = settingsSlice.actions;
 export const { reducer } = settingsSlice;
 export { settingsSlice };
 export type { ISettingsSlice };

@@ -9,7 +9,7 @@ type TRenderTreeAsFileProps = {
     node: TchildrenType | undefined;
     onClickNodeCallback?: (nodeData: TchildrenType) => void;
     onNodeContextCallback?: (nodeData: TchildrenType, e: React.MouseEvent) => void;
-    findParams?: IFindNodeParametres;
+    isNoteStatus?: boolean;
 };
 
 /**
@@ -20,7 +20,7 @@ type TRenderTreeAsFileProps = {
  * @returns
  */
 
-function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, findParams }: TRenderTreeAsFileProps) {
+function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, isNoteStatus }: TRenderTreeAsFileProps) {
     if (!node) return <></>;
 
     const nodeData = nodeWithoutChildren(node);
@@ -42,13 +42,13 @@ function RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, fi
     return (
         <CustomTreeItem
             key={node.id}
-            customProps={{ nodeType: node.type, noteComplete: noteComplete, onSelectCallback: onSelect }}
+            customProps={{ nodeType: node.type, noteComplete: noteComplete, onSelectCallback: onSelect, isNoteStatus }}
             props={{ nodeId: node.id, label: node.name, onContextMenu: onContextMenu }}
         >
             {isDataTreeFolder(node) &&
                 node.children &&
                 node.children.map((node) => {
-                    return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback });
+                    return RenderTreeAsFile({ node, onClickNodeCallback, onNodeContextCallback, isNoteStatus });
                 })}
         </CustomTreeItem>
     );
