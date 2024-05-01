@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunknote_master=self.webpackChunknote_master||[]).push([[3140],{5410:e=>{function a(e){e.languages.hsts={directive:{pattern:/\b(?:includeSubDomains|max-age|preload)(?=[\s;=]|$)/i,alias:"property"},operator:/=/,punctuation:/;/}}e.exports=a,a.displayName="hsts",a.aliases=[]}}]);
