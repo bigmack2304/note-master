@@ -2,6 +2,7 @@ import React from "react";
 import { Link, Typography, Divider } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import "./AppInfo.scss";
+import { APP_VERSION_MAJOR, APP_VERSION_MINOR, APP_VERSION_PATCH } from "5-app/settings";
 
 /**
  * содержимое страницы "о приложении"
@@ -11,6 +12,9 @@ function AppInfo() {
         <div className="AppInfo">
             <Typography component={"h2"} variant="h2" className="AppInfo__head">
                 NoteMaser
+                <Typography component={"span"} className="AppInfo__version">
+                    v {APP_VERSION_MAJOR}.{APP_VERSION_MINOR}.{APP_VERSION_PATCH}
+                </Typography>
             </Typography>
             <br />
             <br />

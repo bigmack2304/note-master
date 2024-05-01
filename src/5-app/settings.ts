@@ -1,5 +1,9 @@
 import type { TTagColors } from "0-shared/types/dataSave";
 
+const APP_VERSION_MAJOR = 1; // обновляется вручную
+const APP_VERSION_MINOR = 0; // обновляется автоматически
+const APP_VERSION_PATCH = 1; // обновляется автоматически
+
 // следующие параметры дублируют свои аналоги в settings.scss
 const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
 const MIN_DIALOG_WINDOW_W = 460; // минимальная ширина для dialogWindow.tsx
@@ -117,4 +121,7 @@ export {
     EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED,
     EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED,
     EV_NAME_TABLE_SAVE,
+    APP_VERSION_MINOR,
+    APP_VERSION_MAJOR,
+    APP_VERSION_PATCH,
 };
