@@ -15,7 +15,7 @@ fs.readFile(filePath, "utf-8", (err, data) => {
         const oldVersion = parseInt(p2);
         let newVersion = oldVersion + 1;
 
-        if (newVersion > 100) {
+        if (newVersion > 500) {
             newVersion = 0;
             isNeedUpdMinor = true;
         }

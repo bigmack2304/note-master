@@ -149,6 +149,7 @@ function Note({ addClassNames = [] }: TNoteProps) {
                                           addClassNames={["note__list", "note__content"]}
                                           key={noteComponent.id}
                                           componentData={noteComponent}
+                                          defaultValue={noteComponent.value}
                                       />
                                   );
                               }

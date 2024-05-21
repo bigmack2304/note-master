@@ -6,6 +6,7 @@ function customToolTipStyle(theme: PaletteMode): SxProps {
         "&.CustomToolTip .MuiTooltip-tooltip": {
             display: "flex",
             backgroundColor: theme === "light" ? "#E6E6E6" : "#3E3E3E",
+            border: `1px ${theme === "light" ? "black" : "white"} solid`,
             color: fontThemeColor(theme),
         },
 

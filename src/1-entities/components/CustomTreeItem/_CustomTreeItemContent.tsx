@@ -6,6 +6,7 @@ import { BORDER_LIGHT, BORDER_DARK, NOTE_STATUS_COMPLETE, NOTE_STATUS_NO_COMPLET
 import { Typography, Box } from "@mui/material";
 import FolderIcon from "@mui/icons-material/Folder";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import { CustomTooltip } from "0-shared/components/CustomTooltip/CustomTooltip";
 import type { TreeItemContentProps } from "@mui/x-tree-view";
 import type { SxProps, PaletteMode } from "@mui/material";
 import type { TCuspomProps } from "./_CustomTreeItemTypes";
@@ -123,19 +124,23 @@ const CustomTreeItemContent = React.forwardRef(function CustomTreeItem_Content(p
 
     return (
         <Box className={genClassName} sx={CustomTreeItemContentStyle(themeValue)} onMouseDown={handleMouseDown} ref={ref}>
-            <Box onClick={handleExpansionClick} component={"div"} className={props.classes.iconContainer}>
-                {icon}
-            </Box>
-            <Box onClick={handleIconClick.bind(null, props.nodeType)} sx={{ lineHeight: "0" }}>
-                {props.nodeType && props.nodeType === "folder" ? (
-                    <FolderIcon fontSize="small" sx={IconFolderStyle()} />
-                ) : (
-                    <ContentPasteIcon fontSize="small" />
-                )}
-            </Box>
-            <Typography className={NodeNameClass} onClick={handleSelectionClick} component="span" ref={nameRef}>
-                {props.label}
-            </Typography>
+            <>
+                <Box onClick={handleExpansionClick} component={"div"} className={props.classes.iconContainer}>
+                    {icon}
+                </Box>
+                <Box onClick={handleIconClick.bind(null, props.nodeType)} sx={{ lineHeight: "0" }}>
+                    {props.nodeType && props.nodeType === "folder" ? (
+                        <FolderIcon fontSize="small" sx={IconFolderStyle()} />
+                    ) : (
+                        <ContentPasteIcon fontSize="small" />
+                    )}
+                </Box>
+                <CustomTooltip title={props.label?.toString()} placement="top-start">
+                    <Typography className={NodeNameClass} onClick={handleSelectionClick} component="span" ref={nameRef}>
+                        {props.label}
+                    </Typography>
+                </CustomTooltip>
+            </>
             {isNoteStatus && props.noteComplete === "complete" ? (
                 <Box className="CustomTreeItemContent__noteStatus--complete"></Box>
             ) : isNoteStatus && props.noteComplete === "noComlete" ? (

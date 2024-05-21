@@ -14,13 +14,13 @@ function CustomTooltip({ className, ...props }: TooltipProps) {
     const componentClassName = "CustomToolTip";
     return (
         <Tooltip
-            {...props}
             placement="bottom-start"
             className={componentClassName}
             classes={{ popper: `${className ? className : ""} ${componentClassName}` }}
             componentsProps={{ popper: { sx: style.customToolTipStyle(themeValue) } }}
             enterDelay={800}
             enterNextDelay={800}
+            {...props}
         />
     );
 }
