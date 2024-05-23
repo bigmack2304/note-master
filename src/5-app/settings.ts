@@ -2,7 +2,7 @@ import type { TTagColors } from "0-shared/types/dataSave";
 
 const APP_VERSION_MAJOR = 1; // обновляется вручную
 const APP_VERSION_MINOR = 0; // обновляется автоматически
-const APP_VERSION_PATCH = 11; // обновляется автоматически
+const APP_VERSION_PATCH = 43; // обновляется автоматически
 
 // следующие параметры дублируют свои аналоги в settings.scss
 const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
