@@ -14,6 +14,7 @@ interface IAppLocalStorage {
     treeViewNoteStatus: boolean;
     viewNoteStatus: boolean;
     viewNoteInfo: boolean;
+    consoleButton: boolean;
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -29,6 +30,7 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     treeViewNoteStatus: true,
     viewNoteStatus: true,
     viewNoteInfo: true,
+    consoleButton: false,
 };
 
 /**
@@ -50,8 +52,8 @@ function get_stprage_data() {
  * @param data
  */
 function set_storage_data(data: IAppLocalStorage) {
-    dispatchEventStorageUpdate();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    dispatchEventStorageUpdate();
 }
 
 /**

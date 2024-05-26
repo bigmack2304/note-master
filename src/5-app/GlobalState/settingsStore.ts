@@ -10,6 +10,7 @@ interface ISettingsSlice {
     treeViewNoteStatus: boolean;
     viewNoteStatus: boolean;
     viewNoteInfo: boolean;
+    consoleButton: boolean;
 }
 
 const initialState: ISettingsSlice = {
@@ -20,6 +21,7 @@ const initialState: ISettingsSlice = {
     treeViewNoteStatus: true, // показать статус заметки в блоке навигации
     viewNoteStatus: true, // показать блок статуса в заметках
     viewNoteInfo: true, // показать информацию о создании и редактировании в заметках
+    consoleButton: false, // показать кнопку кастомной консоли
 };
 
 // в начале загружаем значения из localStorage
@@ -32,6 +34,7 @@ function init_values() {
     initialState.treeViewNoteStatus = get_stprage_data().treeViewNoteStatus;
     initialState.viewNoteStatus = get_stprage_data().viewNoteStatus;
     initialState.viewNoteInfo = get_stprage_data().viewNoteInfo;
+    initialState.consoleButton = get_stprage_data().consoleButton;
 }
 
 /**
@@ -70,6 +73,10 @@ const settingsSlice = createSlice({
             state.viewNoteInfo = action.payload;
             storage_save_value("viewNoteInfo", action.payload);
         },
+        setConsoleButton: (state, action: PayloadAction<ISettingsSlice["consoleButton"]>) => {
+            state.consoleButton = action.payload;
+            storage_save_value("consoleButton", action.payload);
+        },
     },
 });
 
@@ -81,6 +88,7 @@ export const {
     setTreeViewNoteStatus,
     setViewNoteStatus,
     setViewNoteInfo,
+    setConsoleButton,
 } = settingsSlice.actions;
 export const { reducer } = settingsSlice;
 export { settingsSlice };

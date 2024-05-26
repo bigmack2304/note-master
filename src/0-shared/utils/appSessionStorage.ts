@@ -4,7 +4,7 @@ import { EV_NAME_UPD_SESSION_STORAGE } from "5-app/settings";
 
 // тип сессионого стораджа приложения
 interface IAppSessionStorage {
-    appLogs: { type: "log" | "warn" | "error"; value: string }[];
+    appLogs: { type: "log" | "warn" | "error" | "user"; value: string }[];
 }
 
 const STORAGE_KEY = "app_note_master_session_data";
@@ -32,8 +32,8 @@ function get_session_stprage_data() {
  * @param data
  */
 function set_session_storage_data(data: IAppSessionStorage) {
-    dispatchEventSessionStorageUpdate();
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    dispatchEventSessionStorageUpdate();
 }
 
 /**
