@@ -2,7 +2,7 @@
  * функционал будет связан с закрытием приложения
  * - нужно вызвать всего один раз при инициализации приложения
  */
-function hanleExit() {
+function hanleExitInit() {
     window.addEventListener(
         "load",
         () => {
@@ -15,4 +15,4 @@ function hanleExit() {
     );
 }
 
-export { hanleExit };
+export { hanleExitInit };

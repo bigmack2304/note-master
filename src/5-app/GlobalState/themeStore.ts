@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { isDark } from "0-shared/utils/getSystemStyle";
 import { AUTO_THEME_DETECT } from "5-app/settings";
-import { get_stprage_data, storage_save_value } from "2-features/utils/appLoacalStorage";
+import { get_stprage_data, storage_save_value } from "2-features/utils/appLocalStorage";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface IThemeState {

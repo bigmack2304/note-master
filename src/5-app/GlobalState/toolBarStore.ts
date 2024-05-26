@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { get_stprage_data, storage_save_value } from "2-features/utils/appLoacalStorage";
+import { get_stprage_data, storage_save_value } from "2-features/utils/appLocalStorage";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface IFindNodeParametres {

@@ -1,4 +1,4 @@
-import { AUTO_THEME_DETECT } from "5-app/settings";
+import { AUTO_THEME_DETECT, EV_NAME_UPD_LOCAL_STORAGE } from "5-app/settings";
 
 // определение локал-стораджа всего приложения
 // тип локал стораджа приложения
@@ -58,7 +58,7 @@ function set_storage_data(data: IAppLocalStorage) {
  * генерирует событие при вызове set_storage_data
  */
 function dispatchEventStorageUpdate() {
-    window.dispatchEvent(new CustomEvent("appLocalStorageUpdate"));
+    window.dispatchEvent(new CustomEvent(EV_NAME_UPD_LOCAL_STORAGE));
 }
 
 /**
