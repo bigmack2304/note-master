@@ -26,7 +26,7 @@ function AppConsole() {
     };
 
     const onButtonClear = () => {
-        setSessionData({ ...appLogs, appLogs: [] });
+        setSessionData({ ...sessionData, appLogs: [] });
     };
 
     useEffect(() => {
