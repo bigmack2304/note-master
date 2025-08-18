@@ -1,6 +1,6 @@
 import type { PaletteMode } from "@mui/material";
 import type { SxProps } from "@mui/material";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, DRAG_ZONE_OUT_DARK, DRAG_ZONE_OUT_LIGHT } from "5-app/settings";
 
 function typographyStyle(themeMode: PaletteMode): SxProps {
     return {
@@ -18,6 +18,9 @@ function typographyStyle(themeMode: PaletteMode): SxProps {
 
 function wrapperStyle(themeMode: PaletteMode): SxProps {
     return {
+        "&.NoteText_outWrapper.dragZoneOut": {
+            outline: `2px ${themeMode === "light" ? DRAG_ZONE_OUT_DARK : DRAG_ZONE_OUT_LIGHT}  dashed`,
+        },
         "&.NoteText_outWrapper.dragZoneOk": {
             outline: `2px ${themeMode === "light" ? "black" : "white"}  dashed`,
         },

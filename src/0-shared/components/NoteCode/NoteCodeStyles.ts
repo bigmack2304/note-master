@@ -1,5 +1,5 @@
 import { codeCustomThemeLight, codeCustomThemeDark } from "./NoteCodeValues";
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, DRAG_ZONE_OUT_DARK, DRAG_ZONE_OUT_LIGHT } from "5-app/settings";
 import type { TCodeThemes } from "./NoteCodeTypes";
 import type { PaletteMode, SxProps } from "@mui/material";
 import type { CSSProperties } from "react";
@@ -32,7 +32,9 @@ function codeWrapperStyle(themeMode: PaletteMode): SxProps {
         "&.NoteCode.text_empty": {
             backgroundColor: themeMode === "light" ? THEME_LIGHT_GRAY : THEME_DARK_GRAY,
         },
-
+        "&.NoteCode.dragZoneOut": {
+            outline: `2px ${themeMode === "light" ? DRAG_ZONE_OUT_DARK : DRAG_ZONE_OUT_LIGHT}  dashed`,
+        },
         "&.NoteCode.dragZoneOk": {
             outline: `2px ${themeMode === "light" ? "black" : "white"}  dashed`,
         },

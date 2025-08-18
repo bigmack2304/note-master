@@ -2,7 +2,7 @@ import type { TTagColors } from "0-shared/types/dataSave";
 
 const APP_VERSION_MAJOR = 1; // обновляется вручную
 const APP_VERSION_MINOR = 0; // обновляется автоматически
-const APP_VERSION_PATCH = 179; // обновляется автоматически
+const APP_VERSION_PATCH = 203; // обновляется автоматически
 
 // следующие параметры дублируют свои аналоги в settings.scss
 const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
@@ -63,6 +63,9 @@ const BORDER_DARK = "#E6E6E6";
 
 const NOTE_STATUS_COMPLETE = "#349515";
 const NOTE_STATUS_NO_COMPLETE = "#ff692d";
+
+const DRAG_ZONE_OUT_LIGHT = "#5EBD6BB0";
+const DRAG_ZONE_OUT_DARK = "#5EBD6BB0";
 
 // цвета для тегов при светлой и темной теме (кроме этого этот обьект напрямую влияет на очередь отображения цветов в списках)
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
@@ -127,4 +130,6 @@ export {
     APP_VERSION_PATCH,
     EV_NAME_UPD_LOCAL_STORAGE,
     EV_NAME_UPD_SESSION_STORAGE,
+    DRAG_ZONE_OUT_LIGHT,
+    DRAG_ZONE_OUT_DARK,
 };

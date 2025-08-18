@@ -1,4 +1,4 @@
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, DRAG_ZONE_OUT_DARK, DRAG_ZONE_OUT_LIGHT } from "5-app/settings";
 import { fontThemeColor } from "2-features/utils/themeStylesOverride";
 import type { SxProps, PaletteMode } from "@mui/material";
 
@@ -16,6 +16,9 @@ function noteTableStyle(theme: PaletteMode): SxProps {
 
 function outWrapperStyle(theme: PaletteMode): SxProps {
     return {
+        "&.NoteTable__out_wrapper.dragZoneOut": {
+            outline: `2px ${theme === "light" ? DRAG_ZONE_OUT_DARK : DRAG_ZONE_OUT_LIGHT}  dashed`,
+        },
         "&.NoteTable__out_wrapper.dragZoneOk": {
             outline: `2px ${theme === "light" ? "black" : "white"}  dashed`,
         },
