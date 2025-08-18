@@ -70,7 +70,13 @@ function useNoteComponentDrag({ wrapperRef, moverRef, containerRef, dragId, full
             if (dropData.canDrop && dropData.isOver && dropData.dropId !== dropData.item.dragId) {
                 // console.log(`drop: ${dropData.item.dragId} -> ${dragId}`);
                 if (!actoveNote) return;
-                dispatch(updateNoteComponentsOrder({ noteId: actoveNote.id, componentDragId: dropData.item.dragId, toComponentDragId: dropData.dropId }));
+                dispatch(
+                    updateNoteComponentsOrder({
+                        noteId: actoveNote.id,
+                        componentDragId: dropData.item.dragId,
+                        toComponentDragId: dropData.dropId,
+                    })
+                );
             }
         },
     });
@@ -79,6 +85,10 @@ function useNoteComponentDrag({ wrapperRef, moverRef, containerRef, dragId, full
         if (!fullClassName) return;
 
         let tempClassName = fullClassName.split(" ");
+
+        if (dropData.canDrop && !dropData.isOver && dropData.dropId !== dropData.item.dragId) {
+            tempClassName.push("dragZoneOut");
+        }
 
         if (dropData.canDrop && dropData.isOver && dropData.dropId !== dropData.item.dragId) {
             tempClassName.push("dragZoneOk");
