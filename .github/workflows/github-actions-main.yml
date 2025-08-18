@@ -27,7 +27,7 @@ jobs:
         run: npm run build-git
 
       - name: Create Artifacts 
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: final
           path: build
