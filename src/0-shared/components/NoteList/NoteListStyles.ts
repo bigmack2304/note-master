@@ -1,4 +1,4 @@
-import { THEME_LIGHT_GRAY, THEME_DARK_GRAY } from "5-app/settings";
+import { THEME_LIGHT_GRAY, THEME_DARK_GRAY, DRAG_ZONE_OUT_DARK, DRAG_ZONE_OUT_LIGHT } from "5-app/settings";
 import type { PaletteMode } from "@mui/material";
 import type { SxProps } from "@mui/material";
 
@@ -18,6 +18,9 @@ function ListStyle(themeMode: PaletteMode): SxProps {
 
 function outWrapperStyle(themeMode: PaletteMode): SxProps {
     return {
+        "&.NoteList_outWrapper.dragZoneOut": {
+            outline: `2px ${themeMode === "light" ? DRAG_ZONE_OUT_DARK : DRAG_ZONE_OUT_LIGHT}  dashed`,
+        },
         "&.NoteList_outWrapper.dragZoneOk": {
             outline: `2px ${themeMode === "light" ? "black" : "white"}  dashed`,
         },

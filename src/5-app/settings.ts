@@ -2,7 +2,7 @@ import type { TTagColors } from "0-shared/types/dataSave";
 
 const APP_VERSION_MAJOR = 1; // обновляется вручную
 const APP_VERSION_MINOR = 0; // обновляется автоматически
-const APP_VERSION_PATCH = 11; // обновляется автоматически
+const APP_VERSION_PATCH = 203; // обновляется автоматически
 
 // следующие параметры дублируют свои аналоги в settings.scss
 const MIN_FULLSCREEN_W = 400; // минимальная ширина для fullscreen блоков
@@ -13,8 +13,7 @@ const DESCTOP_SCREEN_MIN = 1200; // митимальный размер окна
 
 const MAX_TAG_LENGTH = 10; // максимальная длинна имяни тега
 
-// события для асинхронных редьюсеров в saveDataInspectSlice
-// REJECT не обязательно значит что произошла ошибка, возможно не прошла какаято валидация
+// имена кастомных событий на которые может реагировать приложение
 const EV_NAME_BUTTON_CLOSE_TREE_FOLDERS = "buttonCloseTreeFolders"; // закрыть все папки в окне с папками и заметками
 const EV_NAME_SAVE_DATA_REDUCER_START = "saveDataInspectReducerSart"; // начало операции
 const EV_NAME_SAVE_DATA_REDUCER_REJECT = "saveDataInspectReducerRejected"; // ошибка
@@ -24,6 +23,8 @@ const EV_NAME_LINK_NOTE_REDIRECT = "componentLinkRedirectToNote"; // перех�
 const EV_NAME_SAVE_DATA_REDUCER_SAVE_FULFILLED = "saveDataInspectReducerSaveFulfield"; // успешное сохранение
 const EV_NAME_SAVE_DATA_REDUCER_LOAD_FULFILLED = "saveDataInspectReducerLoadFulfield"; // успешная загрузка
 const EV_NAME_TABLE_SAVE = "tableSaveClick"; // нажатие на кнопку сохранить в компоненте таблицы
+const EV_NAME_UPD_LOCAL_STORAGE = "appLocalStorageUpdate"; // изменение в localStorage (через appLocalStorage.ts или useLocalStorage.ts)
+const EV_NAME_UPD_SESSION_STORAGE = "appSessionStorageUpdate"; // изменение в sessionStorage (через appSessionStorage.ts или useSessionStorage.ts)
 
 const TRANSITION_DURATION = 150; // длительность анимаций переходов в интерфейсе
 const AUTO_THEME_DETECT = true; // при первом запуске, определяем тему приложения, если true то автоопределение
@@ -62,6 +63,9 @@ const BORDER_DARK = "#E6E6E6";
 
 const NOTE_STATUS_COMPLETE = "#349515";
 const NOTE_STATUS_NO_COMPLETE = "#ff692d";
+
+const DRAG_ZONE_OUT_LIGHT = "#5EBD6BB0";
+const DRAG_ZONE_OUT_DARK = "#5EBD6BB0";
 
 // цвета для тегов при светлой и темной теме (кроме этого этот обьект напрямую влияет на очередь отображения цветов в списках)
 const TAGS_COLORS_LIGHT: Record<TTagColors, string> = {
@@ -124,4 +128,8 @@ export {
     APP_VERSION_MINOR,
     APP_VERSION_MAJOR,
     APP_VERSION_PATCH,
+    EV_NAME_UPD_LOCAL_STORAGE,
+    EV_NAME_UPD_SESSION_STORAGE,
+    DRAG_ZONE_OUT_LIGHT,
+    DRAG_ZONE_OUT_DARK,
 };

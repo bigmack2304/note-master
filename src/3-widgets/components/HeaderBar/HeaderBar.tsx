@@ -15,6 +15,8 @@ import { addNote } from "5-app/GlobalState/saveDataInspectStore";
 import { ExportProjectDialog } from "2-features/components/ExportProjectDialog/ExportProjectDialog";
 import { TreeAddNoteDialog } from "2-features/components/TreeAddNoteDialog/TreeAddNoteDialog";
 import { AppInfo } from "1-entities/components/AppInfo/AppInfo";
+import { ConsoleButton } from "0-shared/components/ConsoleButton/ConsoleButton";
+import { AppConsole } from "2-features/components/AppConsole/AppConsole";
 
 type THeaderBarProps = {};
 
@@ -24,12 +26,14 @@ type THeaderBarProps = {};
  */
 function HeaderBar({}: THeaderBarProps) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false); // меню настроек открыта
+    const [isConsoleOpen, setIsConsoleOpen] = useState(false); // показ кастомной консоли
     const [isInfoOpen, setIsInfoOpen] = useState(false); // открыто окно о приложении
     const [isExportOpen, setIsExportOpen] = useState(false); // открыта форма экспорта
     const [isNewNoteOpen, setIsNewNoteOpen] = useState(false); // открыта форма для новой заметки
     const [isLoadDialog, setIsLoadDialog] = useState(false); // открыта форма загрузить
     const inputFileRef = useRef<HTMLInputElement>(null); // ссылка на dom елемент загрузчика фаила с системы
     const isProject = useAppSelector((state) => state.saveDataInspect.isProjectOpen); // открыт ли какой либо проект
+    const isConsoleButton = useAppSelector((state) => state.settingsData.consoleButton); // показ кнопки кастомной консоли
 
     const dispatch = useAppDispatch();
 
@@ -120,6 +124,14 @@ function HeaderBar({}: THeaderBarProps) {
         }
     };
 
+    const onConsoleClick = () => {
+        setIsConsoleOpen(true);
+    };
+
+    const onConsoleClose = () => {
+        setIsConsoleOpen(false);
+    };
+
     return (
         <AppBar>
             <ToggleMenuButton
@@ -137,11 +149,15 @@ function HeaderBar({}: THeaderBarProps) {
                 }}
             />
             <ToggleToolBarButton />
+            {isConsoleButton && <ConsoleButton onClick={onConsoleClick} />}
             <DialogWindow headerText="Меню настроек" isOpen={isSettingsOpen} onClose={onSettingsClose}>
                 <SettingsContent />
             </DialogWindow>
             <DialogWindow headerText="О приложении" isOpen={isInfoOpen} onClose={onInfoClose}>
                 <AppInfo />
+            </DialogWindow>
+            <DialogWindow headerText="Console" isOpen={isConsoleOpen} onClose={onConsoleClose}>
+                <AppConsole />
             </DialogWindow>
             <LoadDialog isOpen={isLoadDialog} onClose={onloadDialogClose} onCloseSave={onloadDialogCloseSave} />
             <ExportProjectDialog isOpen={isExportOpen} onClose={onExportDialogClose} onCloseSave={onExportDialogCloseSave} />

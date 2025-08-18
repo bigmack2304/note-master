@@ -1,0 +1,78 @@
+.AppConsole {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    padding: 0.3rem;
+    padding-bottom: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.AppConsole__vieport {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.AppConsole__item {
+    color: white;
+    margin: 6px 0px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+
+    &--log {
+        background-color: #4e4e4e52;
+    }
+    &--user {
+        background-color: #24f7ff52;
+    }
+
+    &--warn {
+        background-color: #f4ff0052;
+    }
+
+    &--error {
+        background-color: #ff242452;
+    }
+}
+
+.AppConsole__input {
+    border-top: 1px white solid;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 2px;
+
+    &::before {
+        content: ">";
+        font-family: monospace;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.315);
+    }
+
+    &:has(input:active),
+    &:has(input:focus) {
+        &::before {
+            color: white;
+        }
+    }
+
+    input {
+        width: 100%;
+        height: 45px;
+        background-color: black;
+        color: white;
+        outline: none;
+        border: none;
+        font-family: monospace;
+    }
+}
+
+.AppConsole__clearBtn.MuiButtonBase-root {
+    color: red;
+
+    .MuiSvgIcon-root {
+        color: red;
+    }
+}

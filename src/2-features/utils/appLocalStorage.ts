@@ -1,4 +1,4 @@
-import { AUTO_THEME_DETECT } from "5-app/settings";
+import { AUTO_THEME_DETECT, EV_NAME_UPD_LOCAL_STORAGE } from "5-app/settings";
 
 // определение локал-стораджа всего приложения
 // тип локал стораджа приложения
@@ -14,6 +14,7 @@ interface IAppLocalStorage {
     treeViewNoteStatus: boolean;
     viewNoteStatus: boolean;
     viewNoteInfo: boolean;
+    consoleButton: boolean;
 }
 
 const STORAGE_KEY = "app_note_master_local_data";
@@ -29,6 +30,7 @@ const STORAGE_DEF_VALUE: IAppLocalStorage = {
     treeViewNoteStatus: true,
     viewNoteStatus: true,
     viewNoteInfo: true,
+    consoleButton: false,
 };
 
 /**
@@ -50,15 +52,15 @@ function get_stprage_data() {
  * @param data
  */
 function set_storage_data(data: IAppLocalStorage) {
-    dispatchEventStorageUpdate();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    dispatchEventStorageUpdate();
 }
 
 /**
  * генерирует событие при вызове set_storage_data
  */
 function dispatchEventStorageUpdate() {
-    window.dispatchEvent(new CustomEvent("appLocalStorageUpdate"));
+    window.dispatchEvent(new CustomEvent(EV_NAME_UPD_LOCAL_STORAGE));
 }
 
 /**

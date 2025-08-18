@@ -201,6 +201,15 @@ function themeOverrideStyles(theme: TTheme, themeValue: PaletteMode, storeTheme:
                     },
                 },
             },
+            MuiBackdrop: {
+                styleOverrides: {
+                    root: {
+                        "&": {
+                            backdropFilter: "blur(5px)",
+                        },
+                    },
+                },
+            },
             MuiCircularProgress: {
                 styleOverrides: {
                     root: {

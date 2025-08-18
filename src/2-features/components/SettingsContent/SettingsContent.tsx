@@ -15,6 +15,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { ButtonNoteStatus } from "../ButtonNoteStatus/ButtonNoteStatus";
 import { ButtonNoteInfo } from "../ButtonNoteInfo/ButtonNoteInfo";
 import InfoIcon from "@mui/icons-material/Info";
+import TerminalIcon from "@mui/icons-material/Terminal";
+import { ButtonVisivbleConsoleButton } from "../ButtonVisivbleConsoleButton/ButtonVisivbleConsoleButton";
 import * as styles from "./SettingsContentStyle";
 
 type TSettingsContentProps = {};
@@ -80,6 +82,15 @@ function SettingsContent({}: TSettingsContentProps) {
                         <ListItemText className="SettingsContent__listItemText">Информация о заметке</ListItemText>
                     </CustomTooltip>
                     <ButtonNoteInfo />
+                </ListItem>
+                <ListItem className="SettingsContent__listItem">
+                    <ListItemIcon>
+                        <TerminalIcon />
+                    </ListItemIcon>
+                    <CustomTooltip title="Включает кнопку для отображения кастомной консоли.">
+                        <ListItemText className="SettingsContent__listItemText">Консоль</ListItemText>
+                    </CustomTooltip>
+                    <ButtonVisivbleConsoleButton />
                 </ListItem>
             </List>
         </>
